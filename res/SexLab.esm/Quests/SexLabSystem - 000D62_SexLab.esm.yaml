@@ -316,6 +316,9 @@ VirtualMachineAdapter:
       Name: mDirtyUpgrade
       Object: 02043A:SexLab.esm
     - MutagenObjectType: ScriptObjectProperty
+      Name: mMoveScene
+      Object: 02907D:SexLab.esm
+    - MutagenObjectType: ScriptObjectProperty
       Name: mNoSKSE
       Object: 014BB5:SexLab.esm
     - MutagenObjectType: ScriptObjectProperty
@@ -401,7 +404,7 @@ Flags:
 - 0x10
 - RunOnce
 Priority: 95
-QuestFormVersion: 76
+QuestFormVersion: 68
 Filter: SexLab\
 NextAliasID: 72
 Aliases:

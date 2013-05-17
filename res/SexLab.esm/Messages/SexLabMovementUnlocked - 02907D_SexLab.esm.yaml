@@ -1,0 +1,13 @@
+FormKey: 02907D:SexLab.esm
+VersionControl: 32016
+EditorID: SexLabMovementUnlocked
+FormVersion: 43
+Description:
+  TargetLanguage: English
+  Value: Scene location unlocked. Relocking in %.0f
+Name:
+  TargetLanguage: English
+  Value: Reposition Scene
+INAM: 0x00000000
+Quest: 000D62:SexLab.esm
+DisplayTime: 2

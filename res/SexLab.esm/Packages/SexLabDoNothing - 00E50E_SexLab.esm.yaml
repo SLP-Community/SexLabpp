@@ -9,7 +9,7 @@ ScheduleMonth: -1
 ScheduleDayOfWeek: Any
 ScheduleHour: -1
 ScheduleMinute: -1
-Unknown3: 0x657265
+Unknown3: 0x000000
 OwnerQuest: 000D62:SexLab.esm
 PackageTemplate: 016FAA:Skyrim.esm
 DataInputVersion: 3
