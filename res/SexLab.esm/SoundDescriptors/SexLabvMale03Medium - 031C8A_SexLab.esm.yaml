@@ -1,0 +1,20 @@
+FormKey: 031C8A:SexLab.esm
+VersionControl: 32520
+EditorID: SexLabvMale03Medium
+FormVersion: 43
+Type: Standard
+Category: 0172A1:Skyrim.esm
+SoundFiles:
+- data\Sound\fx\SexLab\vMaleMoan03\medium\medium_4.wav
+- data\Sound\fx\SexLab\vMaleMoan03\medium\medium_5.wav
+- data\Sound\fx\SexLab\vMaleMoan03\medium\medium_6.wav
+- data\Sound\fx\SexLab\vMaleMoan03\medium\medium_7.wav
+- data\Sound\fx\SexLab\vMaleMoan03\medium\medium_8.wav
+- data\Sound\fx\SexLab\vMaleMoan03\medium\medium_9.wav
+- data\Sound\fx\SexLab\vMaleMoan03\medium\medium_1.wav
+- data\Sound\fx\SexLab\vMaleMoan03\medium\medium_2.wav
+- data\Sound\fx\SexLab\vMaleMoan03\medium\medium_3.wav
+OutputModel: 0428B6:Skyrim.esm
+LoopAndRumble: {}
+PercentFrequencyVariance: 8
+Priority: 128

@@ -361,6 +361,15 @@ VirtualMachineAdapter:
       Name: malemoan01
       Object: 01102B:SexLab.esm
     - MutagenObjectType: ScriptObjectProperty
+      Name: malemoan02
+      Object: 01102B:SexLab.esm
+    - MutagenObjectType: ScriptObjectProperty
+      Name: malemoan03
+      Object: 01102B:SexLab.esm
+    - MutagenObjectType: ScriptObjectProperty
+      Name: malemoan04
+      Object: 01102B:SexLab.esm
+    - MutagenObjectType: ScriptObjectProperty
       Name: mCleanSystemFinish
       Object: 020439:SexLab.esm
     - MutagenObjectType: ScriptObjectProperty
@@ -408,9 +417,6 @@ VirtualMachineAdapter:
     - MutagenObjectType: ScriptObjectProperty
       Name: SexLabDoggyStyle
       Object: 0022EB:SexLab.esm
-    - MutagenObjectType: ScriptObjectProperty
-      Name: SexLabDummyWeapon
-      Object: 0311BF:SexLab.esm
     - MutagenObjectType: ScriptObjectProperty
       Name: SexLabForbid
       Object: 02F6D1:SexLab.esm
@@ -460,7 +466,7 @@ Flags:
 - 0x10
 - RunOnce
 Priority: 95
-QuestFormVersion: 46
+QuestFormVersion: 0
 Filter: SexLab\
 NextAliasID: 81
 Aliases:

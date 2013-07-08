@@ -294,6 +294,93 @@ VirtualMachineAdapter:
     - MutagenObjectType: ScriptObjectProperty
       Name: VoicesPlayer
       Object: 068ACA:Skyrim.esm
+  - Name: sslVoiceMaleMoan02
+    Properties:
+    - MutagenObjectType: ScriptObjectProperty
+      Name: hot
+      Object: 031C8D:SexLab.esm
+    - MutagenObjectType: ScriptObjectProperty
+      Name: medium
+      Object: 031C8E:SexLab.esm
+    - MutagenObjectType: ScriptObjectProperty
+      Name: mild
+      Object: 031C8F:SexLab.esm
+    - MutagenObjectType: ScriptObjectProperty
+      Name: SexLabMoanHot
+      Object: 02CBB7:SexLab.esm
+    - MutagenObjectType: ScriptObjectProperty
+      Name: SexLabMoanMedium
+      Object: 02CBB5:SexLab.esm
+    - MutagenObjectType: ScriptObjectProperty
+      Name: SexLabMoanMild
+      Object: 02CBB6:SexLab.esm
+    - MutagenObjectType: ScriptObjectProperty
+      Name: SexLabVoiceF
+      Object: 02CBBE:SexLab.esm
+    - MutagenObjectType: ScriptObjectProperty
+      Name: SexLabVoiceM
+      Object: 02CBBD:SexLab.esm
+    - MutagenObjectType: ScriptObjectProperty
+      Name: VoicesPlayer
+      Object: 068ACA:Skyrim.esm
+  - Name: sslVoiceMaleMoan03
+    Properties:
+    - MutagenObjectType: ScriptObjectProperty
+      Name: hot
+      Object: 031C94:SexLab.esm
+    - MutagenObjectType: ScriptObjectProperty
+      Name: medium
+      Object: 031C92:SexLab.esm
+    - MutagenObjectType: ScriptObjectProperty
+      Name: mild
+      Object: 031C90:SexLab.esm
+    - MutagenObjectType: ScriptObjectProperty
+      Name: SexLabMoanHot
+      Object: 02CBB7:SexLab.esm
+    - MutagenObjectType: ScriptObjectProperty
+      Name: SexLabMoanMedium
+      Object: 02CBB5:SexLab.esm
+    - MutagenObjectType: ScriptObjectProperty
+      Name: SexLabMoanMild
+      Object: 02CBB6:SexLab.esm
+    - MutagenObjectType: ScriptObjectProperty
+      Name: SexLabVoiceF
+      Object: 02CBBE:SexLab.esm
+    - MutagenObjectType: ScriptObjectProperty
+      Name: SexLabVoiceM
+      Object: 02CBBD:SexLab.esm
+    - MutagenObjectType: ScriptObjectProperty
+      Name: VoicesPlayer
+      Object: 068ACA:Skyrim.esm
+  - Name: sslVoiceMaleMoan04
+    Properties:
+    - MutagenObjectType: ScriptObjectProperty
+      Name: hot
+      Object: 031C95:SexLab.esm
+    - MutagenObjectType: ScriptObjectProperty
+      Name: medium
+      Object: 031C93:SexLab.esm
+    - MutagenObjectType: ScriptObjectProperty
+      Name: mild
+      Object: 031C91:SexLab.esm
+    - MutagenObjectType: ScriptObjectProperty
+      Name: SexLabMoanHot
+      Object: 02CBB7:SexLab.esm
+    - MutagenObjectType: ScriptObjectProperty
+      Name: SexLabMoanMedium
+      Object: 02CBB5:SexLab.esm
+    - MutagenObjectType: ScriptObjectProperty
+      Name: SexLabMoanMild
+      Object: 02CBB6:SexLab.esm
+    - MutagenObjectType: ScriptObjectProperty
+      Name: SexLabVoiceF
+      Object: 02CBBE:SexLab.esm
+    - MutagenObjectType: ScriptObjectProperty
+      Name: SexLabVoiceM
+      Object: 02CBBD:SexLab.esm
+    - MutagenObjectType: ScriptObjectProperty
+      Name: VoicesPlayer
+      Object: 068ACA:Skyrim.esm
   Versioning:
   - Break0
   ExtraBindDataVersion: 0
@@ -306,6 +393,6 @@ Flags:
 - 0x10
 - RunOnce
 Priority: 90
-QuestFormVersion: 0
+QuestFormVersion: 48
 Filter: SexLab\
 NextAliasID: 0
