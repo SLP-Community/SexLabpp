@@ -502,6 +502,9 @@ VirtualMachineAdapter:
       Name: SexLabSideways
       Object: 0022EB:SexLab.esm
     - MutagenObjectType: ScriptObjectProperty
+      Name: SexLabStageBox
+      Object: 0347AD:SexLab.esm
+    - MutagenObjectType: ScriptObjectProperty
       Name: SexLabStanding
       Object: 0022EB:SexLab.esm
     - MutagenObjectType: ScriptObjectProperty
@@ -532,7 +535,7 @@ Flags:
 - 0x10
 - RunOnce
 Priority: 95
-QuestFormVersion: 45
+QuestFormVersion: 46
 Filter: SexLab\
 NextAliasID: 97
 Aliases:
