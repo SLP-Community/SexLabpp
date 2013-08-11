@@ -99,5 +99,5 @@ Flags:
 - StartGameEnabled
 - 0x10
 Priority: 99
-QuestFormVersion: 29
+QuestFormVersion: 0
 NextAliasID: 0

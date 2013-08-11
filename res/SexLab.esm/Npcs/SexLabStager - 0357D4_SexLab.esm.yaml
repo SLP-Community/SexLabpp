@@ -1,7 +1,6 @@
 FormKey: 0357D4:SexLab.esm
 IsCompressed: True
 MajorRecordFlagsRaw: 262144
-VersionControl: 32778
 EditorID: SexLabStager
 FormVersion: 43
 SkyrimMajorRecordFlags:
@@ -29,7 +28,7 @@ AIData:
   Confidence: Foolhardy
   EnergyLevel: 50
   Responsibility: NoCrime
-  Unused: 29
+  Unused: 32
 Class: 017008:Skyrim.esm
 Name:
   TargetLanguage: English

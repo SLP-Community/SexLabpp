@@ -15,7 +15,7 @@ Responses:
   Edits: ''
 Conditions:
 - MutagenObjectType: ConditionFloat
-  Unknown2: 7846
+  Unknown2: 6218
   Data:
     MutagenObjectType: GetInFactionConditionData
     Faction: 00E50F:SexLab.esm
@@ -23,7 +23,7 @@ Conditions:
 - MutagenObjectType: ConditionFloat
   Flags:
   - OR
-  Unknown2: 7846
+  Unknown2: 6218
   Data:
     MutagenObjectType: GetIsVoiceTypeConditionData
     VoiceTypeOrList: 02CBBE:SexLab.esm
@@ -31,7 +31,7 @@ Conditions:
 - MutagenObjectType: ConditionFloat
   Flags:
   - OR
-  Unknown2: 7846
+  Unknown2: 6218
   Data:
     MutagenObjectType: GetIsVoiceTypeConditionData
     VoiceTypeOrList: 02CBBD:SexLab.esm
