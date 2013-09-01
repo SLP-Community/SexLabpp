@@ -1,0 +1,1528 @@
+FormKey: 03931F:SexLab.esm
+VersionControl: 32799
+EditorID: SexLabAnimationRegistry
+FormVersion: 43
+VirtualMachineAdapter:
+  Scripts:
+  - Name: sslAnimationDefaults
+    Properties:
+    - MutagenObjectType: ScriptObjectProperty
+      Name: Registry
+      Object: 03931F:SexLab.esm
+  - Name: sslAnimationRegistry
+    Properties:
+    - MutagenObjectType: ScriptObjectProperty
+      Name: defaults
+      Object: 03931F:SexLab.esm
+    - MutagenObjectType: ScriptObjectProperty
+      Name: SexLabAnimationSlot000
+      Object: 03931F:SexLab.esm
+      Alias: 1
+    - MutagenObjectType: ScriptObjectProperty
+      Name: SexLabAnimationSlot001
+      Object: 03931F:SexLab.esm
+      Alias: 2
+    - MutagenObjectType: ScriptObjectProperty
+      Name: SexLabAnimationSlot002
+      Object: 03931F:SexLab.esm
+      Alias: 3
+    - MutagenObjectType: ScriptObjectProperty
+      Name: SexLabAnimationSlot003
+      Object: 03931F:SexLab.esm
+      Alias: 4
+    - MutagenObjectType: ScriptObjectProperty
+      Name: SexLabAnimationSlot004
+      Object: 03931F:SexLab.esm
+      Alias: 5
+    - MutagenObjectType: ScriptObjectProperty
+      Name: SexLabAnimationSlot005
+      Object: 03931F:SexLab.esm
+      Alias: 6
+    - MutagenObjectType: ScriptObjectProperty
+      Name: SexLabAnimationSlot006
+      Object: 03931F:SexLab.esm
+      Alias: 7
+    - MutagenObjectType: ScriptObjectProperty
+      Name: SexLabAnimationSlot007
+      Object: 03931F:SexLab.esm
+      Alias: 8
+    - MutagenObjectType: ScriptObjectProperty
+      Name: SexLabAnimationSlot008
+      Object: 03931F:SexLab.esm
+      Alias: 9
+    - MutagenObjectType: ScriptObjectProperty
+      Name: SexLabAnimationSlot009
+      Object: 03931F:SexLab.esm
+      Alias: 10
+    - MutagenObjectType: ScriptObjectProperty
+      Name: SexLabAnimationSlot010
+      Object: 03931F:SexLab.esm
+      Alias: 11
+    - MutagenObjectType: ScriptObjectProperty
+      Name: SexLabAnimationSlot011
+      Object: 03931F:SexLab.esm
+      Alias: 12
+    - MutagenObjectType: ScriptObjectProperty
+      Name: SexLabAnimationSlot012
+      Object: 03931F:SexLab.esm
+      Alias: 13
+    - MutagenObjectType: ScriptObjectProperty
+      Name: SexLabAnimationSlot013
+      Object: 03931F:SexLab.esm
+      Alias: 14
+    - MutagenObjectType: ScriptObjectProperty
+      Name: SexLabAnimationSlot014
+      Object: 03931F:SexLab.esm
+      Alias: 15
+    - MutagenObjectType: ScriptObjectProperty
+      Name: SexLabAnimationSlot015
+      Object: 03931F:SexLab.esm
+      Alias: 16
+    - MutagenObjectType: ScriptObjectProperty
+      Name: SexLabAnimationSlot016
+      Object: 03931F:SexLab.esm
+      Alias: 17
+    - MutagenObjectType: ScriptObjectProperty
+      Name: SexLabAnimationSlot017
+      Object: 03931F:SexLab.esm
+      Alias: 18
+    - MutagenObjectType: ScriptObjectProperty
+      Name: SexLabAnimationSlot018
+      Object: 03931F:SexLab.esm
+      Alias: 19
+    - MutagenObjectType: ScriptObjectProperty
+      Name: SexLabAnimationSlot019
+      Object: 03931F:SexLab.esm
+      Alias: 20
+    - MutagenObjectType: ScriptObjectProperty
+      Name: SexLabAnimationSlot020
+      Object: 03931F:SexLab.esm
+      Alias: 21
+    - MutagenObjectType: ScriptObjectProperty
+      Name: SexLabAnimationSlot021
+      Object: 03931F:SexLab.esm
+      Alias: 22
+    - MutagenObjectType: ScriptObjectProperty
+      Name: SexLabAnimationSlot022
+      Object: 03931F:SexLab.esm
+      Alias: 23
+    - MutagenObjectType: ScriptObjectProperty
+      Name: SexLabAnimationSlot023
+      Object: 03931F:SexLab.esm
+      Alias: 24
+    - MutagenObjectType: ScriptObjectProperty
+      Name: SexLabAnimationSlot024
+      Object: 03931F:SexLab.esm
+      Alias: 25
+    - MutagenObjectType: ScriptObjectProperty
+      Name: SexLabAnimationSlot025
+      Object: 03931F:SexLab.esm
+      Alias: 26
+    - MutagenObjectType: ScriptObjectProperty
+      Name: SexLabAnimationSlot026
+      Object: 03931F:SexLab.esm
+      Alias: 27
+    - MutagenObjectType: ScriptObjectProperty
+      Name: SexLabAnimationSlot027
+      Object: 03931F:SexLab.esm
+      Alias: 28
+    - MutagenObjectType: ScriptObjectProperty
+      Name: SexLabAnimationSlot028
+      Object: 03931F:SexLab.esm
+      Alias: 29
+    - MutagenObjectType: ScriptObjectProperty
+      Name: SexLabAnimationSlot029
+      Object: 03931F:SexLab.esm
+      Alias: 30
+    - MutagenObjectType: ScriptObjectProperty
+      Name: SexLabAnimationSlot030
+      Object: 03931F:SexLab.esm
+      Alias: 31
+    - MutagenObjectType: ScriptObjectProperty
+      Name: SexLabAnimationSlot031
+      Object: 03931F:SexLab.esm
+      Alias: 32
+    - MutagenObjectType: ScriptObjectProperty
+      Name: SexLabAnimationSlot032
+      Object: 03931F:SexLab.esm
+      Alias: 33
+    - MutagenObjectType: ScriptObjectProperty
+      Name: SexLabAnimationSlot033
+      Object: 03931F:SexLab.esm
+      Alias: 34
+    - MutagenObjectType: ScriptObjectProperty
+      Name: SexLabAnimationSlot034
+      Object: 03931F:SexLab.esm
+      Alias: 35
+    - MutagenObjectType: ScriptObjectProperty
+      Name: SexLabAnimationSlot035
+      Object: 03931F:SexLab.esm
+      Alias: 36
+    - MutagenObjectType: ScriptObjectProperty
+      Name: SexLabAnimationSlot036
+      Object: 03931F:SexLab.esm
+      Alias: 37
+    - MutagenObjectType: ScriptObjectProperty
+      Name: SexLabAnimationSlot037
+      Object: 03931F:SexLab.esm
+      Alias: 38
+    - MutagenObjectType: ScriptObjectProperty
+      Name: SexLabAnimationSlot038
+      Object: 03931F:SexLab.esm
+      Alias: 39
+    - MutagenObjectType: ScriptObjectProperty
+      Name: SexLabAnimationSlot039
+      Object: 03931F:SexLab.esm
+      Alias: 40
+    - MutagenObjectType: ScriptObjectProperty
+      Name: SexLabAnimationSlot040
+      Object: 03931F:SexLab.esm
+      Alias: 41
+    - MutagenObjectType: ScriptObjectProperty
+      Name: SexLabAnimationSlot041
+      Object: 03931F:SexLab.esm
+      Alias: 42
+    - MutagenObjectType: ScriptObjectProperty
+      Name: SexLabAnimationSlot042
+      Object: 03931F:SexLab.esm
+      Alias: 43
+    - MutagenObjectType: ScriptObjectProperty
+      Name: SexLabAnimationSlot043
+      Object: 03931F:SexLab.esm
+      Alias: 44
+    - MutagenObjectType: ScriptObjectProperty
+      Name: SexLabAnimationSlot044
+      Object: 03931F:SexLab.esm
+      Alias: 45
+    - MutagenObjectType: ScriptObjectProperty
+      Name: SexLabAnimationSlot045
+      Object: 03931F:SexLab.esm
+      Alias: 46
+    - MutagenObjectType: ScriptObjectProperty
+      Name: SexLabAnimationSlot046
+      Object: 03931F:SexLab.esm
+      Alias: 47
+    - MutagenObjectType: ScriptObjectProperty
+      Name: SexLabAnimationSlot047
+      Object: 03931F:SexLab.esm
+      Alias: 48
+    - MutagenObjectType: ScriptObjectProperty
+      Name: SexLabAnimationSlot048
+      Object: 03931F:SexLab.esm
+      Alias: 49
+    - MutagenObjectType: ScriptObjectProperty
+      Name: SexLabAnimationSlot049
+      Object: 03931F:SexLab.esm
+      Alias: 50
+    - MutagenObjectType: ScriptObjectProperty
+      Name: SexLabAnimationSlot050
+      Object: 03931F:SexLab.esm
+      Alias: 51
+    - MutagenObjectType: ScriptObjectProperty
+      Name: SexLabAnimationSlot051
+      Object: 03931F:SexLab.esm
+      Alias: 52
+    - MutagenObjectType: ScriptObjectProperty
+      Name: SexLabAnimationSlot052
+      Object: 03931F:SexLab.esm
+      Alias: 53
+    - MutagenObjectType: ScriptObjectProperty
+      Name: SexLabAnimationSlot053
+      Object: 03931F:SexLab.esm
+      Alias: 54
+    - MutagenObjectType: ScriptObjectProperty
+      Name: SexLabAnimationSlot054
+      Object: 03931F:SexLab.esm
+      Alias: 55
+    - MutagenObjectType: ScriptObjectProperty
+      Name: SexLabAnimationSlot055
+      Object: 03931F:SexLab.esm
+      Alias: 56
+    - MutagenObjectType: ScriptObjectProperty
+      Name: SexLabAnimationSlot056
+      Object: 03931F:SexLab.esm
+      Alias: 57
+    - MutagenObjectType: ScriptObjectProperty
+      Name: SexLabAnimationSlot057
+      Object: 03931F:SexLab.esm
+      Alias: 58
+    - MutagenObjectType: ScriptObjectProperty
+      Name: SexLabAnimationSlot058
+      Object: 03931F:SexLab.esm
+      Alias: 59
+    - MutagenObjectType: ScriptObjectProperty
+      Name: SexLabAnimationSlot059
+      Object: 03931F:SexLab.esm
+      Alias: 60
+    - MutagenObjectType: ScriptObjectProperty
+      Name: SexLabAnimationSlot060
+      Object: 03931F:SexLab.esm
+      Alias: 61
+    - MutagenObjectType: ScriptObjectProperty
+      Name: SexLabAnimationSlot061
+      Object: 03931F:SexLab.esm
+      Alias: 62
+    - MutagenObjectType: ScriptObjectProperty
+      Name: SexLabAnimationSlot062
+      Object: 03931F:SexLab.esm
+      Alias: 63
+    - MutagenObjectType: ScriptObjectProperty
+      Name: SexLabAnimationSlot063
+      Object: 03931F:SexLab.esm
+      Alias: 64
+    - MutagenObjectType: ScriptObjectProperty
+      Name: SexLabAnimationSlot064
+      Object: 03931F:SexLab.esm
+      Alias: 65
+    - MutagenObjectType: ScriptObjectProperty
+      Name: SexLabAnimationSlot065
+      Object: 03931F:SexLab.esm
+      Alias: 66
+    - MutagenObjectType: ScriptObjectProperty
+      Name: SexLabAnimationSlot066
+      Object: 03931F:SexLab.esm
+      Alias: 67
+    - MutagenObjectType: ScriptObjectProperty
+      Name: SexLabAnimationSlot067
+      Object: 03931F:SexLab.esm
+      Alias: 68
+    - MutagenObjectType: ScriptObjectProperty
+      Name: SexLabAnimationSlot068
+      Object: 03931F:SexLab.esm
+      Alias: 69
+    - MutagenObjectType: ScriptObjectProperty
+      Name: SexLabAnimationSlot069
+      Object: 03931F:SexLab.esm
+      Alias: 70
+    - MutagenObjectType: ScriptObjectProperty
+      Name: SexLabAnimationSlot070
+      Object: 03931F:SexLab.esm
+      Alias: 71
+    - MutagenObjectType: ScriptObjectProperty
+      Name: SexLabAnimationSlot071
+      Object: 03931F:SexLab.esm
+      Alias: 72
+    - MutagenObjectType: ScriptObjectProperty
+      Name: SexLabAnimationSlot072
+      Object: 03931F:SexLab.esm
+      Alias: 73
+    - MutagenObjectType: ScriptObjectProperty
+      Name: SexLabAnimationSlot073
+      Object: 03931F:SexLab.esm
+      Alias: 74
+    - MutagenObjectType: ScriptObjectProperty
+      Name: SexLabAnimationSlot074
+      Object: 03931F:SexLab.esm
+      Alias: 75
+    - MutagenObjectType: ScriptObjectProperty
+      Name: SexLabAnimationSlot075
+      Object: 03931F:SexLab.esm
+      Alias: 76
+    - MutagenObjectType: ScriptObjectProperty
+      Name: SexLabAnimationSlot076
+      Object: 03931F:SexLab.esm
+      Alias: 77
+    - MutagenObjectType: ScriptObjectProperty
+      Name: SexLabAnimationSlot077
+      Object: 03931F:SexLab.esm
+      Alias: 78
+    - MutagenObjectType: ScriptObjectProperty
+      Name: SexLabAnimationSlot078
+      Object: 03931F:SexLab.esm
+      Alias: 79
+    - MutagenObjectType: ScriptObjectProperty
+      Name: SexLabAnimationSlot079
+      Object: 03931F:SexLab.esm
+      Alias: 80
+    - MutagenObjectType: ScriptObjectProperty
+      Name: SexLabAnimationSlot080
+      Object: 03931F:SexLab.esm
+      Alias: 81
+    - MutagenObjectType: ScriptObjectProperty
+      Name: SexLabAnimationSlot081
+      Object: 03931F:SexLab.esm
+      Alias: 82
+    - MutagenObjectType: ScriptObjectProperty
+      Name: SexLabAnimationSlot082
+      Object: 03931F:SexLab.esm
+      Alias: 83
+    - MutagenObjectType: ScriptObjectProperty
+      Name: SexLabAnimationSlot083
+      Object: 03931F:SexLab.esm
+      Alias: 84
+    - MutagenObjectType: ScriptObjectProperty
+      Name: SexLabAnimationSlot084
+      Object: 03931F:SexLab.esm
+      Alias: 85
+    - MutagenObjectType: ScriptObjectProperty
+      Name: SexLabAnimationSlot085
+      Object: 03931F:SexLab.esm
+      Alias: 86
+    - MutagenObjectType: ScriptObjectProperty
+      Name: SexLabAnimationSlot086
+      Object: 03931F:SexLab.esm
+      Alias: 87
+    - MutagenObjectType: ScriptObjectProperty
+      Name: SexLabAnimationSlot087
+      Object: 03931F:SexLab.esm
+      Alias: 88
+    - MutagenObjectType: ScriptObjectProperty
+      Name: SexLabAnimationSlot088
+      Object: 03931F:SexLab.esm
+      Alias: 89
+    - MutagenObjectType: ScriptObjectProperty
+      Name: SexLabAnimationSlot089
+      Object: 03931F:SexLab.esm
+      Alias: 90
+    - MutagenObjectType: ScriptObjectProperty
+      Name: SexLabAnimationSlot090
+      Object: 03931F:SexLab.esm
+      Alias: 91
+    - MutagenObjectType: ScriptObjectProperty
+      Name: SexLabAnimationSlot091
+      Object: 03931F:SexLab.esm
+      Alias: 92
+    - MutagenObjectType: ScriptObjectProperty
+      Name: SexLabAnimationSlot092
+      Object: 03931F:SexLab.esm
+      Alias: 93
+    - MutagenObjectType: ScriptObjectProperty
+      Name: SexLabAnimationSlot093
+      Object: 03931F:SexLab.esm
+      Alias: 94
+    - MutagenObjectType: ScriptObjectProperty
+      Name: SexLabAnimationSlot094
+      Object: 03931F:SexLab.esm
+      Alias: 95
+    - MutagenObjectType: ScriptObjectProperty
+      Name: SexLabAnimationSlot095
+      Object: 03931F:SexLab.esm
+      Alias: 96
+    - MutagenObjectType: ScriptObjectProperty
+      Name: SexLabAnimationSlot096
+      Object: 03931F:SexLab.esm
+      Alias: 97
+    - MutagenObjectType: ScriptObjectProperty
+      Name: SexLabAnimationSlot097
+      Object: 03931F:SexLab.esm
+      Alias: 98
+    - MutagenObjectType: ScriptObjectProperty
+      Name: SexLabAnimationSlot098
+      Object: 03931F:SexLab.esm
+      Alias: 99
+    - MutagenObjectType: ScriptObjectProperty
+      Name: SexLabAnimationSlot099
+      Object: 03931F:SexLab.esm
+      Alias: 100
+  FileName: ''
+  Aliases:
+  - Property:
+      Name: ''
+      Object: 03931F:SexLab.esm
+      Alias: 100
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 03931F:SexLab.esm
+      Alias: 99
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 03931F:SexLab.esm
+      Alias: 98
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 03931F:SexLab.esm
+      Alias: 97
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 03931F:SexLab.esm
+      Alias: 96
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 03931F:SexLab.esm
+      Alias: 95
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 03931F:SexLab.esm
+      Alias: 94
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 03931F:SexLab.esm
+      Alias: 93
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 03931F:SexLab.esm
+      Alias: 92
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 03931F:SexLab.esm
+      Alias: 91
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 03931F:SexLab.esm
+      Alias: 90
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 03931F:SexLab.esm
+      Alias: 89
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 03931F:SexLab.esm
+      Alias: 88
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 03931F:SexLab.esm
+      Alias: 87
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 03931F:SexLab.esm
+      Alias: 86
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 03931F:SexLab.esm
+      Alias: 85
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 03931F:SexLab.esm
+      Alias: 84
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 03931F:SexLab.esm
+      Alias: 83
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 03931F:SexLab.esm
+      Alias: 82
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 03931F:SexLab.esm
+      Alias: 81
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 03931F:SexLab.esm
+      Alias: 80
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 03931F:SexLab.esm
+      Alias: 79
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 03931F:SexLab.esm
+      Alias: 78
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 03931F:SexLab.esm
+      Alias: 77
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 03931F:SexLab.esm
+      Alias: 76
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 03931F:SexLab.esm
+      Alias: 75
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 03931F:SexLab.esm
+      Alias: 74
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 03931F:SexLab.esm
+      Alias: 73
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 03931F:SexLab.esm
+      Alias: 72
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 03931F:SexLab.esm
+      Alias: 71
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 03931F:SexLab.esm
+      Alias: 70
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 03931F:SexLab.esm
+      Alias: 69
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 03931F:SexLab.esm
+      Alias: 68
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 03931F:SexLab.esm
+      Alias: 67
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 03931F:SexLab.esm
+      Alias: 66
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 03931F:SexLab.esm
+      Alias: 65
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 03931F:SexLab.esm
+      Alias: 64
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 03931F:SexLab.esm
+      Alias: 63
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 03931F:SexLab.esm
+      Alias: 62
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 03931F:SexLab.esm
+      Alias: 61
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 03931F:SexLab.esm
+      Alias: 60
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 03931F:SexLab.esm
+      Alias: 59
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 03931F:SexLab.esm
+      Alias: 58
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 03931F:SexLab.esm
+      Alias: 57
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 03931F:SexLab.esm
+      Alias: 56
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 03931F:SexLab.esm
+      Alias: 55
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 03931F:SexLab.esm
+      Alias: 54
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 03931F:SexLab.esm
+      Alias: 53
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 03931F:SexLab.esm
+      Alias: 52
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 03931F:SexLab.esm
+      Alias: 51
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 03931F:SexLab.esm
+      Alias: 50
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 03931F:SexLab.esm
+      Alias: 49
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 03931F:SexLab.esm
+      Alias: 48
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 03931F:SexLab.esm
+      Alias: 47
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 03931F:SexLab.esm
+      Alias: 46
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 03931F:SexLab.esm
+      Alias: 45
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 03931F:SexLab.esm
+      Alias: 44
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 03931F:SexLab.esm
+      Alias: 43
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 03931F:SexLab.esm
+      Alias: 42
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 03931F:SexLab.esm
+      Alias: 41
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 03931F:SexLab.esm
+      Alias: 40
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 03931F:SexLab.esm
+      Alias: 39
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 03931F:SexLab.esm
+      Alias: 38
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 03931F:SexLab.esm
+      Alias: 37
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 03931F:SexLab.esm
+      Alias: 36
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 03931F:SexLab.esm
+      Alias: 35
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 03931F:SexLab.esm
+      Alias: 34
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 03931F:SexLab.esm
+      Alias: 33
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 03931F:SexLab.esm
+      Alias: 32
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 03931F:SexLab.esm
+      Alias: 31
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 03931F:SexLab.esm
+      Alias: 30
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 03931F:SexLab.esm
+      Alias: 29
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 03931F:SexLab.esm
+      Alias: 28
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 03931F:SexLab.esm
+      Alias: 27
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 03931F:SexLab.esm
+      Alias: 26
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 03931F:SexLab.esm
+      Alias: 25
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 03931F:SexLab.esm
+      Alias: 24
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 03931F:SexLab.esm
+      Alias: 23
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 03931F:SexLab.esm
+      Alias: 22
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 03931F:SexLab.esm
+      Alias: 21
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 03931F:SexLab.esm
+      Alias: 20
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 03931F:SexLab.esm
+      Alias: 19
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 03931F:SexLab.esm
+      Alias: 18
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 03931F:SexLab.esm
+      Alias: 17
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 03931F:SexLab.esm
+      Alias: 16
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 03931F:SexLab.esm
+      Alias: 15
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 03931F:SexLab.esm
+      Alias: 14
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 03931F:SexLab.esm
+      Alias: 13
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 03931F:SexLab.esm
+      Alias: 12
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 03931F:SexLab.esm
+      Alias: 11
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 03931F:SexLab.esm
+      Alias: 10
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 03931F:SexLab.esm
+      Alias: 9
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 03931F:SexLab.esm
+      Alias: 8
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 03931F:SexLab.esm
+      Alias: 7
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 03931F:SexLab.esm
+      Alias: 6
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 03931F:SexLab.esm
+      Alias: 5
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 03931F:SexLab.esm
+      Alias: 4
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 03931F:SexLab.esm
+      Alias: 3
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 03931F:SexLab.esm
+      Alias: 2
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 03931F:SexLab.esm
+      Alias: 1
+    Scripts:
+    - Name: sslBaseAnimation
+Name:
+  TargetLanguage: English
+  Value: SexLab Animation Registry
+Flags:
+- StartGameEnabled
+Priority: 90
+QuestFormVersion: 44
+Filter: SexLab\
+NextAliasID: 101
+Aliases:
+- ID: 100
+  Name: SexLabAnimationSlot099
+  Flags:
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 99
+  Name: SexLabAnimationSlot098
+  Flags:
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 98
+  Name: SexLabAnimationSlot097
+  Flags:
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 97
+  Name: SexLabAnimationSlot096
+  Flags:
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 96
+  Name: SexLabAnimationSlot095
+  Flags:
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 95
+  Name: SexLabAnimationSlot094
+  Flags:
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 94
+  Name: SexLabAnimationSlot093
+  Flags:
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 93
+  Name: SexLabAnimationSlot092
+  Flags:
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 92
+  Name: SexLabAnimationSlot091
+  Flags:
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 91
+  Name: SexLabAnimationSlot090
+  Flags:
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 90
+  Name: SexLabAnimationSlot089
+  Flags:
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 89
+  Name: SexLabAnimationSlot088
+  Flags:
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 88
+  Name: SexLabAnimationSlot087
+  Flags:
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 87
+  Name: SexLabAnimationSlot086
+  Flags:
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 86
+  Name: SexLabAnimationSlot085
+  Flags:
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 85
+  Name: SexLabAnimationSlot084
+  Flags:
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 84
+  Name: SexLabAnimationSlot083
+  Flags:
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 83
+  Name: SexLabAnimationSlot082
+  Flags:
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 82
+  Name: SexLabAnimationSlot081
+  Flags:
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 81
+  Name: SexLabAnimationSlot080
+  Flags:
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 80
+  Name: SexLabAnimationSlot079
+  Flags:
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 79
+  Name: SexLabAnimationSlot078
+  Flags:
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 78
+  Name: SexLabAnimationSlot077
+  Flags:
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 77
+  Name: SexLabAnimationSlot076
+  Flags:
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 76
+  Name: SexLabAnimationSlot075
+  Flags:
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 75
+  Name: SexLabAnimationSlot074
+  Flags:
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 74
+  Name: SexLabAnimationSlot073
+  Flags:
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 73
+  Name: SexLabAnimationSlot072
+  Flags:
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 72
+  Name: SexLabAnimationSlot071
+  Flags:
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 71
+  Name: SexLabAnimationSlot070
+  Flags:
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 70
+  Name: SexLabAnimationSlot069
+  Flags:
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 69
+  Name: SexLabAnimationSlot068
+  Flags:
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 68
+  Name: SexLabAnimationSlot067
+  Flags:
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 67
+  Name: SexLabAnimationSlot066
+  Flags:
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 66
+  Name: SexLabAnimationSlot065
+  Flags:
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 65
+  Name: SexLabAnimationSlot064
+  Flags:
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 64
+  Name: SexLabAnimationSlot063
+  Flags:
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 63
+  Name: SexLabAnimationSlot062
+  Flags:
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 62
+  Name: SexLabAnimationSlot061
+  Flags:
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 61
+  Name: SexLabAnimationSlot060
+  Flags:
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 60
+  Name: SexLabAnimationSlot059
+  Flags:
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 59
+  Name: SexLabAnimationSlot058
+  Flags:
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 58
+  Name: SexLabAnimationSlot057
+  Flags:
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 57
+  Name: SexLabAnimationSlot056
+  Flags:
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 56
+  Name: SexLabAnimationSlot055
+  Flags:
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 55
+  Name: SexLabAnimationSlot054
+  Flags:
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 54
+  Name: SexLabAnimationSlot053
+  Flags:
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 53
+  Name: SexLabAnimationSlot052
+  Flags:
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 52
+  Name: SexLabAnimationSlot051
+  Flags:
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 51
+  Name: SexLabAnimationSlot050
+  Flags:
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 50
+  Name: SexLabAnimationSlot049
+  Flags:
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 49
+  Name: SexLabAnimationSlot048
+  Flags:
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 48
+  Name: SexLabAnimationSlot047
+  Flags:
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 47
+  Name: SexLabAnimationSlot046
+  Flags:
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 46
+  Name: SexLabAnimationSlot045
+  Flags:
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 45
+  Name: SexLabAnimationSlot044
+  Flags:
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 44
+  Name: SexLabAnimationSlot043
+  Flags:
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 43
+  Name: SexLabAnimationSlot042
+  Flags:
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 42
+  Name: SexLabAnimationSlot041
+  Flags:
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 41
+  Name: SexLabAnimationSlot040
+  Flags:
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 40
+  Name: SexLabAnimationSlot039
+  Flags:
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 39
+  Name: SexLabAnimationSlot038
+  Flags:
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 38
+  Name: SexLabAnimationSlot037
+  Flags:
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 37
+  Name: SexLabAnimationSlot036
+  Flags:
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 36
+  Name: SexLabAnimationSlot035
+  Flags:
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 35
+  Name: SexLabAnimationSlot034
+  Flags:
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 34
+  Name: SexLabAnimationSlot033
+  Flags:
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 33
+  Name: SexLabAnimationSlot032
+  Flags:
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 32
+  Name: SexLabAnimationSlot031
+  Flags:
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 31
+  Name: SexLabAnimationSlot030
+  Flags:
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 30
+  Name: SexLabAnimationSlot029
+  Flags:
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 29
+  Name: SexLabAnimationSlot028
+  Flags:
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 28
+  Name: SexLabAnimationSlot027
+  Flags:
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 27
+  Name: SexLabAnimationSlot026
+  Flags:
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 26
+  Name: SexLabAnimationSlot025
+  Flags:
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 25
+  Name: SexLabAnimationSlot024
+  Flags:
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 24
+  Name: SexLabAnimationSlot023
+  Flags:
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 23
+  Name: SexLabAnimationSlot022
+  Flags:
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 22
+  Name: SexLabAnimationSlot021
+  Flags:
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 21
+  Name: SexLabAnimationSlot020
+  Flags:
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 20
+  Name: SexLabAnimationSlot019
+  Flags:
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 19
+  Name: SexLabAnimationSlot018
+  Flags:
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 18
+  Name: SexLabAnimationSlot017
+  Flags:
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 17
+  Name: SexLabAnimationSlot016
+  Flags:
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 16
+  Name: SexLabAnimationSlot015
+  Flags:
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 15
+  Name: SexLabAnimationSlot014
+  Flags:
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 14
+  Name: SexLabAnimationSlot013
+  Flags:
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 13
+  Name: SexLabAnimationSlot012
+  Flags:
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 12
+  Name: SexLabAnimationSlot011
+  Flags:
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 11
+  Name: SexLabAnimationSlot010
+  Flags:
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 10
+  Name: SexLabAnimationSlot009
+  Flags:
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 9
+  Name: SexLabAnimationSlot008
+  Flags:
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 8
+  Name: SexLabAnimationSlot007
+  Flags:
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 7
+  Name: SexLabAnimationSlot006
+  Flags:
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 6
+  Name: SexLabAnimationSlot005
+  Flags:
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 5
+  Name: SexLabAnimationSlot004
+  Flags:
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 4
+  Name: SexLabAnimationSlot003
+  Flags:
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 3
+  Name: SexLabAnimationSlot002
+  Flags:
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 2
+  Name: SexLabAnimationSlot001
+  Flags:
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 1
+  Name: SexLabAnimationSlot000
+  Flags:
+  - AllowReuseInQuest
+  VoiceTypes: Null
