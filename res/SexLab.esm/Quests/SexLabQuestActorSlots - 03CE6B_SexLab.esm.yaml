@@ -33,6 +33,9 @@ VirtualMachineAdapter:
       Name: DummyWeapon
       Object: 0311BF:SexLab.esm
     - MutagenObjectType: ScriptObjectProperty
+      Name: GenderFaction
+      Object: 043A43:SexLab.esm
+    - MutagenObjectType: ScriptObjectProperty
       Name: kwCumAnal
       Object: 0434D3:SexLab.esm
     - MutagenObjectType: ScriptObjectProperty

@@ -1,0 +1,30 @@
+FormKey: 043A43:SexLab.esm
+VersionControl: 33036
+EditorID: SexLabGenderFaction
+FormVersion: 43
+Name:
+  TargetLanguage: English
+  Value: SexLab Gender Faction
+Flags:
+- HiddenFromPC
+CrimeValues:
+  Arrest: True
+  AttackOnSight: True
+Ranks:
+- Number: 0
+  Title:
+    Male:
+      TargetLanguage: English
+      Value: Treat Male as Male
+    Female:
+      TargetLanguage: English
+      Value: Treat Female As Male
+- Number: 1
+  Title:
+    Male:
+      TargetLanguage: English
+      Value: Treat Male as Female
+    Female:
+      TargetLanguage: English
+      Value: Treat Female as Female
+VendorValues: {}
