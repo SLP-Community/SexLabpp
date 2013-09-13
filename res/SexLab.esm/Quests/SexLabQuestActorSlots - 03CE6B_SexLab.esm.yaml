@@ -9,29 +9,38 @@ VirtualMachineAdapter:
       Name: AnimatingFaction
       Object: 00E50F:SexLab.esm
     - MutagenObjectType: ScriptObjectProperty
-      Name: CumAnal
-      Object: 0140E8:SexLab.esm
+      Name: CumAnalSpell
+      Object: 0434D7:SexLab.esm
     - MutagenObjectType: ScriptObjectProperty
-      Name: CumOral
-      Object: 0140E6:SexLab.esm
+      Name: CumOralAnalSpell
+      Object: 043A41:SexLab.esm
     - MutagenObjectType: ScriptObjectProperty
-      Name: CumOralAnal
-      Object: 01464F:SexLab.esm
+      Name: CumOralSpell
+      Object: 0434D5:SexLab.esm
     - MutagenObjectType: ScriptObjectProperty
-      Name: CumVaginal
-      Object: 01464C:SexLab.esm
+      Name: CumVaginalAnalSpell
+      Object: 043A3D:SexLab.esm
     - MutagenObjectType: ScriptObjectProperty
-      Name: CumVaginalAnal
-      Object: 01464E:SexLab.esm
+      Name: CumVaginalOralAnalSpell
+      Object: 043A3F:SexLab.esm
     - MutagenObjectType: ScriptObjectProperty
-      Name: CumVaginalOral
-      Object: 01464D:SexLab.esm
+      Name: CumVaginalOralSpell
+      Object: 043A3B:SexLab.esm
     - MutagenObjectType: ScriptObjectProperty
-      Name: CumVaginalOralAnal
-      Object: 014650:SexLab.esm
+      Name: CumVaginalSpell
+      Object: 041478:SexLab.esm
     - MutagenObjectType: ScriptObjectProperty
       Name: DummyWeapon
       Object: 0311BF:SexLab.esm
+    - MutagenObjectType: ScriptObjectProperty
+      Name: kwCumAnal
+      Object: 0434D3:SexLab.esm
+    - MutagenObjectType: ScriptObjectProperty
+      Name: kwCumOral
+      Object: 0434D4:SexLab.esm
+    - MutagenObjectType: ScriptObjectProperty
+      Name: kwCumVaginal
+      Object: 0419DB:SexLab.esm
     - MutagenObjectType: ScriptObjectProperty
       Name: NudeSuit
       Object: 018715:SexLab.esm

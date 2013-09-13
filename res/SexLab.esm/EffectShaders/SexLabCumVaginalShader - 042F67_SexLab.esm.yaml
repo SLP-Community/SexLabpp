@@ -1,7 +1,7 @@
-FormKey: 01464D:SexLab.esm
-EditorID: SexLabCumVaginalOral
+FormKey: 042F67:SexLab.esm
+EditorID: SexLabCumVaginalShader
 FormVersion: 43
-FillTexture: SexLab\CumVaginalOral.dds
+FillTexture: SexLab\CumVaginal.dds
 ParticleShaderTexture: ''
 HolesTexture: ''
 MembranePaletteTexture: ''
@@ -10,7 +10,7 @@ Unknown: 692122368
 MembraneSourceBlendMode: SourceAlpha
 MembraneZTest: EqualTo
 FillColorKey1: '#00000000'
-FillFadeOutTime: 60
+FillFadeOutTime: 5
 FillPersistentAlphaRatio: 1
 FillTextureAnimationSpeedV: -0.001
 EdgeEffectFallOff: 1
