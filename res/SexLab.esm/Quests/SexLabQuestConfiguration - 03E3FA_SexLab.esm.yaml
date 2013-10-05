@@ -84,7 +84,7 @@ Flags:
 - 0x10
 - RunOnce
 Priority: 40
-QuestFormVersion: 0
+QuestFormVersion: 49
 Filter: SexLab\
 NextAliasID: 1
 Aliases:
