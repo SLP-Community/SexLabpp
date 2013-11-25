@@ -1,11 +1,15 @@
-FormKey: 00E50E:SexLab.esm
-EditorID: SexLabDoNothing
+FormKey: 051710:SexLab.esm
+EditorID: SexLabCameraPackage
 FormVersion: 43
 Flags:
 - MustComplete
+- MaintainSpeedAtGoal
+- PreferredSpeed
 - IgnoreCombat
 - NoCombatAlert
 Type: Package
+PreferredSpeed: Run
+Unknown: 52
 ScheduleMonth: -1
 ScheduleDayOfWeek: Any
 ScheduleHour: -1
@@ -14,10 +18,10 @@ Unknown3: 0x000000
 Conditions:
 - MutagenObjectType: ConditionFloat
   Data:
-    MutagenObjectType: GetInFactionConditionData
-    Faction: 00E50F:SexLab.esm
+    MutagenObjectType: GetIsAliasRefConditionData
+    ReferenceAliasIndex: 1
   ComparisonValue: 1
-OwnerQuest: 03CE6B:SexLab.esm
+OwnerQuest: 054227:SexLab.esm
 Data:
 - Key: 3
   Value:

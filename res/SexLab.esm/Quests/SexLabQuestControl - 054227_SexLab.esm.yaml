@@ -1,0 +1,87 @@
+FormKey: 054227:SexLab.esm
+EditorID: SexLabQuestControl
+FormVersion: 43
+VirtualMachineAdapter:
+  Scripts:
+  - Name: sslcontrollibrary
+    Properties:
+    - MutagenObjectType: ScriptObjectProperty
+      Name: ActorLib
+      Object: 03CE6B:SexLab.esm
+    - MutagenObjectType: ScriptObjectProperty
+      Name: BaseMarker
+      Object: 045A93:SexLab.esm
+    - MutagenObjectType: ScriptObjectProperty
+      Name: ControlCamera
+      Object: 054227:SexLab.esm
+      Alias: 0
+    - MutagenObjectType: ScriptObjectProperty
+      Name: PlayerRef
+      Object: 000014:Skyrim.esm
+    - MutagenObjectType: ScriptObjectProperty
+      Name: ThreadLib
+      Object: 03CE6E:SexLab.esm
+  FileName: ''
+  Aliases:
+  - Property:
+      Name: ''
+      Object: 054227:SexLab.esm
+      Alias: 0
+    Scripts:
+    - Name: sslcontrolcamera
+      Properties:
+      - MutagenObjectType: ScriptObjectProperty
+        Name: ActorSlots
+        Object: 03CE6B:SexLab.esm
+      - MutagenObjectType: ScriptObjectProperty
+        Name: CameraHead
+        Object: 05524E:SexLab.esm
+      - MutagenObjectType: ScriptObjectProperty
+        Name: CameraRace
+        Object: 053762:SexLab.esm
+      - MutagenObjectType: ScriptObjectProperty
+        Name: CloneAlias
+        Object: 054227:SexLab.esm
+        Alias: 1
+      - MutagenObjectType: ScriptObjectProperty
+        Name: Lib
+        Object: 054227:SexLab.esm
+      - MutagenObjectType: ScriptObjectProperty
+        Name: PlayerRef
+        Object: 000014:Skyrim.esm
+      - MutagenObjectType: ScriptObjectProperty
+        Name: SexLabVoiceF
+        Object: 02CBBE:SexLab.esm
+      - MutagenObjectType: ScriptObjectProperty
+        Name: SexLabVoiceM
+        Object: 02CBBD:SexLab.esm
+Name:
+  TargetLanguage: English
+  Value: SexLab Controls
+Flags:
+- StartGameEnabled
+- 0x10
+- RunOnce
+Priority: 95
+QuestFormVersion: 0
+Filter: SexLab\
+NextAliasID: 2
+Aliases:
+- Name: ControlCamera
+  Flags: []
+  ForcedReference: 000014:Skyrim.esm
+  VoiceTypes: Null
+- ID: 1
+  Name: CloneAlias
+  Flags:
+  - ReservesLocationOrReference
+  - Optional
+  - Essential
+  - AllowDisabled
+  Factions:
+  - 049068:SexLab.esm
+  - 00E50F:SexLab.esm
+  - 10FCB4:Skyrim.esm
+  PackageData:
+  - 051710:SexLab.esm
+  VoiceTypes: Null

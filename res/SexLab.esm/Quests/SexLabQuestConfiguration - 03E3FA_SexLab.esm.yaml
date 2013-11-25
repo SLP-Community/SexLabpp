@@ -21,6 +21,9 @@ VirtualMachineAdapter:
       Name: AnimSlots
       Object: 03CE6C:SexLab.esm
     - MutagenObjectType: ScriptObjectProperty
+      Name: ControlLib
+      Object: 054227:SexLab.esm
+    - MutagenObjectType: ScriptObjectProperty
       Name: CreatureAnimSlots
       Object: 044A6C:SexLab.esm
     - MutagenObjectType: ScriptObjectProperty
@@ -90,7 +93,7 @@ Flags:
 - 0x10
 - RunOnce
 Priority: 90
-QuestFormVersion: 31
+QuestFormVersion: 34
 Filter: SexLab\
 NextAliasID: 1
 Aliases:

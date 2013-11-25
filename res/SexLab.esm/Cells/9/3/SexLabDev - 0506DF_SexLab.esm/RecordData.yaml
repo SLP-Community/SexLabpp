@@ -1,0 +1,87 @@
+FormKey: 0506DF:SexLab.esm
+IsCompressed: True
+MajorRecordFlagsRaw: 262144
+EditorID: SexLabDev
+FormVersion: 43
+SkyrimMajorRecordFlags:
+- Compressed
+Name:
+  TargetLanguage: English
+  Value: SexLab Dev Emporium
+Flags:
+- IsInteriorCell
+- PublicArea
+Lighting:
+  AmbientColor: '#00808080'
+  DirectionalColor: '#00000000'
+  FogNearColor: '#00000000'
+  FogPower: 1
+  AmbientColors:
+    DirectionalXPlus: '#008D8086'
+    DirectionalXMinus: '#0073807A'
+    DirectionalYPlus: '#00808680'
+    DirectionalYMinus: '#00807A80'
+    DirectionalZPlus: '#003D3D3A'
+    DirectionalZMinus: '#00C3C3C6'
+    Specular: '#00000000'
+    Scale: 1
+  FogFarColor: '#00000000'
+  FogMax: 1
+  Inherits:
+  - AmbientColor
+  - DirectionalColor
+  - FogColor
+  - FogNear
+  - FogFar
+  - ClipDistance
+WaterHeight: -2.1474836E+09
+Temporary:
+- MutagenObjectType: PlacedObject
+  FormKey: 0506F0:SexLab.esm
+  FormVersion: 43
+  Base: 013F86:Skyrim.esm
+  Placement:
+    Position: -192, -128, 0
+- MutagenObjectType: PlacedObject
+  FormKey: 0506F2:SexLab.esm
+  FormVersion: 43
+  Base: 013F87:Skyrim.esm
+  Placement:
+    Position: 320, -128, 0
+    Rotation: 0, -0, 3.1415927
+- MutagenObjectType: PlacedObject
+  FormKey: 0506F3:SexLab.esm
+  FormVersion: 43
+  Base: 03A205:Skyrim.esm
+  Placement:
+    Position: -64, 128, 0
+    Rotation: 0, 0, 1.5707964
+- MutagenObjectType: PlacedObject
+  FormKey: 0506F4:SexLab.esm
+  FormVersion: 43
+  Base: 03A206:Skyrim.esm
+  Placement:
+    Position: -64, -384, 0
+    Rotation: 0, 0, 4.712389
+- MutagenObjectType: PlacedObject
+  FormKey: 0506F5:SexLab.esm
+  FormVersion: 43
+  Base: 013F81:Skyrim.esm
+  Placement:
+    Position: 64, -128, 0
+- MutagenObjectType: PlacedObject
+  FormKey: 0506F6:SexLab.esm
+  FormVersion: 43
+  Base: 013F7C:Skyrim.esm
+  Placement:
+    Position: 192, 128, 0
+    Rotation: 0, 0, 1.5707964
+- MutagenObjectType: PlacedObject
+  FormKey: 0506F7:SexLab.esm
+  FormVersion: 43
+  Base: 013F7C:Skyrim.esm
+  Placement:
+    Position: 192, -384, 0
+    Rotation: 0, 0, 3.1415927
+MajorFlags:
+- 0x40000

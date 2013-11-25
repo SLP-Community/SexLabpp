@@ -15,6 +15,9 @@ VirtualMachineAdapter:
       Name: BedsList
       Object: 0181B1:SexLab.esm
     - MutagenObjectType: ScriptObjectProperty
+      Name: ControlLib
+      Object: 054227:SexLab.esm
+    - MutagenObjectType: ScriptObjectProperty
       Name: CreatureAnimations
       Object: 044A6C:SexLab.esm
     - MutagenObjectType: ScriptObjectProperty
@@ -215,7 +218,7 @@ Flags:
 - 0x10
 - RunOnce
 Priority: 100
-QuestFormVersion: 0
+QuestFormVersion: 34
 Filter: SexLab\
 NextAliasID: 16
 Aliases:

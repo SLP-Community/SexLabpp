@@ -1,0 +1,23 @@
+FormKey: 034CF0:Skyrim.esm
+EditorID: RangedKills
+FormVersion: 43
+Version2: 9
+Conditions:
+- MutagenObjectType: ConditionFloat
+  CompareOperator: LessThan
+  Unknown2: 8925
+  Data:
+    MutagenObjectType: GetRandomPercentConditionData
+  ComparisonValue: 100
+- MutagenObjectType: ConditionFloat
+  CompareOperator: GreaterThanOrEqualTo
+  Unknown2: 8925
+  Data:
+    MutagenObjectType: GetVATSValueTargetDistanceConditionData
+  ComparisonValue: 256
+RelatedPaths:
+- Null
+- 055D13:SexLab.esm
+Zoom:
+- Disable
+ZoomMustHaveCameraShots: True

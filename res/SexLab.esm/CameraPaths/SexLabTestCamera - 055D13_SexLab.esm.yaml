@@ -1,0 +1,18 @@
+FormKey: 055D13:SexLab.esm
+EditorID: SexLabTestCamera
+FormVersion: 43
+Conditions:
+- MutagenObjectType: ConditionFloat
+  Unknown2: 9151
+  Data:
+    MutagenObjectType: IsPC1stPersonConditionData
+  ComparisonValue: 1
+RelatedPaths:
+- Null
+- 056276:SexLab.esm
+Zoom:
+- Disable
+ZoomMustHaveCameraShots: True
+Shots:
+- 034A9C:Skyrim.esm
+- 0537EB:Skyrim.esm

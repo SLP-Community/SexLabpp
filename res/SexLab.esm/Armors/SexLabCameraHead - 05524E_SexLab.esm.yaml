@@ -1,0 +1,30 @@
+FormKey: 05524E:SexLab.esm
+MajorRecordFlagsRaw: 4
+EditorID: SexLabCameraHead
+FormVersion: 43
+SkyrimMajorRecordFlags:
+- NotPlayable
+BodyTemplate:
+  FirstPersonFlags:
+  - Head
+  - Hair
+  - LongHair
+  - DecapitateHead
+  - Decapitate
+  ArmorType: Clothing
+  ActsLike44: True
+Race: 013746:Skyrim.esm
+Keywords:
+- 02F16E:SexLab.esm
+Description:
+  TargetLanguage: English
+  Value: ''
+Armature:
+- 0DB5CF:Skyrim.esm
+- 047036:Skyrim.esm
+- 047499:Skyrim.esm
+- 0474A0:Skyrim.esm
+- 04749A:Skyrim.esm
+- 0474A1:Skyrim.esm
+MajorFlags:
+- NonPlayable

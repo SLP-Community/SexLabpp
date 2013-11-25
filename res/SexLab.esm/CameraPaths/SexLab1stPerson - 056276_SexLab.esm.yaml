@@ -1,0 +1,21 @@
+FormKey: 056276:SexLab.esm
+VersionControl: 33558
+EditorID: SexLab1stPerson
+FormVersion: 43
+Conditions:
+- MutagenObjectType: ConditionFloat
+  CompareOperator: LessThan
+  Unknown2: 10597
+  Data:
+    MutagenObjectType: GetRandomPercentConditionData
+  ComparisonValue: 100
+- MutagenObjectType: ConditionFloat
+  CompareOperator: GreaterThanOrEqualTo
+  Unknown2: 10597
+  Data:
+    MutagenObjectType: GetVATSValueTargetDistanceConditionData
+  ComparisonValue: 256
+RelatedPaths:
+- Null
+- 10D65C:Skyrim.esm
+ZoomMustHaveCameraShots: True

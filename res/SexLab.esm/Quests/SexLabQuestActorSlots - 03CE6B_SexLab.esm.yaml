@@ -15,6 +15,9 @@ VirtualMachineAdapter:
       Name: BaseMarker
       Object: 045A93:SexLab.esm
     - MutagenObjectType: ScriptObjectProperty
+      Name: ControlLib
+      Object: 054227:SexLab.esm
+    - MutagenObjectType: ScriptObjectProperty
       Name: CumAnalSpell
       Object: 0434D7:SexLab.esm
     - MutagenObjectType: ScriptObjectProperty
@@ -853,9 +856,9 @@ Flags:
 - 0x10
 - RunOnce
 Priority: 100
-QuestFormVersion: 31
+QuestFormVersion: 34
 Filter: SexLab\
-NextAliasID: 76
+NextAliasID: 77
 Aliases:
 - ID: 75
   Name: ActorSlot074

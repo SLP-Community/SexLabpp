@@ -1,0 +1,9 @@
+FormKey: 013AF7:Skyrim.esm
+EditorID: BlockHit
+FormVersion: 43
+Version2: 2
+Filename: Actors\Character\Behaviors\0_Master.hkx
+AnimationEvent: blockHitStart
+RelatedIdles:
+- 013AF6:Skyrim.esm
+- Null
