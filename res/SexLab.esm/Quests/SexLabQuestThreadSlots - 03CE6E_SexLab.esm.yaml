@@ -51,6 +51,9 @@ VirtualMachineAdapter:
       Name: sfxSucking01
       Object: 013B82:SexLab.esm
     - MutagenObjectType: ScriptObjectProperty
+      Name: Slots
+      Object: 03CE6E:SexLab.esm
+    - MutagenObjectType: ScriptObjectProperty
       Name: Voices
       Object: 03DE97:SexLab.esm
   - Name: sslThreadSlots
@@ -218,7 +221,7 @@ Flags:
 - 0x10
 - RunOnce
 Priority: 100
-QuestFormVersion: 52
+QuestFormVersion: 34
 Filter: SexLab\
 NextAliasID: 16
 Aliases:
