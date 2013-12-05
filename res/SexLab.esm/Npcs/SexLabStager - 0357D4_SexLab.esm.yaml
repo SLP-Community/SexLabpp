@@ -29,7 +29,6 @@ AIData:
   Confidence: Foolhardy
   EnergyLevel: 50
   Responsibility: NoCrime
-  Unused: 32
 Class: 017008:Skyrim.esm
 Name:
   TargetLanguage: English

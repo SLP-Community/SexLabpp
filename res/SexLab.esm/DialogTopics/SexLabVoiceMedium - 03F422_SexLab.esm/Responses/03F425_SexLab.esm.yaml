@@ -18,13 +18,13 @@ Responses:
   Edits: ''
 Conditions:
 - MutagenObjectType: ConditionFloat
-  Unknown2: 9186
+  Unknown2: 9376
   Data:
     MutagenObjectType: GetInFactionConditionData
     Faction: 00E50F:SexLab.esm
   ComparisonValue: 1
 - MutagenObjectType: ConditionFloat
-  Unknown2: 9186
+  Unknown2: 9376
   Data:
     MutagenObjectType: GetIsVoiceTypeConditionData
     VoiceTypeOrList: 068ACA:Skyrim.esm

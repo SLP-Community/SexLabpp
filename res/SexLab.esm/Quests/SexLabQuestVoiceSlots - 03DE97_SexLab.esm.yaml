@@ -122,6 +122,9 @@ VirtualMachineAdapter:
       Name: PlayerRef
       Object: 000014:Skyrim.esm
     - MutagenObjectType: ScriptObjectProperty
+      Name: RememberVoice
+      Object: 0592EC:SexLab.esm
+    - MutagenObjectType: ScriptObjectProperty
       Name: SexLabMoanHot
       Object: 03F423:SexLab.esm
     - MutagenObjectType: ScriptObjectProperty
@@ -670,7 +673,7 @@ Flags:
 - 0x10
 - RunOnce
 Priority: 95
-QuestFormVersion: 34
+QuestFormVersion: 35
 Filter: SexLab\
 NextAliasID: 51
 Aliases:
