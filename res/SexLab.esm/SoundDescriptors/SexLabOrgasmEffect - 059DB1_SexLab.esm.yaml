@@ -4,8 +4,10 @@ FormVersion: 43
 Type: Standard
 Category: 0172A1:Skyrim.esm
 SoundFiles:
-- Data\Sound\FX\ITM\PotionUse\ITM_PotionUse_01.wav
-- Data\Sound\FX\ITM\PotionUse\ITM_PotionUse_02.wav
+- Data\Sound\fx\SexLab\fxOrgasm01\02.wav
+- Data\Sound\fx\SexLab\fxOrgasm01\01.wav
+- Data\Sound\FX\NPC\Kill\Gore\NPC_Kill_Gore_02.wav
+- Data\Sound\FX\NPC\Kill\Gore\NPC_Kill_Gore_02.wav
 OutputModel: 07EDCA:Skyrim.esm
 LoopAndRumble: {}
 PercentFrequencyShift: 35

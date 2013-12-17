@@ -643,7 +643,7 @@ Flags:
 - 0x10
 - RunOnce
 Priority: 95
-QuestFormVersion: 48
+QuestFormVersion: 34
 Filter: SexLab\
 NextAliasID: 101
 Aliases:
