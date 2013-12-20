@@ -56,16 +56,40 @@ VirtualMachineAdapter:
       Name: ActorLib
       Object: 03CE6B:SexLab.esm
     - MutagenObjectType: ScriptObjectProperty
+      Name: ActorSlots
+      Object: 03CE6B:SexLab.esm
+    - MutagenObjectType: ScriptObjectProperty
+      Name: ActorStats
+      Object: 03CE6B:SexLab.esm
+    - MutagenObjectType: ScriptObjectProperty
       Name: AnimLib
+      Object: 03CE6C:SexLab.esm
+    - MutagenObjectType: ScriptObjectProperty
+      Name: AnimSlots
       Object: 03CE6C:SexLab.esm
     - MutagenObjectType: ScriptObjectProperty
       Name: ControlLib
       Object: 054227:SexLab.esm
     - MutagenObjectType: ScriptObjectProperty
+      Name: CreatureAnimSlots
+      Object: 044A6C:SexLab.esm
+    - MutagenObjectType: ScriptObjectProperty
+      Name: ExpressionLib
+      Object: 04C63D:SexLab.esm
+    - MutagenObjectType: ScriptObjectProperty
+      Name: ExpressionSlots
+      Object: 04C63D:SexLab.esm
+    - MutagenObjectType: ScriptObjectProperty
       Name: ThreadLib
       Object: 03CE6E:SexLab.esm
     - MutagenObjectType: ScriptObjectProperty
+      Name: ThreadSlots
+      Object: 03CE6E:SexLab.esm
+    - MutagenObjectType: ScriptObjectProperty
       Name: VoiceLib
+      Object: 03DE97:SexLab.esm
+    - MutagenObjectType: ScriptObjectProperty
+      Name: VoiceSlots
       Object: 03DE97:SexLab.esm
   Versioning:
   - Break0
@@ -79,6 +103,6 @@ Flags:
 - 0x10
 - RunOnce
 Priority: 90
-QuestFormVersion: 0
+QuestFormVersion: 35
 Filter: SexLab\
 NextAliasID: 1
