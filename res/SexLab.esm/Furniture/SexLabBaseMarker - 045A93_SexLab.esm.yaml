@@ -7,9 +7,6 @@ SkyrimMajorRecordFlags:
 Name:
   TargetLanguage: English
   Value: SexLab Base Marker
-Model:
-  File: Furniture\ChairInvisibleSingle.nif
-  Data: 0x020000000000000000000000
 Keywords:
 - 06E9C7:Skyrim.esm
 PNAM: 0x00000000
@@ -18,7 +15,8 @@ Flags:
 WorkbenchData:
   UsesSkill: 255
 Markers:
-- DisabledEntryPoints:
+- Enabled: True
+  DisabledEntryPoints:
     Points:
     - Right
     - Left
@@ -26,8 +24,7 @@ Markers:
     Type:
     - Sit
     Points:
-    - Front
-    - Right
-    - Left
+    - Behind
+ModelFilename: Furniture\LayDownMarker.nif
 MajorFlags:
 - IsMarker
