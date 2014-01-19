@@ -2,7 +2,7 @@ FormKey: 010565:SexLab.esm
 EditorID: SexLabfxSex01
 FormVersion: 43
 Type: Standard
-Category: 0172A1:Skyrim.esm
+Category: 061428:SexLab.esm
 SoundFiles:
 - data\Sound\fx\SexLab\fxSex01\001.wav
 - data\Sound\fx\SexLab\fxSex01\002.wav

@@ -2,14 +2,13 @@ FormKey: 059DB1:SexLab.esm
 EditorID: SexLabOrgasmEffect
 FormVersion: 43
 Type: Standard
-Category: 0172A1:Skyrim.esm
+Category: 061428:SexLab.esm
 SoundFiles:
 - Data\Sound\fx\SexLab\fxOrgasm01\02.wav
 - Data\Sound\fx\SexLab\fxOrgasm01\01.wav
-- Data\Sound\FX\NPC\Kill\Gore\NPC_Kill_Gore_02.wav
-- Data\Sound\FX\NPC\Kill\Gore\NPC_Kill_Gore_02.wav
 OutputModel: 07EDCA:Skyrim.esm
 LoopAndRumble: {}
 PercentFrequencyShift: 35
 PercentFrequencyVariance: 10
 Priority: 128
+Variance: 5

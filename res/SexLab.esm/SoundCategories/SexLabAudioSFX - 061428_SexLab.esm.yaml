@@ -1,0 +1,10 @@
+FormKey: 061428:SexLab.esm
+VersionControl: 3347
+EditorID: SexLabAudioSFX
+FormVersion: 43
+Name:
+  TargetLanguage: English
+  Value: $SSL_SFXVolume
+Flags: []
+Parent: 0EB803:Skyrim.esm
+StaticVolumeMultiplier: 1

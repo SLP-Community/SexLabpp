@@ -2,7 +2,7 @@ FormKey: 031C86:SexLab.esm
 EditorID: SexLabvMale02Mild
 FormVersion: 43
 Type: Standard
-Category: 0172A1:Skyrim.esm
+Category: 061429:SexLab.esm
 SoundFiles:
 - data\Sound\fx\SexLab\vMaleMoan02\mild\mild_3.wav
 - data\Sound\fx\SexLab\vMaleMoan02\mild\mild_4.wav

@@ -2,7 +2,7 @@ FormKey: 011594:SexLab.esm
 EditorID: SexLabvFemale02Medium
 FormVersion: 43
 Type: Standard
-Category: 0172A1:Skyrim.esm
+Category: 061429:SexLab.esm
 SoundFiles:
 - data\Sound\fx\SexLab\vFemaleMoan02\medium\RS_med_moans_02.wav
 - data\Sound\fx\SexLab\vFemaleMoan02\medium\RS_med_moans_03.wav

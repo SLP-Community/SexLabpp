@@ -21,6 +21,12 @@ VirtualMachineAdapter:
       Name: AnimSlots
       Object: 03CE6C:SexLab.esm
     - MutagenObjectType: ScriptObjectProperty
+      Name: AudioSFX
+      Object: 061428:SexLab.esm
+    - MutagenObjectType: ScriptObjectProperty
+      Name: AudioVoice
+      Object: 061429:SexLab.esm
+    - MutagenObjectType: ScriptObjectProperty
       Name: ControlLib
       Object: 054227:SexLab.esm
     - MutagenObjectType: ScriptObjectProperty
@@ -96,7 +102,7 @@ Flags:
 - 0x10
 - RunOnce
 Priority: 90
-QuestFormVersion: 34
+QuestFormVersion: 35
 Filter: SexLab\
 NextAliasID: 1
 Aliases:
