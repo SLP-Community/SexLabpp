@@ -15,13 +15,13 @@ Responses:
   Edits: ''
 Conditions:
 - MutagenObjectType: ConditionFloat
-  Unknown2: 5128
+  Unknown2: 8816
   Data:
     MutagenObjectType: GetInFactionConditionData
     Faction: 00E50F:SexLab.esm
   ComparisonValue: 1
 - MutagenObjectType: ConditionFloat
-  Unknown2: 5128
+  Unknown2: 8816
   Data:
     MutagenObjectType: GetIsVoiceTypeConditionData
     VoiceTypeOrList: 02CBBC:SexLab.esm
