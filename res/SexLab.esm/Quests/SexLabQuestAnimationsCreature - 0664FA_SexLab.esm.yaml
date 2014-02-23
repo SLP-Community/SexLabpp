@@ -1,0 +1,919 @@
+FormKey: 0664FA:SexLab.esm
+EditorID: SexLabQuestAnimationsCreature
+FormVersion: 43
+VirtualMachineAdapter:
+  Scripts:
+  - Name: sslAnimationSlots
+  FileName: ''
+  Aliases:
+  - Property:
+      Name: ''
+      Object: 0664FA:SexLab.esm
+      Alias: 75
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 0664FA:SexLab.esm
+      Alias: 74
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 0664FA:SexLab.esm
+      Alias: 73
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 0664FA:SexLab.esm
+      Alias: 72
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 0664FA:SexLab.esm
+      Alias: 71
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 0664FA:SexLab.esm
+      Alias: 70
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 0664FA:SexLab.esm
+      Alias: 69
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 0664FA:SexLab.esm
+      Alias: 68
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 0664FA:SexLab.esm
+      Alias: 67
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 0664FA:SexLab.esm
+      Alias: 66
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 0664FA:SexLab.esm
+      Alias: 65
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 0664FA:SexLab.esm
+      Alias: 64
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 0664FA:SexLab.esm
+      Alias: 63
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 0664FA:SexLab.esm
+      Alias: 62
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 0664FA:SexLab.esm
+      Alias: 61
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 0664FA:SexLab.esm
+      Alias: 60
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 0664FA:SexLab.esm
+      Alias: 59
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 0664FA:SexLab.esm
+      Alias: 58
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 0664FA:SexLab.esm
+      Alias: 57
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 0664FA:SexLab.esm
+      Alias: 56
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 0664FA:SexLab.esm
+      Alias: 55
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 0664FA:SexLab.esm
+      Alias: 54
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 0664FA:SexLab.esm
+      Alias: 53
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 0664FA:SexLab.esm
+      Alias: 52
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 0664FA:SexLab.esm
+      Alias: 51
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 0664FA:SexLab.esm
+      Alias: 50
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 0664FA:SexLab.esm
+      Alias: 49
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 0664FA:SexLab.esm
+      Alias: 48
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 0664FA:SexLab.esm
+      Alias: 47
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 0664FA:SexLab.esm
+      Alias: 46
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 0664FA:SexLab.esm
+      Alias: 45
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 0664FA:SexLab.esm
+      Alias: 44
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 0664FA:SexLab.esm
+      Alias: 43
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 0664FA:SexLab.esm
+      Alias: 42
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 0664FA:SexLab.esm
+      Alias: 41
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 0664FA:SexLab.esm
+      Alias: 40
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 0664FA:SexLab.esm
+      Alias: 39
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 0664FA:SexLab.esm
+      Alias: 38
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 0664FA:SexLab.esm
+      Alias: 37
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 0664FA:SexLab.esm
+      Alias: 36
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 0664FA:SexLab.esm
+      Alias: 35
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 0664FA:SexLab.esm
+      Alias: 34
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 0664FA:SexLab.esm
+      Alias: 33
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 0664FA:SexLab.esm
+      Alias: 32
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 0664FA:SexLab.esm
+      Alias: 31
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 0664FA:SexLab.esm
+      Alias: 30
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 0664FA:SexLab.esm
+      Alias: 29
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 0664FA:SexLab.esm
+      Alias: 28
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 0664FA:SexLab.esm
+      Alias: 27
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 0664FA:SexLab.esm
+      Alias: 26
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 0664FA:SexLab.esm
+      Alias: 25
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 0664FA:SexLab.esm
+      Alias: 24
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 0664FA:SexLab.esm
+      Alias: 23
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 0664FA:SexLab.esm
+      Alias: 22
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 0664FA:SexLab.esm
+      Alias: 21
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 0664FA:SexLab.esm
+      Alias: 20
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 0664FA:SexLab.esm
+      Alias: 19
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 0664FA:SexLab.esm
+      Alias: 18
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 0664FA:SexLab.esm
+      Alias: 17
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 0664FA:SexLab.esm
+      Alias: 16
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 0664FA:SexLab.esm
+      Alias: 15
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 0664FA:SexLab.esm
+      Alias: 14
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 0664FA:SexLab.esm
+      Alias: 13
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 0664FA:SexLab.esm
+      Alias: 12
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 0664FA:SexLab.esm
+      Alias: 11
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 0664FA:SexLab.esm
+      Alias: 10
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 0664FA:SexLab.esm
+      Alias: 9
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 0664FA:SexLab.esm
+      Alias: 8
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 0664FA:SexLab.esm
+      Alias: 7
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 0664FA:SexLab.esm
+      Alias: 6
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 0664FA:SexLab.esm
+      Alias: 5
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 0664FA:SexLab.esm
+      Alias: 4
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 0664FA:SexLab.esm
+      Alias: 3
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 0664FA:SexLab.esm
+      Alias: 2
+    Scripts:
+    - Name: sslBaseAnimation
+  - Property:
+      Name: ''
+      Object: 0664FA:SexLab.esm
+      Alias: 1
+    Scripts:
+    - Name: sslBaseAnimation
+Name:
+  TargetLanguage: English
+  Value: SexLab Creature Animation Registry
+Flags:
+- StartGameEnabled
+- 0x10
+Priority: 90
+QuestFormVersion: 50
+Filter: SexLab\
+NextAliasID: 76
+Aliases:
+- ID: 75
+  Name: BaseAnimation074
+  Flags:
+  - Optional
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 74
+  Name: BaseAnimation073
+  Flags:
+  - Optional
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 73
+  Name: BaseAnimation072
+  Flags:
+  - Optional
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 72
+  Name: BaseAnimation071
+  Flags:
+  - Optional
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 71
+  Name: BaseAnimation070
+  Flags:
+  - Optional
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 70
+  Name: BaseAnimation069
+  Flags:
+  - Optional
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 69
+  Name: BaseAnimation068
+  Flags:
+  - Optional
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 68
+  Name: BaseAnimation067
+  Flags:
+  - Optional
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 67
+  Name: BaseAnimation066
+  Flags:
+  - Optional
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 66
+  Name: BaseAnimation065
+  Flags:
+  - Optional
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 65
+  Name: BaseAnimation064
+  Flags:
+  - Optional
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 64
+  Name: BaseAnimation063
+  Flags:
+  - Optional
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 63
+  Name: BaseAnimation062
+  Flags:
+  - Optional
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 62
+  Name: BaseAnimation061
+  Flags:
+  - Optional
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 61
+  Name: BaseAnimation060
+  Flags:
+  - Optional
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 60
+  Name: BaseAnimation059
+  Flags:
+  - Optional
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 59
+  Name: BaseAnimation058
+  Flags:
+  - Optional
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 58
+  Name: BaseAnimation057
+  Flags:
+  - Optional
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 57
+  Name: BaseAnimation056
+  Flags:
+  - Optional
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 56
+  Name: BaseAnimation055
+  Flags:
+  - Optional
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 55
+  Name: BaseAnimation054
+  Flags:
+  - Optional
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 54
+  Name: BaseAnimation053
+  Flags:
+  - Optional
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 53
+  Name: BaseAnimation052
+  Flags:
+  - Optional
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 52
+  Name: BaseAnimation051
+  Flags:
+  - Optional
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 51
+  Name: BaseAnimation050
+  Flags:
+  - Optional
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 50
+  Name: BaseAnimation049
+  Flags:
+  - Optional
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 49
+  Name: BaseAnimation048
+  Flags:
+  - Optional
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 48
+  Name: BaseAnimation047
+  Flags:
+  - Optional
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 47
+  Name: BaseAnimation046
+  Flags:
+  - Optional
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 46
+  Name: BaseAnimation045
+  Flags:
+  - Optional
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 45
+  Name: BaseAnimation044
+  Flags:
+  - Optional
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 44
+  Name: BaseAnimation043
+  Flags:
+  - Optional
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 43
+  Name: BaseAnimation042
+  Flags:
+  - Optional
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 42
+  Name: BaseAnimation041
+  Flags:
+  - Optional
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 41
+  Name: BaseAnimation040
+  Flags:
+  - Optional
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 40
+  Name: BaseAnimation039
+  Flags:
+  - Optional
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 39
+  Name: BaseAnimation038
+  Flags:
+  - Optional
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 38
+  Name: BaseAnimation037
+  Flags:
+  - Optional
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 37
+  Name: BaseAnimation036
+  Flags:
+  - Optional
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 36
+  Name: BaseAnimation035
+  Flags:
+  - Optional
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 35
+  Name: BaseAnimation034
+  Flags:
+  - Optional
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 34
+  Name: BaseAnimation033
+  Flags:
+  - Optional
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 33
+  Name: BaseAnimation032
+  Flags:
+  - Optional
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 32
+  Name: BaseAnimation031
+  Flags:
+  - Optional
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 31
+  Name: BaseAnimation030
+  Flags:
+  - Optional
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 30
+  Name: BaseAnimation029
+  Flags:
+  - Optional
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 29
+  Name: BaseAnimation028
+  Flags:
+  - Optional
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 28
+  Name: BaseAnimation027
+  Flags:
+  - Optional
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 27
+  Name: BaseAnimation026
+  Flags:
+  - Optional
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 26
+  Name: BaseAnimation025
+  Flags:
+  - Optional
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 25
+  Name: BaseAnimation024
+  Flags:
+  - Optional
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 24
+  Name: BaseAnimation023
+  Flags:
+  - Optional
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 23
+  Name: BaseAnimation022
+  Flags:
+  - Optional
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 22
+  Name: BaseAnimation021
+  Flags:
+  - Optional
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 21
+  Name: BaseAnimation020
+  Flags:
+  - Optional
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 20
+  Name: BaseAnimation019
+  Flags:
+  - Optional
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 19
+  Name: BaseAnimation018
+  Flags:
+  - Optional
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 18
+  Name: BaseAnimation017
+  Flags:
+  - Optional
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 17
+  Name: BaseAnimation016
+  Flags:
+  - Optional
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 16
+  Name: BaseAnimation015
+  Flags:
+  - Optional
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 15
+  Name: BaseAnimation014
+  Flags:
+  - Optional
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 14
+  Name: BaseAnimation013
+  Flags:
+  - Optional
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 13
+  Name: BaseAnimation012
+  Flags:
+  - Optional
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 12
+  Name: BaseAnimation011
+  Flags:
+  - Optional
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 11
+  Name: BaseAnimation010
+  Flags:
+  - Optional
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 10
+  Name: BaseAnimation009
+  Flags:
+  - Optional
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 9
+  Name: BaseAnimation008
+  Flags:
+  - Optional
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 8
+  Name: BaseAnimation007
+  Flags:
+  - Optional
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 7
+  Name: BaseAnimation006
+  Flags:
+  - Optional
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 6
+  Name: BaseAnimation005
+  Flags:
+  - Optional
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 5
+  Name: BaseAnimation004
+  Flags:
+  - Optional
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 4
+  Name: BaseAnimation003
+  Flags:
+  - Optional
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 3
+  Name: BaseAnimation002
+  Flags:
+  - Optional
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 2
+  Name: BaseAnimation001
+  Flags:
+  - Optional
+  - AllowReuseInQuest
+  VoiceTypes: Null
+- ID: 1
+  Name: BaseAnimation000
+  Flags:
+  - Optional
+  - AllowReuseInQuest
+  VoiceTypes: Null

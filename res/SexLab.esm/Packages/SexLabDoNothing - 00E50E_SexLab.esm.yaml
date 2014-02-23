@@ -10,14 +10,13 @@ ScheduleMonth: -1
 ScheduleDayOfWeek: Any
 ScheduleHour: -1
 ScheduleMinute: -1
-Unknown3: 0x000000
+Unknown3: 0x74290D
 Conditions:
 - MutagenObjectType: ConditionFloat
   Data:
     MutagenObjectType: GetInFactionConditionData
     Faction: 00E50F:SexLab.esm
   ComparisonValue: 1
-OwnerQuest: 03CE6B:SexLab.esm
 Data:
 - Key: 3
   Value:

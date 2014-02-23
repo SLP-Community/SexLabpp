@@ -1,0 +1,111 @@
+FormKey: 061EEF:SexLab.esm
+EditorID: SexLabThread00
+FormVersion: 43
+VirtualMachineAdapter:
+  Scripts:
+  - Name: sslThreadController
+    Properties:
+    - MutagenObjectType: ScriptObjectProperty
+      Name: Config
+      Object: 000D62:SexLab.esm
+    - MutagenObjectType: ScriptObjectProperty
+      Name: PlayerRef
+      Object: 000014:Skyrim.esm
+  FileName: ''
+  Aliases:
+  - Property:
+      Name: ''
+      Object: 061EEF:SexLab.esm
+      Alias: 5
+    Scripts:
+    - Name: sslActorAlias
+  - Property:
+      Name: ''
+      Object: 061EEF:SexLab.esm
+      Alias: 4
+    Scripts:
+    - Name: sslActorAlias
+  - Property:
+      Name: ''
+      Object: 061EEF:SexLab.esm
+      Alias: 3
+    Scripts:
+    - Name: sslActorAlias
+  - Property:
+      Name: ''
+      Object: 061EEF:SexLab.esm
+      Alias: 2
+    Scripts:
+    - Name: sslActorAlias
+  - Property:
+      Name: ''
+      Object: 061EEF:SexLab.esm
+      Alias: 1
+    Scripts:
+    - Name: sslActorAlias
+Name:
+  TargetLanguage: English
+  Value: SexLab Thread 00
+Flags:
+- StartGameEnabled
+- 0x10
+Priority: 80
+QuestFormVersion: 50
+Filter: SexLab\
+NextAliasID: 6
+Aliases:
+- ID: 5
+  Name: ActorAlias004
+  Flags:
+  - ReservesLocationOrReference
+  - Optional
+  Keywords:
+  - 012B24:SexLab.esm
+  Factions:
+  - 00E50F:SexLab.esm
+  - 10FCB4:Skyrim.esm
+  VoiceTypes: 02CBBC:SexLab.esm
+- ID: 4
+  Name: ActorAlias003
+  Flags:
+  - ReservesLocationOrReference
+  - Optional
+  Keywords:
+  - 012B24:SexLab.esm
+  Factions:
+  - 00E50F:SexLab.esm
+  - 10FCB4:Skyrim.esm
+  VoiceTypes: 02CBBC:SexLab.esm
+- ID: 3
+  Name: ActorAlias002
+  Flags:
+  - ReservesLocationOrReference
+  - Optional
+  Keywords:
+  - 012B24:SexLab.esm
+  Factions:
+  - 00E50F:SexLab.esm
+  - 10FCB4:Skyrim.esm
+  VoiceTypes: 02CBBC:SexLab.esm
+- ID: 2
+  Name: ActorAlias001
+  Flags:
+  - ReservesLocationOrReference
+  - Optional
+  Keywords:
+  - 012B24:SexLab.esm
+  Factions:
+  - 00E50F:SexLab.esm
+  - 10FCB4:Skyrim.esm
+  VoiceTypes: 02CBBC:SexLab.esm
+- ID: 1
+  Name: ActorAlias000
+  Flags:
+  - ReservesLocationOrReference
+  - Optional
+  Keywords:
+  - 012B24:SexLab.esm
+  Factions:
+  - 00E50F:SexLab.esm
+  - 10FCB4:Skyrim.esm
+  VoiceTypes: 02CBBC:SexLab.esm

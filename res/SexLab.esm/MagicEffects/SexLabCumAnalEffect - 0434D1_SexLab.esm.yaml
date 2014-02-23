@@ -4,10 +4,6 @@ FormVersion: 43
 VirtualMachineAdapter:
   Scripts:
   - Name: sslActorCumEffect
-    Properties:
-    - MutagenObjectType: ScriptObjectProperty
-      Name: Lib
-      Object: 03CE6B:SexLab.esm
 Name:
   TargetLanguage: English
   Value: Covered In Cum
