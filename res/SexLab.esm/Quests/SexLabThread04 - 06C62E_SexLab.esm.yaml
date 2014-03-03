@@ -1,5 +1,4 @@
 FormKey: 06C62E:SexLab.esm
-VersionControl: 3609
 EditorID: SexLabThread04
 FormVersion: 43
 VirtualMachineAdapter:
@@ -49,7 +48,7 @@ Flags:
 - 0x10
 - RunOnce
 Priority: 99
-QuestFormVersion: 57
+QuestFormVersion: 48
 Filter: SexLab\
 NextAliasID: 6
 Aliases:

@@ -1,0 +1,13 @@
+FormKey: 06CB9C:SexLab.esm
+EditorID: SexLabNoSKSE
+FormVersion: 43
+Description:
+  TargetLanguage: English
+  Value: SexLab requires a recent version of SKSE verseion in order to function. Currently no SKSE was detected, you must either install it or ensure you start the game from the skse_loader.exe
+Name:
+  TargetLanguage: English
+  Value: No SKSE Running
+INAM: 0x00000000
+Quest: 06347C:SexLab.esm
+Flags:
+- MessageBox

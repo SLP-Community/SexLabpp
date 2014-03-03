@@ -1,0 +1,16 @@
+FormKey: 06CB9B:SexLab.esm
+EditorID: SexLabOldSKSE
+FormVersion: 43
+Description:
+  TargetLanguage: English
+  Value: >-
+    Your SKSE install is out of date!
+
+    This version of SexLab requires SKSE version %10.2f You currently have version %10.2f
+Name:
+  TargetLanguage: English
+  Value: Outdated SKSE
+INAM: 0x00000000
+Quest: 06347C:SexLab.esm
+Flags:
+- MessageBox

@@ -14,9 +14,21 @@ VirtualMachineAdapter:
     - MutagenObjectType: ScriptObjectProperty
       Name: CalypsStrapon
       Object: 01A22A:SexLab.esm
+    - MutagenObjectType: ScriptObjectProperty
+      Name: CleanSystemFinish
+      Object: 06CB9E:SexLab.esm
     - MutagenObjectType: ScriptStringProperty
       Name: modname
       Data: SexLab
+    - MutagenObjectType: ScriptObjectProperty
+      Name: NoSKSE
+      Object: 06CB9C:SexLab.esm
+    - MutagenObjectType: ScriptObjectProperty
+      Name: OldSKSE
+      Object: 06CB9B:SexLab.esm
+    - MutagenObjectType: ScriptObjectProperty
+      Name: OldSkyrim
+      Object: 06CB9D:SexLab.esm
     - MutagenObjectType: ScriptObjectProperty
       Name: PlayerRef
       Object: 000014:Skyrim.esm
@@ -36,7 +48,7 @@ Flags:
 - 0x10
 - RunOnce
 Priority: 70
-QuestFormVersion: 21
+QuestFormVersion: 48
 Filter: SexLab\
 NextAliasID: 1
 Aliases:

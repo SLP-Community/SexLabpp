@@ -1,0 +1,16 @@
+FormKey: 06CB9E:SexLab.esm
+EditorID: SexLabCleanSystemFinish
+FormVersion: 43
+Description:
+  TargetLanguage: English
+  Value: >-
+    SexLab has finished resetting itself to the default state, it is now safe to uninstall or update.
+
+    If any other SexLab mods have been installed, ensure you also follow their respective uninstall/update insructions.
+Name:
+  TargetLanguage: English
+  Value: Finished Cleaning
+INAM: 0x00000000
+Quest: 06347C:SexLab.esm
+Flags:
+- MessageBox
