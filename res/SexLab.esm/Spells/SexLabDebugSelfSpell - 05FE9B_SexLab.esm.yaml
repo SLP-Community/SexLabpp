@@ -18,4 +18,4 @@ CastType: FireAndForget
 Effects:
 - BaseEffect: 05FE9E:SexLab.esm
   Data:
-    Duration: 120
+    Duration: 600
