@@ -20,6 +20,12 @@ VirtualMachineAdapter:
       Name: AnimatingFaction
       Object: 00E50F:SexLab.esm
     - MutagenObjectType: ScriptObjectProperty
+      Name: AudioSFX
+      Object: 061428:SexLab.esm
+    - MutagenObjectType: ScriptObjectProperty
+      Name: AudioVoice
+      Object: 061429:SexLab.esm
+    - MutagenObjectType: ScriptObjectProperty
       Name: BaseMarker
       Object: 045A93:SexLab.esm
     - MutagenObjectType: ScriptObjectProperty
@@ -29,8 +35,26 @@ VirtualMachineAdapter:
       Name: BedsList
       Object: 0181B1:SexLab.esm
     - MutagenObjectType: ScriptObjectProperty
+      Name: CalypsStrapon
+      Object: 01A22A:SexLab.esm
+    - MutagenObjectType: ScriptObjectProperty
       Name: CheckFNIS
       Object: 070C38:SexLab.esm
+    - MutagenObjectType: ScriptObjectProperty
+      Name: CheckPapyrusUtil
+      Object: 070C3B:SexLab.esm
+    - MutagenObjectType: ScriptObjectProperty
+      Name: CheckSKSE
+      Object: 070C39:SexLab.esm
+    - MutagenObjectType: ScriptObjectProperty
+      Name: CheckSkyrim
+      Object: 070C3A:SexLab.esm
+    - MutagenObjectType: ScriptObjectProperty
+      Name: CheckSkyUI
+      Object: 070C3C:SexLab.esm
+    - MutagenObjectType: ScriptObjectProperty
+      Name: CleanSystemFinish
+      Object: 06CB9E:SexLab.esm
     - MutagenObjectType: ScriptObjectProperty
       Name: CumAnalKeyword
       Object: 0434D3:SexLab.esm
@@ -130,7 +154,7 @@ Flags:
 - StartGameEnabled
 - 0x10
 Priority: 90
-QuestFormVersion: 31
+QuestFormVersion: 0
 Filter: SexLab\
 NextAliasID: 2
 Aliases:
