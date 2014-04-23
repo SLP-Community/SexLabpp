@@ -11,12 +11,11 @@ ModHeader:
     Version: 1.7
   Author: Ashal
   Description: >+
-    Version 1.51
+    Version 1.52
 
-    Released 2014/04/21
+    Released 2014/04/23
 
     LoversLab.com
-
   MasterReferences:
   - Master: Skyrim.esm
     FileSize: 0
