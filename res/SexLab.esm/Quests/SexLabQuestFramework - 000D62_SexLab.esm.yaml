@@ -11,6 +11,8 @@ VirtualMachineAdapter:
     - MutagenObjectType: ScriptObjectProperty
       Name: PlayerRef
       Object: 000014:Skyrim.esm
+  - Name: sslActorLibrary
+  - Name: sslActorStats
   - Name: sslSystemConfig
     Properties:
     - MutagenObjectType: ScriptObjectProperty
@@ -138,15 +140,10 @@ VirtualMachineAdapter:
       Object: 068ACA:Skyrim.esm
   - Name: sslThreadLibrary
   - Name: sslThreadSlots
+  Versioning:
+  - Break0
+  ExtraBindDataVersion: 0
   FileName: ''
-  Aliases:
-  - Property:
-      Name: ''
-      Object: 000D62:SexLab.esm
-      Alias: 1
-    Scripts:
-    - Name: sslActorLibrary
-    - Name: sslActorStats
 Name:
   TargetLanguage: English
   Value: SexLab Framework
@@ -154,13 +151,6 @@ Flags:
 - StartGameEnabled
 - 0x10
 Priority: 90
-QuestFormVersion: 30
+QuestFormVersion: 32
 Filter: SexLab\
 NextAliasID: 2
-Aliases:
-- ID: 1
-  Name: SystemAlias
-  Flags:
-  - Optional
-  - AllowReuseInQuest
-  VoiceTypes: Null
