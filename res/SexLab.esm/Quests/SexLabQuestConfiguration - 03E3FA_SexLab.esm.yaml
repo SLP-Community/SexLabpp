@@ -1,0 +1,31 @@
+FormKey: 03E3FA:SexLab.esm
+VersionControl: 4121
+EditorID: SexLabQuestConfiguration
+FormVersion: 43
+VirtualMachineAdapter:
+  Scripts:
+  - Name: sslConfigDeprecated
+    Properties:
+    - MutagenObjectType: ScriptObjectProperty
+      Name: Config
+      Object: 000D62:SexLab.esm
+    - MutagenObjectType: ScriptObjectProperty
+      Name: PlayerRef
+      Object: 000014:Skyrim.esm
+    - MutagenObjectType: ScriptObjectProperty
+      Name: SexLab
+      Object: 000D62:SexLab.esm
+  Versioning:
+  - Break0
+  ExtraBindDataVersion: 0
+  FileName: ''
+Name:
+  TargetLanguage: English
+  Value: (Deprecated) SexLab Configuration
+Flags:
+- StartGameEnabled
+- RunOnce
+Priority: 90
+QuestFormVersion: 31
+Filter: SexLab\
+NextAliasID: 0
