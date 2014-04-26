@@ -1,5 +1,4 @@
 FormKey: 03E3FA:SexLab.esm
-VersionControl: 4121
 EditorID: SexLabQuestConfiguration
 FormVersion: 43
 VirtualMachineAdapter:
@@ -24,6 +23,7 @@ Name:
   Value: (Deprecated) SexLab Configuration
 Flags:
 - StartGameEnabled
+- 0x10
 - RunOnce
 Priority: 90
 QuestFormVersion: 31

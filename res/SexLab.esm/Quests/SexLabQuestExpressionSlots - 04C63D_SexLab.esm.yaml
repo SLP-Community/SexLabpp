@@ -1,0 +1,21 @@
+FormKey: 04C63D:SexLab.esm
+EditorID: SexLabQuestExpressionSlots
+FormVersion: 43
+VirtualMachineAdapter:
+  Scripts:
+  - Name: sslExpressionLibrary
+  Versioning:
+  - Break0
+  ExtraBindDataVersion: 0
+  FileName: ''
+Name:
+  TargetLanguage: English
+  Value: (Deprecated) SexLab Expressions
+Flags:
+- StartGameEnabled
+- 0x10
+- RunOnce
+Priority: 90
+QuestFormVersion: 31
+Filter: SexLab\
+NextAliasID: 0
