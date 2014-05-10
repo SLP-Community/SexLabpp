@@ -1,5 +1,4 @@
 FormKey: 079840:SexLab.esm
-VersionControl: 4360
 EditorID: SexLabConfigurationMenu
 FormVersion: 43
 VirtualMachineAdapter:
@@ -31,9 +30,10 @@ Name:
   Value: SexLab MCM
 Flags:
 - StartGameEnabled
+- 0x10
 - RunOnce
 Priority: 90
-QuestFormVersion: 30
+QuestFormVersion: 31
 Filter: SexLab\
 NextAliasID: 1
 Aliases:
