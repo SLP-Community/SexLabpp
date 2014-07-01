@@ -10,10 +10,10 @@ ModHeader:
   Stats:
     Version: 1.7
   Author: Ashal
-  Description: >-
-    Version 1.58
+  Description: >+
+    Version 1.58b
 
-    Released 2014/06/30
+    Released 2014/07/01
 
     LoversLab.com
   MasterReferences:
