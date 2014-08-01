@@ -1013,7 +1013,6 @@ VirtualMachineAdapter:
     - Name: sslBaseAnimation
 Name:
   TargetLanguage: English
-  Value: SexLab Secondary Registry
 Flags:
 - StartGameEnabled
 - 0x10

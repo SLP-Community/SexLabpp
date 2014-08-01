@@ -10,7 +10,6 @@ VirtualMachineAdapter:
   FileName: ''
 Name:
   TargetLanguage: English
-  Value: (Deprecated) SexLab Expressions
 Flags:
 - StartGameEnabled
 - 0x10

@@ -3,10 +3,8 @@ EditorID: SexLabAskContinue
 FormVersion: 43
 Description:
   TargetLanguage: English
-  Value: Response
 Name:
   TargetLanguage: English
-  Value: SexLab Troubleshoot
 INAM: 0x00000000
 Quest: 07BDF5:SexLab.esm
 Flags:
@@ -14,7 +12,5 @@ Flags:
 MenuButtons:
 - Text:
     TargetLanguage: English
-    Value: No
 - Text:
     TargetLanguage: English
-    Value: Yes

@@ -27,7 +27,6 @@ VirtualMachineAdapter:
     - Name: SKI_PlayerLoadGameAlias
 Name:
   TargetLanguage: English
-  Value: SexLab MCM
 Flags:
 - StartGameEnabled
 - 0x10

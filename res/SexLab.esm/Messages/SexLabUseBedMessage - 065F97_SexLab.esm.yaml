@@ -3,7 +3,6 @@ EditorID: SexLabUseBedMessage
 FormVersion: 43
 Description:
   TargetLanguage: English
-  Value: Use nearby bed?
 INAM: 0x00000000
 Quest: 000D62:SexLab.esm
 Flags:
@@ -11,7 +10,5 @@ Flags:
 MenuButtons:
 - Text:
     TargetLanguage: English
-    Value: No
 - Text:
     TargetLanguage: English
-    Value: Yes

@@ -149,7 +149,6 @@ VirtualMachineAdapter:
   FileName: ''
 Name:
   TargetLanguage: English
-  Value: SexLab Framework
 Flags:
 - StartGameEnabled
 - 0x10

@@ -3,7 +3,6 @@ EditorID: SexLabAudioSFX
 FormVersion: 43
 Name:
   TargetLanguage: English
-  Value: $SSL_SFXVolume
 Flags: []
 Parent: 0876BB:Skyrim.esm
 StaticVolumeMultiplier: 1
