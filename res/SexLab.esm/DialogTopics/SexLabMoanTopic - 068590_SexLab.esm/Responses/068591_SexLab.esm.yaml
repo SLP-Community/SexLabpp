@@ -10,6 +10,7 @@ Responses:
   Unknown3: 0x000000
   Text:
     TargetLanguage: English
+    Value: ' '
   ScriptNotes: ''
   Edits: ''
 Conditions:
@@ -21,3 +22,4 @@ Conditions:
   ComparisonValue: 1
 Prompt:
   TargetLanguage: English
+  Value: ' '

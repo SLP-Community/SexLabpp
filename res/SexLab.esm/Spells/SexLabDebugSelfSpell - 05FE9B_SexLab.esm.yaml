@@ -3,10 +3,12 @@ EditorID: SexLabDebugSelfSpell
 FormVersion: 43
 Name:
   TargetLanguage: English
+  Value: SexLab Debug (Self)
 MenuDisplayObject: 10AB43:Skyrim.esm
 EquipmentType: 013F44:Skyrim.esm
 Description:
   TargetLanguage: English
+  Value: ''
 Flags:
 - PCStartSpell
 - IgnoreResistance

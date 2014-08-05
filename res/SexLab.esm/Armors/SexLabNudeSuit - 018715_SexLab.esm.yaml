@@ -3,6 +3,7 @@ EditorID: SexLabNudeSuit
 FormVersion: 43
 Name:
   TargetLanguage: English
+  Value: In The Nude
 BodyTemplate:
   FirstPersonFlags:
   - Body
@@ -13,6 +14,7 @@ Keywords:
 - 02F16E:SexLab.esm
 Description:
   TargetLanguage: English
+  Value: ''
 Armature:
 - 018716:SexLab.esm
 Value: 1

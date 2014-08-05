@@ -47,6 +47,7 @@ VirtualMachineAdapter:
   FileName: ''
 Name:
   TargetLanguage: English
+  Value: SexLab Troubleshoot
 Flags:
 - StartGameEnabled
 - AllowRepeatedStages

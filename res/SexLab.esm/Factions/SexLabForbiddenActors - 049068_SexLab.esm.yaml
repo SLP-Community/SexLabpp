@@ -3,6 +3,7 @@ EditorID: SexLabForbiddenActors
 FormVersion: 43
 Name:
   TargetLanguage: English
+  Value: SexLab Forbidden Actors
 Flags:
 - HiddenFromPC
 CrimeValues:

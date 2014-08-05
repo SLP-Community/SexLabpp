@@ -10,6 +10,7 @@ VirtualMachineAdapter:
       Object: 000D62:SexLab.esm
 Name:
   TargetLanguage: English
+  Value: SexLab Debug
 Keywords:
 - 05FE9D:SexLab.esm
 Flags:
@@ -27,3 +28,4 @@ DualCastScale: 1
 CastingSoundLevel: Silent
 Description:
   TargetLanguage: English
+  Value: Blah.

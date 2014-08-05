@@ -3,9 +3,11 @@ EditorID: SexLabCumAnalSpell
 FormVersion: 43
 Name:
   TargetLanguage: English
+  Value: Sexual Encounter
 EquipmentType: 013F44:Skyrim.esm
 Description:
   TargetLanguage: English
+  Value: ''
 Flags:
 - IgnoreResistance
 - NoAbsorbOrReflect

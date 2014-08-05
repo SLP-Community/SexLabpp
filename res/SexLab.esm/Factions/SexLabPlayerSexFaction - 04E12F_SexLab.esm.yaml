@@ -3,6 +3,7 @@ EditorID: SexLabPlayerSexFaction
 FormVersion: 43
 Name:
   TargetLanguage: English
+  Value: SexLab Player Sexual Partners
 Flags:
 - HiddenFromPC
 CrimeValues:

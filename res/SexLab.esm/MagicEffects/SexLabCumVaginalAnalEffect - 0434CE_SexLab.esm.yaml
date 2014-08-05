@@ -6,6 +6,7 @@ VirtualMachineAdapter:
   - Name: sslActorCumEffect
 Name:
   TargetLanguage: English
+  Value: Covered In Cum
 Keywords:
 - 0419DB:SexLab.esm
 - 0434D3:SexLab.esm
@@ -27,3 +28,4 @@ DualCastScale: 1
 CastingSoundLevel: Normal
 Description:
   TargetLanguage: English
+  Value: ''

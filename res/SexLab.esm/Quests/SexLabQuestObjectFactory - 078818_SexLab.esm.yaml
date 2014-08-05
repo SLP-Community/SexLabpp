@@ -808,6 +808,7 @@ VirtualMachineAdapter:
     - Name: sslBaseAnimation
 Name:
   TargetLanguage: English
+  Value: SexLab Ephemeral Object Factory
 Flags:
 - StartGameEnabled
 - 0x10

@@ -3,6 +3,7 @@ EditorID: SexLabCalypsStrapon
 FormVersion: 43
 Name:
   TargetLanguage: English
+  Value: Calyps Strapon
 BodyTemplate:
   FirstPersonFlags:
   - Decapitate
@@ -19,6 +20,7 @@ Keywords:
 - 02F16E:SexLab.esm
 Description:
   TargetLanguage: English
+  Value: ''
 Armature:
 - 016757:Skyrim.esm
 - 016760:Skyrim.esm

@@ -3,6 +3,7 @@ EditorID: SexLabSavedVoices
 FormVersion: 43
 Name:
   TargetLanguage: English
+  Value: SexLab NPC Saved Voices
 Flags:
 - HiddenFromPC
 CrimeValues:

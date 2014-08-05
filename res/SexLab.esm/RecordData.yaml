@@ -6,7 +6,6 @@ GameRelease: SkyrimSE
 ModHeader:
   Flags:
   - Master
-  - Localized
   FormVersion: 43
   Stats:
     Version: 1.7

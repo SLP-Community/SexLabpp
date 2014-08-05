@@ -38,6 +38,7 @@ VirtualMachineAdapter:
     - Name: sslActorAlias
 Name:
   TargetLanguage: English
+  Value: SexLab Thread 05
 Flags:
 - StartGameEnabled
 - 0x10

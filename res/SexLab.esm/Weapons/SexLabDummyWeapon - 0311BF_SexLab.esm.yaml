@@ -10,6 +10,7 @@ Keywords:
 - 08F958:Skyrim.esm
 Description:
   TargetLanguage: English
+  Value: ''
 ImpactDataSet: 013CAC:Skyrim.esm
 AttackFailSound: 03C730:Skyrim.esm
 EquipSound: 03CED9:Skyrim.esm
