@@ -7,6 +7,9 @@ Description:
     Outdated or missing "PapyrusUtil" SKSE plugin detected.
 
     SexLab currently requires PapyrusUtil v%.1f or newer in order to function. Install the proper version along with SKSE and that  the file "StorageUtil.dll" is located in your /Skyrim/Data/SKSE/Plugins/ folder.
+
+
+    If you have installed other mods that use PapyrusUtil (such as Schlong of Skyrim) ensure that it has not overwritten the newest version of PapyrusUtil with an older version. Within ModOrganizer this can be ensured by giving SexLab a higher priority in the mod order (the left window). If using NexusModManager or no manager at all, reinstall either the latest SexLab or PapyrusUtil release.
 Name:
   TargetLanguage: English
   Value: 'SexLab Dependency: PapyrusUtil'

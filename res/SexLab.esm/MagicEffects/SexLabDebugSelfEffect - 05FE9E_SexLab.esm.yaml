@@ -15,6 +15,9 @@ Keywords:
 - 05FE9D:SexLab.esm
 Flags:
 - DispelWithKeywords
+- NoMagnitude
+- NoArea
+- Painless
 MagicSkill: Illusion
 Unknown1: 24908
 Archetype:

@@ -15,6 +15,9 @@ Keywords:
 - 05FE9D:SexLab.esm
 Flags:
 - DispelWithKeywords
+- NoMagnitude
+- NoArea
+- Painless
 MagicSkill: Illusion
 Unknown1: 11593
 Archetype:
@@ -24,6 +27,7 @@ Projectile: 10B0A5:Skyrim.esm
 CastType: FireAndForget
 TargetType: Aimed
 CastingArt: 03CDFC:Skyrim.esm
+HitEffectArt: 0ABF0E:Skyrim.esm
 DualCastScale: 1
 CastingSoundLevel: Silent
 Description:

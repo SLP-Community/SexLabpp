@@ -20,4 +20,4 @@ Range: 100
 Effects:
 - BaseEffect: 0073CB:SexLab.esm
   Data:
-    Duration: 600
+    Duration: 300

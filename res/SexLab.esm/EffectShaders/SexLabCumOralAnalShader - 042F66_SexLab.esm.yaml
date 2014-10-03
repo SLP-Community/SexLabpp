@@ -7,7 +7,7 @@ HolesTexture: ''
 MembranePaletteTexture: ''
 ParticlePaletteTexture: ''
 Unknown: 692122368
-MembraneSourceBlendMode: One
+MembraneSourceBlendMode: SourceAlpha
 MembraneZTest: EqualTo
 FillColorKey1: '#00000000'
 FillFadeOutTime: 5
@@ -18,7 +18,7 @@ EdgeEffectColor: '#00000000'
 EdgeEffectAlphaPulseFrequency: 1
 FillFullAlphaRatio: 1
 EdgeEffectFullAlphaRatio: 1
-MembraneDestBlendMode: One
+MembraneDestBlendMode: SourceInvertedAlpha
 ParticleSourceBlendMode: SourceAlpha
 ParticleDestBlendMode: SourceInvertedAlpha
 ParticleFullBirthRatio: 1
@@ -55,7 +55,6 @@ ColorScale: 1
 Flags:
 - NoParticleShader
 - AffectSkinOnly
-- UseBloodGeometry
 FillTextureScaleU: 1
 FillTextureScaleV: 1
 SceneGraphEmitDepthLimit: 660799488
