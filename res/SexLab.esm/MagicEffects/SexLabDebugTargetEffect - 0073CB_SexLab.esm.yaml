@@ -6,6 +6,9 @@ VirtualMachineAdapter:
   - Name: sslEffectDebug
     Properties:
     - MutagenObjectType: ScriptObjectProperty
+      Name: PlayerRef
+      Object: 000014:Skyrim.esm
+    - MutagenObjectType: ScriptObjectProperty
       Name: SexLab
       Object: 000D62:SexLab.esm
 Name:
@@ -23,7 +26,7 @@ Unknown1: 11593
 Archetype:
   MutagenObjectType: MagicEffectArchetype
   Type: Script
-Projectile: 10B0A5:Skyrim.esm
+Projectile: 07A522:Skyrim.esm
 CastType: FireAndForget
 TargetType: Aimed
 CastingArt: 03CDFC:Skyrim.esm

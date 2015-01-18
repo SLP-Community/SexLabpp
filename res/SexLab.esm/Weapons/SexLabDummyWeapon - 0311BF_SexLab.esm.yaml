@@ -5,8 +5,7 @@ EquipmentType: 013F42:Skyrim.esm
 BlockBashImpact: 0183FF:Skyrim.esm
 AlternateBlockMaterial: 0774C2:Skyrim.esm
 Keywords:
-- 01E718:Skyrim.esm
-- 01E713:Skyrim.esm
+- 0F3E6C:Skyrim.esm
 - 08F958:Skyrim.esm
 Description:
   TargetLanguage: English
@@ -18,10 +17,13 @@ UnequipSound: 03CEDB:Skyrim.esm
 BasicStats: {}
 Data:
   AnimationType: OneHandDagger
-  Unused: 0x059400
+  Unused: 0x7C9300
   Speed: 1.3
   Reach: 0.7
-  Unused2: 147
+  Flags:
+  - DontUseFirstPersonIsAnim
+  - DontUseThirdPersonISAnim
+  Unused2: 42
   NumProjectiles: 1
   AnimationAttackMult: 1
   Unknown2: 1056964608
@@ -31,8 +33,9 @@ Data:
   Unknown3: 0x000000000000000000000000
   Skill: OneHanded
 Critical:
+  Unused: 232
   PercentMult: 1
   Flags:
   - OnDeath
-  Unused2: 0x889300
+  Unused2: 0xFFFFFF
 DetectionSoundLevel: Silent

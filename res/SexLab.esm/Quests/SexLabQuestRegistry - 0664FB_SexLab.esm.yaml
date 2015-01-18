@@ -20,6 +20,13 @@ VirtualMachineAdapter:
       Object: 000D62:SexLab.esm
   - Name: sslExpressionDefaults
   - Name: sslExpressionSlots
+    Properties:
+    - MutagenObjectType: ScriptObjectProperty
+      Name: Config
+      Object: 000D62:SexLab.esm
+    - MutagenObjectType: ScriptObjectProperty
+      Name: PlayerRef
+      Object: 000014:Skyrim.esm
   - Name: sslVoiceDefaults
   - Name: sslVoiceSlots
     Properties:
@@ -3038,7 +3045,7 @@ Flags:
 - StartGameEnabled
 - 0x10
 Priority: 99
-QuestFormVersion: 34
+QuestFormVersion: 32
 Filter: SexLab\
 NextAliasID: 1137
 Aliases:
