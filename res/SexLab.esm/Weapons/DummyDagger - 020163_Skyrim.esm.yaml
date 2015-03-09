@@ -26,10 +26,10 @@ BasicStats:
   Damage: 10
 Data:
   AnimationType: OneHandSword
-  Unused: 0x3E1C02
+  Unused: 0x059400
   Speed: 1
   Reach: 1
-  Unused2: -5428
+  Unused2: 147
   NumProjectiles: 1
   AnimationAttackMult: 1
   Unknown2: 1061997773
@@ -39,8 +39,7 @@ Data:
   Unknown3: 0x000000000000000000000000
   Skill: OneHanded
 Critical:
-  Unused: 432
   Flags:
   - OnDeath
-  Unused2: 0x000000
+  Unused2: 0x889300
 DetectionSoundLevel: Normal

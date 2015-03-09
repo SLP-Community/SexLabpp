@@ -58,9 +58,8 @@ Name:
 Flags:
 - StartGameEnabled
 - 0x10
-- RunOnce
 Priority: 95
-QuestFormVersion: 39
+QuestFormVersion: 0
 Filter: SexLab\
 NextAliasID: 6
 Aliases:
@@ -74,6 +73,8 @@ Aliases:
   Factions:
   - 00E50F:SexLab.esm
   - 10FCB4:Skyrim.esm
+  PackageData:
+  - 00E50E:SexLab.esm
   VoiceTypes: 02CBBC:SexLab.esm
 - ID: 4
   Name: ActorAlias003
@@ -85,6 +86,8 @@ Aliases:
   Factions:
   - 00E50F:SexLab.esm
   - 10FCB4:Skyrim.esm
+  PackageData:
+  - 00E50E:SexLab.esm
   VoiceTypes: 02CBBC:SexLab.esm
 - ID: 3
   Name: ActorAlias002
@@ -96,6 +99,8 @@ Aliases:
   Factions:
   - 00E50F:SexLab.esm
   - 10FCB4:Skyrim.esm
+  PackageData:
+  - 00E50E:SexLab.esm
   VoiceTypes: 02CBBC:SexLab.esm
 - ID: 2
   Name: ActorAlias001
@@ -107,6 +112,8 @@ Aliases:
   Factions:
   - 00E50F:SexLab.esm
   - 10FCB4:Skyrim.esm
+  PackageData:
+  - 00E50E:SexLab.esm
   VoiceTypes: 02CBBC:SexLab.esm
 - ID: 1
   Name: ActorAlias000
@@ -118,4 +125,6 @@ Aliases:
   Factions:
   - 00E50F:SexLab.esm
   - 10FCB4:Skyrim.esm
+  PackageData:
+  - 00E50E:SexLab.esm
   VoiceTypes: 02CBBC:SexLab.esm

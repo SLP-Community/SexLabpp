@@ -58,7 +58,6 @@ Name:
 Flags:
 - StartGameEnabled
 - 0x10
-- RunOnce
 Priority: 95
 QuestFormVersion: 40
 Filter: SexLab\

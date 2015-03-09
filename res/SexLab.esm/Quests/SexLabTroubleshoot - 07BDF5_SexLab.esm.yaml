@@ -50,7 +50,7 @@ Name:
   Value: SexLab Troubleshoot
 Flags:
 - AllowRepeatedStages
-Priority: 90
+Priority: 50
 QuestFormVersion: 40
 Filter: SexLab\
 NextAliasID: 2

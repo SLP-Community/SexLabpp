@@ -47,6 +47,9 @@ VirtualMachineAdapter:
       Name: ActorLib
       Object: 000D62:SexLab.esm
     - MutagenObjectType: ScriptObjectProperty
+      Name: ActorTypeNPC
+      Object: 013794:Skyrim.esm
+    - MutagenObjectType: ScriptObjectProperty
       Name: AnimSlots
       Object: 0639DF:SexLab.esm
     - MutagenObjectType: ScriptObjectProperty
@@ -55,6 +58,9 @@ VirtualMachineAdapter:
     - MutagenObjectType: ScriptObjectProperty
       Name: CreatureSlots
       Object: 0664FB:SexLab.esm
+    - MutagenObjectType: ScriptObjectProperty
+      Name: DoNothing
+      Object: 0654E2:Skyrim.esm
     - MutagenObjectType: ScriptObjectProperty
       Name: ExpressionSlots
       Object: 0664FB:SexLab.esm
