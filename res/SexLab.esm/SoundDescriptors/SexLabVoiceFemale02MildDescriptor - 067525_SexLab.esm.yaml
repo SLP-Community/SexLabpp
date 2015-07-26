@@ -4,11 +4,11 @@ FormVersion: 43
 Type: Standard
 Category: 061429:SexLab.esm
 SoundFiles:
-- data\Sound\fx\SexLab\vFemaleMoan02\mild\RS_mild_moans_04.wav
-- data\Sound\fx\SexLab\vFemaleMoan02\mild\RS_mild_moans_05.wav
-- data\Sound\fx\SexLab\vFemaleMoan02\mild\RS_mild_moans_01.wav
-- data\Sound\fx\SexLab\vFemaleMoan02\mild\RS_mild_moans_02.wav
-- data\Sound\fx\SexLab\vFemaleMoan02\mild\RS_mild_moans_03.wav
+- data\Sound\FX\SexLab\vFemaleMoan02\mild\RS_mild_moans_04.wav
+- data\Sound\FX\SexLab\vFemaleMoan02\mild\RS_mild_moans_05.wav
+- data\Sound\FX\SexLab\vFemaleMoan02\mild\RS_mild_moans_01.wav
+- data\Sound\FX\SexLab\vFemaleMoan02\mild\RS_mild_moans_02.wav
+- data\Sound\FX\SexLab\vFemaleMoan02\mild\RS_mild_moans_03.wav
 OutputModel: 0D78B4:Skyrim.esm
 LoopAndRumble: {}
 Priority: 128

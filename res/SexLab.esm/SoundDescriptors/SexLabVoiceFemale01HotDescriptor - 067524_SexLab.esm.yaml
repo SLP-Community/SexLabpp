@@ -4,14 +4,14 @@ FormVersion: 43
 Type: Standard
 Category: 061429:SexLab.esm
 SoundFiles:
-- data\Sound\fx\SexLab\vFemaleMoan01\hot\hot_moans_04.wav
-- data\Sound\fx\SexLab\vFemaleMoan01\hot\hot_moans_05.wav
-- data\Sound\fx\SexLab\vFemaleMoan01\hot\hot_moans_06.wav
-- data\Sound\fx\SexLab\vFemaleMoan01\hot\hot_moans_07.wav
-- data\Sound\fx\SexLab\vFemaleMoan01\hot\hot_moans_08.wav
-- data\Sound\fx\SexLab\vFemaleMoan01\hot\hot_moans_01.wav
-- data\Sound\fx\SexLab\vFemaleMoan01\hot\hot_moans_02.wav
-- data\Sound\fx\SexLab\vFemaleMoan01\hot\hot_moans_03.wav
+- data\Sound\FX\SexLab\VFemaleMoan01\Hot\Hot_Moans_04.wav
+- data\Sound\FX\SexLab\VFemaleMoan01\Hot\Hot_Moans_05.wav
+- data\Sound\FX\SexLab\VFemaleMoan01\Hot\Hot_Moans_06.wav
+- data\Sound\FX\SexLab\VFemaleMoan01\Hot\Hot_Moans_07.wav
+- data\Sound\FX\SexLab\VFemaleMoan01\Hot\Hot_Moans_08.wav
+- data\Sound\FX\SexLab\VFemaleMoan01\Hot\Hot_Moans_01.wav
+- data\Sound\FX\SexLab\VFemaleMoan01\Hot\Hot_Moans_02.wav
+- data\Sound\FX\SexLab\VFemaleMoan01\Hot\Hot_Moans_03.wav
 OutputModel: 0D78B4:Skyrim.esm
 LoopAndRumble: {}
 Priority: 128

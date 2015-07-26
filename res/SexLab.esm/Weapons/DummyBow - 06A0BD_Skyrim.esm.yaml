@@ -25,7 +25,7 @@ UnequipSound: 03D882:Skyrim.esm
 BasicStats: {}
 Data:
   AnimationType: Bow
-  Unused: 0x0F15F5
+  Unused: 0x4504F9
   Speed: 1
   Reach: 1
   Unused2: 148
@@ -41,5 +41,5 @@ Data:
 Critical:
   Flags:
   - OnDeath
-  Unused2: 0x4FFEF7
+  Unused2: 0x51EEFB
 DetectionSoundLevel: Normal

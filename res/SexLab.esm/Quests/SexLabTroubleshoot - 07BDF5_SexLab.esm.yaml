@@ -15,7 +15,7 @@ VirtualMachineAdapter:
       Name: AskContinue
       Object: 07C358:SexLab.esm
     - MutagenObjectType: ScriptObjectProperty
-      Name: Config
+      Name: config
       Object: 000D62:SexLab.esm
     - MutagenObjectType: ScriptObjectProperty
       Name: CreatureSlots
@@ -51,7 +51,7 @@ Name:
 Flags:
 - AllowRepeatedStages
 Priority: 50
-QuestFormVersion: 35
+QuestFormVersion: 37
 Filter: SexLab\
 NextAliasID: 2
 Aliases:

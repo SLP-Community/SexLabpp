@@ -10,7 +10,7 @@ VirtualMachineAdapter:
       Name: ActorLib
       Object: 000D62:SexLab.esm
     - MutagenObjectType: ScriptObjectProperty
-      Name: Config
+      Name: config
       Object: 000D62:SexLab.esm
     - MutagenObjectType: ScriptObjectProperty
       Name: PlayerRef
@@ -2277,7 +2277,7 @@ Flags:
 - StartGameEnabled
 - 0x10
 Priority: 100
-QuestFormVersion: 35
+QuestFormVersion: 37
 Filter: SexLab\
 NextAliasID: 887
 Aliases:

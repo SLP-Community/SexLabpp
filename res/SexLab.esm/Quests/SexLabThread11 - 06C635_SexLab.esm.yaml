@@ -12,7 +12,7 @@ VirtualMachineAdapter:
       Name: AnimSlots
       Object: 0639DF:SexLab.esm
     - MutagenObjectType: ScriptObjectProperty
-      Name: Config
+      Name: config
       Object: 000D62:SexLab.esm
     - MutagenObjectType: ScriptObjectProperty
       Name: CreatureSlots
@@ -59,7 +59,7 @@ Flags:
 - StartGameEnabled
 - 0x10
 Priority: 95
-QuestFormVersion: 35
+QuestFormVersion: 37
 Filter: SexLab\
 NextAliasID: 6
 Aliases:

@@ -4,16 +4,16 @@ FormVersion: 43
 Type: Standard
 Category: 061429:SexLab.esm
 SoundFiles:
-- data\Sound\fx\SexLab\vFemaleMoan06\medium\002.wav
-- data\Sound\fx\SexLab\vFemaleMoan06\medium\003.wav
-- data\Sound\fx\SexLab\vFemaleMoan06\medium\004.wav
-- data\Sound\fx\SexLab\vFemaleMoan06\medium\005.wav
-- data\Sound\fx\SexLab\vFemaleMoan06\medium\006.wav
-- data\Sound\fx\SexLab\vFemaleMoan06\medium\007.wav
-- data\Sound\fx\SexLab\vFemaleMoan06\medium\008.wav
-- data\Sound\fx\SexLab\vFemaleMoan06\medium\009.wav
-- data\Sound\fx\SexLab\vFemaleMoan06\medium\000.wav
-- data\Sound\fx\SexLab\vFemaleMoan06\medium\001.wav
+- data\Sound\FX\SexLab\vFemaleMoan06\medium\002.wav
+- data\Sound\FX\SexLab\vFemaleMoan06\medium\003.wav
+- data\Sound\FX\SexLab\vFemaleMoan06\medium\004.wav
+- data\Sound\FX\SexLab\vFemaleMoan06\medium\005.wav
+- data\Sound\FX\SexLab\vFemaleMoan06\medium\006.wav
+- data\Sound\FX\SexLab\vFemaleMoan06\medium\007.wav
+- data\Sound\FX\SexLab\vFemaleMoan06\medium\008.wav
+- data\Sound\FX\SexLab\vFemaleMoan06\medium\009.wav
+- data\Sound\FX\SexLab\vFemaleMoan06\medium\000.wav
+- data\Sound\FX\SexLab\vFemaleMoan06\medium\001.wav
 OutputModel: 0D78B4:Skyrim.esm
 LoopAndRumble: {}
 Priority: 128
