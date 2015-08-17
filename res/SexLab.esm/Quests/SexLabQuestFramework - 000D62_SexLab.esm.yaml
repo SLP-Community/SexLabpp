@@ -254,6 +254,9 @@ VirtualMachineAdapter:
       Name: ForbiddenFaction
       Object: 049068:SexLab.esm
     - MutagenObjectType: ScriptObjectProperty
+      Name: FurnitureBedRoll
+      Object: 0E4AD6:Skyrim.esm
+    - MutagenObjectType: ScriptObjectProperty
       Name: GenderFaction
       Object: 043A43:SexLab.esm
     - MutagenObjectType: ScriptObjectProperty
@@ -277,6 +280,9 @@ VirtualMachineAdapter:
     - MutagenObjectType: ScriptObjectProperty
       Name: SexLab
       Object: 000D62:SexLab.esm
+    - MutagenObjectType: ScriptObjectProperty
+      Name: SexLabActive
+      Object: 012B24:SexLab.esm
     - MutagenObjectType: ScriptObjectProperty
       Name: SexLabVoiceF
       Object: 02CBBE:SexLab.esm
@@ -399,7 +405,7 @@ Flags:
 - StartGameEnabled
 - 0x10
 Priority: 100
-QuestFormVersion: 37
+QuestFormVersion: 36
 Filter: SexLab\
 NextAliasID: 4
 Aliases:

@@ -4,16 +4,16 @@ FormVersion: 43
 Type: Standard
 Category: 061429:SexLab.esm
 SoundFiles:
-- data\Sound\FX\SexLab\vMaleMoan04\mild\mild_4.wav
-- data\Sound\FX\SexLab\vMaleMoan04\mild\mild_5.wav
-- data\Sound\FX\SexLab\vMaleMoan04\mild\mild_6.wav
-- data\Sound\FX\SexLab\vMaleMoan04\mild\mild_7.wav
-- data\Sound\FX\SexLab\vMaleMoan04\mild\mild_8.wav
-- data\Sound\FX\SexLab\vMaleMoan04\mild\mild_9.wav
-- data\Sound\FX\SexLab\vMaleMoan04\mild\mild_10.wav
-- data\Sound\FX\SexLab\vMaleMoan04\mild\mild_1.wav
-- data\Sound\FX\SexLab\vMaleMoan04\mild\mild_2.wav
-- data\Sound\FX\SexLab\vMaleMoan04\mild\mild_3.wav
+- data\Sound\fx\SexLab\vMaleMoan04\mild\mild_4.wav
+- data\Sound\fx\SexLab\vMaleMoan04\mild\mild_5.wav
+- data\Sound\fx\SexLab\vMaleMoan04\mild\mild_6.wav
+- data\Sound\fx\SexLab\vMaleMoan04\mild\mild_7.wav
+- data\Sound\fx\SexLab\vMaleMoan04\mild\mild_8.wav
+- data\Sound\fx\SexLab\vMaleMoan04\mild\mild_9.wav
+- data\Sound\fx\SexLab\vMaleMoan04\mild\mild_10.wav
+- data\Sound\fx\SexLab\vMaleMoan04\mild\mild_1.wav
+- data\Sound\fx\SexLab\vMaleMoan04\mild\mild_2.wav
+- data\Sound\fx\SexLab\vMaleMoan04\mild\mild_3.wav
 OutputModel: 0D78B4:Skyrim.esm
 LoopAndRumble: {}
 Priority: 128

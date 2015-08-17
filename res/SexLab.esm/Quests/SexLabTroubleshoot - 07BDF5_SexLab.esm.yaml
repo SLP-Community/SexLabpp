@@ -51,7 +51,7 @@ Name:
 Flags:
 - AllowRepeatedStages
 Priority: 50
-QuestFormVersion: 37
+QuestFormVersion: 36
 Filter: SexLab\
 NextAliasID: 2
 Aliases:

@@ -4,9 +4,9 @@ FormVersion: 43
 Type: Standard
 Category: 061428:SexLab.esm
 SoundFiles:
-- data\Sound\FX\SexLab\fxOrgasm01\01.wav
-- data\Sound\FX\SexLab\fxOrgasm01\02.wav
+- data\Sound\fx\SexLab\fxOrgasm01\01.wav
+- data\Sound\fx\SexLab\fxOrgasm01\02.wav
 OutputModel: 0D78B4:Skyrim.esm
 LoopAndRumble: {}
 Priority: 128
-StaticAttenuation: 0.88
+Variance: 2
