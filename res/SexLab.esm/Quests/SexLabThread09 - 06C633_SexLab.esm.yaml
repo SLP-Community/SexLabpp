@@ -58,10 +58,10 @@ Name:
 Flags:
 - StartGameEnabled
 - 0x10
-Priority: 95
-QuestFormVersion: 36
+Priority: 100
+QuestFormVersion: 48
 Filter: SexLab\
-NextAliasID: 6
+NextAliasID: 7
 Aliases:
 - ID: 5
   Name: ActorAlias004
@@ -73,6 +73,9 @@ Aliases:
   Factions:
   - 00E50F:SexLab.esm
   - 10FCB4:Skyrim.esm
+  PackageData:
+  - 08A020:SexLab.esm
+  - 00E50E:SexLab.esm
   VoiceTypes: 02CBBC:SexLab.esm
 - ID: 4
   Name: ActorAlias003
@@ -84,6 +87,9 @@ Aliases:
   Factions:
   - 00E50F:SexLab.esm
   - 10FCB4:Skyrim.esm
+  PackageData:
+  - 08A020:SexLab.esm
+  - 00E50E:SexLab.esm
   VoiceTypes: 02CBBC:SexLab.esm
 - ID: 3
   Name: ActorAlias002
@@ -95,6 +101,9 @@ Aliases:
   Factions:
   - 00E50F:SexLab.esm
   - 10FCB4:Skyrim.esm
+  PackageData:
+  - 08A020:SexLab.esm
+  - 00E50E:SexLab.esm
   VoiceTypes: 02CBBC:SexLab.esm
 - ID: 2
   Name: ActorAlias001
@@ -106,6 +115,9 @@ Aliases:
   Factions:
   - 00E50F:SexLab.esm
   - 10FCB4:Skyrim.esm
+  PackageData:
+  - 08A020:SexLab.esm
+  - 00E50E:SexLab.esm
   VoiceTypes: 02CBBC:SexLab.esm
 - ID: 1
   Name: ActorAlias000
@@ -117,4 +129,13 @@ Aliases:
   Factions:
   - 00E50F:SexLab.esm
   - 10FCB4:Skyrim.esm
+  PackageData:
+  - 08A020:SexLab.esm
+  - 00E50E:SexLab.esm
   VoiceTypes: 02CBBC:SexLab.esm
+- ID: 6
+  Name: CenterAlias
+  Flags:
+  - Optional
+  - AllowReuseInQuest
+  VoiceTypes: Null

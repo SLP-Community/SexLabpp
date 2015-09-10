@@ -17,10 +17,10 @@ UnequipSound: 03CEDB:Skyrim.esm
 BasicStats: {}
 Data:
   AnimationType: OneHandDagger
-  Unused: 0x709400
+  Unused: 0xFE9400
   Speed: 1.3
   Reach: 0.7
-  Unused2: 537
+  Unused2: 148
   NumProjectiles: 1
   AnimationAttackMult: 1
   Unknown2: 1056964608
@@ -30,9 +30,8 @@ Data:
   Unknown3: 0x000000000000000000000000
   Skill: OneHanded
 Critical:
-  Unused: 232
   PercentMult: 1
   Flags:
   - OnDeath
-  Unused2: 0xFFFFFF
+  Unused2: 0x819400
 DetectionSoundLevel: Silent
