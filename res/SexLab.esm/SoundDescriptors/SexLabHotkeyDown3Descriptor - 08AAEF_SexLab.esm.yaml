@@ -3,7 +3,7 @@ EditorID: SexLabHotkeyDown3Descriptor
 FormVersion: 43
 Type: Standard
 SoundFiles:
-- Data\Sound\FX\ITM\Ingredient\ITM_Ingredient_BeeHiveHusk_Up_01.wav
+- data\Sound\fx\itm\ingredient\itm_ingredient_beehivehusk_up_01.wav
 OutputModel: 0B5183:Skyrim.esm
 LoopAndRumble: {}
 PercentFrequencyShift: 30

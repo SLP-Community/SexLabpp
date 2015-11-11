@@ -3,7 +3,7 @@ EditorID: SexLabHotkeyDown2Descriptor
 FormVersion: 43
 Type: Standard
 SoundFiles:
-- Data\Sound\FX\ITM\Generic\Down\ITM_Generic_Down_02.wav
+- data\Sound\fx\itm\generic\down\itm_generic_down_02.wav
 OutputModel: 0B5183:Skyrim.esm
 LoopAndRumble: {}
 PercentFrequencyShift: 30

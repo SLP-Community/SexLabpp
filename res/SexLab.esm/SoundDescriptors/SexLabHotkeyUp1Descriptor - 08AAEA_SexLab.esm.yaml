@@ -3,7 +3,7 @@ EditorID: SexLabHotkeyUp1Descriptor
 FormVersion: 43
 Type: Standard
 SoundFiles:
-- Data\Sound\FX\ITM\Generic\Up\ITM_Generic_Up_01.wav
+- data\Sound\fx\itm\generic\up\itm_generic_up_01.wav
 OutputModel: 0B5183:Skyrim.esm
 LoopAndRumble: {}
 PercentFrequencyShift: 50

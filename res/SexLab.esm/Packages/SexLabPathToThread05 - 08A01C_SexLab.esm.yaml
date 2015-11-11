@@ -14,7 +14,7 @@ ScheduleMonth: -1
 ScheduleDayOfWeek: Any
 ScheduleHour: -1
 ScheduleMinute: -1
-Unknown3: 0x327363
+Unknown3: 0x000000
 Conditions:
 - MutagenObjectType: ConditionFloat
   Data:
@@ -33,7 +33,7 @@ Data:
         MutagenObjectType: LocationFallback
         Type: AliasForReference
         Data: 6
-      Radius: 70
+      Radius: 120
 - Key: 18
   Value:
     MutagenObjectType: PackageDataLocation
@@ -42,7 +42,7 @@ Data:
         MutagenObjectType: LocationFallback
         Type: AliasForReference
         Data: 6
-      Radius: 100
+      Radius: 400
 - Key: 16
   Value:
     MutagenObjectType: PackageDataLocation
@@ -51,7 +51,7 @@ Data:
         MutagenObjectType: LocationFallback
         Type: AliasForReference
         Data: 6
-      Radius: 500
+      Radius: 800
 - Key: 14
   Value:
     MutagenObjectType: PackageDataLocation
@@ -60,7 +60,7 @@ Data:
         MutagenObjectType: LocationFallback
         Type: AliasForReference
         Data: 6
-      Radius: 1000
+      Radius: 1200
 - Key: 2
   Value:
     MutagenObjectType: PackageDataBool

@@ -10,5 +10,6 @@ SoundFiles:
 - data\Sound\fx\SexLab\vMaleMoan01\medium\18.wav
 OutputModel: 0D78B4:Skyrim.esm
 LoopAndRumble: {}
+PercentFrequencyVariance: 5
 Priority: 128
-Variance: 5
+Variance: 3

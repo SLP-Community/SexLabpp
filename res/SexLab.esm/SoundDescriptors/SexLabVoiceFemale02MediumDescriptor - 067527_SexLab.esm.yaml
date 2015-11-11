@@ -12,5 +12,6 @@ SoundFiles:
 - data\Sound\fx\SexLab\vFemaleMoan02\medium\RS_med_moans_03.wav
 OutputModel: 0D78B4:Skyrim.esm
 LoopAndRumble: {}
+PercentFrequencyVariance: 5
 Priority: 128
-Variance: 5
+Variance: 3

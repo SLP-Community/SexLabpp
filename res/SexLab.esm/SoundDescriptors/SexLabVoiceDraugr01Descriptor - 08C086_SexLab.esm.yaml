@@ -1,0 +1,20 @@
+FormKey: 08C086:SexLab.esm
+VersionControl: 8970
+EditorID: SexLabVoiceDraugr01Descriptor
+FormVersion: 43
+Type: Standard
+Category: 061429:SexLab.esm
+SoundFiles:
+- data\Sound\fx\npc\draugr\voice\dialoguedraugr__0004c59d_1.wav
+- data\Sound\fx\npc\draugr\voice\dialoguedraugr__0004c59f_1.wav
+- data\Sound\fx\npc\draugr\combatidle\npc_draugr_combatidle_1hmtaunta_01.wav
+- data\Sound\fx\npc\draugr\combatidle\npc_draugr_combatidle_1hmtauntb_01.wav
+- data\Sound\fx\npc\draugr\combatidle\npc_draugr_combatidle_1hmtauntc_01.wav
+- data\Sound\fx\npc\draugr\combatidle\npc_draugr_combatidle_2gstaunta_01.wav
+- data\Sound\fx\npc\draugr\attack\npc_draugr_attack_01.wav
+- data\Sound\fx\npc\draugr\attack\npc_draugr_attack_02.wav
+OutputModel: 0ABEF3:Skyrim.esm
+LoopAndRumble: {}
+PercentFrequencyVariance: 8
+Priority: 128
+Variance: 2

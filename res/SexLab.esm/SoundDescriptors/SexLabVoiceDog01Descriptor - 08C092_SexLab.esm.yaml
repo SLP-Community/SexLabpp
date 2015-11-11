@@ -1,0 +1,23 @@
+FormKey: 08C092:SexLab.esm
+VersionControl: 8970
+EditorID: SexLabVoiceDog01Descriptor
+FormVersion: 43
+Type: Standard
+Category: 061429:SexLab.esm
+SoundFiles:
+- data\Sound\fx\npc\dog\idle\whine\npc_dog_idle_whine_01.wav
+- data\Sound\fx\npc\dog\idle\whine\npc_dog_idle_whine_02.wav
+- data\Sound\fx\npc\dog\idle\whine\npc_dog_idle_whine_03.wav
+- data\Sound\fx\npc\dog\idle\whine\npc_dog_idle_whine_04.wav
+- data\Sound\fx\npc\dog\idle\whine\npc_dog_idle_whine_04a.wav
+- data\Sound\fx\npc\dog\idle\whine\npc_dog_idle_whine_04b.wav
+- data\Sound\fx\npc\dog\idle\whine\npc_dog_idle_whine_05.wav
+- data\Sound\fx\npc\dog\idle\whine\npc_dog_idle_whine_06.wav
+- data\Sound\fx\npc\dog\idle\whine\npc_dog_idle_whine_07.wav
+- data\Sound\fx\npc\dog\idle\whine\npc_dog_idle_whine_08.wav
+- data\Sound\fx\npc\dog\idle\whine\npc_dog_idle_whine_09.wav
+- data\Sound\fx\npc\dog\idle\whine\npc_dog_idle_whine_10.wav
+OutputModel: 0ABEF3:Skyrim.esm
+LoopAndRumble: {}
+PercentFrequencyVariance: 5
+Priority: 128
