@@ -1,6 +1,5 @@
 FormKey: 041477:SexLab.esm
 EditorID: SexLabCumVaginalEffect
-FormVersion: 43
 VirtualMachineAdapter:
   Scripts:
   - Name: sslActorCumEffect
@@ -17,7 +16,7 @@ Flags:
 - FXPersist
 - HideInUI
 - Painless
-Unknown1: 26950
+- NoDeathDispel
 HitShader: 042F67:SexLab.esm
 TaperDuration: 20
 Archetype:
@@ -25,6 +24,7 @@ Archetype:
   Type: Script
 DualCastScale: 1
 CastingSoundLevel: Normal
+Sounds: []
 Description:
   TargetLanguage: English
   Value: ''

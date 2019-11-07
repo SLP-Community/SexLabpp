@@ -1,6 +1,5 @@
 FormKey: 07BDF5:SexLab.esm
 EditorID: SexLabTroubleshoot
-FormVersion: 43
 VirtualMachineAdapter:
   Scripts:
   - Name: sslTroubleshoot
@@ -51,7 +50,6 @@ Name:
 Flags:
 - AllowRepeatedStages
 Priority: 50
-QuestFormVersion: 44
 Filter: SexLab\
 NextAliasID: 2
 Aliases:

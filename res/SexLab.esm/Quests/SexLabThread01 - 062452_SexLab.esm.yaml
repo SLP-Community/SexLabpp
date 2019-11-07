@@ -1,6 +1,5 @@
 FormKey: 062452:SexLab.esm
 EditorID: SexLabThread01
-FormVersion: 43
 VirtualMachineAdapter:
   Scripts:
   - Name: sslThreadController
@@ -59,7 +58,6 @@ Flags:
 - StartGameEnabled
 - 0x10
 Priority: 100
-QuestFormVersion: 44
 Filter: SexLab\
 NextAliasID: 7
 Aliases:

@@ -1,6 +1,5 @@
 FormKey: 0073CB:SexLab.esm
 EditorID: SexLabDebugTargetEffect
-FormVersion: 43
 VirtualMachineAdapter:
   Scripts:
   - Name: sslEffectDebug
@@ -25,7 +24,6 @@ Flags:
 - NoArea
 - Painless
 MagicSkill: Illusion
-Unknown1: 11593
 Archetype:
   MutagenObjectType: MagicEffectArchetype
   Type: Script
@@ -36,6 +34,7 @@ CastingArt: 03CDFC:Skyrim.esm
 HitEffectArt: 07024B:Skyrim.esm
 DualCastScale: 1
 CastingSoundLevel: Silent
+Sounds: []
 Description:
   TargetLanguage: English
   Value: Blah.

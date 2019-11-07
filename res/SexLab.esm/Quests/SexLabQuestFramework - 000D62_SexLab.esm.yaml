@@ -1,6 +1,5 @@
 FormKey: 000D62:SexLab.esm
 EditorID: SexLabQuestFramework
-FormVersion: 43
 VirtualMachineAdapter:
   Scripts:
   - Name: SexLabFramework
@@ -513,7 +512,6 @@ Flags:
 - StartGameEnabled
 - 0x10
 Priority: 99
-QuestFormVersion: 44
 Filter: SexLab\
 NextAliasID: 4
 Aliases:

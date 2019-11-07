@@ -1,6 +1,5 @@
 FormKey: 0311BF:SexLab.esm
 EditorID: SexLabDummyWeapon
-FormVersion: 43
 EquipmentType: 013F42:Skyrim.esm
 BlockBashImpact: 0183FF:Skyrim.esm
 AlternateBlockMaterial: 0774C2:Skyrim.esm
@@ -17,10 +16,9 @@ UnequipSound: 03CEDB:Skyrim.esm
 BasicStats: {}
 Data:
   AnimationType: OneHandDagger
-  Unused: 0xCC66F6
+  Unused: 0x000000
   Speed: 1.3
   Reach: 0.7
-  Unused2: 148
   NumProjectiles: 1
   AnimationAttackMult: 1
   Unknown2: 1056964608
@@ -30,9 +28,10 @@ Data:
   Unknown3: 0x000000000000000000000000
   Skill: OneHanded
 Critical:
-  Unused: 25
+  Unused: 32106
   PercentMult: 1
   Flags:
   - OnDeath
-  Unused2: 0xE91900
+  Unused2: 0xFFFFFF
+  Unused3: 1
 DetectionSoundLevel: Silent

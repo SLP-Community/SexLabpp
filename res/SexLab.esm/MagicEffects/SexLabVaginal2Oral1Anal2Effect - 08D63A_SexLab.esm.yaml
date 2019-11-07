@@ -1,6 +1,5 @@
 FormKey: 08D63A:SexLab.esm
 EditorID: SexLabVaginal2Oral1Anal2Effect
-FormVersion: 43
 VirtualMachineAdapter:
   Scripts:
   - Name: sslActorCumEffect
@@ -21,12 +20,14 @@ Flags:
 - FXPersist
 - HideInUI
 - Painless
+- NoDeathDispel
 HitShader: 08D0BE:SexLab.esm
 Archetype:
   MutagenObjectType: MagicEffectArchetype
   Type: Script
 DualCastScale: 1
 CastingSoundLevel: Normal
+Sounds: []
 Description:
   TargetLanguage: English
   Value: ''

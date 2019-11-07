@@ -6,14 +6,13 @@ GameRelease: SkyrimSE
 ModHeader:
   Flags:
   - Master
-  FormVersion: 43
   Stats:
     Version: 1.7
   Author: Ashal
-  Description: >-
-    Version 1.61
+  Description: >+
+    Version 1.62
 
-    Released 2015/11/??
+    Released 2016/06/03
 
     LoversLab.com
   MasterReferences:

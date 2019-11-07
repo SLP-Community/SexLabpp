@@ -1,6 +1,5 @@
 FormKey: 08C5F5:SexLab.esm
 EditorID: SexLabSelectedActorEffect
-FormVersion: 43
 Name:
   TargetLanguage: English
   Value: Selected
@@ -12,7 +11,6 @@ Flags:
 - HideInUI
 - Painless
 - NoDeathDispel
-Unknown1: 11397
 Archetype:
   MutagenObjectType: MagicEffectArchetype
   Type: Script
@@ -20,6 +18,7 @@ CastType: FireAndForget
 HitEffectArt: 07024B:Skyrim.esm
 DualCastScale: 1
 CastingSoundLevel: Normal
+Sounds: []
 Description:
   TargetLanguage: English
   Value: ''

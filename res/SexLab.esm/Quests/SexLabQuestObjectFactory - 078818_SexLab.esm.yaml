@@ -1,6 +1,5 @@
 FormKey: 078818:SexLab.esm
 EditorID: SexLabQuestObjectFactory
-FormVersion: 43
 VirtualMachineAdapter:
   Scripts:
   - Name: sslObjectFactory
@@ -1068,7 +1067,6 @@ Flags:
 - StartGameEnabled
 - 0x10
 Priority: 95
-QuestFormVersion: 44
 Filter: SexLab\
 NextAliasID: 228
 Aliases:

@@ -1,6 +1,5 @@
 FormKey: 061428:SexLab.esm
 EditorID: SexLabAudioSFX
-FormVersion: 43
 Name:
   TargetLanguage: English
   Value: $SSL_SFXVolume

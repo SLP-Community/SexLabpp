@@ -1,12 +1,10 @@
 FormKey: 08D0CF:SexLab.esm
 EditorID: SexLabVaginal1Shader
-FormVersion: 43
 FillTexture: SexLab\Vaginal1.dds
 ParticleShaderTexture: ''
 HolesTexture: ''
 MembranePaletteTexture: ''
 ParticlePaletteTexture: ''
-Unknown: 692122368
 MembraneSourceBlendMode: SourceAlpha
 MembraneZTest: EqualTo
 FillColorKey1: '#00000000'
@@ -55,4 +53,3 @@ Flags:
 - NoParticleShader
 FillTextureScaleU: 1
 FillTextureScaleV: 1
-SceneGraphEmitDepthLimit: 660799488

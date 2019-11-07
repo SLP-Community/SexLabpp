@@ -1,6 +1,5 @@
 FormKey: 061429:SexLab.esm
 EditorID: SexLabAudioVoice
-FormVersion: 43
 Name:
   TargetLanguage: English
   Value: $SSL_VoiceVolume

@@ -1,12 +1,11 @@
 FormKey: 068591:SexLab.esm
-FormVersion: 43
 Flags: {}
 PreviousDialog: Null
 FavorLevel: None
 Responses:
 - EmotionValue: 50
   ResponseNumber: 1
-  Unknown2: 0x750601
+  Unknown2: 0x000000
   Unknown3: 0x000000
   Text:
     TargetLanguage: English
@@ -15,7 +14,6 @@ Responses:
   Edits: ''
 Conditions:
 - MutagenObjectType: ConditionFloat
-  Unknown2: 11492
   Data:
     MutagenObjectType: GetIsVoiceTypeConditionData
     VoiceTypeOrList: 02CBBC:SexLab.esm

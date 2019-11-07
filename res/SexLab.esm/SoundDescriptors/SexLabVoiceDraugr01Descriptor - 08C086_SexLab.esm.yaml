@@ -1,15 +1,14 @@
 FormKey: 08C086:SexLab.esm
 EditorID: SexLabVoiceDraugr01Descriptor
-FormVersion: 43
 Type: Standard
 Category: 061429:SexLab.esm
 SoundFiles:
-- data\Sound\fx\npc\draugr\voice\dialoguedraugr__0004c59d_1.wav
-- data\Sound\fx\npc\draugr\voice\dialoguedraugr__0004c59f_1.wav
-- data\Sound\fx\npc\draugr\combatidle\npc_draugr_combatidle_1hmtaunta_01.wav
-- data\Sound\fx\npc\draugr\combatidle\npc_draugr_combatidle_1hmtauntb_01.wav
-- data\Sound\fx\npc\draugr\combatidle\npc_draugr_combatidle_1hmtauntc_01.wav
-- data\Sound\fx\npc\draugr\combatidle\npc_draugr_combatidle_2gstaunta_01.wav
+- Data\Sound\FX\NPC\Draugr\Voice\DialogueDraugr__0004C59D_1.wav
+- Data\Sound\FX\NPC\Draugr\Voice\DialogueDraugr__0004C59F_1.wav
+- Data\Sound\FX\NPC\Draugr\CombatIdle\NPC_Draugr_CombatIdle_1HMTauntA_01.wav
+- Data\Sound\FX\NPC\Draugr\CombatIdle\NPC_Draugr_CombatIdle_1HMTauntB_01.wav
+- Data\Sound\FX\NPC\Draugr\CombatIdle\NPC_Draugr_CombatIdle_1HMTauntC_01.wav
+- Data\Sound\FX\NPC\Draugr\CombatIdle\NPC_Draugr_CombatIdle_2GSTauntA_01.wav
 - data\Sound\fx\npc\draugr\attack\npc_draugr_attack_01.wav
 - data\Sound\fx\npc\draugr\attack\npc_draugr_attack_02.wav
 OutputModel: 0ABEF3:Skyrim.esm

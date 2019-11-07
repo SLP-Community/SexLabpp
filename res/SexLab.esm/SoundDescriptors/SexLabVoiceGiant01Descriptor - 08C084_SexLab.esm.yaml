@@ -1,16 +1,15 @@
 FormKey: 08C084:SexLab.esm
 EditorID: SexLabVoiceGiant01Descriptor
-FormVersion: 43
 Type: Standard
 Category: 061429:SexLab.esm
 SoundFiles:
-- data\Sound\fx\npc\giant\attackvocal\npc_giant_attackvocal_01.wav
-- data\Sound\fx\npc\giant\attackvocal\npc_giant_attackvocal_02.wav
-- data\Sound\fx\npc\giant\attackvocal\npc_giant_attackvocal_03.wav
-- data\Sound\fx\npc\giant\attackvocal\npc_giant_attackvocal_04.wav
-- data\Sound\fx\npc\giant\attackvocal\npc_giant_attackvocal_05.wav
-- data\Sound\fx\npc\giant\attackvocal\npc_giant_attackvocal_06.wav
-- data\Sound\fx\npc\giant\attackvocal\npc_giant_attackvocal_07.wav
+- Data\Sound\FX\NPC\Giant\AttackVocal\NPC_Giant_AttackVocal_01.wav
+- Data\Sound\FX\NPC\Giant\AttackVocal\NPC_Giant_AttackVocal_02.wav
+- Data\Sound\FX\NPC\Giant\AttackVocal\NPC_Giant_AttackVocal_03.wav
+- Data\Sound\FX\NPC\Giant\AttackVocal\NPC_Giant_AttackVocal_04.wav
+- Data\Sound\FX\NPC\Giant\AttackVocal\NPC_Giant_AttackVocal_05.wav
+- Data\Sound\FX\NPC\Giant\AttackVocal\NPC_Giant_AttackVocal_06.wav
+- Data\Sound\FX\NPC\Giant\AttackVocal\NPC_Giant_AttackVocal_07.wav
 OutputModel: 0ABEF3:Skyrim.esm
 LoopAndRumble: {}
 PercentFrequencyVariance: 10

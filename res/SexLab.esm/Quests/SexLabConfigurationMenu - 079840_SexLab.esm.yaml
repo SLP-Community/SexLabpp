@@ -1,6 +1,5 @@
 FormKey: 079840:SexLab.esm
 EditorID: SexLabConfigurationMenu
-FormVersion: 43
 VirtualMachineAdapter:
   Scripts:
   - Name: sslConfigMenu
@@ -36,7 +35,6 @@ Flags:
 - StartGameEnabled
 - 0x10
 Priority: 90
-QuestFormVersion: 44
 Filter: SexLab\
 NextAliasID: 1
 Aliases:

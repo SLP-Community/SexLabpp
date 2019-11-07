@@ -1,6 +1,5 @@
 FormKey: 08A024:SexLab.esm
 EditorID: SexLabPathToThread13
-FormVersion: 43
 Flags:
 - MustComplete
 - PreferredSpeed
@@ -32,7 +31,7 @@ Data:
         MutagenObjectType: LocationFallback
         Type: AliasForReference
         Data: 6
-      Radius: 120
+      Radius: 50
 - Key: 18
   Value:
     MutagenObjectType: PackageDataLocation
@@ -66,6 +65,7 @@ Data:
 - Key: 4
   Value:
     MutagenObjectType: PackageDataBool
+    Data: True
 XnamMarker: 0x13
 OnBegin:
   Topics:
