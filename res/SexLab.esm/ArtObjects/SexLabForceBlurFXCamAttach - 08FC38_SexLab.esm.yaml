@@ -1,0 +1,7 @@
+FormKey: 08FC38:SexLab.esm
+EditorID: SexLabForceBlurFXCamAttach
+FormVersion: 43
+Model:
+  File: effects\FXforceblurcamattach.nif
+Type:
+- MagicCasting

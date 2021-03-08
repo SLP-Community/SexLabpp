@@ -1,0 +1,7 @@
+FormKey: 08FC37:SexLab.esm
+EditorID: SexLabForceBlackFXCamAttach
+FormVersion: 43
+Model:
+  File: effects\FXforceblackcamattach.nif
+Type:
+- MagicCasting
