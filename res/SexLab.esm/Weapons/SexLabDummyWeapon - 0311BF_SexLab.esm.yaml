@@ -28,10 +28,8 @@ Data:
   Unknown3: 0x000000000000000000000000
   Skill: OneHanded
 Critical:
-  Unused: -18013
   PercentMult: 1
   Flags:
   - OnDeath
-  Unused2: 0xFFFFFF
-  Unused3: 1
+  Unused2: 0x000000
 DetectionSoundLevel: Silent

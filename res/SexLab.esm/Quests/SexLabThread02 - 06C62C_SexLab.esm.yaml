@@ -4,6 +4,24 @@ VirtualMachineAdapter:
   Scripts:
   - Name: sslThreadController
     Properties:
+    - MutagenObjectType: ScriptObjectListProperty
+      Name: ActorAlias
+      Objects:
+      - Name: ''
+        Object: 06C62C:SexLab.esm
+        Alias: 1
+      - Name: ''
+        Object: 06C62C:SexLab.esm
+        Alias: 2
+      - Name: ''
+        Object: 06C62C:SexLab.esm
+        Alias: 3
+      - Name: ''
+        Object: 06C62C:SexLab.esm
+        Alias: 4
+      - Name: ''
+        Object: 06C62C:SexLab.esm
+        Alias: 5
     - MutagenObjectType: ScriptObjectProperty
       Name: ActorLib
       Object: 000D62:SexLab.esm
@@ -11,14 +29,33 @@ VirtualMachineAdapter:
       Name: AnimSlots
       Object: 0639DF:SexLab.esm
     - MutagenObjectType: ScriptObjectProperty
+      Name: CenterAlias
+      Object: 06C62C:SexLab.esm
+      Alias: 6
+    - MutagenObjectType: ScriptObjectProperty
       Name: config
       Object: 000D62:SexLab.esm
     - MutagenObjectType: ScriptObjectProperty
       Name: CreatureSlots
       Object: 0664FB:SexLab.esm
     - MutagenObjectType: ScriptObjectProperty
+      Name: DoNothingPackage
+      Object: 00E50E:SexLab.esm
+    - MutagenObjectType: ScriptObjectProperty
+      Name: PlayerRef
+      Object: 000014:Skyrim.esm
+    - MutagenObjectType: ScriptObjectProperty
+      Name: Stats
+      Object: 000D62:SexLab.esm
+    - MutagenObjectType: ScriptObjectProperty
       Name: ThreadLib
       Object: 000D62:SexLab.esm
+    - MutagenObjectType: ScriptObjectProperty
+      Name: UseBed
+      Object: 065F97:SexLab.esm
+    - MutagenObjectType: ScriptObjectProperty
+      Name: XMarker
+      Object: 00003B:Skyrim.esm
   FileName: ''
   Aliases:
   - Property:
@@ -58,7 +95,6 @@ Flags:
 - StartGameEnabled
 - 0x10
 Priority: 100
-QuestFormVersion: 50
 Type: Misc
 Filter: SexLab\
 Objectives:

@@ -8,12 +8,16 @@ ModHeader:
   - Master
   Stats:
     Version: 1.7
-  Author: Ashal
+  Author: Ashal, Scrab
   Description: >+
-    Version 1.63 Edited 2021/02/25 
+    Version 2.0 P+ Edited 2023/01/30 
 
     LoversLab.com
   MasterReferences:
   - Master: Skyrim.esm
+    FileSize: 0
+  - Master: Update.esm
+    FileSize: 0
+  - Master: Dragonborn.esm
     FileSize: 0
   INTV: 1
