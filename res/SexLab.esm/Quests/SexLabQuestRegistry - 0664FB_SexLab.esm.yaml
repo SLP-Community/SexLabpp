@@ -8,10 +8,6 @@ VirtualMachineAdapter:
       Name: config
       Object: 000D62:SexLab.esm
   - Name: sslCreatureAnimationSlots
-    Properties:
-    - MutagenObjectType: ScriptObjectProperty
-      Name: config
-      Object: 000D62:SexLab.esm
   - Name: sslExpressionDefaults
   - Name: sslExpressionSlots
     Properties:

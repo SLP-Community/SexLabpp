@@ -42,20 +42,17 @@ VirtualMachineAdapter:
       Name: DoNothingPackage
       Object: 00E50E:SexLab.esm
     - MutagenObjectType: ScriptObjectProperty
+      Name: InvalidCenterMsg
+      Object: 0AA6A6:SexLab.esm
+    - MutagenObjectType: ScriptObjectProperty
       Name: PlayerRef
       Object: 000014:Skyrim.esm
     - MutagenObjectType: ScriptObjectProperty
-      Name: Stats
-      Object: 000D62:SexLab.esm
+      Name: RepositionInfoMsg
+      Object: 0A77DD:SexLab.esm
     - MutagenObjectType: ScriptObjectProperty
       Name: ThreadLib
       Object: 000D62:SexLab.esm
-    - MutagenObjectType: ScriptObjectProperty
-      Name: UseBed
-      Object: 065F97:SexLab.esm
-    - MutagenObjectType: ScriptObjectProperty
-      Name: XMarker
-      Object: 00003B:Skyrim.esm
   FileName: ''
   Aliases:
   - Property:

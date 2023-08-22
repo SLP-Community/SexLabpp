@@ -400,9 +400,6 @@ VirtualMachineAdapter:
       Object: 0664FB:SexLab.esm
   - Name: sslThreadSlots
     Properties:
-    - MutagenObjectType: ScriptObjectProperty
-      Name: SexLab
-      Object: 000D62:SexLab.esm
     - MutagenObjectType: ScriptObjectListProperty
       Name: Threads
       Objects:

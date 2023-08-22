@@ -1,0 +1,21 @@
+FormKey: 0A77DD:SexLab.esm
+EditorID: SexLabConfirmRepositionScene
+Description:
+  TargetLanguage: English
+  Value: >-
+    You have 30 seconds to position yourself to a new center location.
+
+    Hold down the 'Move Scene' hotkey to relocate the center instantly to your current position
+INAM: 0x00000000
+Flags:
+- MessageBox
+MenuButtons:
+- Text:
+    TargetLanguage: English
+    Value: Ok
+- Text:
+    TargetLanguage: English
+    Value: Cancel
+- Text:
+    TargetLanguage: English
+    Value: Don't show again
