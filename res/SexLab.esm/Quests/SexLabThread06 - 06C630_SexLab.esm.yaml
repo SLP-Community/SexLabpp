@@ -45,11 +45,17 @@ VirtualMachineAdapter:
       Name: InvalidCenterMsg
       Object: 0AA6A6:SexLab.esm
     - MutagenObjectType: ScriptObjectProperty
+      Name: PlayerMarriedFaction
+      Object: 0C6472:Skyrim.esm
+    - MutagenObjectType: ScriptObjectProperty
       Name: PlayerRef
       Object: 000014:Skyrim.esm
     - MutagenObjectType: ScriptObjectProperty
       Name: RepositionInfoMsg
       Object: 0A77DD:SexLab.esm
+    - MutagenObjectType: ScriptObjectProperty
+      Name: SpouseAssocation
+      Object: 0142CA:Skyrim.esm
     - MutagenObjectType: ScriptObjectProperty
       Name: ThreadLib
       Object: 000D62:SexLab.esm

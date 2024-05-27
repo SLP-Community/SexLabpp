@@ -16,9 +16,6 @@ VirtualMachineAdapter:
     - MutagenObjectType: ScriptObjectProperty
       Name: CreatureSlots
       Object: 0664FB:SexLab.esm
-    - MutagenObjectType: ScriptObjectProperty
-      Name: ExpressionSlots
-      Object: 0664FB:SexLab.esm
     - MutagenObjectType: ScriptStringProperty
       Name: ModName
       Data: SexLab
@@ -27,9 +24,6 @@ VirtualMachineAdapter:
       Object: 000014:Skyrim.esm
     - MutagenObjectType: ScriptObjectProperty
       Name: SexLab
-      Object: 000D62:SexLab.esm
-    - MutagenObjectType: ScriptObjectProperty
-      Name: Stats
       Object: 000D62:SexLab.esm
     - MutagenObjectType: ScriptObjectProperty
       Name: SystemAlias
@@ -41,9 +35,6 @@ VirtualMachineAdapter:
     - MutagenObjectType: ScriptObjectProperty
       Name: ThreadSlots
       Object: 000D62:SexLab.esm
-    - MutagenObjectType: ScriptObjectProperty
-      Name: VoiceSlots
-      Object: 0664FB:SexLab.esm
   FileName: ''
   Aliases:
   - Property:

@@ -6,22 +6,8 @@ VirtualMachineAdapter:
   - Name: sslCreatureAnimationSlots
   - Name: sslExpressionDefaults
   - Name: sslExpressionSlots
-    Properties:
-    - MutagenObjectType: ScriptObjectProperty
-      Name: config
-      Object: 000D62:SexLab.esm
-    - MutagenObjectType: ScriptObjectProperty
-      Name: PlayerRef
-      Object: 000014:Skyrim.esm
   - Name: sslVoiceDefaults
   - Name: sslVoiceSlots
-    Properties:
-    - MutagenObjectType: ScriptObjectProperty
-      Name: config
-      Object: 000D62:SexLab.esm
-    - MutagenObjectType: ScriptObjectProperty
-      Name: PlayerRef
-      Object: 000014:Skyrim.esm
   FileName: ''
   Aliases:
   - Property:
