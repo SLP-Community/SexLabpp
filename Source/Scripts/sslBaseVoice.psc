@@ -13,7 +13,7 @@ int Function GetCompatibleSex(String asID) native global
 String[] Function GetCompatibleRaces(String asID) native global
 
 Sound Function GetSoundObject(String asID, int aiStrength, String asScene, int aiPositionIdx, bool abMuffled) native global
-Sound Function GetOrgasmSound(String asID, String asScene, int aiPositionIdx, bool abMuffled, bool aborgasmStart) native global
+Sound Function GetOrgasmSound(String asID, String asScene, int aiPositionIdx, bool abMuffled) native global
 Function PlaySound(Actor akActor, Sound akSound, float afStrength, bool abSyncLips) global
 	If (abSyncLips)
 		MoveLips(akActor, akSound, afStrength / 100.0)

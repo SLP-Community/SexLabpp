@@ -1588,7 +1588,7 @@ Sound Function GetAliasSound(sslActorAlias akThis, String asVoice, int aiStrengt
 	return sslBaseVoice.GetSoundObject(asVoice, aiStrength, _ActiveScene, ActorAlias.Find(akThis), akThis.OpenMouth)
 EndFunction
 Sound Function GetAliasOrgasmSound(sslActorAlias akThis, String asVoice)
-	return sslBaseVoice.GetOrgasmSound(asVoice, _ActiveScene, ActorAlias.Find(akThis), true, akThis.OpenMouth)
+	return sslBaseVoice.GetOrgasmSound(asVoice, _ActiveScene, ActorAlias.Find(akThis), akThis.OpenMouth)
 EndFunction
 
 ; ------------------------------------------------------- ;
