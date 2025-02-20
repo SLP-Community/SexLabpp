@@ -42,10 +42,10 @@
             <Include>SexLab.esm</Include>
             <Include>Interface</Include>
             <Include>Scripts</Include>
+            <Include>Sound</Include>
             <Include>Source</Include>
             <Include>SKSE</Include>
             <!-- <Include>SEQ</Include>
-            <Include>Sound</Include>
             <Include>textures</Include> -->
         </ZipFile>
         <ZipFile Name="@ModName - @Ver - 1.5.97" RootDir="@ThisProject" Compression="deflate">
@@ -54,11 +54,11 @@
             <Include>Interface</Include>
             <Include>Scripts</Include>
             <Include>Source</Include>
+            <Include>Sound</Include>
             <Include Path="SKSE/Plugins">1597</Include>
             <Include>SKSE/Plugins/SexLab.ini</Include>
             <Include>SKSE/SexLab</Include>
             <!-- <Include>SEQ</Include>
-            <Include>Sound</Include>
             <Include>textures</Include> -->
         </ZipFile>
         <ZipFile Name="@ModName - @Ver - VR" RootDir="@ThisProject" Compression="deflate">
@@ -67,11 +67,11 @@
             <Include>Interface</Include>
             <Include>Scripts</Include>
             <Include>Source</Include>
+            <Include>Sound</Include>
             <Include Path="SKSE/Plugins">14vr</Include>
             <Include>SKSE/Plugins/SexLab.ini</Include>
             <Include>SKSE/SexLab</Include>
             <!-- <Include>SEQ</Include>
-            <Include>Sound</Include>
             <Include>textures</Include> -->
         </ZipFile>
     </ZipFiles>
