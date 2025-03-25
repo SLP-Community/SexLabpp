@@ -929,7 +929,9 @@ State Animating
 		_ActorRef.SetAnimationVariableBool("bHumanoidFootIKDisable", _AnimVarbHumanoidFootIKDisable)
 		If (_ActorRef == _PlayerRef)
 			Game.EnablePlayerControls(abFighting = false, abActivate = false)
-			MiscUtil.SetFreeCameraState(false)
+			If (_Config.AutoTFC)
+				MiscUtil.SetFreeCameraState(false)
+			EndIf
 			If (sslLovense.IsLovenseInstalled())
 				sslLovense.StopAllActions()
 			EndIf
