@@ -1,4 +1,5 @@
 Name: MaleAverage
+DisplayName: "$SSL_MaleAverage"
 Actor:
   Sex: Male
   Race:

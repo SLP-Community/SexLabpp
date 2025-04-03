@@ -1,4 +1,5 @@
 Name: FemaleExcitable
+DisplayName: "$SSL_FemaleExcitable"
 Actor:
   Sex: Female
   Race:

@@ -1,4 +1,5 @@
 Name: FemaleQuiet
+DisplayName: "$SSL_FemaleQuiet"
 Actor:
   Sex: Female
   Race:

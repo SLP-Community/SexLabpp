@@ -1,4 +1,5 @@
 Name: TrollVoice01
+DisplayName: "$SSL_TrollVoice01"
 Actor:
   Sex: Any
   Race:

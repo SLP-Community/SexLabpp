@@ -1,4 +1,5 @@
 Name: HorseVoice01
+DisplayName: "$SSL_HorseVoice01"
 Actor:
   Sex: Any
   Race:

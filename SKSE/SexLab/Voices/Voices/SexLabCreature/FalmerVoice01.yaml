@@ -1,4 +1,5 @@
 Name: FalmerVoice01
+DisplayName: "$SSL_FalmerVoice01"
 Actor:
   Sex: Any
   Race:

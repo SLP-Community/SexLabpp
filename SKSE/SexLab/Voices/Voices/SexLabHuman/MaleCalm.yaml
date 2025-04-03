@@ -1,4 +1,5 @@
 Name: MaleCalm
+DisplayName: "$SSL_MaleCalm"
 Actor:
   Sex: Male
   Race:

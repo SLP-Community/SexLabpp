@@ -1,4 +1,5 @@
 Name: WerewolfVoice01
+DisplayName: "$SSL_WerewolfVoice01"
 Actor:
   Sex: Any
   Race:

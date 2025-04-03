@@ -1,4 +1,5 @@
 Name: DogVoice01
+DisplayName: "$SSL_DogVoice01"
 Actor:
   Sex: Any
   Race:

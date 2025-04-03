@@ -1,4 +1,6 @@
 Name: MaleRough
+DisplayName: "$SSL_MaleRough"
+
 Actor:
   Sex: Male
   Race:

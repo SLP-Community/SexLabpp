@@ -1,4 +1,5 @@
-Name: Female Warrior
+Name: SLFemaleWarrior
+DisplayName: "$SSL_FemaleWarrior"
 
 Actor:
   Sex: Female

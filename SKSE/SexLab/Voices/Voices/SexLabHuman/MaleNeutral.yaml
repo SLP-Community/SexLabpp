@@ -1,4 +1,6 @@
 Name: MaleNeutral
+DisplayName: "$SSL_MaleNeutral"
+
 Actor:
   Sex: Male
   Race:

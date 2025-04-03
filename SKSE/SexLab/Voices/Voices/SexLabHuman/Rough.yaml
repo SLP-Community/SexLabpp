@@ -1,4 +1,5 @@
-Name: Female Rough
+Name: SLFemaleRough
+DisplayName: "$SSL_FemaleRough"
 
 Actor:
   Sex: Female

@@ -1,4 +1,5 @@
 Name: GiantVoice01
+DisplayName: "$SSL_GiantVoice01"
 Actor:
   Sex: Any
   Race:

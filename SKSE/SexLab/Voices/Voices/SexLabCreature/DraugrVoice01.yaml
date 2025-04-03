@@ -1,4 +1,5 @@
 Name: DraugrVoice01
+DisplayName: "$SSL_DraugrVoice01"
 Actor:
   Sex: Any
   Race:

@@ -1,4 +1,5 @@
-Name: Female Flat
+Name: SLFemaleFlat
+DisplayName: "$SSL_FemaleFlat"
 
 Actor:
   Sex: Female

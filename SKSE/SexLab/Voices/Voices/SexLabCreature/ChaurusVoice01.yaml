@@ -1,4 +1,5 @@
 Name: ChaurusVoice01
+DisplayName: "$SSL_ChaurusVoice01"
 Actor:
   Sex: Any
   Race:

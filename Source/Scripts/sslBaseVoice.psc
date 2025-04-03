@@ -22,6 +22,8 @@ Function PlaySound(Actor akActor, Sound akSound, float afStrength, bool abSyncLi
 	EndIf
 EndFunction
 
+String Function GetDisplayName(String asID) native global
+
 ; *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-* ;
 ; ----------------------------------------------------------------------------- ;
 ;        ██╗███╗   ██╗████████╗███████╗██████╗ ███╗   ██╗ █████╗ ██╗            ;

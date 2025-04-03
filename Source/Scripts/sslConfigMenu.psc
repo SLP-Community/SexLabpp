@@ -471,7 +471,7 @@ Function SoundSettings()
 	AddMenuOptionST("activeVoices", "$SSL_ActiveVoices", "$SSL_Race_" + SexLabRegistry.MapRaceKeyToID(_voiceActiveRaceKey))
 	int i = 0
 	While (i < _voices.Length)
-		AddToggleOptionST("Voice_" + i, _voices[i], sslBaseVoice.GetEnabled(_voices[i]))
+		AddToggleOptionST("Voice_" + i, sslBaseVoice.GetDisplayName(_voices[i]), sslBaseVoice.GetEnabled(_voices[i]))
 		i += 1
 	EndWhile
 EndFunction
