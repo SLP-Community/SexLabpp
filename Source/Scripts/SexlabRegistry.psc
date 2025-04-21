@@ -45,20 +45,18 @@ String[] Function LookupScenes(Actor[] akPositions, String asTags, Actor akSubmi
 String[] Function LookupScenesA(Actor[] akPositions, String asTags, Actor[] akSubmissives, int aiFurniturePreference, ObjectReference akCenter) native global
 
 ; Check if the given Actors can play the stated scene under the stated tag constraints. Return an array of all valid scenes
-; Strictness Mapping: -1 User Config | 0 Loose | 1 Standard | 2 Strict. Higher strictness improves quality but may result in no animations being found
-bool Function ValidateScene(String asSceneID, Actor[] akPositions, String asTags, Actor akSubmissive, int aiStrictness) native global
-bool Function ValidateSceneA(String asSceneID, Actor[] akPositions, String asTags, Actor[] akSubmissives, int aiStrictness) native global
-String[] Function ValidateScenes(String[] asSceneIDs, Actor[] akPositions, String asTags, Actor akSubmissive, int aiStrictness) native global
-String[] Function ValidateScenesA(String[] asSceneIDs, Actor[] akPositions, String asTags, Actor[] akSubmissive, int aiStrictness) native global
+bool Function ValidateScene(String asSceneID, Actor[] akPositions, String asTags, Actor akSubmissive) native global
+bool Function ValidateSceneA(String asSceneID, Actor[] akPositions, String asTags, Actor[] akSubmissives) native global
+String[] Function ValidateScenes(String[] asSceneIDs, Actor[] akPositions, String asTags, Actor akSubmissive) native global
+String[] Function ValidateScenesA(String[] asSceneIDs, Actor[] akPositions, String asTags, Actor[] akSubmissive) native global
 
 ; Sort akPosition based on the provided scene. The array will be modified directly, the order of the sorted array is unspecified
 ; The extended version will take an array and return the index of the n'th scene which the actors are sorted by (the first successfull match)
-; Strictness Mapping: -1 User Config | 0 Loose | 1 Standard | 2 Strict. Higher strictness improves quality but may result in no animations being found
 ; Return false/-1 if the positions couldnt be sorted
-bool Function SortByScene(Actor[] akPositions, Actor akSubmissive, String asScene, int aiStrictness) native global
-bool Function SortBySceneA(Actor[] akPositions, Actor[] akSubmissives, String asScene, int aiStrictness) native global
-int Function SortBySceneEx(Actor[] akPositions, Actor akSubmissive, String[] asScenes, int aiStrictness) native global
-int Function SortBySceneExA(Actor[] akPositions, Actor[] akSubmissives, String[] asScenes, int aiStrictness) native global
+bool Function SortByScene(Actor[] akPositions, Actor akSubmissive, String asScene) native global
+bool Function SortBySceneA(Actor[] akPositions, Actor[] akSubmissives, String asScene) native global
+int Function SortBySceneEx(Actor[] akPositions, Actor akSubmissive, String[] asScenes) native global
+int Function SortBySceneExA(Actor[] akPositions, Actor[] akSubmissives, String[] asScenes) native global
 
 ; Returns a scene id representing a scene with the given argument as name or an empty string if no scene with this name exists
 ; In case more than 1 scene with that name exists, returns the first one found
