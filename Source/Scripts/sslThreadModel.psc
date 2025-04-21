@@ -29,7 +29,7 @@ float Function GetTimeTotal()
 EndFunction
 
 String[] Function GetStageHistory()
-	return PapyrusUtil.RemoveString(_StageHistory, "%")
+	return PapyrusUtil.RemoveString(_StageHistory, "")
 EndFunction
 int Function GetStageHistoryLength()
 	return _StageHistory.Length
@@ -222,11 +222,11 @@ Actor[] Function CanBeImpregnated(Actor akActor,  bool abAllowFutaImpregnation, 
 		return ret
 	EndIf
 	ret = new Actor[5]
-	String[] orgasmStages = SexLabRegistry.GetClimaxStages(_ActiveScene)
+	String[] orgasmStages = SexLabRegistry.GetClimaxStages(GetActiveScene())
 	int i = 0
 	While (i < orgasmStages.Length)
-		If (_StageHistory.Find(orgasmStages[i]) > -1 && SexLabRegistry.IsStageTag(_ActiveScene, orgasmStages[i], "~Grinding, ~Vaginal, Penetration"))
-			int[] orgP = SexLabRegistry.GetClimaxingActors(_ActiveScene, orgasmStages[i])
+		If (_StageHistory.Find(orgasmStages[i]) > -1 && SexLabRegistry.IsStageTag(GetActiveScene(), orgasmStages[i], "~Grinding, ~Vaginal, Penetration"))
+			int[] orgP = SexLabRegistry.GetClimaxingActors(GetActiveScene(), orgasmStages[i])
 			int n = 0
 			While (n < orgP.Length)
 				If (_Positions[n] != akActor && ActorAlias[n].IsOrgasmAllowed())
@@ -317,7 +317,7 @@ bool Function HasTag(String Tag)
 EndFunction
 
 bool Function HasSceneTag(String Tag)
-	return SexLabRegistry.IsSceneTag(_ActiveScene, Tag)
+	return SexLabRegistry.IsSceneTag(GetActiveScene(), Tag)
 EndFunction
 bool Function IsVaginal()
 	return HasSceneTag("Vaginal")
@@ -330,7 +330,7 @@ bool Function IsOral()
 EndFunction
 
 bool Function HasStageTag(String Tag)
-	return SexLabRegistry.IsStageTag(_ActiveScene, GetActiveStage(), Tag)
+	return SexLabRegistry.IsStageTag(GetActiveScene(), GetActiveStage(), Tag)
 EndFunction
 
 String[] Function GetTags()
@@ -503,9 +503,7 @@ EndFunction
 sslActorAlias[] Property ActorAlias Auto
 Actor[] _Positions
 
-String _ActiveScene	; The currently playing Animation
 String[] _StageHistory
-
 int Property Stage Hidden
 	int Function Get()
 		return _StageHistory.Length
@@ -712,7 +710,6 @@ State Making
 			return none
 		EndIf
 		GoToState(STATE_SETUP_M)
-		Log("Successfully validated and started thread instance", "StartThread()")
     return self as sslThreadController
 	EndFunction
 	
@@ -734,8 +731,8 @@ State Making_M
 		_LeadInScenes = GetLeadInScenes()
 		_PrimaryScenes = GetPrimaryScenes()
 		_CustomScenes = GetCustomScenes()
-		_ActiveScene = GetActiveScene()
-		LeadIn = LeadIn && _LeadInScenes.Find(_ActiveScene) > -1
+		String activeScene = GetActiveScene()
+		LeadIn = LeadIn && _LeadInScenes.Find(activeScene) > -1
 		SortAliasesToPositions()
 		PrepareDone()
 		If (_CustomScenes.Length)
@@ -743,6 +740,7 @@ State Making_M
 		Else
 			_ThreadTags = SexLabRegistry.GetCommonTags(_PrimaryScenes)
 		EndIf
+		Log("Thread validated, playing animation: " + activeScene + ", " + SexLabRegistry.GetSceneName(activeScene), "StartThread()")
 		SendThreadEvent("AnimationStarting")
 	EndEvent
 
@@ -769,7 +767,6 @@ State Making_M
 				SetObjectiveDisplayed(0, True)
 			EndIf
 		EndIf
-		Log("Prepare completed, entering playing state with active scene: " + _ActiveScene, "PrepareDone()")
 		GoToState(STATE_PLAYING)
 	EndFunction
 	
@@ -866,8 +863,9 @@ EndProperty
 State Animating
 	Event OnBeginState()
 		SetFurnitureIgnored(true)
-		int[] strips_ = SexLabRegistry.GetStripDataA(_ActiveScene, "")
-		int[] sex_ = SexLabRegistry.GetPositionSexA(_ActiveScene)
+		String activeScene = GetActiveScene()
+		int[] strips_ = SexLabRegistry.GetStripDataA(activeScene, "")
+		int[] sex_ = SexLabRegistry.GetPositionSexA(activeScene)
 		int i = 0
 		While (i < _Positions.Length)
 			ActorAlias[i].ReadyActor(strips_[i], sex_[i])
@@ -895,17 +893,17 @@ State Animating
 
 	bool Function ResetScene(String asNewScene)
 		UnregisterForUpdate()
-		AddExperience(_Positions, _ActiveScene, _StageHistory)
-		If (asNewScene != _ActiveScene)
+		String currentScene = GetActiveScene()
+		AddExperience(_Positions, currentScene, _StageHistory)
+		If (asNewScene != currentScene)
 			If (!SetActiveScene(asNewScene))
 				Log("Unable to reset scene. New scene is invalid for this thread")
 				return false
 			EndIf
 			SortAliasesToPositions()
-			_ActiveScene = asNewScene
 		EndIf
-		int[] strips_ = SexLabRegistry.GetStripDataA(_ActiveScene, "")
-		int[] sex_ = SexLabRegistry.GetPositionSexA(_ActiveScene)
+		int[] strips_ = SexLabRegistry.GetStripDataA(currentScene, "")
+		int[] sex_ = SexLabRegistry.GetPositionSexA(currentScene)
 		int i = 0
 		While (i < _Positions.Length)
 			ActorAlias[i].TryLock()
@@ -920,7 +918,7 @@ State Animating
 		UnregisterForUpdate()
 		SendThreadEvent("StageEnd")
 		RunHook(Config.HOOKID_STAGEEND)
-		PlayNextImpl(SexLabRegistry.BranchTo(_ActiveScene, GetActiveStage(), aiNextBranch))
+		PlayNextImpl(SexLabRegistry.BranchTo(GetActiveScene(), GetActiveStage(), aiNextBranch))
 	EndFunction
 	Function PlayNextImpl(String asNewStage)
 		If (!asNewStage)
@@ -932,13 +930,13 @@ State Animating
 			EndIf
 			return
 		ElseIf(!Leadin)
-			If (SexLabRegistry.GetNodeType(_ActiveScene, asNewStage) == 2)
+			If (SexLabRegistry.GetNodeType(GetActiveScene(), asNewStage) == 2)
 				SendThreadEvent("OrgasmStart")
 				TriggerOrgasm()
 			EndIf
 			int ctype = sslSystemConfig.GetSettingInt("iClimaxType")
 			If (ctype == Config.CLIMAXTYPE_SCENE)
-				int[] cactors = SexLabRegistry.GetClimaxingActors(_ActiveScene, asNewStage)
+				int[] cactors = SexLabRegistry.GetClimaxingActors(GetActiveScene(), asNewStage)
 				int i = 0
 				While (i < cactors.Length)
 					ActorAlias[cactors[i]].DoOrgasm()
@@ -946,11 +944,11 @@ State Animating
 				EndWhile
 			EndIf
 		EndIf
-		int[] strips_ = SexLabRegistry.GetStripDataA(_ActiveScene, "")
+		int[] strips = SexLabRegistry.GetStripDataA(GetActiveScene(), "")
 		int i = 0
 		While (i < _Positions.Length)
 			ActorAlias[i].TryLock()
-			ActorAlias[i].UpdateNext(strips_[i])
+			ActorAlias[i].UpdateNext(strips[i])
 			i += 1
 		EndWhile
 		StartStage(_StageHistory, asNewStage)
@@ -971,16 +969,16 @@ State Animating
 		_StageHistory = AdvanceScene(asHistory, asNextStageId)
 		ReStartTimer()
 		; TODO: move into Advance Scene native call?
-		sslSceneMenu.SetStage(Self, _ActiveScene, GetActiveStage())
+		sslSceneMenu.SetStage(Self, GetActiveScene(), GetActiveStage())
 		StartTranslations()
 	EndFunction
 
 	; NOTE: This here counts from 1 instead of 0
 	Function GoToStage(int ToStage)
 		If (ToStage <= 1)
-			ResetScene(_ActiveScene)
+			ResetScene(GetActiveScene())
 		ElseIf (ToStage > Stage)
-			int idx = SelectNextStage(_ActiveScene, GetActiveStage(), _ThreadTags)
+			int idx = SelectNextStage(_ThreadTags)
 			PlayNext(idx)
 		ElseIf (ToStage == Stage)
 			ReStartTimer()
@@ -1026,7 +1024,7 @@ State Animating
 	EndFunction
 
 	float Function GetTimer()
-		float timer = SexLabRegistry.GetFixedLength(_ActiveScene, GetActiveStage())
+		float timer = SexLabRegistry.GetFixedLength(GetActiveScene(), GetActiveStage())
 		If (!timer)
 			return GetStageTimer(0)
 		EndIf
@@ -1036,7 +1034,7 @@ State Animating
 	EndFunction
 
 	float Function GetStageTimer(int maxstage)
-		int[] c = SexLabRegistry.GetClimaxingActors(_ActiveScene, GetActiveStage())
+		int[] c = SexLabRegistry.GetClimaxingActors(GetActiveScene(), GetActiveStage())
 		bool isClimaxStage = c.Length > 0
 		If (isClimaxStage)
 			return Timers[Timers.Length - 1]
@@ -1144,7 +1142,7 @@ State Animating
 		EndAnimation()
 	EndFunction
 	Function EndAnimation(bool Quickly = false)
-		If(SexLabRegistry.GetNodeType(_ActiveScene, asNewStage) == 2)
+		If(SexLabRegistry.GetNodeType(GetActiveScene(), GetActiveStage()) == 2)
 			SendThreadEvent("OrgasmEnd")
 		EndIF
 		GoToState(STATE_END)
@@ -1227,12 +1225,12 @@ EndFunction
 
 ; Set location for all _Positions on CenterAlias, incl offset, and play their respected animation. _Positions are assumed to be sorted by scene
 String[] Function AdvanceScene(String[] asHistory, String asNextStageId) native	; TODO: Impl. Push asNextStageId to history and play it
-int Function SelectNextStage(String asScene, String asActiveStage, String[] asThreadTags) native
+int Function SelectNextStage(String[] asThreadTags) native
 bool Function SetActiveScene(String asScene) native
 bool Function ReassignCenter(ObjectReference CenterOn) native
 ; Function RePlace(Actor akActor, float[] afBaseCoordinates, String asSceneID, String asStageID, int n) native		; COMEBACK: Unnecessary?
 ; Function UpdatePlacement(int n, sslActorAlias akAlias)
-; 	RePlace(akAlias.GetReference() as Actor, _InUseCoordinates, _ActiveScene, GetActiveStage(), n)
+; 	RePlace(akAlias.GetReference() as Actor, _InUseCoordinates, GetActiveScene(), GetActiveStage(), n)
 ; EndFunction
 
 ; Physics/SFX Related
@@ -1439,10 +1437,10 @@ Function SortAliasesToPositions()
 EndFunction
 
 Sound Function GetAliasSound(sslActorAlias akThis, String asVoice, int aiStrength)
-	return sslBaseVoice.GetSoundObject(asVoice, aiStrength, _ActiveScene, ActorAlias.Find(akThis), akThis.OpenMouth)
+	return sslBaseVoice.GetSoundObject(asVoice, aiStrength, GetActiveScene(), ActorAlias.Find(akThis), akThis.OpenMouth)
 EndFunction
 Sound Function GetAliasOrgasmSound(sslActorAlias akThis, String asVoice)
-	return sslBaseVoice.GetOrgasmSound(asVoice, _ActiveScene, ActorAlias.Find(akThis), akThis.OpenMouth)
+	return sslBaseVoice.GetOrgasmSound(asVoice, GetActiveScene(), ActorAlias.Find(akThis), akThis.OpenMouth)
 EndFunction
 
 ; ------------------------------------------------------- ;
@@ -1458,7 +1456,7 @@ Function AddExperience(Actor[] akPositions, String asActiveStage, String[] asSta
 Function UpdateStatistics(Actor akActor, Actor[] akPositions,  String asActiveScene, String[] asPlayedStages, float afTimeInThread) native
 Function RequestStatisticUpdate(Actor akPosition, float afRegisteredAt)	; Called when one of the _Positions is cleared
 	float timeregistered = SexLabUtil.GetCurrentGameRealTime() - afRegisteredAt
-	UpdateStatistics(akPosition, _Positions, _ActiveScene, _StageHistory, timeregistered)
+	UpdateStatistics(akPosition, _Positions, GetActiveScene(), _StageHistory, timeregistered)
 EndFunction
 
 ; int Property ENC_Any 			  = 0	AutoReadOnly Hidden
@@ -1915,7 +1913,6 @@ Function Initialize()
 		i += 1
 	EndWhile
 	CenterAlias.TryToClear()
-	_ActiveScene = ""
 	_Positions = PapyrusUtil.ActorArray(0)
 	_StageHistory = Utility.CreateStringArray(0)
 	_furniStatus = FURNI_ALLOW
@@ -2054,7 +2051,7 @@ EndProperty
 
 string[] Property AnimEvents Hidden
 	String[] Function Get()
-		return SexLabRegistry.GetAnimationEventA(_ActiveScene, GetActiveStage())
+		return SexLabRegistry.GetAnimationEventA(GetActiveScene(), GetActiveStage())
 	EndFunction
 EndProperty
 
@@ -2075,9 +2072,9 @@ bool[] Property IsType Hidden	; [0] IsAggressive, [1] IsVaginal, [2] IsAnal, [3]
 		ret[5] = IsDirty
 		int i = 0
 		While (i < _StageHistory.Length - 1)
-			ret[6] = ret[6] || SexlabRegistry.IsStageTag(_ActiveScene, _StageHistory[i], "Vaginal")
-			ret[7] = ret[7] || SexlabRegistry.IsStageTag(_ActiveScene, _StageHistory[i], "Anal")
-			ret[8] = ret[8] || SexlabRegistry.IsStageTag(_ActiveScene, _StageHistory[i], "Oral")
+			ret[6] = ret[6] || SexlabRegistry.IsStageTag(GetActiveScene(), _StageHistory[i], "Vaginal")
+			ret[7] = ret[7] || SexlabRegistry.IsStageTag(GetActiveScene(), _StageHistory[i], "Anal")
+			ret[8] = ret[8] || SexlabRegistry.IsStageTag(GetActiveScene(), _StageHistory[i], "Oral")
 			i += 1
 		EndWhile
 		return ret
@@ -2095,35 +2092,35 @@ bool Property IsAggressive hidden
 EndProperty
 bool Property IsVaginal hidden
 	bool Function get()
-		return SexlabRegistry.IsSceneTag(_ActiveScene, "Vaginal")
+		return SexlabRegistry.IsSceneTag(GetActiveScene(), "Vaginal")
 	endfunction
 	Function set(bool value)
 	EndFunction
 EndProperty
 bool Property IsAnal hidden
 	bool Function get()
-		return SexlabRegistry.IsSceneTag(_ActiveScene, "Anal")
+		return SexlabRegistry.IsSceneTag(GetActiveScene(), "Anal")
 	endfunction
 	Function set(bool value)
 	EndFunction
 EndProperty
 bool Property IsOral hidden
 	bool Function get()
-		return SexlabRegistry.IsSceneTag(_ActiveScene, "Oral")
+		return SexlabRegistry.IsSceneTag(GetActiveScene(), "Oral")
 	endfunction
 	Function set(bool value)
 	EndFunction
 EndProperty
 bool Property IsLoving hidden
 	bool Function get()
-		return SexlabRegistry.IsSceneTag(_ActiveScene, "Loving")
+		return SexlabRegistry.IsSceneTag(GetActiveScene(), "Loving")
 	endfunction
 	Function set(bool value)
 	EndFunction
 EndProperty
 bool Property IsDirty hidden
 	bool Function get()
-		return SexlabRegistry.IsSceneTag(_ActiveScene, "Dirty") || SexlabRegistry.IsSceneTag(_ActiveScene, "Forced")
+		return SexlabRegistry.IsSceneTag(GetActiveScene(), "Dirty") || SexlabRegistry.IsSceneTag(GetActiveScene(), "Forced")
 	endfunction
 	Function set(bool value)
 	EndFunction
@@ -2228,7 +2225,7 @@ sslBaseAnimation Function GetSetAnimationLegacyCast(String asScene)
 EndFunction
 sslBaseAnimation Property Animation Hidden
 	sslBaseAnimation Function Get()
-		return GetSetAnimationLegacyCast(_ActiveScene)
+		return GetSetAnimationLegacyCast(GetActiveScene())
 	EndFunction
 	Function Set(sslBaseAnimation aSet)
 		SetAnimationImpl(aSet)
@@ -2236,7 +2233,7 @@ sslBaseAnimation Property Animation Hidden
 EndProperty
 sslBaseAnimation Property StartingAnimation Hidden
 	sslBaseAnimation Function Get()
-		return GetSetAnimationLegacyCast(_ActiveScene)
+		return GetSetAnimationLegacyCast(GetActiveScene())
 	EndFunction
 	Function Set(sslBaseAnimation aSet)
 		SetStartingAnimation(aSet)
@@ -2771,5 +2768,5 @@ EndProperty
 Function SetBonuses()
 EndFunction
 Function RecordSkills()
-	AddExperience(_Positions, _ActiveScene, _StageHistory)
+	AddExperience(_Positions, GetActiveScene(), _StageHistory)
 endfunction
