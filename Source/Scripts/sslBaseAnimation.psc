@@ -405,8 +405,7 @@ function AdjustUpward(string AdjustKey, int Position, int Stage, float AdjustBy,
 	endIf
 endFunction
 function AdjustSchlong(string AdjustKey, int Position, int Stage, int AdjustBy)
-	int v = SexLabRegistry.GetSchlongAngle(Registry, Stage, Position)
-	SexLabRegistry.SetSchlongAngle(Registry, Stage, Position, v + AdjustBy)
+	Log("AdjustSchlong is deprecated", "AdjustSchlong")
 endFunction
 
 function _ClearAdjustments(string Registrar, string AdjustKey) global

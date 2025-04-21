@@ -924,10 +924,9 @@ State Animating
 		SetFurnitureIgnored(true)
 		int[] strips_ = SexLabRegistry.GetStripDataA(_ActiveScene, "")
 		int[] sex_ = SexLabRegistry.GetPositionSexA(_ActiveScene)
-		int[] schlongs_ = SexLabRegistry.GetSchlongAngleA(_ActiveScene, _ActiveStage)
 		int i = 0
 		While (i < Positions.Length)
-			ActorAlias[i].ReadyActor(strips_[i], sex_[i], schlongs_[i])
+			ActorAlias[i].ReadyActor(strips_[i], sex_[i])
 			i += 1
 		EndWhile
 		_SFXTimer = Config.SFXDelay
@@ -982,11 +981,10 @@ State Animating
 		EndIf
 		int[] strips_ = SexLabRegistry.GetStripDataA(_ActiveScene, "")
 		int[] sex_ = SexLabRegistry.GetPositionSexA(_ActiveScene)
-		int[] schlongs_ = SexLabRegistry.GetSchlongAngleA(_ActiveScene, _ActiveStage)
 		int i = 0
 		While (i < Positions.Length)
 			ActorAlias[i].TryLock()
-			ActorAlias[i].ResetPosition(strips_[i], sex_[i], schlongs_[i])
+			ActorAlias[i].ResetPosition(strips_[i], sex_[i])
 			i += 1
 		EndWhile
 		StopTranslations()
