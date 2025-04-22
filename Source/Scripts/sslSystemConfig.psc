@@ -587,7 +587,7 @@ bool property HasMFGFix hidden
 EndProperty
 
 bool Function HasAnimSpeedSE() global
-  return SKSE.GetPluginVersion("AnimSpeedSE") > -1
+  return SKSE.GetPluginVersion("AnimSpeedSE") > -1 || SKSE.GetPluginVersion("AnimSpeedSEX") > -1
 EndFunction
 
 ; ------------------------------------------------------- ;
