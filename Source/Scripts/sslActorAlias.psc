@@ -147,9 +147,9 @@ EndFunction
 ; --- Voice                                           --- ;
 ; ------------------------------------------------------- ;
 
-String Function GetActorVoice() native ; TODO: impl
+String Function GetActorVoice() native
 
-Function SetActorVoiceImpl(String asNewVoice) native ; TODO: impl
+Function SetActorVoiceImpl(String asNewVoice) native
 Function SetActorVoice(String asNewVoice, bool abForceSilent)
 	SetActorVoiceImpl(asNewVoice)
 	_IsForcedSilent = abForceSilent
@@ -163,9 +163,9 @@ EndFunction
 ; --- Expression                                      --- ;
 ; ------------------------------------------------------- ;
 
-String Function GetActorExpression() native	; TODO: impl
+String Function GetActorExpression() native
 
-Function SetActorExpressionImpl(String asExpression) native ; TODO: impl
+Function SetActorExpressionImpl(String asExpression) native
 Function SetActorExpression(String asExpression)
 	SetActorExpressionImpl(asExpression)
 	TryRefreshExpression()

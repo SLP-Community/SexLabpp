@@ -11,11 +11,10 @@ int Function GetThreadID()
 	return tid
 EndFunction
 
-String Function GetActiveScene() native ; TODO: Impl
-String Function GetActiveStage() native ; TODO: Impl
-
-; Set of scenes currently used by the thread
-String[] Function GetPlayingScenes()	native ; TODO: impl
+String Function GetActiveScene() native
+String Function GetActiveStage() native
+; Scene set of the active scene
+String[] Function GetPlayingScenes() native
 
 Function StopAnimation()
 	EndAnimation()
@@ -39,7 +38,8 @@ EndFunction
 ; --- Position Access                                 --- ;
 ; ------------------------------------------------------- ;
 
-Actor[] Function GetPositions() native	; TODO: impl
+; Current positions ordered by active scene
+Actor[] Function GetPositions() native
 
 bool Function HasPlayer()
 	return HasPlayer
@@ -535,8 +535,8 @@ float Property TotalTime Hidden
 	EndFunction
 EndProperty
 
-bool Property AutoAdvance auto hidden
-bool Property LeadIn auto hidden
+bool Property AutoAdvance Auto Hidden
+bool Property LeadIn Auto Hidden
 
 String[] _ThreadTags
 String[] _ContextTags
@@ -755,7 +755,6 @@ State Making_M
 				AutoAdvance = true
 			Else
 				AutoAdvance = Config.AutoAdvance
-				; Inheritance is kinda backwards
 				Config.GetThreadControl(self as sslThreadController)
 			EndIf
 			If (sslSystemConfig.GetSettingInt("iUseFade") > 0)
@@ -828,9 +827,9 @@ Function SetFurnitureStatus(int aiStatus)
 EndFunction
 
 bool Function CreateThreadInstance(Actor[] akSubmissives, String[] asPrimaryScenes, String[] asLeadInScenes, String[] asCustomScenes, int aiFurnitureStatus) native
-String[] Function GetLeadInScenes() native ; TODO: impl
-String[] Function GetPrimaryScenes() native ; TODO: impl
-String[] Function GetCustomScenes() native ; TODO: impl
+String[] Function GetLeadInScenes() native
+String[] Function GetPrimaryScenes() native
+String[] Function GetCustomScenes() native
 
 ; ------------------------------------------------------- ;
 ; --- Thread PLAYING                                  --- ;
@@ -1224,15 +1223,11 @@ Function PlayStageAnimations()
 EndFunction
 
 ; Set location for all _Positions on CenterAlias, incl offset, and play their respected animation. _Positions are assumed to be sorted by scene
-String[] Function AdvanceScene(String[] asHistory, String asNextStageId) native	; TODO: Impl. Push asNextStageId to history and play it
+String[] Function AdvanceScene(String[] asHistory, String asNextStageId) native
 int Function SelectNextStage(String[] asThreadTags) native
 bool Function SetActiveScene(String asScene) native
 bool Function ReassignCenter(ObjectReference CenterOn) native
-; Function RePlace(Actor akActor, float[] afBaseCoordinates, String asSceneID, String asStageID, int n) native		; COMEBACK: Unnecessary?
-; Function UpdatePlacement(int n, sslActorAlias akAlias)
-; 	RePlace(akAlias.GetReference() as Actor, _InUseCoordinates, GetActiveScene(), GetActiveStage(), n)
-; EndFunction
-
+Function UpdatePlacement(Actor akActor) native
 ; Physics/SFX Related
 bool Function IsCollisionRegistered() native
 Function UnregisterCollision() native
