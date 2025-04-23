@@ -312,6 +312,11 @@ Function BeginOverlay(Actor akTarget, int aiType)
 		return
 	EndIf
 	String texturePath = "SexLab/CumFx/" + TypeToString(aiType) + "/" + set + "/" + layer + ".dds"
+    ; String akTargetRaceStr = MiscUtil.GetActorRaceEditorID(akTarget)
+    ; If (StringUtil.Find(akTargetRaceStr, "UBE") != -1)
+    ;     texturePath = "SexLab/CumFx/UBE/" + TypeToString(aiType) + "/" + set + "/" + layer + ".dds"
+    ;     Log(akTarget + ": Selecting cum fx set; UBE " + aiType + " set " + set + " selected for " + akTarget.GetBaseObject().GetName())
+    ; Endif
 	StorageUtil.SetStringValue(akTarget, LAST_APPLIED_TEXTURE_PREFIX + aiType, texturePath)
 	StorageUtil.SetFloatValue(akTarget, LAST_APPLIED_TIME_PREFIX + aiType, SexLabUtil.GetCurrentGameRealTime())
 	StorageUtil.IntListAdd(akTarget, APPLIED_TEXTURE_LIST, aiType, false)

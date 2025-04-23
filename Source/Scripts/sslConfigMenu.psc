@@ -79,6 +79,11 @@ Event OnConfigInit()
 	_ClimaxTypes[1] = "$SSL_Climax_1"	; Legacy
 	_ClimaxTypes[2] = "$SSL_Climax_2"	; Extern
 
+	_PlayerBedOptions = new String[3]
+	_PlayerBedOptions[0] = "$SSL_Never"
+	_PlayerBedOptions[1] = "$SSL_IfNotVictim"
+	_PlayerBedOptions[2] = "$SSL_Always"
+
 	_Sexes = new String[3]
 	_Sexes[0] = "$SSL_Male"
 	_Sexes[1] = "$SSL_Female"
@@ -327,6 +332,7 @@ String[] _NPCFurnOpt
 string[] _FadeOpt
 String[] _FilterOpt
 String[] _ClimaxTypes
+String[] _PlayerBedOptions
 String[] _Sexes
 
 Function AnimationSettings()
@@ -372,7 +378,7 @@ Function AnimationSettings()
 	AddToggleOptionST("SetAnimSpeedByEnjoyment", "$SSL_SetAnimSpeedByEnjoyment", Config.SetAnimSpeedByEnjoyment, DoDisable(!sslSystemConfig.HasAnimSpeedSE()))
 	; TODO: Reimplement these once the new UI stands
 	; AddTextOptionST("NPCBed","$SSL_NPCsUseBeds", Chances[ClampInt(Config.NPCBed, 0, 2)])
-	; AddTextOptionST("AskBed","$SSL_AskBed", BedOpt[ClampInt(Config.AskBed, 0, 2)])
+	AddTextOptionST("AskBed", "$SSL_AskBed", _PlayerBedOptions[sslSystemConfig.GetSettingInt("iAskBed")])
 EndFunction
 
 state DisableScale
@@ -1078,10 +1084,17 @@ Event OnSelectST()
 	ElseIf (s[0] == "StopCurrentAnimations")
 		ShowMessage("$SSL_StopRunningAnimations", false)
 		ThreadSlots.StopAll()
+	ElseIf (s[0] == "AskBed")
+		int idx = sslSystemConfig.GetSettingInt("iAskBed") + 1
+		If (idx == _PlayerBedOptions.Length)
+			idx = 0
+		EndIf
+		sslSystemConfig.SetSettingInt("iAskBed", idx)
+		SetTextOptionValueST(_PlayerBedOptions[idx])
 	EndIf
-endEvent
+EndEvent
 
-event OnSliderOpenST()
+Event OnSliderOpenST()
 	string[] s = PapyrusUtil.StringSplit(GetState(), "_")
 	If (s[0] == "AutomaticSUCSM")
 		SetSliderDialogStartValue(Config.AutoSUCSM)
@@ -1159,7 +1172,7 @@ event OnSliderOpenST()
 	EndIf
 EndEvent
 
-event OnSliderAcceptST(float value)
+Event OnSliderAcceptST(float value)
 	string[] s = PapyrusUtil.StringSplit(GetState(), "_")
 	If (s[0] == "AutomaticSUCSM")
 		Config.AutoSUCSM = value
@@ -1489,6 +1502,8 @@ Event OnHighlightST()
 		SetInfoText("$SSL_ExpressionScalingInfo")
 	ElseIf (s[0] == "activeVoices")
 		SetInfoText("$SSL_ActiveVoicesHighlight")
+	ElseIf (s[0] == "AskBed")
+		SetInfoText("$SSL_InfoAskBed")
 	EndIf
 EndEvent
 
