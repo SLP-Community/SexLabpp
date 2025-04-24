@@ -496,6 +496,11 @@ int Function GetStatus()
 	return STATUS_UNDEF
 EndFunction
 
+bool Function IsOwningSceneMenu() native
+bool Function TryOpenSceneMenu() native
+bool Function TryCloseSceneMenu() native
+Function TryUpdateMenuTimer(float afTime) native
+
 ; ------------------------------------------------------- ;
 ; --- Thread Data                                     --- ;
 ; ------------------------------------------------------- ;
@@ -967,8 +972,6 @@ State Animating
 		RunHook(Config.HOOKID_STAGESTART)
 		_StageHistory = AdvanceScene(asHistory, asNextStageId)
 		ReStartTimer()
-		; TODO: move into Advance Scene native call?
-		sslSceneMenu.SetStage(Self, GetActiveScene(), GetActiveStage())
 		StartTranslations()
 	EndFunction
 
@@ -1001,9 +1004,9 @@ State Animating
 		_ForceAdvance = false
 		_StageTimer = GetTimer()
 		If (!_ForceAdvance && !AutoAdvance)
-			sslSceneMenu.SetTimer(Self, 0.0)
+			TryUpdateMenuTimer(0.0)
 		Else
-			sslSceneMenu.SetTimer(Self, _StageTimer)
+			TryUpdateMenuTimer(_StageTimer)
 		EndIf
 		RegisterForSingleUpdate(ANIMATING_UPDATE_INTERVAL)
 	EndFunction
@@ -1011,7 +1014,7 @@ State Animating
 	Function UpdateTimer(float AddSeconds = 0.0)
 		_StageTimer += AddSeconds
 		_ForceAdvance = true
-		sslSceneMenu.SetTimer(Self, _StageTimer)
+		TryUpdateMenuTimer(_StageTimer)
 	EndFunction
 
 	Function SetTimers(float[] SetTimers)

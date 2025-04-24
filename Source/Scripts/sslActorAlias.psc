@@ -1104,6 +1104,10 @@ EndFunction
 ; --- Enjoyment                                       --- ;
 ; ------------------------------------------------------- ;
 
+; COMEBACK: This is probably better off moved into the C++ instance. Prbly wanna do this when the enjoyment is considered complete.
+
+Function UpdateEnjoyment(float afEnjoyment) native
+
 ; Thread
 int _numStage
 float _timeAdjusted
@@ -1204,7 +1208,7 @@ Function UpdateEffectiveEnjoymentCalculations()
 	If _HoldBackSpamPenalty
 		_FullEnjoyment = _FullEnjoyment - _HoldBackSpamPenalty
 	EndIf
-	sslSceneMenu.UpdateEnjoyment(_Thread, _ActorRef, _FullEnjoyment)
+	UpdateEnjoyment(_FullEnjoyment)
 	; Debug
 	If _Config.DebugMode
 		DebugEffectiveCalcVariables()

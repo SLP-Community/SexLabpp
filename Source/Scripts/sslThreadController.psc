@@ -35,15 +35,20 @@ int Property kRotateScene      = 10 AutoReadOnly
 int Property kEndAnimation     = 11 AutoReadOnly
 int Property kAdjustSchlong    = 12 AutoReadOnly
 
+String[] _MenuEvents
+
 Function EnableHotkeys(bool forced = false)
-	If(!HasPlayer && !forced || sslSceneMenu.IsMenuOpen())
+	If(!HasPlayer && !forced || !TryOpenSceneMenu())
 		return
 	EndIf
-	RegisterForModEvent("SL_StageAdvance", "MenuEvent")
-	RegisterForModEvent("SL_SetSpeed", "MenuEvent")
-	RegisterForModEvent("SL_EndScene", "MenuEvent")
-	sslSceneMenu.OpenMenu(Self)
-	sslSceneMenu.SetPositions(Self, Positions)
+	int i = 0
+	While (i < _MenuEvents.Length)
+		RegisterForModEvent(_MenuEvents[i], "MenuEvent")
+		i += 1
+	EndWhile
+	; RegisterForModEvent("SL_StageAdvance", "MenuEvent")
+	; RegisterForModEvent("SL_SetSpeed", "MenuEvent")
+	; RegisterForModEvent("SL_EndScene", "MenuEvent")
 
 	; Hotkeys = new int[13]
 	; Hotkeys[kAdvanceAnimation] = Config.AdvanceAnimation
@@ -67,8 +72,12 @@ Function EnableHotkeys(bool forced = false)
 EndFunction
 
 Function DisableHotkeys()
-	UnregisterForAllModEvents()
-	sslSceneMenu.CloseMenu(Self)
+	int i = 0
+	While (i < _MenuEvents.Length)
+		UnregisterForModEvent(_MenuEvents[i])
+		i += 1
+	EndWhile
+	TryCloseSceneMenu()
 EndFunction
 
 Event MenuEvent(string asEventName, string asStringArg, float afNumArg, form akSender)
