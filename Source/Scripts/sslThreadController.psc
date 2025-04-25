@@ -19,6 +19,9 @@ Message Property RepositionInfoMsg Auto
 
 sslActorAlias AdjustAlias		; The actor currently selected for position adjustments
 bool _SkipHotkeyEvents
+int _AutoAdvanceCache
+
+String[] _MenuEvents
 
 int[] Hotkeys
 int Property kAdvanceAnimation = 0 AutoReadOnly
@@ -35,40 +38,25 @@ int Property kRotateScene      = 10 AutoReadOnly
 int Property kEndAnimation     = 11 AutoReadOnly
 int Property kAdjustSchlong    = 12 AutoReadOnly
 
-String[] _MenuEvents
 
 Function EnableHotkeys(bool forced = false)
 	If(!HasPlayer && !forced || !TryOpenSceneMenu())
 		return
 	EndIf
+	_AutoAdvanceCache = -1
+	_MenuEvents = new String[7]
+	_MenuEvents[0] = "SL_SetActiveScene"
+	_MenuEvents[1] = "SL_SetSpeed"
+	_MenuEvents[2] = "SL_MoveScene"
+	_MenuEvents[3] = "SL_EndScene"
+	_MenuEvents[4] = "SL_SetAnnotations"
+	_MenuEvents[5] = "SL_SetOffset"
+	_MenuEvents[6] = "SL_StartAdjustOffset"
 	int i = 0
 	While (i < _MenuEvents.Length)
 		RegisterForModEvent(_MenuEvents[i], "MenuEvent")
 		i += 1
 	EndWhile
-	; RegisterForModEvent("SL_StageAdvance", "MenuEvent")
-	; RegisterForModEvent("SL_SetSpeed", "MenuEvent")
-	; RegisterForModEvent("SL_EndScene", "MenuEvent")
-
-	; Hotkeys = new int[13]
-	; Hotkeys[kAdvanceAnimation] = Config.AdvanceAnimation
-	; Hotkeys[kChangeAnimation] = Config.ChangeAnimation
-	; Hotkeys[kChangePositions] = Config.ChangePositions
-	; Hotkeys[kAdjustSideways] = Config.AdjustSideways
-	; Hotkeys[kRestoreOffsets] = Config.RestoreOffsets
-	; Hotkeys[kAdjustForward] = Config.AdjustForward
-	; Hotkeys[kRealignActors] = Config.RealignActors
-	; Hotkeys[kAdjustSchlong] = Config.AdjustSchlong
-	; Hotkeys[kAdjustUpward] = Config.AdjustUpward
-	; Hotkeys[kAdjustChange] = Config.AdjustChange
-	; Hotkeys[kEndAnimation] = Config.EndAnimation
-	; Hotkeys[kRotateScene] = Config.RotateScene
-	; Hotkeys[kMoveScene] = Config.MoveScene
-	; int i = 0
-	; While(i < Hotkeys.Length)
-	; 	RegisterForKey(Hotkeys[i])
-	; 	i += 1
-	; Endwhile
 EndFunction
 
 Function DisableHotkeys()
@@ -81,10 +69,16 @@ Function DisableHotkeys()
 EndFunction
 
 Event MenuEvent(string asEventName, string asStringArg, float afNumArg, form akSender)
-	sslLog.Log("MenuEvent: " + asEventName)
-	If(asEventName == "SL_StageAdvance")
-		PlayNextImpl(asStringArg)
-	ElseIf(asEventName == "SL_SetSpeed")
+	Log("MenuEvent: " + asEventName)
+	If (asEventName == "SL_SetActiveScene")
+		SetActiveScene(asStringArg)
+	ElseIf (asEventName == "SL_AdvanceScene")
+		If (afNumArg)
+			GoToStage(Stage - 1)
+		Else
+			PlayNextImpl(asStringArg)
+		EndIf
+	ElseIf (asEventName == "SL_SetSpeed")
 		If (!sslSystemConfig.HasAnimSpeedSE())
 			sslLog.Log("SetSpeed: AnimSpeedSE not found")
 			return
@@ -94,8 +88,23 @@ Event MenuEvent(string asEventName, string asStringArg, float afNumArg, form akS
 			ActorAlias[i].UpdateBaseSpeed(afNumArg)
 			i += 1
 		EndWhile
-	ElseIf(asEventName == "SL_EndScene")
+		If (afNumArg == 0.0)
+			_AutoAdvanceCache = AutoAdvance as int
+			AutoAdvance = false
+		ElseIf (_AutoAdvanceCache != -1)
+			AutoAdvance = _AutoAdvanceCache as bool
+			_AutoAdvanceCache = -1
+		EndIf
+	ElseIf (asEventName == "SL_MoveScene")
+		; TODO: impl
+	ElseIf (asEventName == "SL_EndScene")
 		EndAnimation()
+	ElseIf (asEventName == "SL_SetAnnotations")
+		; TODO: impl
+	ElseIf (asEventName == "SL_SetOffset")
+		; TODO: impl
+	ElseIf (asEventName == "SL_StartAdjustOffset")
+		; TODO: impl
 	EndIf
 EndEvent
 
