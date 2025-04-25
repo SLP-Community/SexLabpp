@@ -710,7 +710,7 @@ State Making
 			ClearLeadInScenes()
 		EndIf
 		Actor[] submissives = GetSubmissives()
-		If (!CreateThreadInstance(submissives, _PrimaryScenes, _LeadInScenes, _CustomScenes, _furniStatus))
+		If (!CreateInstance(submissives, _PrimaryScenes, _LeadInScenes, _CustomScenes, _furniStatus))
 			Fatal("Failed to start Thread: Unable to create thread instance. See 'Documents/My Games/Skyrim Special Edition/SKSE/SexLabUtil.log' for details", "StartThread()")
 			return none
 		EndIf
@@ -831,7 +831,7 @@ Function SetFurnitureStatus(int aiStatus)
 	Log("Furniture status can only be set during setup", "SetFurnitureStatus()")
 EndFunction
 
-bool Function CreateThreadInstance(Actor[] akSubmissives, String[] asPrimaryScenes, String[] asLeadInScenes, String[] asCustomScenes, int aiFurnitureStatus) native
+bool Function CreateInstance(Actor[] akSubmissives, String[] asPrimaryScenes, String[] asLeadInScenes, String[] asCustomScenes, int aiFurnitureStatus) native
 String[] Function GetLeadInScenes() native
 String[] Function GetPrimaryScenes() native
 String[] Function GetCustomScenes() native
