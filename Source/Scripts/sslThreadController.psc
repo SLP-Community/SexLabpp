@@ -44,14 +44,15 @@ Function EnableHotkeys(bool forced = false)
 		return
 	EndIf
 	_AutoAdvanceCache = -1
-	_MenuEvents = new String[7]
-	_MenuEvents[0] = "SL_SetActiveScene"
+	_MenuEvents = new String[8]
+	_MenuEvents[0] = "SL_AdvanceScene"
 	_MenuEvents[1] = "SL_SetSpeed"
 	_MenuEvents[2] = "SL_MoveScene"
 	_MenuEvents[3] = "SL_EndScene"
 	_MenuEvents[4] = "SL_SetAnnotations"
 	_MenuEvents[5] = "SL_SetOffset"
 	_MenuEvents[6] = "SL_StartAdjustOffset"
+	_MenuEvents[7] = "SL_SetActiveScene"
 	int i = 0
 	While (i < _MenuEvents.Length)
 		RegisterForModEvent(_MenuEvents[i], "MenuEvent")
@@ -71,7 +72,7 @@ EndFunction
 Event MenuEvent(string asEventName, string asStringArg, float afNumArg, form akSender)
 	Log("MenuEvent: " + asEventName)
 	If (asEventName == "SL_SetActiveScene")
-		SetActiveScene(asStringArg)
+		PickRandomScene(asStringArg)
 	ElseIf (asEventName == "SL_AdvanceScene")
 		If (afNumArg)
 			GoToStage(Stage - 1)
@@ -96,7 +97,7 @@ Event MenuEvent(string asEventName, string asStringArg, float afNumArg, form akS
 			_AutoAdvanceCache = -1
 		EndIf
 	ElseIf (asEventName == "SL_MoveScene")
-		; TODO: impl
+		MoveScene()
 	ElseIf (asEventName == "SL_EndScene")
 		EndAnimation()
 	ElseIf (asEventName == "SL_SetAnnotations")
@@ -107,6 +108,80 @@ Event MenuEvent(string asEventName, string asStringArg, float afNumArg, form akS
 		; TODO: impl
 	EndIf
 EndEvent
+
+Function PickRandomScene(String asNewScene)
+	String[] sceneSet = GetPlayingScenes()
+	If(sceneSet.Length < 2)
+		Log("PickRandomScene: No other scenes to pick from")
+		return
+	EndIf
+	UnregisterForUpdate()
+	If (asNewScene == "")
+		int i = sceneSet.Find(GetActiveScene())
+		int r = Utility.RandomInt(0, sceneSet.Length - 1)
+		While(r == i)
+			r = Utility.RandomInt(0, sceneSet.Length - 1)
+		EndWhile
+		asNewScene = sceneSet[r]
+	EndIf
+	Log("Changing running scene from " + GetActiveScene() + " to " + asNewScene)
+	SendThreadEvent("AnimationChange")
+	ResetScene(asNewScene)
+EndFunction
+
+Function MoveScene()
+	If (!SexLabRegistry.IsCompatibleCenter(Game.GetPlayer()))
+		Debug.Notification("This scene does not support repositioning")
+		return
+	EndIf
+	UnregisterForUpdate()
+	If (StorageUtil.GetIntValue(none, "SEXLAB_REPOSITIONMSG_INFO", 0) == 0)
+		; "You have 30 secs to position yourself to a new center location.\nHold down the 'Move Scene' hotkey to relocate the center instantly to your current position"
+		int choice = RepositionInfoMsg.Show()
+		If (choice == 1)
+			return
+		ElseIf (choice == 2)
+			StorageUtil.SetIntValue(none, "SEXLAB_REPOSITIONMSG_INFO", 1)
+		EndIf
+	EndIf
+	; Make sure the player cannot activate anything, change worldspaces or start combat on their own
+	Game.DisablePlayerControls(false, true, false, false, true)
+	sslActorAlias PlayerSlot = ActorAlias(PlayerRef)
+	int n = 0
+	While(n < Positions.Length)
+		If(ActorAlias[n] == PlayerSlot)
+			ActorAlias[n].TryUnlock()
+		Else
+			ActorAlias[n].SendDefaultAnimEvent(true)
+		EndIf
+		n += 1
+	EndWhile
+	Utility.Wait(1)
+	int i = 0
+	While(i < 60 && !Input.IsKeyPressed(Hotkeys[kMoveScene]))
+		Utility.Wait(0.5)
+		i += 1
+	EndWhile
+	Game.DisablePlayerControls()	; make sure player isnt moving before resync
+	float x = PlayerRef.X
+	float y = PlayerRef.Y
+	float z = PlayerRef.Z
+	Utility.Wait(0.5)							; wait for momentum to stop
+	While(x != PlayerRef.X || y != PlayerRef.Y || z != PlayerRef.Z)
+		x = PlayerRef.X
+		y = PlayerRef.Y
+		z = PlayerRef.Z
+		Utility.Wait(0.5)
+	EndWhile
+	If(PlayerSlot)
+		PlayerSlot.LockActor()
+	EndIf
+	Game.EnablePlayerControls()
+	CenterOnObject(PlayerRef)
+EndFunction
+
+
+
 
 Event OnKeyDown(int KeyCode)
 	If(Utility.IsInMenuMode() || _SkipHotkeyEvents)
@@ -291,53 +366,6 @@ EndFunction
 Function RestoreOffsets()
 	SexLabRegistry.ResetOffsetA(GetActiveScene(), GetActiveStage())
 	RealignActors()
-EndFunction
-
-Function MoveScene()
-	UnregisterForUpdate()
-	If (StorageUtil.GetIntValue(none, "SEXLAB_REPOSITIONMSG_INFO", 0) == 0)
-		; "You have 30 secs to position yourself to a new center location.\nHold down the 'Move Scene' hotkey to relocate the center instantly to your current position"
-		int choice = RepositionInfoMsg.Show()
-		If (choice == 1)
-			return
-		ElseIf (choice == 2)
-			StorageUtil.SetIntValue(none, "SEXLAB_REPOSITIONMSG_INFO", 1)
-		EndIf
-	EndIf
-	; Make sure the player cannot activate anything, change worldspaces or start combat on their own
-	Game.DisablePlayerControls(false, true, false, false, true)
-	sslActorAlias PlayerSlot = ActorAlias(PlayerRef)
-	int n = 0
-	While(n < Positions.Length)
-		If(ActorAlias[n] == PlayerSlot)
-			ActorAlias[n].TryUnlock()
-		Else
-			ActorAlias[n].SendDefaultAnimEvent(true)
-		EndIf
-		n += 1
-	EndWhile
-	Utility.Wait(1)
-	int i = 0
-	While(i < 60 && !Input.IsKeyPressed(Hotkeys[kMoveScene]))
-		Utility.Wait(0.5)
-		i += 1
-	EndWhile
-	Game.DisablePlayerControls()	; make sure player isnt moving before resync
-	float x = PlayerRef.X
-	float y = PlayerRef.Y
-	float z = PlayerRef.Z
-	Utility.Wait(0.5)							; wait for momentum to stop
-	While(x != PlayerRef.X || y != PlayerRef.Y || z != PlayerRef.Z)
-		x = PlayerRef.X
-		y = PlayerRef.Y
-		z = PlayerRef.Z
-		Utility.Wait(0.5)
-	EndWhile
-	If(PlayerSlot)
-		PlayerSlot.LockActor()
-	EndIf
-	Game.EnablePlayerControls()		; placing doesnt interact with player controls
-	CenterOnObject(PlayerRef)			; Will re-register the update loop
 EndFunction
 
 Function ChangePositions(bool backwards = false)
