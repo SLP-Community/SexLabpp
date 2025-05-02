@@ -54,16 +54,16 @@ Event OnConfigInit()
 	Pages[9] = "$SSL_RebuildClean"
 
 	; Animation Settings
-	_PlFurnOpt = new String[4]
+	_PlFurnOpt = new String[5]
 	_PlFurnOpt[0] = "$SSL_Never"
-	_PlFurnOpt[1] = "$SSL_Somtimes"
+	_PlFurnOpt[1] = "$SSL_Sometimes"
 	_PlFurnOpt[2] = "$SSL_Always"
 	_PlFurnOpt[3] = "$SSL_AskAlways"
 	_PlFurnOpt[4] = "$SSL_AskNotSub"
 
 	_NPCFurnOpt = new String[2]
 	_NPCFurnOpt[0] = "$SSL_Never"
-	_NPCFurnOpt[1] = "$SSL_Somtimes"
+	_NPCFurnOpt[1] = "$SSL_Sometimes"
 	_NPCFurnOpt[2] = "$SSL_Always"
 
 	_FadeOpt = new string[3]
