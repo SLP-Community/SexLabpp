@@ -61,7 +61,7 @@ Event OnConfigInit()
 	_PlFurnOpt[3] = "$SSL_AskAlways"
 	_PlFurnOpt[4] = "$SSL_AskNotSub"
 
-	_NPCFurnOpt = new String[2]
+	_NPCFurnOpt = new String[3]
 	_NPCFurnOpt[0] = "$SSL_Never"
 	_NPCFurnOpt[1] = "$SSL_Sometimes"
 	_NPCFurnOpt[2] = "$SSL_Always"
@@ -372,7 +372,7 @@ Function AnimationSettings()
 	AddToggleOptionST("DisableTeleport","$SSL_DisableTeleport", Config.DisableTeleport)
 	AddToggleOptionST("ShowInMap","$SSL_ShowInMap", Config.ShowInMap)
 	AddToggleOptionST("SetAnimSpeedByEnjoyment", "$SSL_SetAnimSpeedByEnjoyment", Config.SetAnimSpeedByEnjoyment, DoDisable(!sslSystemConfig.HasAnimSpeedSE()))
-	AddTextOptionST("FurnitureNPC","$SSL_FurnitureNPC", _NPCFurnOpt[sslSystemConfig.GetSettingInt("iNPCBed")])
+	AddMenuOptionST("FurnitureNPC", "$SSL_FurnitureNPC", _NPCFurnOpt[sslSystemConfig.GetSettingInt("iNPCBed")])
 	AddMenuOptionST("FurniturePlayer", "$SSL_FurniturePlayer", _PlFurnOpt[sslSystemConfig.GetSettingInt("iAskBed")])
 EndFunction
 
@@ -1524,16 +1524,14 @@ function PlayerHotkeys()
 	AddHeaderOption("$SSL_SceneManipulation")
 	AddEmptyOption()
 	AddKeyMapOptionST("M_S_iKeyUp", "$SSL_KeyUp", sslSystemConfig.GetSettingInt("iKeyUp"))
-	; AddKeyMapOptionST("M_S_iKeyExtra1", "$SSL_KeyExtra1", sslSystemConfig.GetSettingInt("iKeyExtra1"))
-	AddEmptyOption()
+	AddKeyMapOptionST("M_S_iKeyExtra2", "$SSL_KeyExtra2", sslSystemConfig.GetSettingInt("iKeyExtra2"))
 	AddKeyMapOptionST("M_S_iKeyDown", "$SSL_KeyDown", sslSystemConfig.GetSettingInt("iKeyDown"))
-	AddKeyMapOptionST("M_S_iKeyExtra", "$SSL_KeyExtra2", sslSystemConfig.GetSettingInt("iKeyExtra"))
-	AddKeyMapOptionST("M_S_iKeyLeft", "$SSL_KeyLeft", sslSystemConfig.GetSettingInt("iKeyLeft"))
 	AddKeyMapOptionST("M_S_iKeyMod", "$SSL_KeyMod", sslSystemConfig.GetSettingInt("iKeyMod"))
-	AddKeyMapOptionST("M_S_iKeyRight", "$SSL_KeyRight", sslSystemConfig.GetSettingInt("iKeyRight"))
+	AddKeyMapOptionST("M_S_iKeyLeft", "$SSL_KeyLeft", sslSystemConfig.GetSettingInt("iKeyLeft"))
 	AddKeyMapOptionST("M_S_iKeyReset", "$SSL_KeyReset", sslSystemConfig.GetSettingInt("iKeyReset"))
-	AddKeyMapOptionST("M_S_iKeyAdvance", "$SSL_KeyAdvance", sslSystemConfig.GetSettingInt("iKeyAdvance"))
+	AddKeyMapOptionST("M_S_iKeyRight", "$SSL_KeyRight", sslSystemConfig.GetSettingInt("iKeyRight"))
 	AddKeyMapOptionST("M_S_iKeyEnd", "$SSL_KeyEnd", sslSystemConfig.GetSettingInt("iKeyEnd"))
+	AddKeyMapOptionST("M_S_iKeyAdvance", "$SSL_KeyAdvance", sslSystemConfig.GetSettingInt("iKeyAdvance"))
 	; AddKeyMapOptionST("RealignActors","$SSL_RealignActors", Config.RealignActors)
 	; AddKeyMapOptionST("EndAnimation", "$SSL_EndAnimation", Config.EndAnimation)
 	; AddKeyMapOptionST("AdvanceAnimation", "$SSL_AdvanceAnimationStage", Config.AdvanceAnimation)
