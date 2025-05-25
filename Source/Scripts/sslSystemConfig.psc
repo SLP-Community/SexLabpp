@@ -794,16 +794,9 @@ int Property HOOKID_END         = 3 AutoReadOnly
 bool Function AddHook(SexLabThreadHook akHook)
   If (!akHook || _Hooks.Find(akHook) > -1)
     return false
-  ElseIf (!_Hooks.Length)
-    _Hooks = new SexLabThreadHook[16]
   EndIf
-  int idx = _Hooks.Find(none)
-  If (idx == -1)
-    Log("Unable to bind new Thread Hook, limit of " + _Hooks.Length + " hooks reached")
-    Debug.MessageBox("Unable to bind new Thread Hook, limit of possible hooks reached\nPlease report this to Scrab")
-    return false
-  EndIf
-  _Hooks[idx] = akHook
+  Log("Adding new hook " + akHook)
+  _Hooks = sslUtility.PushThreadHook(akHook, _Hooks)
   return true
 EndFunction
 
@@ -813,7 +806,8 @@ bool Function RemoveHook(SexLabThreadHook akHook)
     Log("Hook " + akHook + " is not registered and cannot be removed")
     return false
   EndIf
-  _Hooks[idx] = none
+  _Hooks[idx] = None
+  _Hooks = sslUtility.ClearNoneThreadHook(_Hooks)
   return true
 EndFunction
 
@@ -822,18 +816,18 @@ bool Function IsHooked(SexLabThreadHook akHook)
 EndFUnction
 
 Function RunHook(int aiHookID, SexLabThread akThread)
-  Log("Running Hook " + aiHookID + " from thread " + akThread)
+  Log("Running HookID " + aiHookID + " from thread " + akThread + ", " + _Hooks.Length + " hooks registered")
   int i = 0
   While (i < _Hooks.Length)
     If (!_Hooks[i])
-      ; Skip
-    ElseIf (HOOKID_STAGESTART)
+      Log("Hook " + i + " is empty"); Unlikely to occur. Empty hooks are cleared from array.
+    ElseIf (aiHookID == HOOKID_STAGESTART)
       _Hooks[i].OnStageStart(akThread)
-    ElseIf (HOOKID_STAGEEND)
+    ElseIf (aiHookID == HOOKID_STAGEEND)
       _Hooks[i].OnStageEnd(akThread)
-    ElseIf (HOOKID_STARTING)
+    ElseIf (aiHookID == HOOKID_STARTING)
       _Hooks[i].OnAnimationStarting(akThread)
-    ElseIf (HOOKID_END)
+    ElseIf (aiHookID == HOOKID_END)
       _Hooks[i].OnAnimationEnd(akThread)
     EndIf
     i += 1
@@ -1005,6 +999,7 @@ Function Reload()
   RegisterForCrosshairRef()
   _CrosshairRef = none
   TargetRef = none
+  _Hooks = sslUtility.ClearNoneThreadHook(_Hooks)
 
   UnregisterForAllKeys()
   RegisterForKey(ToggleFreeCamera)
@@ -1718,10 +1713,12 @@ function AddTargetActor(Actor ActorRef)
 endFunction
 
 int function RegisterThreadHook(sslThreadHook Hook)
-  AddHook(Hook)
+  AddHook(Hook as SexLabThreadHook)
+  return _Hooks.Find(Hook as SexLabThreadHook)
 endFunction
 sslThreadHook[] function GetThreadHooks()
-  return new sslThreadHook[1]
+  sslThreadHook[] Empty
+  return Empty
 endFunction
 int function GetThreadHookCount()
   return 0

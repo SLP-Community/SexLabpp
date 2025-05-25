@@ -226,6 +226,57 @@ string[] function GetAllAnimationTagsInArray(sslBaseAnimation[] List) global
 	return PapyrusUtil.RemoveString(Output, "")
 endFunction
 
+SexLabThreadHook[] function PushThreadHook(SexLabThreadHook NewHook, SexLabThreadHook[] Array) global
+	int len = Array.Length
+	if len >= 128
+		return Array
+	elseIf len == 0
+		Array = new SexLabThreadHook[1]
+		Array[0] = NewHook
+		return Array
+	endIf
+	SexLabThreadHook[] Pushed = ThreadHookArray(len+1)
+	Pushed[len] = NewHook
+	while len
+		len -=1
+		Pushed[len] = Array[len]
+	endWhile
+	return Pushed
+endFunction
+
+int function CountNoneThreadHook(SexLabThreadHook[] Array) global
+	int i = 0
+	int EmptyHooks = 0
+	while i < Array.Length
+		if !Array[i]
+			EmptyHooks += 1
+		endif
+		i += 1
+	endWhile
+	return EmptyHooks
+endFunction
+
+SexLabThreadHook[] function ClearNoneThreadHook(SexLabThreadHook[] Array) global
+	int EmptyHooks = CountNoneThreadHook(Array)
+	if EmptyHooks < 1
+		return Array
+	endif
+	SexLabThreadHook[] TrimmedArray = ThreadHookArray(Array.Length - EmptyHooks)
+	if TrimmedArray.Length == 0
+		return TrimmedArray
+	endif
+	int i = 0
+	int NewIndex = 0
+	while i < Array.Length
+		if Array[i]
+			TrimmedArray[NewIndex] = Array[i]
+			NewIndex += 1
+		endif
+		i += 1
+	endWhile
+	return TrimmedArray
+endFunction
+
 ;/-----------------------------------------------\;
 ;|	Utility Functions
 ;\-----------------------------------------------/;
@@ -1501,7 +1552,300 @@ sslBaseObject[] function BaseObjectArray(int size) global
 		endIf
 	endIf
 endFunction
-
+SexLabThreadHook[] function ThreadHookArray(int size) global
+	if size < 8
+		if size <= 0
+			SexLabThreadHook[] Empty
+			return Empty
+		elseIf size == 1
+			return new SexLabThreadHook[1]
+		elseIf size == 2
+			return new SexLabThreadHook[2]
+		elseIf size == 3
+			return new SexLabThreadHook[3]
+		elseIf size == 4
+			return new SexLabThreadHook[4]
+		elseIf size == 5
+			return new SexLabThreadHook[5]
+		elseIf size == 6
+			return new SexLabThreadHook[6]
+		else
+			return new SexLabThreadHook[7]
+		endIf
+	elseIf size < 16
+		if size == 8
+			return new SexLabThreadHook[8]
+		elseIf size == 9
+			return new SexLabThreadHook[9]
+		elseIf size == 10
+			return new SexLabThreadHook[10]
+		elseIf size == 11
+			return new SexLabThreadHook[11]
+		elseIf size == 12
+			return new SexLabThreadHook[12]
+		elseIf size == 13
+			return new SexLabThreadHook[13]
+		elseIf size == 14
+			return new SexLabThreadHook[14]
+		else
+			return new SexLabThreadHook[15]
+		endIf
+	elseIf size < 24
+		if size == 16
+			return new SexLabThreadHook[16]
+		elseIf size == 17
+			return new SexLabThreadHook[17]
+		elseIf size == 18
+			return new SexLabThreadHook[18]
+		elseIf size == 19
+			return new SexLabThreadHook[19]
+		elseIf size == 20
+			return new SexLabThreadHook[20]
+		elseIf size == 21
+			return new SexLabThreadHook[21]
+		elseIf size == 22
+			return new SexLabThreadHook[22]
+		else
+			return new SexLabThreadHook[23]
+		endIf
+	elseIf size < 32
+		if size == 24
+			return new SexLabThreadHook[24]
+		elseIf size == 25
+			return new SexLabThreadHook[25]
+		elseIf size == 26
+			return new SexLabThreadHook[26]
+		elseIf size == 27
+			return new SexLabThreadHook[27]
+		elseIf size == 28
+			return new SexLabThreadHook[28]
+		elseIf size == 29
+			return new SexLabThreadHook[29]
+		elseIf size == 30
+			return new SexLabThreadHook[30]
+		else
+			return new SexLabThreadHook[31]
+		endIf
+	elseIf size < 40
+		if size == 32
+			return new SexLabThreadHook[32]
+		elseIf size == 33
+			return new SexLabThreadHook[33]
+		elseIf size == 34
+			return new SexLabThreadHook[34]
+		elseIf size == 35
+			return new SexLabThreadHook[35]
+		elseIf size == 36
+			return new SexLabThreadHook[36]
+		elseIf size == 37
+			return new SexLabThreadHook[37]
+		elseIf size == 38
+			return new SexLabThreadHook[38]
+		else
+			return new SexLabThreadHook[39]
+		endIf
+	elseIf size < 48
+		if size == 40
+			return new SexLabThreadHook[40]
+		elseIf size == 41
+			return new SexLabThreadHook[41]
+		elseIf size == 42
+			return new SexLabThreadHook[42]
+		elseIf size == 43
+			return new SexLabThreadHook[43]
+		elseIf size == 44
+			return new SexLabThreadHook[44]
+		elseIf size == 45
+			return new SexLabThreadHook[45]
+		elseIf size == 46
+			return new SexLabThreadHook[46]
+		else
+			return new SexLabThreadHook[47]
+		endIf
+	elseIf size < 56
+		if size == 48
+			return new SexLabThreadHook[48]
+		elseIf size == 49
+			return new SexLabThreadHook[49]
+		elseIf size == 50
+			return new SexLabThreadHook[50]
+		elseIf size == 51
+			return new SexLabThreadHook[51]
+		elseIf size == 52
+			return new SexLabThreadHook[52]
+		elseIf size == 53
+			return new SexLabThreadHook[53]
+		elseIf size == 54
+			return new SexLabThreadHook[54]
+		else
+			return new SexLabThreadHook[55]
+		endif
+	elseIf size < 64
+		if size == 56
+			return new SexLabThreadHook[56]
+		elseIf size == 57
+			return new SexLabThreadHook[57]
+		elseIf size == 58
+			return new SexLabThreadHook[58]
+		elseIf size == 59
+			return new SexLabThreadHook[59]
+		elseIf size == 60
+			return new SexLabThreadHook[60]
+		elseIf size == 61
+			return new SexLabThreadHook[61]
+		elseIf size == 62
+			return new SexLabThreadHook[62]
+		else
+			return new SexLabThreadHook[63]
+		endIf
+	elseIf size < 72
+		if size == 64
+			return new SexLabThreadHook[64]
+		elseIf size == 65
+			return new SexLabThreadHook[65]
+		elseIf size == 66
+			return new SexLabThreadHook[66]
+		elseIf size == 67
+			return new SexLabThreadHook[67]
+		elseIf size == 68
+			return new SexLabThreadHook[68]
+		elseIf size == 69
+			return new SexLabThreadHook[69]
+		elseIf size == 70
+			return new SexLabThreadHook[70]
+		else
+			return new SexLabThreadHook[71]
+		endif
+	elseIf size < 80
+		if size == 72
+			return new SexLabThreadHook[72]
+		elseIf size == 73
+			return new SexLabThreadHook[73]
+		elseIf size == 74
+			return new SexLabThreadHook[74]
+		elseIf size == 75
+			return new SexLabThreadHook[75]
+		elseIf size == 76
+			return new SexLabThreadHook[76]
+		elseIf size == 77
+			return new SexLabThreadHook[77]
+		elseIf size == 78
+			return new SexLabThreadHook[78]
+		else
+			return new SexLabThreadHook[79]
+		endIf
+	elseIf size < 88
+		if size == 80
+			return new SexLabThreadHook[80]
+		elseIf size == 81
+			return new SexLabThreadHook[81]
+		elseIf size == 82
+			return new SexLabThreadHook[82]
+		elseIf size == 83
+			return new SexLabThreadHook[83]
+		elseIf size == 84
+			return new SexLabThreadHook[84]
+		elseIf size == 85
+			return new SexLabThreadHook[85]
+		elseIf size == 86
+			return new SexLabThreadHook[86]
+		else
+			return new SexLabThreadHook[87]
+		endif
+	elseIf size < 96
+		if size == 88
+			return new SexLabThreadHook[88]
+		elseIf size == 89
+			return new SexLabThreadHook[89]
+		elseIf size == 90
+			return new SexLabThreadHook[90]
+		elseIf size == 91
+			return new SexLabThreadHook[91]
+		elseIf size == 92
+			return new SexLabThreadHook[92]
+		elseIf size == 93
+			return new SexLabThreadHook[93]
+		elseIf size == 94
+			return new SexLabThreadHook[94]
+		else
+			return new SexLabThreadHook[95]
+		endIf
+	elseIf size < 104
+		if size == 96
+			return new SexLabThreadHook[96]
+		elseIf size == 97
+			return new SexLabThreadHook[97]
+		elseIf size == 98
+			return new SexLabThreadHook[98]
+		elseIf size == 99
+			return new SexLabThreadHook[99]
+		elseIf size == 100
+			return new SexLabThreadHook[100]
+		elseIf size == 101
+			return new SexLabThreadHook[101]
+		elseIf size == 102
+			return new SexLabThreadHook[102]
+		else
+			return new SexLabThreadHook[103]
+		endif
+	elseIf size < 112
+		if size == 104
+			return new SexLabThreadHook[104]
+		elseIf size == 105
+			return new SexLabThreadHook[105]
+		elseIf size == 106
+			return new SexLabThreadHook[106]
+		elseIf size == 107
+			return new SexLabThreadHook[107]
+		elseIf size == 108
+			return new SexLabThreadHook[108]
+		elseIf size == 109
+			return new SexLabThreadHook[109]
+		elseIf size == 110
+			return new SexLabThreadHook[110]
+		else
+			return new SexLabThreadHook[111]
+		endif
+	elseIf size < 120
+		if size == 112
+			return new SexLabThreadHook[112]
+		elseIf size == 113
+			return new SexLabThreadHook[113]
+		elseIf size == 114
+			return new SexLabThreadHook[114]
+		elseIf size == 115
+			return new SexLabThreadHook[115]
+		elseIf size == 116
+			return new SexLabThreadHook[116]
+		elseIf size == 117
+			return new SexLabThreadHook[117]
+		elseIf size == 118
+			return new SexLabThreadHook[118]
+		else
+			return new SexLabThreadHook[119]
+		endif
+	else
+		if size == 120
+			return new SexLabThreadHook[120]
+		elseIf size == 121
+			return new SexLabThreadHook[121]
+		elseIf size == 122
+			return new SexLabThreadHook[122]
+		elseIf size == 123
+			return new SexLabThreadHook[123]
+		elseIf size == 124
+			return new SexLabThreadHook[124]
+		elseIf size == 125
+			return new SexLabThreadHook[125]
+		elseIf size == 126
+			return new SexLabThreadHook[126]
+		elseIf size == 127
+			return new SexLabThreadHook[127]
+		else
+			return new SexLabThreadHook[128]
+		endIf
+	endIf
+endFunction
 ; *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-* ;
 ; ----------------------------------------------------------------------------- ;
 ;               ██╗     ███████╗ ██████╗  █████╗  ██████╗██╗   ██╗              ;
