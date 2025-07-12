@@ -2337,7 +2337,36 @@ Actor Function GameChangePartner(Actor akActor, int idx = -1)
 			EndIf
 		EndIf
 	EndIf
+	Config.SelectedSpell.Cast(akPartner, akPartner)
 	return akPartner
+EndFunction
+
+int Function GameNextPartnerIdx(Actor akActor, Actor akPartner, bool abReverse)
+	int PartnerIdx = GetPositionIdx(akPartner)
+    If (Positions.Length <= 2)
+        return PartnerIdx
+    EndIf
+	int ActorIdx = GetPositionIdx(akActor)
+    int step = 1
+    If (abReverse)
+        step = -1
+    EndIf
+    int NewIdx = (PartnerIdx + step)
+	int PosLen = Positions.Length
+    int i = 0
+    While (i < PosLen)
+        If (NewIdx >= PosLen)
+            NewIdx = 0
+        ElseIf (NewIdx < 0)
+            NewIdx = PosLen - 1
+        EndIf
+        If (NewIdx != ActorIdx) && (NewIdx != PartnerIdx)
+            return NewIdx
+        EndIf
+        NewIdx += step
+        i += 1
+    EndWhile
+    return PartnerIdx
 EndFunction
 
 Function ProcessEnjGameArg(String arg = "", Actor akActor, Actor akPartner, float GameModSelfSta, float GameModSelfMag)

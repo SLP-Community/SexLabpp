@@ -858,11 +858,7 @@ Function EnjoymentSettings()
 		AddKeyMapOptionST("GamePauseKey", "$SSL_GamePauseKey", Config.GamePauseKey)
 		AddKeyMapOptionST("GameRaiseEnjKey", "$SSL_GameRaiseEnjKey", Config.GameRaiseEnjKey)
 		AddKeyMapOptionST("GameHoldbackKey", "$SSL_GameHoldbackKey", Config.GameHoldbackKey)
-		AddKeyMapOptionST("GameSelectPos0", "$SSL_GameSelectPos0", Config.GameSelectPos0)
-		AddKeyMapOptionST("GameSelectPos1", "$SSL_GameSelectPos1", Config.GameSelectPos1)
-		AddKeyMapOptionST("GameSelectPos2", "$SSL_GameSelectPos2", Config.GameSelectPos2)
-		AddKeyMapOptionST("GameSelectPos3", "$SSL_GameSelectPos3", Config.GameSelectPos3)
-		AddKeyMapOptionST("GameSelectPos4", "$SSL_GameSelectPos4", Config.GameSelectPos4)
+		AddKeyMapOptionST("GameSelectNextPos", "$SSL_GameSelectNextPos", Config.GameSelectNextPos)
 EndFunction
 
 ; ------------------------------------------------------- ;

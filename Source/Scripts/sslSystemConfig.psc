@@ -1131,11 +1131,7 @@ Function CacheEnjJsonValues()
 	StoreEnjJsonValue("kGamePauseKey")
 	StoreEnjJsonValue("kGameRaiseEnjKey")
 	StoreEnjJsonValue("kGameHoldbackKey")
-	StoreEnjJsonValue("kGameSelectPos0")
-	StoreEnjJsonValue("kGameSelectPos1")
-	StoreEnjJsonValue("kGameSelectPos2")
-	StoreEnjJsonValue("kGameSelectPos3")
-	StoreEnjJsonValue("kGameSelectPos4")
+	StoreEnjJsonValue("kGameSelectNextPos")
 EndFunction
 
 Function StoreEnjJsonValue(String asSetting)
@@ -1416,44 +1412,12 @@ int Property GameHoldbackKey hidden
     SetSettingIntEnj("kGameHoldbackKey", aiSet)
   EndFunction
 EndProperty
-int Property GameSelectPos0 hidden
+int Property GameSelectNextPos hidden
   int Function Get()
-    return GetSettingIntEnj("kGameSelectPos0")
+    return GetSettingIntEnj("kGameSelectNextPos")
   EndFunction
   Function Set(int aiSet)
-    SetSettingIntEnj("kGameSelectPos0", aiSet)
-  EndFunction
-EndProperty
-int Property GameSelectPos1 hidden
-  int Function Get()
-    return GetSettingIntEnj("kGameSelectPos1")
-  EndFunction
-  Function Set(int aiSet)
-    SetSettingIntEnj("kGameSelectPos1", aiSet)
-  EndFunction
-EndProperty
-int Property GameSelectPos2 hidden
-  int Function Get()
-    return GetSettingIntEnj("kGameSelectPos2")
-  EndFunction
-  Function Set(int aiSet)
-    SetSettingIntEnj("kGameSelectPos2", aiSet)
-  EndFunction
-EndProperty
-int Property GameSelectPos3 hidden
-  int Function Get()
-    return GetSettingIntEnj("kGameSelectPos3")
-  EndFunction
-  Function Set(int aiSet)
-    SetSettingIntEnj("kGameSelectPos3", aiSet)
-  EndFunction
-EndProperty
-int Property GameSelectPos4 hidden
-  int Function Get()
-    return GetSettingIntEnj("kGameSelectPos4")
-  EndFunction
-  Function Set(int aiSet)
-    SetSettingIntEnj("kGameSelectPos4", aiSet)
+    SetSettingIntEnj("kGameSelectNextPos", aiSet)
   EndFunction
 EndProperty
 

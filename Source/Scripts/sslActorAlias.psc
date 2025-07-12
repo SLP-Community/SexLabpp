@@ -938,39 +938,30 @@ State Animating
 	EndFunction
 
 	Event OnKeyDown(int KeyCode)
-		If (Utility.IsInMenuMode() || !_Config.GameEnabled || _bGamePaused)
+		If (Utility.IsInMenuMode() || !_Config.GameEnabled)
 			return
 		EndIf
-		If KeyCode == _Config.GameRaiseEnjKey
-			RunEnjoymentGame("Stamina")
-		ElseIf KeyCode == _Config.GameHoldbackKey
-			RunEnjoymentGame("Magicka")
-		ElseIf Input.IsKeyPressed(_Config.GameUtilityKey)
-			If KeyCode == _Config.GamePauseKey
-				If _bGamePaused
-					_bGamePaused = False
-				Else
-					_bGamePaused = True
+		If (KeyCode == _Config.GamePauseKey) && Input.IsKeyPressed(_Config.GameUtilityKey)
+			_bGamePaused = !_bGamePaused
+			MiscUtil.PrintConsole("[EnjGame] Game paused: " + _bGamePaused)
+		EndIf
+		If !_bGamePaused
+			If (KeyCode == _Config.GameRaiseEnjKey)
+				RunEnjoymentGame("Stamina")
+			ElseIf (KeyCode == _Config.GameHoldbackKey)
+				RunEnjoymentGame("Magicka")
+			ElseIf (KeyCode == _Config.GameSelectNextPos)
+				If _EnjGamePartner
+					int newIdx = _Thread.GameNextPartnerIdx(_ActorRef, _EnjGamePartner, Input.IsKeyPressed(_Config.GameUtilityKey))
+					_EnjGamePartner = _Thread.GameChangePartner(_ActorRef, newIdx)
 				EndIf
-				MiscUtil.PrintConsole("[EnjGame] Game paused: " + _bGamePaused)
-				return
-			ElseIf KeyCode == _Config.GameSelectPos0
-				_EnjGamePartner = _Thread.GameChangePartner(_ActorRef, 0)
-			ElseIf KeyCode == _Config.GameSelectPos1
-				_EnjGamePartner = _Thread.GameChangePartner(_ActorRef, 1)
-			ElseIf KeyCode == _Config.GameSelectPos2
-				_EnjGamePartner = _Thread.GameChangePartner(_ActorRef, 2)
-			ElseIf KeyCode == _Config.GameSelectPos3
-				_EnjGamePartner = _Thread.GameChangePartner(_ActorRef, 3)
-			ElseIf KeyCode == _Config.GameSelectPos4
-				_EnjGamePartner = _Thread.GameChangePartner(_ActorRef, 4)
 			EndIf
 		EndIf
 	EndEvent
 	
 	Event OnEndState()
 		UnregisterForModEvent("SSL_ORGASM_Thread" + _Thread.tid)
-		EnjGameKeys("Unregister")
+		UnregisterEnjGameKeys()
 		StoreExcitementState("Backup")
 		sslBaseExpression.CloseMouth(_ActorRef)
 		_ActorRef.ClearExpressionOverride()
@@ -1291,7 +1282,7 @@ Function UpdateBaseEnjoymentCalculations()
 		return
 	EndIf
 	ResetEnjoymentVariables()
-	EnjGameKeys("Register")
+	RegisterEnjGameKeys()
 	StoreExcitementState("Restore")
 	RunEnjoymentGame("Initiate")
 	_CrtMaleHugePP = _Thread.CrtMaleHugePP()
@@ -1495,33 +1486,25 @@ Function StoreExcitementState(String arg = "")
 	EndIf
 EndFunction
 
-Function EnjGameKeys(String arg = "")
-	If (arg == "Register")
-		bool condition = (_Config.GameEnabled && (_Config.GamePlayerAutoplay != 1) && \
-		(_ActorRef == _PlayerRef) && !(_victim && _Config.GamePlayerVictimAutoplay == 1))
-		If !condition
-			return
-		EndIf
-		RegisterForKey(_Config.GameUtilityKey)
-		RegisterForKey(_Config.GamePauseKey)
-		RegisterForKey(_Config.GameRaiseEnjKey)
-		RegisterForKey(_Config.GameHoldbackKey)
-		RegisterForKey(_Config.GameSelectPos0)
-		RegisterForKey(_Config.GameSelectPos1)
-		RegisterForKey(_Config.GameSelectPos2)
-		RegisterForKey(_Config.GameSelectPos3)
-		RegisterForKey(_Config.GameSelectPos4)
-	ElseIf (arg == "Unregister")
-		UnregisterForKey(_Config.GameUtilityKey)
-		UnregisterForKey(_Config.GamePauseKey)
-		UnregisterForKey(_Config.GameRaiseEnjKey)
-		UnregisterForKey(_Config.GameHoldbackKey)
-		UnregisterForKey(_Config.GameSelectPos0)
-		UnregisterForKey(_Config.GameSelectPos1)
-		UnregisterForKey(_Config.GameSelectPos2)
-		UnregisterForKey(_Config.GameSelectPos3)
-		UnregisterForKey(_Config.GameSelectPos4)
+Function RegisterEnjGameKeys()
+	bool condition = (_Config.GameEnabled && (_Config.GamePlayerAutoplay != 1) && \
+	(_ActorRef == _PlayerRef) && !(_victim && _Config.GamePlayerVictimAutoplay == 1))
+	If !condition
+		return
 	EndIf
+	RegisterForKey(_Config.GameUtilityKey)
+	RegisterForKey(_Config.GamePauseKey)
+	RegisterForKey(_Config.GameRaiseEnjKey)
+	RegisterForKey(_Config.GameHoldbackKey)
+	RegisterForKey(_Config.GameSelectNextPos)
+EndFunction
+
+Function UnregisterEnjGameKeys()
+	UnregisterForKey(_Config.GameUtilityKey)
+	UnregisterForKey(_Config.GamePauseKey)
+	UnregisterForKey(_Config.GameRaiseEnjKey)
+	UnregisterForKey(_Config.GameHoldbackKey)
+	UnregisterForKey(_Config.GameSelectNextPos)
 EndFunction
 
 Function RunEnjoymentGame(String arg = "")
