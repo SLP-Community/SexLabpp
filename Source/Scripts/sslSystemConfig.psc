@@ -38,9 +38,9 @@ SoundCategory property AudioVoice auto
 float Function GetMinSetupTime() native global
 
 int Function GetAnimationCount() native global
-float[] Function GetEnjoymentFactors() native global
-int Function GetEnjoymentSettingInt(String asSetting) native global
-float Function GetEnjoymentSettingFlt(String asSetting) native global
+;float[] Function GetEnjoymentFactors() native global
+;int Function GetEnjoymentSettingInt(String asSetting) native global
+;float Function GetEnjoymentSettingFlt(String asSetting) native global
 Form[] Function GetStrippableItems(Actor akActor, bool abWornOnly) native global
 
 bool Function GetSettingBool(String asSetting) native global
@@ -59,7 +59,7 @@ Function SetSettingFltA(String asSetting, float aiValue, int n) native global
 
 int Property CLIMAXTYPE_SCENE  = 0 AutoReadOnly
 int Property CLIMAXTYPE_LEGACY = 1 AutoReadOnly
-int Property CLIMAXTYPE_EXTERN = 2 AutoReadOnly
+int Property CLIMAXTYPE_SLSO = 2 AutoReadOnly
 
 Spell[] Property MatchMakerSpells Auto
 {4 Spells: Solo | Target | OrgySolo | OrgyTarget}
@@ -117,13 +117,29 @@ String Function MergeTagString(String req, String[] add, String prefix) global
 EndFunction
 
 ; Booleans
-bool property DebugMode hidden
-  bool function get()
+bool property DebugMode hidden		; thread and scene info
+  bool Function get()
     return GetSettingBool("bDebugMode")
-  endFunction
-  function set(bool value)
+  EndFunction
+  Function set(bool value)
     SetSettingBool("bDebugMode", value)
-  endFunction
+  EndFunction
+endProperty
+bool Property DebugMode2 hidden		; expression, voice, sfx, strapon, and cum info
+  bool Function get()
+    return GetSettingBoolEnj("bDebugMode2")
+  EndFunction
+  Function set(bool value)
+    SetSettingBoolEnj("bDebugMode2", value)
+  EndFunction
+endProperty
+bool Property DebugMode3 hidden		; enjoyment and interactions info
+  bool Function get()
+    return GetSettingBoolEnj("bDebugMode3")
+  EndFunction
+  Function set(bool value)
+    SetSettingBoolEnj("bDebugMode3", value)
+  EndFunction
 endProperty
 bool property AllowCreatures hidden
   bool Function Get()
@@ -1048,6 +1064,408 @@ endFunction
 function StoreActor(Form FormRef) global
 endFunction
 
+; *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-* ;
+; --------------------------------------------------------------------------------------- ;
+;  ███████╗███╗   ██╗     ██╗ ██████╗ ██╗   ██╗███╗     ╔███╗███████╗███╗   ██╗████████╗  ;
+;  ██╔════╝████╗  ██║     ██║██╔═══██╗╚██╗ ██╔╝████╗   ╔████║██╔════╝████╗  ██║╚══██╔══╝  ;
+;  █████╗  ██╔██╗ ██║     ██║██║   ██║ ╚████╔╝ ██╔██╗ ╔██╔██║█████╗  ██╔██╗ ██║   ██║     ;
+;  ██╔══╝  ██║╚██╗██║██   ██║██║   ██║  ╚██╔╝  ██║╚██ ██╔╝██║██╔══╝  ██║╚██╗██║   ██║     ;
+;  ███████╗██║ ╚████║╚█████╔╝╚██████╔╝   ██║   ██║ ╚███╔╝ ██║███████╗██║ ╚████║   ██║     ;
+;  ╚══════╝╚═╝  ╚═══╝ ╚════╝  ╚═════╝    ╚═╝   ╚═╝  ╚══╝  ╚═╝╚══════╝╚═╝  ╚═══╝   ╚═╝     ;
+; --------------------------------------------------------------------------------------- ;
+; *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-* ;
+; TODO: move settings from .json to settings.yaml (.ini undesirable bcz no MCM access)
+; When done, remove/replace these functions as in JSON CACHE and CONFIG UTILS
+
+; ----------------------------------------------- ;
+; --- JSON CACHE                              --- ;
+; ----------------------------------- ----------- ;
+string EnjConfigFile = "/SexLabEnjoyment.json"
+
+Function CacheEnjJsonValues()
+	If !JsonUtil.IsGood(EnjConfigFile)
+		Debug.MessageBox("[EnjGame Error]\nSexLabEnjoyment.Json has parsing errors or is missing.")
+		return
+	EndIf
+	; Factors
+	string[] interTypes = sslThreadModel.NameAllInteractions()
+    int i = 0
+	int len = interTypes.Length
+    While (i < len)
+        string interType = interTypes[i]
+        float typeValue = JsonUtil.GetPathFloatValue(EnjConfigFile, interType)
+        StorageUtil.SetFloatValue(None, ("EnjFactor_" + interType), typeValue)
+        i += 1
+    EndWhile
+	StoreEnjJsonValue("bDebugMode2")
+	StoreEnjJsonValue("bDebugMode3")
+	;main
+	StoreEnjJsonValue("bInternalEnjoymentEnabled")
+	StoreEnjJsonValue("fEnjoymentUpdateDelay")
+	StoreEnjJsonValue("iInterDetectionStrength")
+	StoreEnjJsonValue("fEnjRaiseMultInter")
+	;general
+	StoreEnjJsonValue("iEnjGainOnStageSkip")
+	StoreEnjJsonValue("bNoStaminaEndsScene")
+	StoreEnjJsonValue("bMaleOrgasmEndsScene")
+	StoreEnjJsonValue("bDomMustOrgasm")
+	StoreEnjJsonValue("bPlayerMustOrgasm")
+	StoreEnjJsonValue("bHighEnjOrgasmWait")
+	StoreEnjJsonValue("iMaxNoPainOrgasmMale")
+	StoreEnjJsonValue("iMaxNoPainOrgasmFemale")
+	StoreEnjJsonValue("iNoPainRequiredTime")
+	StoreEnjJsonValue("iNoPainRequiredXP")
+	;actor 
+	StoreEnjJsonValue("fEnjMultVictim")
+	StoreEnjJsonValue("fEnjMultAggressor")
+	StoreEnjJsonValue("fEnjMultSub")
+	StoreEnjJsonValue("fEnjMultDom")
+	StoreEnjJsonValue("fPainHugePPMult")
+	;game
+	StoreEnjJsonValue("bGameEnabled")
+	StoreEnjJsonValue("bGamePlayerAutoplay")
+	StoreEnjJsonValue("bGamePlayerVictimAutoplay")
+	StoreEnjJsonValue("bGameNPCAutoplay")
+	StoreEnjJsonValue("bGameEnjReductionChance")
+	StoreEnjJsonValue("bGameHoldbackWithPartner")
+	StoreEnjJsonValue("kGameUtilityKey")
+	StoreEnjJsonValue("kGamePauseKey")
+	StoreEnjJsonValue("kGameRaiseEnjKey")
+	StoreEnjJsonValue("kGameHoldbackKey")
+	StoreEnjJsonValue("kGameSelectPos0")
+	StoreEnjJsonValue("kGameSelectPos1")
+	StoreEnjJsonValue("kGameSelectPos2")
+	StoreEnjJsonValue("kGameSelectPos3")
+	StoreEnjJsonValue("kGameSelectPos4")
+EndFunction
+
+Function StoreEnjJsonValue(String asSetting)
+	If StringUtil.GetNthChar(asSetting, 0) == "f"
+		StorageUtil.SetFloatValue(None, ("Enj_" + asSetting), JsonUtil.GetPathFloatValue(EnjConfigFile, asSetting))
+	Else
+		StorageUtil.SetIntValue(None, ("Enj_" + asSetting), JsonUtil.GetPathIntValue(EnjConfigFile, asSetting))
+	EndIf
+EndFunction
+
+; ----------------------------------------------- ;
+; --- CONFIG UTILS                            --- ;
+; ----------------------------------- ----------- ;
+int Function GetSettingIntEnj(String aiSetting)
+	return StorageUtil.GetIntValue(None, "Enj_" + aiSetting)
+EndFunction
+float Function GetSettingFltEnj(String afSetting)
+	return StorageUtil.GetFloatValue(None, "Enj_" + afSetting)
+EndFunction
+bool Function GetSettingBoolEnj(String aiSetting)
+	return (StorageUtil.GetIntValue(None, "Enj_" + aiSetting) == 1)
+EndFunction
+Function SetSettingIntEnj(String aiSetting, int aiValue)
+	;JsonUtil.SetIntValue(EnjConfigFile, aiSetting, aiValue)
+	StorageUtil.SetIntValue(None, ("Enj_" + aiSetting), aiValue)
+EndFunction
+Function SetSettingFltEnj(String afSetting, float afValue)
+	;JsonUtil.SetFloatValue(EnjConfigFile, afSetting, afValue)
+	StorageUtil.SetFloatValue(None, ("Enj_" + afSetting), afValue)
+EndFunction
+bool Function SetSettingBoolEnj(String aiSetting, bool aiValue)
+	If !aiValue
+		;JsonUtil.SetIntValue(EnjConfigFile, aiSetting, 0)
+		StorageUtil.SetIntValue(None, ("Enj_" + aiSetting), 0)
+	Else
+		;JsonUtil.SetIntValue(EnjConfigFile, aiSetting, 1)
+		StorageUtil.SetIntValue(None, ("Enj_" + aiSetting), 1)
+	EndIf
+EndFunction
+
+; ----------------------------------------------- ;
+; --- MAIN CONFIG                          --- ;
+; ----------------------------------- ----------- ;
+bool Property InternalEnjoymentEnabled hidden
+  bool Function Get()
+    return GetSettingBoolEnj("bInternalEnjoymentEnabled")
+  EndFunction
+  Function Set(bool value)
+    SetSettingBoolEnj("bInternalEnjoymentEnabled", value)
+  EndFunction
+EndProperty
+float Property EnjoymentUpdateDelay hidden
+  float Function Get()
+    return GetSettingFltEnj("fEnjoymentUpdateDelay")
+  EndFunction
+  Function Set(float afSet)
+    SetSettingFltEnj("fEnjoymentUpdateDelay", afSet)
+  EndFunction
+EndProperty
+int Property InterDetectionStrength hidden
+  int Function Get()
+    return GetSettingIntEnj("iInterDetectionStrength")
+  EndFunction
+  Function Set(int aiSet)
+    SetSettingIntEnj("iInterDetectionStrength", aiSet)
+  EndFunction
+EndProperty
+float Property EnjRaiseMultInter hidden
+  float Function Get()
+    return GetSettingFltEnj("fEnjRaiseMultInter")
+  EndFunction
+  Function Set(float afSet)
+    SetSettingFltEnj("fEnjRaiseMultInter", afSet)
+  EndFunction
+EndProperty
+
+; ----------------------------------------------- ;
+; --- GENERAL CONFIG                          --- ;
+; ----------------------------------- ----------- ;
+
+int Property EnjGainOnStageSkip hidden
+  int Function Get()
+    return GetSettingIntEnj("iEnjGainOnStageSkip")
+  EndFunction
+  Function Set(int aiSet)
+    SetSettingIntEnj("iEnjGainOnStageSkip", aiSet)
+  EndFunction
+EndProperty
+bool Property NoStaminaEndsScene hidden
+  bool Function Get()
+    return GetSettingBoolEnj("bNoStaminaEndsScene")
+  EndFunction
+  Function Set(bool value)
+    SetSettingBoolEnj("bNoStaminaEndsScene", value)
+  EndFunction
+EndProperty
+bool Property MaleOrgasmEndsScene hidden
+  bool Function Get()
+    return GetSettingBoolEnj("bMaleOrgasmEndsScene")
+  EndFunction
+  Function Set(bool value)
+    SetSettingBoolEnj("bMaleOrgasmEndsScene", value)
+  EndFunction
+EndProperty
+bool Property DomMustOrgasm hidden
+  bool Function Get()
+    return GetSettingBoolEnj("bDomMustOrgasm")
+  EndFunction
+  Function Set(bool value)
+    SetSettingBoolEnj("bDomMustOrgasm", value)
+  EndFunction
+EndProperty
+bool Property PlayerMustOrgasm hidden
+  bool Function Get()
+    return GetSettingBoolEnj("bPlayerMustOrgasm")
+  EndFunction
+  Function Set(bool value)
+    SetSettingBoolEnj("bPlayerMustOrgasm", value)
+  EndFunction
+EndProperty
+bool Property HighEnjOrgasmWait hidden
+  bool Function Get()
+    return GetSettingBoolEnj("bHighEnjOrgasmWait")
+  EndFunction
+  Function Set(bool value)
+    SetSettingBoolEnj("bHighEnjOrgasmWait", value)
+  EndFunction
+EndProperty
+int Property MaxNoPainOrgasmMale hidden
+  int Function Get()
+    return GetSettingIntEnj("iMaxNoPainOrgasmMale")
+  EndFunction
+  Function Set(int aiSet)
+    SetSettingIntEnj("iMaxNoPainOrgasmMale", aiSet)
+  EndFunction
+EndProperty
+int Property MaxNoPainOrgasmFemale hidden
+  int Function Get()
+    return GetSettingIntEnj("iMaxNoPainOrgasmFemale")
+  EndFunction
+  Function Set(int aiSet)
+    SetSettingIntEnj("iMaxNoPainOrgasmFemale", aiSet)
+  EndFunction
+EndProperty
+int Property NoPainRequiredTime hidden
+  int Function Get()
+    return GetSettingIntEnj("iNoPainRequiredTime")
+  EndFunction
+  Function Set(int aiSet)
+    SetSettingIntEnj("iNoPainRequiredTime", aiSet)
+  EndFunction
+EndProperty
+int Property NoPainRequiredXP hidden
+  int Function Get()
+    return GetSettingIntEnj("iNoPainRequiredXP")
+  EndFunction
+  Function Set(int aiSet)
+    SetSettingIntEnj("iNoPainRequiredXP", aiSet)
+  EndFunction
+EndProperty
+
+; ----------------------------------------------- ;
+; --- ACTOR MULT                              --- ;
+; ----------------------------------- ----------- ;
+float Property EnjMultVictim hidden
+  float Function Get()
+    return GetSettingFltEnj("fEnjMultVictim")
+  EndFunction
+  Function Set(float afSet)
+    SetSettingFltEnj("fEnjMultVictim", afSet)
+  EndFunction
+EndProperty
+float Property EnjMultAggressor hidden
+  float Function Get()
+    return GetSettingFltEnj("fEnjMultAggressor")
+  EndFunction
+  Function Set(float afSet)
+    SetSettingFltEnj("fEnjMultAggressor", afSet)
+  EndFunction
+EndProperty
+float Property EnjMultSub hidden
+  float Function Get()
+    return GetSettingFltEnj("fEnjMultSub")
+  EndFunction
+  Function Set(float afSet)
+    SetSettingFltEnj("fEnjMultSub", afSet)
+  EndFunction
+EndProperty
+float Property EnjMultDom hidden
+  float Function Get()
+    return GetSettingFltEnj("fEnjMultDom")
+  EndFunction
+  Function Set(float afSet)
+    SetSettingFltEnj("fEnjMultDom", afSet)
+  EndFunction
+EndProperty
+float Property PainHugePPMult hidden
+  float Function Get()
+    return GetSettingFltEnj("fPainHugePPMult")
+  EndFunction
+  Function Set(float afSet)
+    SetSettingFltEnj("fPainHugePPMult", afSet)
+  EndFunction
+EndProperty
+
+; ----------------------------------------------- ;
+; --- GAME CONFIG                             --- ;
+; ----------------------------------- ----------- ;
+bool Property GameEnabled hidden
+  bool Function Get()
+    return GetSettingBoolEnj("bGameEnabled")
+  EndFunction
+  Function Set(bool value)
+    SetSettingBoolEnj("bGameEnabled", value)
+  EndFunction
+EndProperty
+bool Property GamePlayerAutoplay hidden
+  bool Function Get()
+    return GetSettingBoolEnj("bGamePlayerAutoplay")
+  EndFunction
+  Function Set(bool value)
+    SetSettingBoolEnj("bGamePlayerAutoplay", value)
+  EndFunction
+EndProperty
+bool Property GamePlayerVictimAutoplay hidden
+  bool Function Get()
+    return GetSettingBoolEnj("bGamePlayerVictimAutoplay")
+  EndFunction
+  Function Set(bool value)
+    SetSettingBoolEnj("bGamePlayerVictimAutoplay", value)
+  EndFunction
+EndProperty
+bool Property GameNPCAutoplay hidden
+  bool Function Get()
+    return GetSettingBoolEnj("bGameNPCAutoplay")
+  EndFunction
+  Function Set(bool value)
+    SetSettingBoolEnj("bGameNPCAutoplay", value)
+  EndFunction
+EndProperty
+bool Property GameEnjReductionChance hidden
+  bool Function Get()
+    return GetSettingBoolEnj("bGameEnjReductionChance")
+  EndFunction
+  Function Set(bool value)
+    SetSettingBoolEnj("bGameEnjReductionChance", value)
+  EndFunction
+EndProperty
+bool Property GameHoldbackWithPartner hidden
+  bool Function Get()
+    return GetSettingBoolEnj("bGameHoldbackWithPartner")
+  EndFunction
+  Function Set(bool value)
+    SetSettingBoolEnj("bGameHoldbackWithPartner", value)
+  EndFunction
+EndProperty
+int Property GameUtilityKey hidden
+  int Function Get()
+    return GetSettingIntEnj("kGameUtilityKey")
+  EndFunction
+  Function Set(int aiSet)
+    SetSettingIntEnj("kGameUtilityKey", aiSet)
+  EndFunction
+EndProperty
+int Property GamePauseKey hidden
+  int Function Get()
+    return GetSettingIntEnj("kGamePauseKey")
+  EndFunction
+  Function Set(int aiSet)
+    SetSettingIntEnj("kGamePauseKey", aiSet)
+  EndFunction
+EndProperty
+int Property GameRaiseEnjKey hidden
+  int Function Get()
+    return GetSettingIntEnj("kGameRaiseEnjKey")
+  EndFunction
+  Function Set(int aiSet)
+    SetSettingIntEnj("kGameRaiseEnjKey", aiSet)
+  EndFunction
+EndProperty
+int Property GameHoldbackKey hidden
+  int Function Get()
+    return GetSettingIntEnj("kGameHoldbackKey")
+  EndFunction
+  Function Set(int aiSet)
+    SetSettingIntEnj("kGameHoldbackKey", aiSet)
+  EndFunction
+EndProperty
+int Property GameSelectPos0 hidden
+  int Function Get()
+    return GetSettingIntEnj("kGameSelectPos0")
+  EndFunction
+  Function Set(int aiSet)
+    SetSettingIntEnj("kGameSelectPos0", aiSet)
+  EndFunction
+EndProperty
+int Property GameSelectPos1 hidden
+  int Function Get()
+    return GetSettingIntEnj("kGameSelectPos1")
+  EndFunction
+  Function Set(int aiSet)
+    SetSettingIntEnj("kGameSelectPos1", aiSet)
+  EndFunction
+EndProperty
+int Property GameSelectPos2 hidden
+  int Function Get()
+    return GetSettingIntEnj("kGameSelectPos2")
+  EndFunction
+  Function Set(int aiSet)
+    SetSettingIntEnj("kGameSelectPos2", aiSet)
+  EndFunction
+EndProperty
+int Property GameSelectPos3 hidden
+  int Function Get()
+    return GetSettingIntEnj("kGameSelectPos3")
+  EndFunction
+  Function Set(int aiSet)
+    SetSettingIntEnj("kGameSelectPos3", aiSet)
+  EndFunction
+EndProperty
+int Property GameSelectPos4 hidden
+  int Function Get()
+    return GetSettingIntEnj("kGameSelectPos4")
+  EndFunction
+  Function Set(int aiSet)
+    SetSettingIntEnj("kGameSelectPos4", aiSet)
+  EndFunction
+EndProperty
+
 ; *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-* ;
 ; ----------------------------------------------------------------------------- ;
 ;               ██╗     ███████╗ ██████╗  █████╗  ██████╗██╗   ██╗              ;
@@ -1575,11 +1993,11 @@ int property OpenMouthSize = 80 auto hidden
 
 bool property SeparateOrgasms Hidden
   bool Function Get()
-    return GetSettingInt("iClimaxType") == CLIMAXTYPE_EXTERN
+    return GetSettingInt("iClimaxType") == CLIMAXTYPE_SLSO
   EndFunction
   Function Set(bool aSet)
     If (aSet)
-      SetSettingInt("iClimaxType", CLIMAXTYPE_EXTERN)
+      SetSettingInt("iClimaxType", CLIMAXTYPE_SLSO)
     Else
       SetSettingInt("iClimaxType", CLIMAXTYPE_SCENE)
     EndIf

@@ -118,7 +118,7 @@ String[] Function GetAnimationEventA(String asID, String asStage) native global
 String Function GetStartAnimation(String asID) native global
 ; Get the total amount of stages for this scene
 int Function GetNumStages(String asID) native global
-String[] Function GetAllstages(String asID) native global
+String[] Function GetAllStages(String asID) native global
 
 ; Get the n'th outgoing edge from the given Stage
 String Function BranchTo(String asID, String asStage, int n) native global
@@ -224,10 +224,10 @@ String[] Function GetSceneAnnotations(String asID) native global
 ; --- Position Annotations
 
 ; Check if a specific annotation exists for the given position in the scene
-bool Function HasPositionAnnotation(String asID, int n, String asTag) native global
+bool Function HasPositionAnnotation(String asID, String asStage, int n, String asTag) native global
 ; Remove a specific annotation from the given position in the scene
-Function RemovePositionAnnotation(String asID, int n, String asTag) native global
+Function RemovePositionAnnotation(String asID, String asStage, int n, String asTag) native global
 ; Add a specific annotation to the given position in the scene
-Function AddPositionAnnotation(String asID, int n, String asTag) native global
+Function AddPositionAnnotation(String asID, String asStage, int n, String asTag) native global
 ; Get all annotations for the given position in the scene
-String[] Function GetPositionAnnotations(String asID, int n) native global
+String[] Function GetPositionAnnotations(String asID, String asStage, int n) native global

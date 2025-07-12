@@ -41,7 +41,7 @@ Event OnGameReload()
 EndEvent
 
 Event OnConfigInit()
-	Pages = new string[10]
+	Pages = new string[11]
 	Pages[0] = "$SSL_SexDiary"
 	Pages[1] = "$SSL_AnimationSettings"
 	Pages[2] = "$SSL_MatchMaker"
@@ -50,8 +50,9 @@ Event OnConfigInit()
 	Pages[5] = "$SSL_StripEditor"
 	Pages[6] = "$SSL_ToggleAnimations"
 	Pages[7] = "$SSL_ExpressionEditor"
-	Pages[8] = "$SSL_PlayerHotkeys"
-	Pages[9] = "$SSL_RebuildClean"
+	Pages[8] = "$SSL_EnjoymentSettings"
+	Pages[9] = "$SSL_PlayerHotkeys"
+	Pages[10] = "$SSL_RebuildClean"
 
 	; Animation Settings
 	_PlFurnOpt = new String[5]
@@ -79,7 +80,7 @@ Event OnConfigInit()
 	_ClimaxTypes = new String[3]
 	_ClimaxTypes[0] = "$SSL_Climax_0"	; Default
 	_ClimaxTypes[1] = "$SSL_Climax_1"	; Legacy
-	_ClimaxTypes[2] = "$SSL_Climax_2"	; Extern
+	_ClimaxTypes[2] = "$SSL_Climax_2"	; SLSO
 
 	_Sexes = new String[3]
 	_Sexes[0] = "$SSL_Male"
@@ -191,6 +192,8 @@ Event OnPageReset(string page)
 			ToggleAnimations()
 		ElseIf (page == "$SSL_ExpressionEditor")
 			ExpressionEditor()
+		ElseIf (page == "$SSL_EnjoymentSettings")
+			EnjoymentSettings()
 		ElseIf (page == "$SSL_PlayerHotkeys")
 			PlayerHotkeys()
 		ElseIf (page == "$SSL_RebuildClean")
@@ -812,6 +815,58 @@ Function TestApply(Actor ActorRef)
 EndFunction
 
 ; ------------------------------------------------------- ;
+; --- Enjoyment Settings                              --- ;
+; ------------------------------------------------------- ;
+
+Function EnjoymentSettings()
+	Config.CacheEnjJsonValues()
+	SetCursorFillMode(TOP_TO_BOTTOM)
+	
+	AddHeaderOption("Primary Settings")
+		AddToggleOptionST("InternalEnjoymentEnabled","$SSL_InternalEnjoymentEnabled", Config.InternalEnjoymentEnabled)
+		AddSliderOptionST("EnjoymentUpdateDelay","$SSL_EnjoymentUpdateDelay", Config.EnjoymentUpdateDelay)
+		AddSliderOptionST("InterDetectionStrength", "$SSL_InterDetectionStrength", Config.InterDetectionStrength)
+		AddSliderOptionST("EnjRaiseMultInter", "$SSL_EnjRaiseMultInter", Config.EnjRaiseMultInter)
+	AddHeaderOption("General Configs")
+		AddSliderOptionST("EnjGainOnStageSkip", "$SSL_EnjGainOnStageSkip", Config.EnjGainOnStageSkip)
+		AddToggleOptionST("NoStaminaEndsScene","$SSL_NoStaminaEndsScene", Config.NoStaminaEndsScene)
+		AddToggleOptionST("MaleOrgasmEndsScene","$SSL_MaleOrgasmEndsScene", Config.MaleOrgasmEndsScene)
+		AddToggleOptionST("DomMustOrgasm","$SSL_DomMustOrgasm", Config.DomMustOrgasm)
+		AddToggleOptionST("PlayerMustOrgasm","$SSL_PlayerMustOrgasm", Config.PlayerMustOrgasm)
+		AddToggleOptionST("HighEnjOrgasmWait","$SSL_HighEnjOrgasmWait", Config.HighEnjOrgasmWait)
+		AddSliderOptionST("MaxNoPainOrgasmMale","$SSL_MaxNoPainOrgasmMale", Config.MaxNoPainOrgasmMale)
+		AddSliderOptionST("MaxNoPainOrgasmFemale", "$SSL_MaxNoPainOrgasmFemale", Config.MaxNoPainOrgasmFemale)
+		AddSliderOptionST("NoPainRequiredTime", "$SSL_NoPainRequiredTime", Config.NoPainRequiredTime)
+		AddSliderOptionST("NoPainRequiredXP", "$SSL_NoPainRequiredXP", Config.NoPainRequiredXP)
+	AddHeaderOption("Misc Multipliers")
+		AddSliderOptionST("EnjMultVictim","$SSL_EnjMultVictim", Config.EnjMultVictim)
+		AddSliderOptionST("EnjMultAggressor", "$SSL_EnjMultAggressor", Config.EnjMultAggressor)
+		AddSliderOptionST("EnjMultSub", "$SSL_EnjMultSub", Config.EnjMultSub)
+		AddSliderOptionST("EnjMultDom", "$SSL_EnjMultDom", Config.EnjMultDom)
+		AddSliderOptionST("PainHugePPMult", "$SSL_PainHugePPMult", Config.PainHugePPMult)
+		
+	SetCursorPosition(1)
+	
+	AddHeaderOption("Game Toggles")
+		AddToggleOptionST("GameEnabled","$SSL_GameEnabled", Config.GameEnabled)
+		AddToggleOptionST("GamePlayerAutoplay","$SSL_GamePlayerAutoplay", Config.GamePlayerAutoplay)
+		AddToggleOptionST("GamePlayerVictimAutoplay","$SSL_GamePlayerVictimAutoplay", Config.GamePlayerVictimAutoplay)
+		AddToggleOptionST("GameNPCAutoplay","$SSL_GameNPCAutoplay", Config.GameNPCAutoplay)
+		AddToggleOptionST("GameEnjReductionChance","$SSL_GameEnjReductionChance", Config.GameEnjReductionChance)
+		AddToggleOptionST("GameHoldbackWithPartner","$SSL_GameHoldbackWithPartner", Config.GameHoldbackWithPartner)
+	AddHeaderOption("Game Hotkeys")
+		AddKeyMapOptionST("GameUtilityKey", "$SSL_GameUtilityKey", Config.GameUtilityKey)
+		AddKeyMapOptionST("GamePauseKey", "$SSL_GamePauseKey", Config.GamePauseKey)
+		AddKeyMapOptionST("GameRaiseEnjKey", "$SSL_GameRaiseEnjKey", Config.GameRaiseEnjKey)
+		AddKeyMapOptionST("GameHoldbackKey", "$SSL_GameHoldbackKey", Config.GameHoldbackKey)
+		AddKeyMapOptionST("GameSelectPos0", "$SSL_GameSelectPos0", Config.GameSelectPos0)
+		AddKeyMapOptionST("GameSelectPos1", "$SSL_GameSelectPos1", Config.GameSelectPos1)
+		AddKeyMapOptionST("GameSelectPos2", "$SSL_GameSelectPos2", Config.GameSelectPos2)
+		AddKeyMapOptionST("GameSelectPos3", "$SSL_GameSelectPos3", Config.GameSelectPos3)
+		AddKeyMapOptionST("GameSelectPos4", "$SSL_GameSelectPos4", Config.GameSelectPos4)
+EndFunction
+
+; ------------------------------------------------------- ;
 ; --- Debug & installation							              --- ;
 ; ------------------------------------------------------- ;
 
@@ -819,6 +874,8 @@ Function RebuildClean()
 	SetCursorFillMode(TOP_TO_BOTTOM)
 	AddHeaderOption("SexLab v" + GetStringVer() + " by Ashal@LoversLab.com")
 	AddToggleOptionST("DebugMode","$SSL_DebugMode", Config.DebugMode)
+	AddToggleOptionST("DebugMode2","$SSL_DebugMode2", Config.DebugMode2)
+	AddToggleOptionST("DebugMode3","$SSL_DebugMode3", Config.DebugMode3)
 	AddTextOptionST("StopCurrentAnimations","$SSL_StopCurrentAnimations", "$SSL_ClickHere")
 	AddTextOptionST("ResetStripOverrides","$SSL_ResetStripOverrides", "$SSL_ClickHere")
 	AddTextOptionST("CleanSystem","$SSL_CleanSystem", "$SSL_ClickHere")
@@ -1076,9 +1133,49 @@ Event OnSelectST()
 	ElseIf (s[0] == "DebugMode")
 		Config.DebugMode = !Config.DebugMode
 		SetToggleOptionValueST(Config.DebugMode)
+	ElseIf (s[0] == "DebugMode2")
+		Config.DebugMode2 = !Config.DebugMode2
+		SetToggleOptionValueST(Config.DebugMode2)
+	ElseIf (s[0] == "DebugMode3")
+		Config.DebugMode3 = !Config.DebugMode3
+		SetToggleOptionValueST(Config.DebugMode3)
 	ElseIf (s[0] == "StopCurrentAnimations")
 		ShowMessage("$SSL_StopRunningAnimations", false)
 		ThreadSlots.StopAll()
+	; Enjoyment
+	ElseIf (s[0] == "InternalEnjoymentEnabled")
+		Config.InternalEnjoymentEnabled = !Config.InternalEnjoymentEnabled
+		SetToggleOptionValueST(Config.InternalEnjoymentEnabled)
+	ElseIf (s[0] == "NoStaminaEndsScene")
+		Config.NoStaminaEndsScene = !Config.NoStaminaEndsScene
+		SetToggleOptionValueST(Config.NoStaminaEndsScene)
+	ElseIf (s[0] == "MaleOrgasmEndsScene")
+		Config.MaleOrgasmEndsScene = !Config.MaleOrgasmEndsScene
+		SetToggleOptionValueST(Config.MaleOrgasmEndsScene)	
+	ElseIf (s[0] == "DomMustOrgasm")
+		Config.DomMustOrgasm = !Config.DomMustOrgasm
+		SetToggleOptionValueST(Config.DomMustOrgasm)
+	ElseIf (s[0] == "PlayerMustOrgasm")
+		Config.PlayerMustOrgasm = !Config.PlayerMustOrgasm
+		SetToggleOptionValueST(Config.PlayerMustOrgasm)
+	ElseIf (s[0] == "HighEnjOrgasmWait")
+		Config.HighEnjOrgasmWait = !Config.HighEnjOrgasmWait
+		SetToggleOptionValueST(Config.HighEnjOrgasmWait)
+	ElseIf (s[0] == "GameEnabled")
+		Config.GameEnabled = !Config.GameEnabled
+		SetToggleOptionValueST(Config.GameEnabled)
+	ElseIf (s[0] == "GamePlayerAutoplay")
+		Config.GamePlayerAutoplay = !Config.GamePlayerAutoplay
+		SetToggleOptionValueST(Config.GamePlayerAutoplay)
+	ElseIf (s[0] == "GamePlayerVictimAutoplay")
+		Config.GamePlayerVictimAutoplay = !Config.GamePlayerVictimAutoplay
+		SetToggleOptionValueST(Config.GamePlayerVictimAutoplay)
+	ElseIf (s[0] == "GameNPCAutoplay")
+		Config.GameNPCAutoplay = !Config.GameNPCAutoplay
+		SetToggleOptionValueST(Config.GameNPCAutoplay)
+	ElseIf (s[0] == "GameEnjReductionChance")
+		Config.GameEnjReductionChance = !Config.GameEnjReductionChance
+		SetToggleOptionValueST(Config.GameEnjReductionChance)
 	EndIf
 EndEvent
 
@@ -1157,6 +1254,72 @@ Event OnSliderOpenST()
 		SetSliderDialogRange(0, 1)
 		SetSliderDialogInterval(0.05)
 		SetSliderDialogDefaultValue(0)
+	; Enjoyment
+	ElseIf (s[0] == "EnjoymentUpdateDelay")
+		SetSliderDialogStartValue(Config.EnjoymentUpdateDelay)
+		SetSliderDialogRange(0.5, 5.0)
+		SetSliderDialogInterval(0.5)
+		SetSliderDialogDefaultValue(1.5)
+	ElseIf (s[0] == "InterDetectionStrength")
+		SetSliderDialogStartValue(Config.InterDetectionStrength)
+		SetSliderDialogRange(1, 4)
+		SetSliderDialogInterval(1)
+		SetSliderDialogDefaultValue(4)
+	ElseIf (s[0] == "EnjRaiseMultInter")
+		SetSliderDialogStartValue(Config.EnjRaiseMultInter)
+		SetSliderDialogRange(0.0, 3.0)
+		SetSliderDialogInterval(0.1)
+		SetSliderDialogDefaultValue(1.2)
+	ElseIf (s[0] == "EnjGainOnStageSkip")
+		SetSliderDialogStartValue(Config.EnjGainOnStageSkip)
+		SetSliderDialogRange(0, 30)
+		SetSliderDialogInterval(1)
+		SetSliderDialogDefaultValue(15)
+	ElseIf (s[0] == "MaxNoPainOrgasmMale")
+		SetSliderDialogStartValue(Config.MaxNoPainOrgasmMale)
+		SetSliderDialogRange(1, 5)
+		SetSliderDialogInterval(1)
+		SetSliderDialogDefaultValue(1)
+	ElseIf (s[0] == "MaxNoPainOrgasmFemale")
+		SetSliderDialogStartValue(Config.MaxNoPainOrgasmFemale)
+		SetSliderDialogRange(1, 5)
+		SetSliderDialogInterval(1)
+		SetSliderDialogDefaultValue(2)
+	ElseIf (s[0] == "NoPainRequiredTime")
+		SetSliderDialogStartValue(Config.NoPainRequiredTime)
+		SetSliderDialogRange(0, 180)
+		SetSliderDialogInterval(10)
+		SetSliderDialogDefaultValue(50)
+	ElseIf (s[0] == "NoPainRequiredXP")
+		SetSliderDialogStartValue(Config.NoPainRequiredXP)
+		SetSliderDialogRange(0, 100)
+		SetSliderDialogInterval(5)
+		SetSliderDialogDefaultValue(50)		
+	ElseIf (s[0] == "EnjMultVictim")
+		SetSliderDialogStartValue(Config.EnjMultVictim)
+		SetSliderDialogRange(0.0, 2.0)
+		SetSliderDialogInterval(0.1)
+		SetSliderDialogDefaultValue(0.8)
+	ElseIf (s[0] == "EnjMultAggressor")
+		SetSliderDialogStartValue(Config.EnjMultAggressor)
+		SetSliderDialogRange(0.0, 2.0)
+		SetSliderDialogInterval(0.1)
+		SetSliderDialogDefaultValue(1.2)
+	ElseIf (s[0] == "EnjMultSub")
+		SetSliderDialogStartValue(Config.EnjMultSub)
+		SetSliderDialogRange(0.0, 2.0)
+		SetSliderDialogInterval(0.1)
+		SetSliderDialogDefaultValue(0.8)
+	ElseIf (s[0] == "EnjMultDom")
+		SetSliderDialogStartValue(Config.EnjMultDom)
+		SetSliderDialogRange(0.0, 2.0)
+		SetSliderDialogInterval(0.1)
+		SetSliderDialogDefaultValue(1.2)
+	ElseIf (s[0] == "PainHugePPMult")
+		SetSliderDialogStartValue(Config.PainHugePPMult)
+		SetSliderDialogRange(0.0, 2.0)
+		SetSliderDialogInterval(0.1)
+		SetSliderDialogDefaultValue(0.5)
 	EndIf
 EndEvent
 
@@ -1213,6 +1376,46 @@ Event OnSliderAcceptST(float value)
 		values[i] = value
 		sslBaseExpression.SetValues(_expression[_expressionIdx], _editFemale, _phaseidx + n, values)
 		SetSliderOptionValueST(value, "{2}")
+	; Enjoyment
+	ElseIf (s[0] == "EnjoymentUpdateDelay")
+		Config.EnjoymentUpdateDelay = value
+		SetSliderOptionValueST(Config.EnjoymentUpdateDelay)
+	ElseIf (s[0] == "InterDetectionStrength")
+		Config.InterDetectionStrength = value as int
+		SetSliderOptionValueST(Config.InterDetectionStrength)
+	ElseIf (s[0] == "EnjRaiseMultInter")
+		Config.EnjRaiseMultInter = value
+		SetSliderOptionValueST(Config.EnjRaiseMultInter, "{1}")
+	ElseIf (s[0] == "EnjGainOnStageSkip")
+		Config.EnjGainOnStageSkip = value as int
+		SetSliderOptionValueST(Config.EnjGainOnStageSkip)
+	ElseIf (s[0] == "MaxNoPainOrgasmMale")
+		Config.MaxNoPainOrgasmMale = value as int
+		SetSliderOptionValueST(Config.MaxNoPainOrgasmMale)
+	ElseIf (s[0] == "MaxNoPainOrgasmFemale")
+		Config.MaxNoPainOrgasmFemale = value as int
+		SetSliderOptionValueST(Config.MaxNoPainOrgasmFemale)
+	ElseIf (s[0] == "NoPainRequiredTime")
+		Config.NoPainRequiredTime = value as int
+		SetSliderOptionValueST(Config.NoPainRequiredTime)
+	ElseIf (s[0] == "NoPainRequiredXP")
+		Config.NoPainRequiredXP = value as int
+		SetSliderOptionValueST(Config.NoPainRequiredXP)
+	ElseIf (s[0] == "EnjMultVictim")
+		Config.EnjMultVictim = value
+		SetSliderOptionValueST(Config.EnjMultVictim, "{1}")
+	ElseIf (s[0] == "EnjMultAggressor")
+		Config.EnjMultAggressor = value
+		SetSliderOptionValueST(Config.EnjMultAggressor, "{1}")
+	ElseIf (s[0] == "EnjMultSub")
+		Config.EnjMultSub = value
+		SetSliderOptionValueST(Config.EnjMultSub, "{1}")
+	ElseIf (s[0] == "EnjMultDom")
+		Config.EnjMultDom = value
+		SetSliderOptionValueST(Config.EnjMultDom, "{1}")
+	ElseIf (s[0] == "PainHugePPMult")
+		Config.PainHugePPMult = value
+		SetSliderOptionValueST(Config.PainHugePPMult, "{1}")
 	EndIf
 EndEvent
 
@@ -1220,7 +1423,7 @@ Event OnMenuOpenST()
 	String[] s = PapyrusUtil.StringSplit(GetState(), "_")
 	If (s[0] == "ClimaxType")
 		SetMenuDialogStartIndex(sslSystemConfig.GetSettingInt("iClimaxType"))
-		SetMenuDialogDefaultIndex(0)
+		SetMenuDialogDefaultIndex(2)
 		SetMenuDialogOptions(_ClimaxTypes)
 	ElseIf (s[0] == "FilterStrictness")
 		SetMenuDialogStartIndex(sslSystemConfig.GetSettingInt("iFilterStrictness"))
@@ -1500,6 +1703,10 @@ Event OnHighlightST()
 		SetInfoText("$SSL_InfoLipsFixedValue")
 	ElseIf (s[0] == "DebugMode")
 		SetInfoText("$SSL_InfoDebugMode")
+	ElseIf (s[0] == "DebugMode2")
+		SetInfoText("$SSL_InfoDebugMode2")
+	ElseIf (s[0] == "DebugMode3")
+		SetInfoText("$SSL_InfoDebugMode3")
 	ElseIf (s[0] == "setexprscaling")
 		SetInfoText("$SSL_ExpressionScalingInfo")
 	ElseIf (s[0] == "activeVoices")

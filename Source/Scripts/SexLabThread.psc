@@ -175,6 +175,13 @@ EndFunction
 Actor[] Function GetPartnersByTypeRev(Actor akPartner, int aiType)
 EndFunction
 
+; Returns a string containing detected CTYPEs, separated by ","
+; String CTYPEs can start with various prefixes, such as
+; a: active (akPosition is giving/doing CTYPE), e.g. aAnimObjFace
+; p: passive (akPosition is receiving/taking CTYPE) e.g. pHandJob
+string Function GetInteractionString(Actor akPosition)
+EndFunction
+
 ; Return the velocity of the specified interaction type
 ; Velocity may be positive or negative, depending on the direction of movement
 float Function GetVelocity(Actor akPosition, Actor akPartner, int aiType)
@@ -270,6 +277,21 @@ EndFunction
 String Function GetActorExpression(Actor akActor)
 EndFunction
 
+; --- Enjoyment
+
+; Return the current enjoyment/arousal level for this actor
+int Function GetEnjoyment(Actor ActorRef)
+EndFunction
+; Set/Adjust the current enjoyment for this actor to/by a specified value
+Function SetEnjoyment(Actor ActorRef, int aiSet)
+EndFunction
+Function AdjustEnjoyment(Actor ActorRef, int AdjustBy)
+EndFunction
+; Modify the rate at which enjoyment raises for an actor
+; afSet == 2 will double the EnjRaise, while afSet == 0 will stop EnjRaise
+Function ModEnjoymentMult(Actor ActorRef, float afSet, bool bAdjust = False)
+EndFunction
+
 ; --- Orgasms
 
 ; Disable or enable orgasm events for the stated actor
@@ -279,10 +301,6 @@ bool Function IsOrgasmAllowed(Actor ActorRef)
 EndFunction
 ; Create an orgasm event for the given actor
 Function ForceOrgasm(Actor ActorRef)
-EndFunction
-
-; Return the current enjoyment/arousal level for this actor
-int Function GetEnjoyment(Actor akActor)
 EndFunction
 
 ; If the given actor has a chance of impregnation at some point during this scene. That is, the function will check
