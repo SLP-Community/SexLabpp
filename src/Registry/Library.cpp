@@ -13,6 +13,10 @@ namespace Registry
 #endif
 			std::vector<ActorFragment> fragments;
 			for (auto&& position : a_actors) {
+				if (!position) {
+					logger::warn("Warning: NULL Actor passed to LookupScenes");
+					continue;
+				}
 				const auto submissive = std::ranges::contains(a_submissives, position);
 				fragments.emplace_back(position, submissive);
 			}
