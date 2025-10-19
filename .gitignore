@@ -5,3 +5,5 @@ build/
 /vcpkg_installed
 scripts/out/
 .xmake
+vsxmake2022
+CppProperties.json

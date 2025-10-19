@@ -153,7 +153,7 @@ namespace Thread::NiNode::Node
 		assert(a_basenode);
 		do {
 			auto& parent = nodes.back();
-			auto& childs = parent->children;
+			auto& childs = parent->GetChildren();
 			switch (childs.size()) {
 			case 0:
 				break;

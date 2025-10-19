@@ -72,7 +72,7 @@ namespace Thread::Interface
 			return Result::kHandled;
 		case Type::kUserEvent:
 		case Type::kScaleformEvent:
-			if (RE::ControlMap::GetSingleton()->textEntryCount <= 0)
+			if (RE::ControlMap::GetSingleton()->GetRuntimeData().textEntryCount <= 0)
 				return Result::kPassOn;
 			__fallthrough;
 		default:

@@ -9,7 +9,23 @@
                 commit = "d690827620fac7d455dac05ed2e60e576f5cdcf8",
                 url = "https://github.com/xmake-io/xmake-repo.git"
             },
-            version = "3.31.6"
+            version = "3.31.6-msvc6"
+        },
+        ["directxmath#31fecfc4"] = {
+            repo = {
+                branch = "master",
+                commit = "425ed3bcd9c61a8dd96e28563d0bd427aaf42968",
+                url = "https://github.com/xmake-io/xmake-repo.git"
+            },
+            version = "2024.02"
+        },
+        ["directxtk#31fecfc4"] = {
+            repo = {
+                branch = "master",
+                commit = "425ed3bcd9c61a8dd96e28563d0bd427aaf42968",
+                url = "https://github.com/xmake-io/xmake-repo.git"
+            },
+            version = "24.2.0"
         },
         ["eigen#31fecfc4"] = {
             repo = {
@@ -35,6 +51,14 @@
             },
             version = "v0.9.7"
         },
+        ["ninja#31fecfc4"] = {
+            repo = {
+                branch = "master",
+                commit = "425ed3bcd9c61a8dd96e28563d0bd427aaf42968",
+                url = "https://github.com/xmake-io/xmake-repo.git"
+            },
+            version = "1.12.1"
+        },
         ["nlohmann_json#31fecfc4"] = {
             repo = {
                 branch = "master",
@@ -43,13 +67,13 @@
             },
             version = "v3.11.3"
         },
-        ["rsm-binary-io#31fecfc4"] = {
+        ["rapidcsv#31fecfc4"] = {
             repo = {
                 branch = "master",
-                commit = "c54cc6e7bc4c571586864d58fdcf119d2ac32250",
+                commit = "425ed3bcd9c61a8dd96e28563d0bd427aaf42968",
                 url = "https://github.com/xmake-io/xmake-repo.git"
             },
-            version = "2.0.6"
+            version = "v8.87"
         },
         ["simpleini#31fecfc4"] = {
             repo = {

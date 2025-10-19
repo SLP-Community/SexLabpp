@@ -3,6 +3,9 @@ set_xmakever("2.9.5")
 -- Globals
 PROJECT_NAME = "SexLabUtil"
 
+-- includes, moved up to name the solution correctly
+includes("lib/CommonLibSSE-NG")
+
 -- Project
 set_project(PROJECT_NAME)
 set_version("2.16.0")
@@ -16,31 +19,9 @@ option("copy_to_papyrus")
     set_description("Copy finished build to Papyrus SKSE folder")
 option_end()
 
-option("skyrim_se")
-    set_default(false)
-    set_description("Enable support for Skyrim 1.5")
-option_end()
-
-option("skyrim_vr")
-    set_default(false)
-    set_description("Enable support for Skyrim VR")
-    add_defines("SKYRIM_SUPPORT_VR=1")
-option_end()
-
 -- Dependencies & Includes
 -- https://github.com/xmake-io/xmake-repo/tree/dev
 add_requires("yaml-cpp", "magic_enum", "nlohmann_json", "simpleini", "glm", "eigen")
-
-if get_config("skyrim_vr") then
-    includes("lib/commonlibvr")
-else
-    includes("lib/commonlibsse")
-    if get_config("skyrim_se") then
-        set_config("skyrim_ae", false)
-    else
-        set_config("skyrim_ae", true)
-    end
-end
 
 -- policies
 set_policy("package.requires_lock", true)
@@ -63,8 +44,8 @@ target(PROJECT_NAME)
     add_packages("yaml-cpp", "magic_enum", "nlohmann_json", "simpleini", "glm", "eigen")
 
     -- CommonLibSSE
-    add_deps("commonlibsse")
-    add_rules("commonlibsse.plugin", {
+    add_deps("commonlibsse-ng")
+    add_rules("commonlibsse-ng.plugin", {
         name = PROJECT_NAME,
         author = "Scrab",
         description = "Backend for skyrims adult animation framework 'SexLab'."
@@ -105,7 +86,13 @@ target(PROJECT_NAME)
     end
     -- Post Build 
     after_build(function (target)
-        os.exec("python scripts/generate_config.py")
+        import("lib.detect.find_tool")
+        local python = find_tool("python3")
+        if python then
+            os.execv(python.program, {"scripts/generate_config.py"})
+        else
+            print("Warning: Python not found. Skipping config generation.")
+        end
 
         local mod_folder = os.getenv("XSE_TES5_MODS_PATH")
         if not has_config("copy_to_papyrus") then
@@ -121,6 +108,6 @@ target(PROJECT_NAME)
         else
             print("Warning: SkyrimPath not defined. Skipping post-build copy.")
         end
-        print("Build finished. Skyrim V" .. (get_config("skyrim_vr") and "VR" or (get_config("skyrim_ae") and "1.6" or "1.5")))
+        print("Build finished. ")
     end)
 target_end()

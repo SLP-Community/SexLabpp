@@ -12,7 +12,7 @@ RE::NiPointer<RE::NiCollisionObject> ObjectBound::GetCollisionNodeRecurse(RE::Ni
 	if (a_recurse > MAX_RECURSE) {
 		return nullptr;
 	}
-	for (auto child : a_node->children) {
+	for (auto child : a_node->GetChildren()) {
 		if (!child)
 			continue;
 		if (child->collisionObject)

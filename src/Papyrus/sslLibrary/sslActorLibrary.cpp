@@ -100,7 +100,7 @@ namespace Papyrus::ActorLibrary
 			a_vm->TraceStack("Actor is none", a_stackID);
 			return false;
 		}
-		return a_actor->unk1E8;
+		return a_actor->GetActorRuntimeData().unk1E8;
 	}
 
 	RE::BSFixedString PickRandomFxSet(VM* a_vm, StackID a_stackID, RE::StaticFunctionTag*, int32_t a_type)

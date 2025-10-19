@@ -71,7 +71,7 @@ static void SKSEMessageHandler(SKSE::MessagingInterface::Message* message)
 extern "C" DLLEXPORT bool SKSEAPI SKSEPlugin_Load(const SKSE::LoadInterface* a_skse)
 {
 	constexpr auto PLUGIN_NAME = "SexLabUtil"sv;
-	const auto InitLogger = []() -> bool {
+	const auto InitLogger = [&]() -> bool {
 #ifndef NDEBUG
 		auto sink = std::make_shared<spdlog::sinks::msvc_sink_mt>();
 #else

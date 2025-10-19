@@ -60,7 +60,7 @@ namespace Registry
 			throw std::runtime_error(std::format("Cannt build fragment from Actor {:X}: Invalid RaceKey", a_actor->GetFormID()));
 		case RaceKey::Human:
 			value.set(Human);
-			if (a_actor->HasKeywordWithType(RE::DEFAULT_OBJECT::kKeywordVampire)) {
+			if (a_actor->HasKeywordWithType(RE::DefaultObjectID::kKeywordVampire)) {
 				value.set(Vampire);
 			}
 			break;
@@ -68,7 +68,8 @@ namespace Registry
 			value.set(RaceKeyToValue(race));
 			break;
 		}
-		if (a_submissive, a_actor->IsDead() || a_actor->IsUnconscious() || a_actor->GetActorValue(RE::ActorValue::kVariable05) < 0)
+		// Check for IsUnconcious(), which only exists in ActorState.h
+		if (a_submissive, a_actor->IsDead() || a_actor->AsActorState()->IsUnconscious() || a_actor->GetActorValueMax(RE::ActorValue::kVariable05) < 0)	// || a_actor->IsUnconscious())
 			value.set(Unconscious);
 		if (a_submissive) {
 			value.set(Submissive);
