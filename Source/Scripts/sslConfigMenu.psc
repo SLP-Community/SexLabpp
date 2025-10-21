@@ -797,12 +797,29 @@ EndFunction
 ; ------------------------------------------------------- ;
 
 Function EnjoymentSettings()
+	Config.CacheInterFactorValues()
 	SetCursorFillMode(TOP_TO_BOTTOM)
 	
 	AddHeaderOption("Primary Settings")
 	AddStateOptionBool("bInternalEnjoymentEnabled", "$SSL_InternalEnjoymentEnabled")
     AddStateOptionSlider("iInterDetectionStrength", "$SSL_InterDetectionStrength", 4, 1, 4, 1, "{0}")
     AddStateOptionSlider("fEnjRaiseMultInter", "$SSL_EnjRaiseMultInter", 1.2, 0, 3, 0.1, "{1}")
+
+	AddHeaderOption("Game Toggles")
+	AddStateOptionBool("bGameEnabled", "$SSL_GameEnabled")
+	AddStateOptionBool("bGamePlayerAutoplay", "$SSL_GamePlayerAutoplay")
+	AddStateOptionBool("bGamePlayerVictimAutoplay", "$SSL_GamePlayerVictimAutoplay")
+	AddStateOptionBool("bGameNPCAutoplay", "$SSL_GameNPCAutoplay")
+	AddStateOptionBool("bGameEnjReductionChance", "$SSL_GameEnjReductionChance")
+	AddStateOptionBool("bGameHoldbackWithPartner", "$SSL_GameHoldbackWithPartner")
+
+	AddHeaderOption("Game Hotkeys")
+    AddStateOptionKey("iGameUtilityKey", "$SSL_GameUtilityKey")
+    AddStateOptionKey("iGamePauseKey", "$SSL_GamePauseKey")
+    AddStateOptionKey("iGameRaiseEnjKey", "$SSL_GameRaiseEnjKey")
+    AddStateOptionKey("iGameHoldbackKey", "$SSL_GameHoldbackKey")
+    AddStateOptionKey("iGameSelectNextPos", "$SSL_GameSelectNextPos")
+	SetCursorPosition(1)
 
 	AddHeaderOption("General Configs")
     AddStateOptionSlider("iEnjGainOnStageSkip", "$SSL_EnjGainOnStageSkip", 15, 0, 30, 1, "{0}")
@@ -822,22 +839,6 @@ Function EnjoymentSettings()
     AddStateOptionSlider("fEnjMultSub", "$SSL_EnjMultSub", 0.8, 0, 2, 0.1, "{1}")
     AddStateOptionSlider("fEnjMultDom", "$SSL_EnjMultDom", 1.2, 0, 2, 0.1, "{1}")
     AddStateOptionSlider("fPainHugePPMult", "$SSL_PainHugePPMult", 0.5, 0, 2, 0.1, "{1}")
-	SetCursorPosition(1)
-	
-	AddHeaderOption("Game Toggles")
-	AddStateOptionBool("bGameEnabled", "$SSL_GameEnabled")
-	AddStateOptionBool("bGamePlayerAutoplay", "$SSL_GamePlayerAutoplay")
-	AddStateOptionBool("bGamePlayerVictimAutoplay", "$SSL_GamePlayerVictimAutoplay")
-	AddStateOptionBool("bGameNPCAutoplay", "$SSL_GameNPCAutoplay")
-	AddStateOptionBool("bGameEnjReductionChance", "$SSL_GameEnjReductionChance")
-	AddStateOptionBool("bGameHoldbackWithPartner", "$SSL_GameHoldbackWithPartner")
-
-	AddHeaderOption("Game Hotkeys")
-    AddStateOptionKey("iGameUtilityKey", "$SSL_GameUtilityKey")
-    AddStateOptionKey("iGamePauseKey", "$SSL_GamePauseKey")
-    AddStateOptionKey("iGameRaiseEnjKey", "$SSL_GameRaiseEnjKey")
-    AddStateOptionKey("iGameHoldbackKey", "$SSL_GameHoldbackKey")
-    AddStateOptionKey("iGameSelectNextPos", "$SSL_GameSelectNextPos")
 EndFunction
 
 ; ------------------------------------------------------- ;
@@ -854,6 +855,7 @@ Function RebuildClean()
 	AddTextOptionST("ForceRegisterVoices", "$SSL_ForceRegisterVoices", "$SSL_ClickHere")
 	AddHeaderOption("System Requirements")
 	SystemCheckOptions()
+	Config.CacheInterFactorValues()
 
 	SetCursorPosition(1)
 	AddHeaderOption("Registry Info")

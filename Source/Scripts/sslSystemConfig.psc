@@ -1059,6 +1059,28 @@ endFunction
 ; --------------------------------------------------------------------------------------- ;
 ; *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-* ;
 
+string EnjConfigFile = "/SexLabEnjoyment.json"
+
+Function CacheInterFactorValues()
+	If !JsonUtil.IsGood(EnjConfigFile)
+		Debug.MessageBox("[EnjGame Error]\nSexLabEnjoyment.Json has parsing errors or is missing.")
+		return
+	EndIf
+	string[] interTypes = sslThreadModel.NameAllInteractions()
+    int i = 0
+	int len = interTypes.Length
+    While (i < len)
+		string interType = interTypes[i]
+		float typeValue = JsonUtil.GetPathFloatValue(EnjConfigFile, interType)
+		StorageUtil.SetFloatValue(None, ("EnjFactor_" + interType), typeValue)
+		i += 1
+    EndWhile
+EndFunction
+
+; ----------------------------------------------- ;
+; --- MAIN CONFIG                             --- ;
+; ----------------------------------------------- ;
+
 bool Property InternalEnjoymentEnabled hidden
   bool Function Get()
     return GetSettingBool("bInternalEnjoymentEnabled")
