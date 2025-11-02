@@ -129,7 +129,7 @@ namespace Papyrus::ThreadModel
 				return;
 			}
 			Registry::Scale::GetSingleton()->RemoveScale(actor);
-			switch (static_cast<int32_t>(actor->GetActorValueMax(RE::ActorValue::kVariable05))) {
+			switch (static_cast<int32_t>(actor->AsActorValueOwner()->GetActorValue(RE::ActorValue::kVariable05))) {
 			case STATUS05::Unconscious:
 				actor->AsActorState()->actorState1.lifeState = RE::ACTOR_LIFE_STATE::kUnconcious;
 				break;

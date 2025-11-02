@@ -28,7 +28,7 @@ Raycast::RayResult Raycast::CastRay(glm::vec4 start, glm::vec4 end, float traceH
 	auto physicsWorld = ply->parentCell->GetbhkWorld();
 	if (physicsWorld) {
 		typedef bool(__fastcall * RayCastFunType)(
-			decltype(RE::PlayerCamera::GetSingleton()->GetRuntimeData().unk120) physics, RE::bhkWorld * world, glm::vec4 & rayStart,
+			RE::PlayerCamera::Unk120 * physics, RE::bhkWorld * world, glm::vec4 & rayStart,
 			glm::vec4 & rayEnd, uint32_t * rayResultInfo, RE::NiAVObject * *hitActor, float traceHullSize);
 
 		static auto cameraCaster = REL::Relocation<RayCastFunType>(Offsets::CameraCaster);
