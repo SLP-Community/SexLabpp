@@ -92,7 +92,7 @@ namespace Registry
 		SET_SEX(Male);
 		SET_SEX(Female);
 		SET_SEX(Futa);
-#undef SET
+#undef SET_SEX
 		return ret;
 	}
 
