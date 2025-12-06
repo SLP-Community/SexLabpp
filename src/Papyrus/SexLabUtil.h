@@ -93,6 +93,15 @@ namespace Papyrus::SexLabUtil
 		return (calendar->GetCurrentGameTime() / timescale) * seconds_per_day;
 	}
 
+	std::string GetTranslation(RE::StaticFunctionTag*, std::string a_str)
+	{
+		std::string ret;
+		if (SKSE::Translation::Translate(a_str, ret)) {
+			return ret;
+		}
+		return "";
+	}
+
 	inline bool Register(VM* a_vm)
 	{
 		REGISTERFUNC(HasKeywordSub, "SexLabUtil", true);
@@ -104,6 +113,7 @@ namespace Papyrus::SexLabUtil
 		REGISTERFUNC(FloatMinMaxValue, "SexLabUtil", true);
 		REGISTERFUNC(MakeActorArray, "SexLabUtil", true);
 		REGISTERFUNC(GetCurrentGameRealTime, "SexLabUtil", true);
+		REGISTERFUNC(GetTranslation, "SexLabUtil", true);
 
 		return true;
 	}
