@@ -40,7 +40,10 @@ namespace Registry
 	Scene::Scene(std::ifstream& a_stream, std::string_view a_hash, uint8_t a_version) :
 		hash(a_hash), enabled(true)
 	{
-		start_animation=nullptr;	// initialize start_animation to avoid crash
+		
+		// initialize start_animation to avoid crash
+		start_animation=nullptr;
+
 		id.resize(Decode::ID_SIZE);
 		a_stream.read(id.data(), Decode::ID_SIZE);
 		Decode::Read(a_stream, name);
