@@ -1425,11 +1425,9 @@ Event OnHighlightST()
 		String[] tags = sslBaseExpression.GetExpressionTags(_expression[_expressionIdx])
 		SetInfoText("Tags: " + PapyrusUtil.StringJoin(tags, ", "))
 	Else
-		If (s[0] != "expredit" && s[0] != "expredittag" && s[0] != "M" && s[0] != "R")
-			String tlKey = "$SSL_" + s[0] + "Highlight"
-			If SexLabUtil.GetTranslation(tlKey) != ""
-				SetInfoText(tlKey)
-			EndIf
+		String tlKey = "$SSL_" + s[0] + "Highlight"
+		If SexLabUtil.GetTranslation(tlKey) != ""
+			SetInfoText(tlKey)
 		EndIf
 	EndIf
 EndEvent

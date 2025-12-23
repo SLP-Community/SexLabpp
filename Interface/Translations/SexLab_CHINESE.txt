@@ -343,7 +343,6 @@ $SSL_StageTimer_0	Stage 1 Length
 $SSL_StageTimer_1	Stage 2 Length
 $SSL_StageTimer_2	Stage 3 Length
 $SSL_StageTimer_3	Ending Stage Length
-$SSL_StageTimersHighlight	
 
 # ------ Stripping
 $SSL_Stripping	Stripping
@@ -458,7 +457,7 @@ $SSL_bGameHoldbackWithPartner	Holdback With Partner
 $SSL_bGameHoldbackWithPartnerHighlight	In scenes with a loved partner, the actors will try to perpetuate the scene by avoiding orgasm at the cost of magicka.
 
 # ------ Game Hotkeys
-$SSL_iGameUtilityKey	Game Utility Key
+$SSL_iGameUtilityKey	Game Modifier Key
 $SSL_iGameUtilityKeyHighlight	Modifier key for alternate functions of other enjoyment game hotkeys.
 $SSL_iGamePauseKey	Game Pause Key
 $SSL_iGamePauseKeyHighlight	Hotkey to pause/resume the enjoyment game.\nAlternative functions toggled by combining with utility key.
@@ -579,9 +578,7 @@ $SSL_ExpressionsVictim	Available as submissive
 $SSL_ExpressionsAggressor	Available as dominant
 $SSL_ExpressionScalingHighlight	Scaling behavior to map expression progress to scene enjoyment.\nLinear: Steady and even increase\nSquared: Fast initial increase, slow mid section, second spike as orgasm approaches\nCubic: Slow start, gradual ramp up as orgasm approaches\nExponential: Very slow start, rapid growth as orgasm approaches
 $SSL_EditFemale	Edit Female Data
-$SSL_expressioneditfemaleHighlight	
 $SSL_TestOnPlayer	Test On Player
-$SSL_expressiontestHighlight	
 
 $SSL_WarnTestExpression{}	Testing selected expression on {}. Continue?
 $SSL_WarnTestExpressionLowOrHight	Test current expression's low (left) or high (right) profile?
@@ -593,7 +590,6 @@ $SSL_RestoredTestExpression	Expression restored...
 $SSL_EditExpressions_0	Expression Data (Low)
 $SSL_EditExpressions_1	Expression Data (High)
 $SSL_MoodType	Mood Type
-$SSL_expreditHighlight	
 $SSL_MoodStrength	Mood Strength
 $SSL_Phoneme	Phoneme
 $SSL_Modifier	Modifier

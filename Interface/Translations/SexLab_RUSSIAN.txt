@@ -343,7 +343,6 @@ $SSL_StageTimer_0	Стадия №1
 $SSL_StageTimer_1	Стадия №2
 $SSL_StageTimer_2	Стадия №3 и выше
 $SSL_StageTimer_3	Заключительная стадия
-$SSL_StageTimersHighlight	
 
 # ------ Stripping
 $SSL_Stripping	Раздевание
@@ -579,9 +578,7 @@ $SSL_ExpressionsVictim	Доступно как жертве
 $SSL_ExpressionsAggressor	Доступно как агрессору
 $SSL_ExpressionScalingHighlight	Алгоритм изменения эмоции относительно роста наслаждения.\nЛинейный: Линейное увеличение | Квадратичный: Резкое увеличение вначале, медленный рост в середине и быстрый рост близко к оргазму.\nCubic: Медленное начало, постепенное нарастание по мере приближения оргазма | Экспоненциальный: Очень медленное начало, быстрое нарастание по мере приближения оргазма
 $SSL_EditFemale	Редактировать данные женщин
-$SSL_expressioneditfemaleHighlight	
 $SSL_TestOnPlayer	Тестировать на игроке
-$SSL_expressiontestHighlight	
 
 $SSL_WarnTestExpression{}	Тестируем выбранную эмоцию на {}. Продолжить?
 $SSL_WarnTestExpressionLowOrHight	Тестировать минимальные(слева) или максимальные(справа) вариации профиля текущей эмоции?
@@ -593,7 +590,6 @@ $SSL_RestoredTestExpression	Эмоции сброшены.
 $SSL_EditExpressions_0	Данные Эмоций (минимум)
 $SSL_EditExpressions_1	Данные эмоций (максимум)
 $SSL_MoodType	Тип настроения
-$SSL_expreditHighlight	
 $SSL_MoodStrength	Сила настроения
 $SSL_Phoneme	Фонемы
 $SSL_Modifier	Модификаторы
