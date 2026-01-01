@@ -1299,9 +1299,10 @@ State Ending
 		UpdateAllEncounters()
 		int i = 0
 		While (i < ActorAlias.Length)
-			Utility.Wait(0.2)
-			If (!ActorAlias[i].GetReference())
+			If (ActorAlias[i].GetState() == ActorAlias[i].STATE_IDLE)
 				i += 1
+			Else
+				Utility.Wait(0.1)
 			EndIf
 		EndWhile
 		SendThreadEvent("AnimationEnding")

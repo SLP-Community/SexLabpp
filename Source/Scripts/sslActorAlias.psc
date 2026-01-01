@@ -523,6 +523,10 @@ State Ready
 		GoToState(STATE_IDLE)
 		Clear()
 	EndFunction
+	Function Initialize()
+		Clear()
+		Initialize()
+	EndFunction
 
 	Event OnEndState()
 		UnregisterForModEvent("SSL_PREPARE_Thread" + _Thread.tid)
