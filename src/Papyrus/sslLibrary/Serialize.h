@@ -74,12 +74,8 @@ namespace Papyrus
 				a_intfc->ReadRecordData(numRegs);
 
 				for (size_t i = 0; i < numRegs; i++) {
-					RE::FormID id, newid;
+					RE::FormID id;
 					a_intfc->ReadRecordData(id);
-					if (!a_intfc->ResolveFormID(id, newid)) {
-						while (a_intfc->ReadRecordData(id) && id != (std::numeric_limits<uint32_t>::max)()) {}
-						continue;
-					}
 
 					std::vector<RE::BSFixedString> list{};
 					size_t numEvents;
@@ -91,7 +87,13 @@ namespace Papyrus
 						stl::read_string(a_intfc, next);
 						list.push_back(next);
 					}
-					toload.insert({ newid, list });
+
+					RE::FormID newid;
+					if (a_intfc->ResolveFormID(id, newid)) {
+						toload.insert({ newid, list });
+					} else {
+						logger::warn("Unable to resolve form {:X} while loading tracking", id);
+					}
 
 					a_intfc->ReadRecordData(id);
 					assert(id == (std::numeric_limits<uint32_t>::max)());
