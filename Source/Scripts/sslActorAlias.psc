@@ -212,7 +212,6 @@ sslSystemConfig _Config
 
 Faction _AnimatingFaction
 Actor _PlayerRef
-Form _xMarker
 
 ; Constants
 String Property STATE_IDLE 		= "Empty" AutoReadOnly
@@ -249,9 +248,6 @@ Actor _killer
 
 int _AnimVarIsNPC
 bool _AnimVarbHumanoidFootIKDisable
-
-; Center
-ObjectReference _myMarker
 
 ; Orgasms
 int _OrgasmCount
@@ -601,12 +597,6 @@ State Paused
 		LockActorImpl()
 		_ActorRef.SetAnimationVariableInt("IsNPC", 0)
 		_ActorRef.SetAnimationVariableBool("bHumanoidFootIKDisable", 1)
-		If (!sslActorLibrary.HasVehicle(_ActorRef))
-			If (!_myMarker)
-				_myMarker = _ActorRef.PlaceAtMe(_xMarker)
-			EndIf
-			_ActorRef.SetVehicle(_myMarker)
-		EndIf
 		SendDefaultAnimEvent()
 		GoToState(STATE_PLAYING)
 	EndFunction
@@ -885,7 +875,6 @@ State Animating
 		UnlockActor()
 	EndFunction
 	Function UnlockActor()
-		_ActorRef.SetVehicle(none)
 		_ActorRef.SetAnimationVariableInt("IsNPC", _AnimVarIsNPC)
 		_ActorRef.SetAnimationVariableBool("bHumanoidFootIKDisable", _AnimVarbHumanoidFootIKDisable)
 		If (_ActorRef == _PlayerRef)
@@ -1112,8 +1101,6 @@ Function Setup()
 	_Thread = GetOwningQuest() as sslThreadModel
 	_AnimatingFaction = _Config.AnimatingFaction
 	_PlayerRef = Game.GetPlayer()
-	; _xMarker = Game.GetFormFromFile(0x045A93, "SexLab.esm") ; 0x3B)
-	_xMarker = Game.GetForm(0x3B)
 
 	Initialize()
 EndFunction
