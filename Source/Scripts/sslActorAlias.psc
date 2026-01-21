@@ -1437,14 +1437,14 @@ Function StoreExcitementState(String arg = "")
 	string ActorName = GetActorName()
 	If (arg == "Backup")
 		StorageUtil.SetFloatValue(None, ("EnjBackupTime_" + ActorName),  SexLabUtil.GetCurrentGameRealTime())
-		StorageUtil.SetIntValue(None, ("LastOrgasmCount_" + ActorName), _OrgasmCount)
+		;StorageUtil.SetIntValue(None, ("LastOrgasmCount_" + ActorName), _OrgasmCount)
 		If _FullEnjoyment > 10
 			StorageUtil.SetIntValue(None, ("LastEnjoyment_" + ActorName), _FullEnjoyment)
 		EndIf
 	ElseIf (arg == "Restore")
 		float TimeSinceEnjBackup = (SexLabUtil.GetCurrentGameRealTime() - StorageUtil.GetFloatValue(None, ("EnjBackupTime_" + ActorName)))
 		If (TimeSinceEnjBackup < 60)
-			_OrgasmCount = StorageUtil.GetIntValue(None, ("LastOrgasmCount_" + ActorName))
+			;_OrgasmCount = StorageUtil.GetIntValue(None, ("LastOrgasmCount_" + ActorName))
 			int LastEnjoyment = StorageUtil.GetIntValue(None, ("LastEnjoyment_" + ActorName))
 			_FullEnjoyment = (LastEnjoyment as float * (1 - (TimeSinceEnjBackup/60))) as int
 		EndIf
