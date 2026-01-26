@@ -217,9 +217,9 @@ namespace Registry::Statistics
 	const ActorEncounter::EncounterObj* ActorEncounter::GetPartner(RE::Actor* a_actor) const
 	{
 		if (a_actor->formID == npc1.id)
-			return &npc1;
-		if (a_actor->formID == npc2.id)
 			return &npc2;
+		if (a_actor->formID == npc2.id)
+			return &npc1;
 		return nullptr;
 	}
 
