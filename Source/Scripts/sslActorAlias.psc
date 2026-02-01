@@ -327,10 +327,6 @@ endProperty
 float _StartedAt
 float _LastOrgasm
 
-bool Function ActorIsLocked()
-	return _ActorLocked
-EndFunction
-
 ; ------------------------------------------------------- ;
 ; --- Alias IDLE                                      --- ;
 ; ------------------------------------------------------- ;
@@ -405,6 +401,7 @@ EndFunction
 State Ready
 	Event OnBeginState()
 		RegisterForModEvent("SSL_PREPARE_Thread" + _Thread.tid, "OnDoPrepare")
+		RegisterForModEvent("SSL_ENDING_Thread" + _Thread.tid, "OnRequestEnding")
 	EndEvent
 
 	Function SetStrapon(Form ToStrapon)
@@ -419,6 +416,7 @@ State Ready
 	EndFunction
 
 	Event OnDoPrepare(string asEventName, string asStringArg, float afNumArg, form akPathTo)
+		UnregisterForModEvent("SSL_PREPARE_Thread" + _Thread.tid)
 		_ActorRef.SetActorValue("Paralysis", 0.0)
 		float interval = 0.05
 		If(_ActorRef == _PlayerRef)
@@ -452,13 +450,12 @@ State Ready
 		EndIf
 		_ActorRef.SetFactionRank(_AnimatingFaction, 1)
 		_ActorRef.EvaluatePackage()
+		_AnimVarIsNPC = _ActorRef.GetAnimationVariableInt("IsNPC")
+		_AnimVarbHumanoidFootIKDisable = _ActorRef.GetAnimationVariableBool("bHumanoidFootIKDisable")
 		GoToState(STATE_PAUSED)
 		If (asStringArg != "skip")
 			_Thread.PrepareDone()
 		EndIf
-		; Delayed Initialization
-		_AnimVarIsNPC = _ActorRef.GetAnimationVariableInt("IsNPC")
-		_AnimVarbHumanoidFootIKDisable = _ActorRef.GetAnimationVariableBool("bHumanoidFootIKDisable")
 		If (_sex <= 2)	; NPC: Strapon, Expression
 			If (_sex == 0)
 				_BaseDelay = _Config.MaleVoiceDelay
@@ -478,15 +475,9 @@ State Ready
 		EndIf
 		_VoiceDelay = _BaseDelay
 		_ExpressionDelay = _BaseDelay * 2
-		; Post Delayed Initialization
-		If (!_Config.DebugMode)
-			return
+		If (_Config.DebugMode)
+			Log("Strapon[" + _Strapon + "] Voice[" + GetActorVoice() + "] Expression[" + GetActorExpression() + "]")
 		EndIf
-		String LogInfo = ""
-		LogInfo += "Strapon[" + _Strapon + "] "
-		LogInfo += "Voice[" + GetActorVoice() + "] "
-		LogInfo += "Expression[" + GetActorExpression() + "]"
-		Log(LogInfo)
 	EndEvent
 
 	Function Clear()
@@ -497,10 +488,6 @@ State Ready
 		Clear()
 		Initialize()
 	EndFunction
-
-	Event OnEndState()
-		UnregisterForModEvent("SSL_PREPARE_Thread" + _Thread.tid)
-	EndEvent
 EndState
 
 Event OnDoPrepare(string asEventName, string asStringArg, float afNumArg, form akPathTo)
@@ -528,16 +515,9 @@ EndFunction
 State Paused
 	; Only called once the first time the main thread enters animating state
 	Function ReadyActor(int aiStripData, int aiPositionGenders)
+		LockActor()
 		_stripData = aiStripData
 		_useStrapon = _sex == 1 && Math.LogicalAnd(aiPositionGenders, 0x2) == 0
-		RegisterForModEvent("SSL_READY_Thread" + _Thread.tid, "OnStartPlaying")
-	EndFunction
-	Event OnStartPlaying(string asEventName, string asStringArg, float afNumArg, form akSender)
-		UnregisterForModEvent("SSL_READY_Thread" + _Thread.tid)
-		LockActor()
-		While (!_Thread.AllActorsLocked())
-			Utility.Wait(0.05)
-		EndWhile
 		If (_sex <= 2)
 			If (DoUndress)
 				DoUndress = false
@@ -552,12 +532,18 @@ State Paused
 			ResolveStrapon()
 			_ActorRef.QueueNiNodeUpdate()
 		EndIf
-		_StartedAt = SexLabUtil.GetCurrentGameRealTime()
-		_LastOrgasm = _StartedAt
+		Debug.SendAnimationEvent(_ActorRef, "SOSBend0")
+		;Utility.Wait(0.5)	; Wait for schlong to update
+		RegisterForModEvent("SSL_READY_Thread" + _Thread.tid, "OnStartPlaying")
+	EndFunction
+
+	Event OnStartPlaying(string asEventName, string asStringArg, float afNumArg, form akSender)
+		UnregisterForModEvent("SSL_READY_Thread" + _Thread.tid)
+		GoToState(STATE_PLAYING)
 		_Thread.AnimationStart()
 		TrackedEvent(TRACK_START)
-		Utility.Wait(1)	; Wait for schlong to update
-		Debug.SendAnimationEvent(_ActorRef, "SOSBend0")
+		_StartedAt = SexLabUtil.GetCurrentGameRealTime()
+		_LastOrgasm = _StartedAt
 	EndEvent
 
 	Function SetStrapon(Form ToStrapon)
@@ -593,8 +579,26 @@ State Paused
 		_ActorRef.SetAnimationVariableInt("IsNPC", 0)
 		_ActorRef.SetAnimationVariableBool("bHumanoidFootIKDisable", 1)
 		SendDefaultAnimEvent()
-		GoToState(STATE_PLAYING)
+		Log("Locked Actor: " + GetActorName())
 		_ActorLocked = True
+	EndFunction
+
+	Function TryUnlock()
+		UnlockActor()
+	EndFunction
+	Function UnlockActor()
+		_ActorRef.SetAnimationVariableInt("IsNPC", _AnimVarIsNPC)
+		_ActorRef.SetAnimationVariableBool("bHumanoidFootIKDisable", _AnimVarbHumanoidFootIKDisable)
+		If (_ActorRef == _PlayerRef)
+			MiscUtil.SetFreeCameraState(false)
+			Game.EnablePlayerControls(abFighting = false, abActivate = false)
+		Else
+			ActorUtil.RemovePackageOverride(_ActorRef, _Thread.DoNothingPackage)
+			_ActorRef.EvaluatePackage()
+		EndIf
+		UnlockActorImpl()
+		Log("Unlocked Actor: " + GetActorName())
+		_ActorLocked = False
 	EndFunction
 	
 	Function RemoveStrapon()
@@ -608,6 +612,19 @@ State Paused
 			Redress()
 			RemoveStrapon()
 		EndIf
+		If (_ActorLocked)
+			UnlockActor()
+		EndIf
+		If (sslLovense.IsLovenseInstalled())
+			sslLovense.StopAllActions()
+		EndIf
+		If (sslSystemConfig.HasAnimSpeedSE())
+			sslAnimSpeedHelper.ResetAnimationSpeed(_ActorRef)
+		EndIf
+		sslBaseExpression.CloseMouth(_ActorRef)
+		_ActorRef.ClearExpressionOverride()
+		_ActorRef.ResetExpressionOverrides()
+		sslBaseExpression.ClearMFG(_ActorRef)
 		TrackedEvent(TRACK_END)
 		GoToState(STATE_IDLE)
 		Clear()
@@ -621,9 +638,6 @@ EndState
 Function ReadyActor(int aiStripData, int aiPositionGenders)
 	Error("Cannot ready outside of idle state", "ReadyActor()")
 EndFunction
-Function LockActor()
-	Error("Cannot lock actor outside of idle state", "LockActor()")
-EndFunction
 Event OnStartPlaying(string asEventName, string asStringArg, float afNumArg, form akSender)
 	Error("Playing request outside of idle state", "OnStartPlaying()")
 EndEvent
@@ -631,12 +645,22 @@ Function RemoveStrapon()
 	Error("Removing strapon from invalid state", "RemoveStrapon()")
 EndFunction
 
-;	Lock actor iff in idling state, otherwise do nothing
+;	Lock/Unlock actor if in idling state, otherwise do nothing
 Function TryLock()
 EndFunction
-
+Function LockActor()
+	Error("Cannot lock actor outside of idle state", "LockActor()")
+EndFunction
+Function TryUnlock()
+EndFunction
+Function UnlockActor()
+	Error("Cannot unlock actor outside of playing state", "UnlockActor()")
+EndFunction
 ; Take this actor out of combat and clear all actor states, return true if the actor was the player
 Function LockActorImpl() native
+; Undo "LockActor()" persistent changes
+Function UnlockActorImpl() native
+
 Form[] Function StripByData(int aiStripData, int[] aiDefaults, int[] aiOverwrites) native
 
 ; ------------------------------------------------------- ;
@@ -872,27 +896,6 @@ State Animating
 		_hasOrgasm = false
 		Log(GetActorName() + ": Orgasms[" + _OrgasmCount + "] FullEnjoyment [" + _FullEnjoyment + "]")
 	EndFunction
-
-	Function TryUnlock()
-		UnlockActor()
-	EndFunction
-	Function UnlockActor()
-		_ActorRef.SetAnimationVariableInt("IsNPC", _AnimVarIsNPC)
-		_ActorRef.SetAnimationVariableBool("bHumanoidFootIKDisable", _AnimVarbHumanoidFootIKDisable)
-		If (_ActorRef == _PlayerRef)
-			MiscUtil.SetFreeCameraState(false)
-			Game.EnablePlayerControls(abFighting = false, abActivate = false)
-			If (sslLovense.IsLovenseInstalled())
-				sslLovense.StopAllActions()
-			EndIf
-		Else
-			ActorUtil.RemovePackageOverride(_ActorRef, _Thread.DoNothingPackage)
-			_ActorRef.EvaluatePackage()
-		EndIf
-		UnlockActorImpl()
-		_ActorLocked = False
-		GoToState(STATE_PAUSED)
-	EndFunction
 	
 	Function ResetPosition(int aiStripData, int aiPositionGenders)
 		_stripData = aiStripData
@@ -903,10 +906,7 @@ State Animating
 	EndFunction
 
 	Function Clear()
-		If (sslSystemConfig.HasAnimSpeedSE())
-			sslAnimSpeedHelper.ResetAnimationSpeed(_ActorRef)
-		EndIf
-		UnlockActor() ; will go to idle state
+		GoToState(STATE_PAUSED)
 		Clear()
 	EndFunction
 	Function Initialize()
@@ -940,17 +940,10 @@ State Animating
 		UnregisterForModEvent("SSL_ORGASM_Thread" + _Thread.tid)
 		UnregisterEnjGameKeys()
 		StoreExcitementState("Backup")
-		sslBaseExpression.CloseMouth(_ActorRef)
-		_ActorRef.ClearExpressionOverride()
-		_ActorRef.ResetExpressionOverrides()
-		sslBaseExpression.ClearMFG(_ActorRef)
 		SendDefaultAnimEvent()
 	EndEvent
 EndState
 
-Function UnlockActor()
-	Error("Cannot unlock actor outside of playing state", "UnlockActor()")
-EndFunction
 Function UpdateNext(int aiStripData)
 	Error("Cannot update to next stage outside of playing state", "UpdateNext()")
 EndFunction
@@ -974,13 +967,9 @@ Event OnOrgasm(string eventName, string strArg, float numArg, Form sender)
 	Error("Cannot create orgasm effects outside of playing state", "OnOrgasm()")
 EndEvent
 
-Function TryUnlock()
-EndFunction
 Function TryRefreshExpression()
 EndFunction
 
-; Undo "LockActor()" persistent changes
-Function UnlockActorImpl() native
 Form[] Function StripByDataEx(int aiStripData, int[] aiDefaults, int[] aiOverwrites, Form[] akMergeWith) native
 
 ; ------------------------------------------------------- ;
@@ -1111,6 +1100,10 @@ Function Initialize()
 	ResetEnjoymentVariables()
 EndFunction
 
+Event OnRequestEnding(string asEventName, string asStringArg, float afDoStatistics, form akSender)
+	GoToState(STATE_PAUSED)
+	Clear()
+EndEvent
 Event OnRequestClear(string asEventName, string asStringArg, float afDoStatistics, form akSender)
 	Clear()
 EndEvent

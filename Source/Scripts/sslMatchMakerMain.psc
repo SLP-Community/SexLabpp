@@ -116,8 +116,6 @@ Function TriggerSex(Actor[] akPassed)
     EndIf
     sub = PapyrusUtil.RemoveActor(sub, sub[sub.Length - 1])
   EndWhile
-  float retTimeB = Utility.GetCurrentRealTime()
-  Config.Log("[SexLab MatchMaker] Successfully started animation after " + (retTimeB - _StartCall))
 EndFunction
 
 Event AnimationStarted(int aiThread, bool abHasPlayer)
@@ -128,10 +126,11 @@ Event AnimationStarted(int aiThread, bool abHasPlayer)
   Config.Log("[SexLab MatchMaker] - ###### START LOGGING SCENE DATA #####")
   Config.Log("[SexLab MatchMaker] - Startup time: " + (retTime - _StartCall))
   Config.Log("[SexLab MatchMaker] - Current thread id: " + thread.GetThreadID())
-  Config.Log("[SexLab MatchMaker] - Current active stage: " + thread.GetActiveStage())
-  Config.Log("[SexLab MatchMaker] - Current active scene: " + thread.GetActiveScene())
   Config.Log("[SexLab MatchMaker] - Current playing scene: " + thread.GetPlayingScenes())
+  Config.Log("[SexLab MatchMaker] - Current active scene: " + thread.GetActiveScene())
   Config.Log("[SexLab MatchMaker] - Current scene name: " + SexLabRegistry.GetSceneName(thread.GetActiveScene()))
+  Config.Log("[SexLab MatchMaker] - Current active stage: " + thread.GetActiveStage())
+  Config.Log("[SexLab MatchMaker] - Current active stage number: " + (thread as sslThreadModel).GetLegacyStageNum() + " / " + (thread as sslThreadModel).GetLegacyStagesCount())
   Config.Log("[SexLab MatchMaker] - Current submissive actor(s): " + thread.GetSubmissives())
   Config.Log("[SexLab MatchMaker] - ###### END LOGGING SCENE DATA #####")
 EndEvent

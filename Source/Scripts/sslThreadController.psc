@@ -78,7 +78,7 @@ Event MenuEvent(string asEventName, string asStringArg, float afNumArg, form akS
 	ElseIf (asEventName == "SL_AdvanceScene")
 		If (afNumArg)
 			GoToStage(Stage - 1)
-		ElseIf (GetTimeTotal() > 0.75)
+		Else
 			PlayNextImpl(asStringArg)
 		EndIf
 	ElseIf (asEventName == "SL_SetSpeed")
@@ -97,9 +97,7 @@ Event MenuEvent(string asEventName, string asStringArg, float afNumArg, form akS
 	ElseIf (asEventName == "SL_MoveScene")
 		MoveScene()
 	ElseIf (asEventName == "SL_EndScene")
-		If (GetTimeTotal() > 0.75)
-			EndAnimation()
-		EndIf
+		EndAnimation()
 	ElseIf (asEventName == "SL_SetAnnotations")
 		UpdateAnnotations(asStringArg)
 	ElseIf (asEventName == "SL_SetOffset")
@@ -156,6 +154,7 @@ Function MoveScene()
 	int n = 0
 	While(n < Positions.Length)
 		If(ActorAlias[n] == PlayerSlot)
+			ActorAlias[n].GoToState(ActorAlias[n].STATE_PAUSED)
 			ActorAlias[n].TryUnlock()
 		Else
 			ActorAlias[n].SendDefaultAnimEvent(true)
@@ -180,7 +179,8 @@ Function MoveScene()
 		Utility.Wait(0.5)
 	EndWhile
 	If(PlayerSlot)
-		PlayerSlot.LockActor()
+		PlayerSlot.TryLock()
+		PlayerSlot.GoToState(PlayerSlot.STATE_PLAYING)
 	EndIf
 	Game.EnablePlayerControls()
 	CenterOnObject(PlayerRef)

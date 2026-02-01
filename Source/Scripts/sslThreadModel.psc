@@ -497,17 +497,6 @@ bool Property IsLocked hidden
 	EndFunction
 EndProperty
 
-bool Function AllActorsLocked()
-	int i = 0
-	While (i < _Positions.Length)
-		If (!ActorAlias[i].ActorIsLocked())
-			return false
-		EndIf
-		i += 1
-	EndWhile
-	return true
-EndFunction
-
 ; Every valid state will oerwrite this
 ; Should this ever be called, then the Thread was in an unspecified state and will be reset
 int Function GetStatus()
@@ -618,6 +607,7 @@ State Making
 	EndEvent
 	Event OnUpdate()
 		Fatal("Thread has timed out during setup. Resetting thread...")
+		Initialize()
 	EndEvent
 
 	int Function AddActor(Actor ActorRef, bool IsVictim = false, sslBaseVoice Voice = none, bool ForceSilent = false)
@@ -654,7 +644,7 @@ State Making
 			EndIf
 			i += 1
 		EndWhile
-    Log("Added " + ActorList + " to thread", "AddActors()")
+    	Log("Added " + SexLabUtil.ActorNames(ActorList) + " to thread", "AddActors()")
 		return true
 	EndFunction
 	bool Function AddActorsA(Actor[] ActorList, Actor[] akVictims)
@@ -665,7 +655,7 @@ State Making
 			EndIf
 			i += 1
 		EndWhile
-    Log("Added " + ActorList + " to thread", "AddActorsA()")
+    	Log("Added " + SexLabUtil.ActorNames(ActorList) + " to thread", "AddActorsA()")
 		return true
 	EndFunction
 
@@ -726,6 +716,7 @@ State Making
 		_Positions = PapyrusUtil.RemoveActor(_Positions, none)
 		If(_Positions.Length <= 0 || _Positions.Length > POSITION_COUNT_MAX)
 			Fatal("Failed to start Thread: Thread has reached actor limit or no actors were added", "StartThread()")
+			Initialize()
 			return none
 		EndIf
 		RunHook(Config.HOOKID_STARTING)
@@ -741,6 +732,7 @@ State Making
 		EndWhile
 		If (_instanceCreationWaitLock == 0)
 			Fatal("Failed to start Thread: Unable to create thread instance. See 'Documents/My Games/Skyrim Special Edition/SKSE/SexLabUtil.log' for details", "StartThread()")
+			Initialize()
 			return none
 		EndIf
 		GoToState(STATE_SETUP_M)
@@ -770,8 +762,6 @@ State Making_M
 		_LeadInScenes = GetLeadInScenes()
 		_PrimaryScenes = GetPrimaryScenes()
 		_CustomScenes = GetCustomScenes()
-		String activeScene = GetActiveScene()
-		LeadIn = LeadIn && _LeadInScenes.Find(activeScene) > -1
 		SortAliasesToPositions()
 		PrepareDone()
 		If (_CustomScenes.Length)
@@ -779,28 +769,24 @@ State Making_M
 		Else
 			_ThreadTags = SexLabRegistry.GetCommonTags(_PrimaryScenes)
 		EndIf
-		Log("Thread validated, playing animation: " + activeScene + ", " + SexLabRegistry.GetSceneName(activeScene), "StartThread()")
-		SendThreadEvent("AnimationStarting")
 	EndEvent
 
 	; Invoked n times by Aliases and once by StartThread, then continue to next state
 	Function PrepareDone()
-		If (_prepareAsyncCount < _Positions.Length)
-			_prepareAsyncCount += 1
-			Log("Prepare done called " + _prepareAsyncCount + "/" + (_Positions.Length + 1) + " times")
+		_prepareAsyncCount += 1
+		Log("Prepare done called " + _prepareAsyncCount + "/" + (_Positions.Length + 1) + " times")
+		If (_prepareAsyncCount < (_Positions.Length + 1))
 			return
-		ElseIf (HasPlayer)
-			If(IsVictim(PlayerRef) && Config.DisablePlayer)
-				AutoAdvance = true
-			Else
-				AutoAdvance = Config.AutoAdvance
-				Config.GetThreadControl(self as sslThreadController)
-			EndIf
+		EndIf
+		String activeScene = GetActiveScene()
+		LeadIn = LeadIn && _LeadInScenes.Find(activeScene) > -1
+		Log("Thread validated, playing animation: " + activeScene + ", " + SexLabRegistry.GetSceneName(activeScene), "StartThread()")
+		SendThreadEvent("AnimationStarting")
+		If (HasPlayer)
 			If (sslSystemConfig.GetSettingInt("iUseFade") > 0)
 				Config.ApplyFade()
 			EndIf
 		Else
-			AutoAdvance = true
 			If (Config.ShowInMap && PlayerRef.GetDistance(CenterRef) > 750)
 				SetObjectiveDisplayed(0, True)
 			EndIf
@@ -915,20 +901,30 @@ State Animating
 		_SFXTimer = Config.SFXDelay
 		_animationSyncCount = 0
 		SendModEvent("SSL_READY_Thread" + tid)
-		StartedAt = SexLabUtil.GetCurrentGameRealTime()
 		AnimationStart()
 	EndEvent
 	Function AnimationStart()
-		If (_animationSyncCount < _Positions.Length)
-			_animationSyncCount += 1
-			Log("AnimationStart called " + _animationSyncCount + "/" + (_Positions.Length) + " times")
+		_animationSyncCount += 1
+		Log("AnimationStart called " + _animationSyncCount + "/" + (_Positions.Length + 1) + " times")
+		If (_animationSyncCount < (_Positions.Length + 1))
 			return
 		EndIf
 		Log("AnimationStart fully setup, begin animating")
+		StartedAt = SexLabUtil.GetCurrentGameRealTime()
 		StartStage(Utility.CreateStringArray(0), "")
 		SendThreadEvent("AnimationStart")
 		If(LeadIn)
 			SendThreadEvent("LeadInStart")
+		EndIf
+		If (HasPlayer)
+			If(IsVictim(PlayerRef) && Config.DisablePlayer)
+				AutoAdvance = true
+			Else
+				AutoAdvance = Config.AutoAdvance
+				Config.GetThreadControl(self as sslThreadController)
+			EndIf
+		Else
+			AutoAdvance = true
 		EndIf
 	EndFunction
 
@@ -971,12 +967,13 @@ State Animating
 			EndIf
 			return
 		ElseIf(!Leadin)
-			If (SexLabRegistry.GetNodeType(GetActiveScene(), asNewStage) == 2)
-				SendThreadEvent("OrgasmStart")
-				TriggerOrgasm()
-			EndIf
 			int ctype = sslSystemConfig.GetSettingInt("iClimaxType")
-			If (ctype == Config.CLIMAXTYPE_SCENE)
+			If (ctype == Config.CLIMAXTYPE_LEGACY)
+				If (SexLabRegistry.GetNodeType(GetActiveScene(), asNewStage) == 2)
+					SendThreadEvent("OrgasmStart")
+					TriggerOrgasm()
+				EndIf
+			ElseIf (ctype == Config.CLIMAXTYPE_SCENE)
 				int[] cactors = SexLabRegistry.GetClimaxingActors(GetActiveScene(), asNewStage)
 				int i = 0
 				While (i < cactors.Length)
@@ -1050,6 +1047,7 @@ State Animating
 
 	Function UpdateTimer(float AddSeconds = 0.0)
 		_StageTimer += AddSeconds
+		_ForceAdvance = true
 		TryUpdateMenuTimer(_StageTimer)
 	EndFunction
 
@@ -1085,10 +1083,7 @@ State Animating
 	Endfunction
 	
 	Event OnUpdate()
-		If (_ForceAdvance)
-			GoToStage(_StageHistory.Length + 1)
-			return
-		ElseIf (AutoAdvance)
+		If (AutoAdvance || _ForceAdvance)
 			_StageTimer -= ANIMATING_UPDATE_INTERVAL
 			If (_StageTimer <= 0)
 				If !ThreadWaitsForOrgasm()
@@ -1196,9 +1191,11 @@ State Animating
 		EndAnimation()
 	EndFunction
 	Function EndAnimation(bool Quickly = false)
-		If(SexLabRegistry.GetNodeType(GetActiveScene(), GetActiveStage()) == 2)
-			SendThreadEvent("OrgasmEnd")
-		EndIF
+		If (sslSystemConfig.GetSettingInt("iClimaxType") == Config.CLIMAXTYPE_LEGACY)
+			If (SexLabRegistry.GetNodeType(GetActiveScene(), GetActiveStage()) == 2)
+				SendThreadEvent("OrgasmEnd")
+			EndIf
+		EndIf
 		GoToState(STATE_END)
 	EndFunction
 
@@ -1306,7 +1303,8 @@ float Function GetActionVelocity(Actor akPosition, Actor akPartner, int aiType) 
 State Ending
 	Event OnBeginState()
 		Config.DisableThreadControl(self as sslThreadController)
-		SendModEvent("SSL_CLEAR_Thread" + tid, "", 1.0)
+		SendThreadEvent("AnimationEnding")
+		SendModEvent("SSL_ENDING_Thread" + tid, "", 1.0)
 		If(IsObjectiveDisplayed(0))
 			SetObjectiveDisplayed(0, False)
 		EndIf
@@ -1316,12 +1314,12 @@ State Ending
 			If (ActorAlias[i].GetState() == ActorAlias[i].STATE_IDLE)
 				i += 1
 			Else
-				Utility.Wait(0.1)
+				Utility.Wait(0.05)
 			EndIf
 		EndWhile
-		SendThreadEvent("AnimationEnding")
-		SendThreadEvent("AnimationEnd")
+		SendModEvent("SSL_CLEAR_Thread" + tid, "", 1.0)
 		RunHook(Config.HOOKID_END)
+		SendThreadEvent("AnimationEnd")
 		; Cant use default OnUpdate() event as the previous state could leak a registration into this one here
 		; any attempt to prevent this leak without artificially slowing down the code have failed
 		; 0.1 gametime = 6ig minutes = 360 ig seconds = 360 / 20 rt seconds = 18 rt seconds with default timescale
@@ -1604,7 +1602,7 @@ Function ApplyCumFX(Actor SourceRef)
 				EndIf
 				If (aiType != -2)
 					ActorLib.AddCumFx(TargetRef, aiType)
-					Int handle = ModEvent.Create("OnCumFxApplied")
+					Int handle = ModEvent.Create("SexLabApplyCumFX")
 					ModEvent.PushForm(handle, TargetRef)
 					ModEvent.PushForm(handle, SourceRef)
 					ModEvent.PushInt(handle, aiType)
@@ -2373,6 +2371,7 @@ Function EnjBasedSkipToLastStage(bool abSkip)
 	bool NotEndStageScenario = (GetLegacyStageNum() < GetLegacyStagesCount())
 	bool SoloDuoScenario = (_Positions.Length == 1 || _Positions.Length == 2) 
 	If (NotEndStageScenario && SoloDuoScenario)
+		Log("Skipping to sink stage, EnjBasedSkipToLastStage()")
 		SkipTo(SexLabRegistry.GetEndingStages(GetActiveScene())[0])
 		_StageTimer -= (GetTimer() / 2)
 		UpdateBaseSpeed(0.8)
