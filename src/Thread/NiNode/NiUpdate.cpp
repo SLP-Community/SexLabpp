@@ -132,8 +132,7 @@ namespace Thread::NiNode
 	std::shared_ptr<NiInstance> NiUpdate::Register(RE::FormID a_id, std::vector<RE::Actor*> a_positions, const Registry::Scene* a_scene) noexcept
 	{
 		try {
-			const auto where = std::ranges::find(processes, a_id, [](auto& it) { return it.first; });
-			if (where != processes.end()) {
+			std::scoped_lock lk{ _m };
 				logger::info("Object with ID {:X} already registered. Resetting NiInstance.", a_id);
 				std::swap(*where, processes.back());
 				processes.pop_back();
@@ -151,8 +150,7 @@ namespace Thread::NiNode
 
 	void NiUpdate::Unregister(RE::FormID a_id) noexcept
 	{
-		const auto where = std::ranges::find(processes, a_id, [](auto& it) { return it.first; });
-		if (where == processes.end()) {
+		std::scoped_lock lk{ _m };
 			logger::error("No object registered using ID {:X}", a_id);
 			return;
 		}
