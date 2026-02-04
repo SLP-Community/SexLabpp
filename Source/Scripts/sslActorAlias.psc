@@ -401,7 +401,25 @@ EndFunction
 State Ready
 	Event OnBeginState()
 		RegisterForModEvent("SSL_PREPARE_Thread" + _Thread.tid, "OnDoPrepare")
-		RegisterForModEvent("SSL_ENDING_Thread" + _Thread.tid, "OnRequestEnding")
+		If (_sex <= 2)	; NPC: Strapon, Expression
+			If (_sex == 0)
+				_BaseDelay = _Config.MaleVoiceDelay
+			Else
+				_BaseDelay = _Config.FemaleVoiceDelay
+				If (_sex == 1)
+					_HadStrapon = _Config.WornStrapon(_ActorRef)
+					If (!_HadStrapon)
+						_Strapon = _Config.GetStrapon()
+					ElseIf (!_Strapon)
+						_Strapon = _HadStrapon
+					EndIf
+				EndIf
+			EndIf
+		Else	; Creature
+			_BaseDelay = 3.0
+		EndIf
+		_VoiceDelay = _BaseDelay
+		_ExpressionDelay = _BaseDelay * 2
 	EndEvent
 
 	Function SetStrapon(Form ToStrapon)
@@ -453,28 +471,23 @@ State Ready
 		_AnimVarIsNPC = _ActorRef.GetAnimationVariableInt("IsNPC")
 		_AnimVarbHumanoidFootIKDisable = _ActorRef.GetAnimationVariableBool("bHumanoidFootIKDisable")
 		GoToState(STATE_PAUSED)
+		; Code below executed in STATE_PAUSED as it should be part of event, not ReadyActor() to avoid delays
+		; By compulsion, it's executed in OnDoPrepare() here due to no OnStateBegin() event in that state
+		LockActor()
+		If (_sex <= 2)
+			If (DoUndress)
+				DoUndress = false
+				If (_sex == 0)
+					Debug.SendAnimationEvent(_ActorRef, "Arrok_Undress_G1")
+				Else
+					Debug.SendAnimationEvent(_ActorRef, "Arrok_Undress_G1")
+				EndIf
+				Utility.Wait(0.6)
+			EndIf
+		EndIf
 		If (asStringArg != "skip")
 			_Thread.PrepareDone()
 		EndIf
-		If (_sex <= 2)	; NPC: Strapon, Expression
-			If (_sex == 0)
-				_BaseDelay = _Config.MaleVoiceDelay
-			Else
-				_BaseDelay = _Config.FemaleVoiceDelay
-				If (_sex == 1)
-					_HadStrapon = _Config.WornStrapon(_ActorRef)
-					If (!_HadStrapon)
-						_Strapon = _Config.GetStrapon()
-					ElseIf (!_Strapon)
-						_Strapon = _HadStrapon
-					EndIf
-				EndIf
-			EndIf
-		Else	; Creature
-			_BaseDelay = 3.0
-		EndIf
-		_VoiceDelay = _BaseDelay
-		_ExpressionDelay = _BaseDelay * 2
 		If (_Config.DebugMode)
 			Log("Strapon[" + _Strapon + "] Voice[" + GetActorVoice() + "] Expression[" + GetActorExpression() + "]")
 		EndIf
@@ -515,19 +528,9 @@ EndFunction
 State Paused
 	; Only called once the first time the main thread enters animating state
 	Function ReadyActor(int aiStripData, int aiPositionGenders)
-		LockActor()
 		_stripData = aiStripData
 		_useStrapon = _sex == 1 && Math.LogicalAnd(aiPositionGenders, 0x2) == 0
 		If (_sex <= 2)
-			If (DoUndress)
-				DoUndress = false
-				If (_sex == 0)
-					Debug.SendAnimationEvent(_ActorRef, "Arrok_Undress_G1")
-				Else
-					Debug.SendAnimationEvent(_ActorRef, "Arrok_Undress_G1")
-				EndIf
-				Utility.Wait(0.6)
-			EndIf
 			_equipment = StripByData(_stripData, GetStripSettings(), _stripCstm)
 			ResolveStrapon()
 			_ActorRef.QueueNiNodeUpdate()
@@ -621,10 +624,14 @@ State Paused
 		If (sslSystemConfig.HasAnimSpeedSE())
 			sslAnimSpeedHelper.ResetAnimationSpeed(_ActorRef)
 		EndIf
+		UnregisterForModEvent("SSL_ORGASM_Thread" + _Thread.tid)
+		UnregisterEnjGameKeys()
+		StoreExcitementState("Backup")
 		sslBaseExpression.CloseMouth(_ActorRef)
 		_ActorRef.ClearExpressionOverride()
 		_ActorRef.ResetExpressionOverrides()
 		sslBaseExpression.ClearMFG(_ActorRef)
+		SendDefaultAnimEvent()
 		TrackedEvent(TRACK_END)
 		GoToState(STATE_IDLE)
 		Clear()
@@ -736,13 +743,7 @@ State Animating
 			Sound snd = _Thread.GetAliasSound(Self, GetActorVoice(), strength)
 			sslBaseVoice.PlaySound(_ActorRef, snd, strength, lipsync)
 		EndIf
-		If ((_FullEnjoyment > 90) && (_Config.SeparateOrgasms || _Config.InternalEnjoymentEnabled))
-			DoOrgasm()
-		EndIf
-		bool NoStaminaEndScenario = (_Config.NoStaminaEndsScene && !_victim && _ActorRef.GetActorValuePercentage("Stamina") < 0.10)
-		If NoStaminaEndScenario
-			_Thread.EnjBasedSkipToLastStage(true)
-		EndIf
+		RefreshExpressionEx(strength)
 		If (_LoopLovenseDelay <= 0)
 			If (_ActorRef == _PlayerRef && sslLovense.IsLovenseInstalled())
 				int lovenseStrength = sslSystemConfig.GetSettingInt("iLovenseStrength")
@@ -772,7 +773,13 @@ State Animating
 		Else
 			_LoopLovenseDelay -= UPDATE_INTERVAL
 		EndIf
-		RefreshExpressionEx(strength)
+		If ((_FullEnjoyment > 90) && (_Config.SeparateOrgasms || _Config.InternalEnjoymentEnabled))
+			DoOrgasm()
+		EndIf
+		bool NoStaminaEndScenario = (_Config.NoStaminaEndsScene && !_victim && _ActorRef.GetActorValuePercentage("Stamina") < 0.10)
+		If NoStaminaEndScenario
+			_Thread.EnjBasedSkipToLastStage(true)
+		EndIf
 		; Loop
 		_LoopDelay += UPDATE_INTERVAL
 		_LoopEnjoymentDelay += UPDATE_INTERVAL
@@ -937,9 +944,6 @@ State Animating
 	EndEvent
 	
 	Event OnEndState()
-		UnregisterForModEvent("SSL_ORGASM_Thread" + _Thread.tid)
-		UnregisterEnjGameKeys()
-		StoreExcitementState("Backup")
 		SendDefaultAnimEvent()
 	EndEvent
 EndState
@@ -1100,10 +1104,6 @@ Function Initialize()
 	ResetEnjoymentVariables()
 EndFunction
 
-Event OnRequestEnding(string asEventName, string asStringArg, float afDoStatistics, form akSender)
-	GoToState(STATE_PAUSED)
-	Clear()
-EndEvent
 Event OnRequestClear(string asEventName, string asStringArg, float afDoStatistics, form akSender)
 	Clear()
 EndEvent

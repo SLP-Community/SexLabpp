@@ -975,11 +975,14 @@ State Animating
 				EndIf
 			ElseIf (ctype == Config.CLIMAXTYPE_SCENE)
 				int[] cactors = SexLabRegistry.GetClimaxingActors(GetActiveScene(), asNewStage)
-				int i = 0
-				While (i < cactors.Length)
-					ActorAlias[cactors[i]].DoOrgasm()
-					i += 1
-				EndWhile
+				If (cactors.Length > 0)
+					SendThreadEvent("OrgasmStart")
+					int i = 0
+					While (i < cactors.Length)
+						ActorAlias[cactors[i]].DoOrgasm()
+						i += 1
+					EndWhile
+				EndIf
 			EndIf
 		EndIf
 		int[] strips = SexLabRegistry.GetStripDataA(GetActiveScene(), "")
@@ -1191,6 +1194,7 @@ State Animating
 		EndAnimation()
 	EndFunction
 	Function EndAnimation(bool Quickly = false)
+		UnregisterForUpdate()
 		If (sslSystemConfig.GetSettingInt("iClimaxType") == Config.CLIMAXTYPE_LEGACY)
 			If (SexLabRegistry.GetNodeType(GetActiveScene(), GetActiveStage()) == 2)
 				SendThreadEvent("OrgasmEnd")
@@ -1303,8 +1307,7 @@ float Function GetActionVelocity(Actor akPosition, Actor akPartner, int aiType) 
 State Ending
 	Event OnBeginState()
 		Config.DisableThreadControl(self as sslThreadController)
-		SendThreadEvent("AnimationEnding")
-		SendModEvent("SSL_ENDING_Thread" + tid, "", 1.0)
+		SendModEvent("SSL_CLEAR_Thread" + tid, "", 1.0)
 		If(IsObjectiveDisplayed(0))
 			SetObjectiveDisplayed(0, False)
 		EndIf
@@ -1317,8 +1320,8 @@ State Ending
 				Utility.Wait(0.05)
 			EndIf
 		EndWhile
-		SendModEvent("SSL_CLEAR_Thread" + tid, "", 1.0)
 		RunHook(Config.HOOKID_END)
+		SendThreadEvent("AnimationEnding")
 		SendThreadEvent("AnimationEnd")
 		; Cant use default OnUpdate() event as the previous state could leak a registration into this one here
 		; any attempt to prevent this leak without artificially slowing down the code have failed
