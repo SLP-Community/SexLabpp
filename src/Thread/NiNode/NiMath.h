@@ -10,8 +10,8 @@ namespace Thread::NiNode::NiMath
 		Segment(RE::NiPoint3 fst) :
 			std::pair<RE::NiPoint3, RE::NiPoint3>(fst, fst), isPoint(true) {}
 
-		float Length() const { return first.GetDistance(second); }
-		RE::NiPoint3 Vector() const { return second - first; }
+		float Length() const { return isPoint ? 0.0f : first.GetDistance(second); }
+		RE::NiPoint3 Vector() const { return  isPoint ? RE::NiPoint3::Zero() : second - first; }
 
 		bool isPoint;
 	};
@@ -52,7 +52,9 @@ namespace Thread::NiNode::NiMath
 	/// @param v1 The first vector
 	/// @param v2 The second vector
 	/// @return The angle, in radians
+	float GetCosAngle(const RE::NiPoint3& v1, const RE::NiPoint3& v2);
 	float GetAngle(const Eigen::Vector3f& v1, const Eigen::Vector3f& v2);
+	float GetAngle(const RE::NiPoint3& v1, const RE::NiPoint3& v2);
 	float GetAngleDegree(const RE::NiPoint3& v1, const RE::NiPoint3& v2);
 
 	/// @brief Get the angle when projecting the matrix onto a specific plane

@@ -165,18 +165,29 @@ namespace Thread::NiNode::NiMath
 		return transform;
 	}
 
+	float GetCosAngle(const RE::NiPoint3& v1, const RE::NiPoint3& v2)
+	{
+		const auto dot = v1.Dot(v2);
+		const auto l = v1.Length() * v2.Length();
+		return std::clamp(dot / l, -1.0f, 1.0f);
+	}
+
 	float GetAngle(const Eigen::Vector3f& v1, const Eigen::Vector3f& v2)
 	{
 		const auto cos_theta = v1.dot(v2);
-		return acos(cos_theta / (v1.norm() * v2.norm()));
+		const auto l = v1.norm() * v2.norm();
+		const auto x = std::clamp(cos_theta / l, -1.0f, 1.0f);
+		return acos(x);
+	}
+	
+	float GetAngle(const RE::NiPoint3& v1, const RE::NiPoint3& v2)
+	{
+		return std::acosf(GetCosAngle(v1, v2));
 	}
 
 	float GetAngleDegree(const RE::NiPoint3& v1, const RE::NiPoint3& v2)
 	{
-		const auto dot = v1.Dot(v2);
-		const auto l = v1.Length() * v2.Length();
-		const auto x = std::clamp(dot / l, -1.0f, 1.0f);
-		return RE::rad_to_deg(std::acosf(x));
+		return RE::rad_to_deg(GetAngle(v1, v2));
 	}
 
 	float GetAngleXY(const RE::NiMatrix3& rot)
