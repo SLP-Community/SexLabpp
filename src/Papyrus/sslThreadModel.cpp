@@ -5,6 +5,7 @@
 #include "Registry/Util/RayCast.h"
 #include "Registry/Util/RayCast/ObjectBound.h"
 #include "Registry/Util/Scale.h"
+#include "Thread/Collision/CollisionHandler.h"
 #include "Thread/NiNode/Node.h"
 #include "Thread/Thread.h"
 #include "UserData/StripData.h"
@@ -15,25 +16,25 @@ using Offset = Registry::CoordinateType;
 
 namespace Papyrus::ThreadModel
 {
-#define GET_INSTANCE(ret)                                     \
-	auto instance = Thread::Instance::GetInstance(a_qst);       \
-	if (!instance) {                                            \
+#define GET_INSTANCE(ret)                                         \
+	auto instance = Thread::Instance::GetInstance(a_qst);         \
+	if (!instance) {                                              \
 		a_vm->TraceStack("Thread instance not found", a_stackID); \
 		return ret;                                               \
 	}
 
 	namespace ActorAlias
 	{
-#define GET_POSITION(ret)                                                                 \
-	const auto actor = a_alias->GetActorReference();                                        \
-	if (!actor) {                                                                           \
+#define GET_POSITION(ret)                                                                     \
+	const auto actor = a_alias->GetActorReference();                                          \
+	if (!actor) {                                                                             \
 		a_vm->TraceStack("ReferenceAlias must be filled with an actor reference", a_stackID); \
 		return ret;                                                                           \
-	}                                                                                       \
-	const auto a_qst = a_alias->owningQuest;                                                \
-	GET_INSTANCE(ret);                                                                      \
-	auto position = instance->GetPosition(actor);                                           \
-	if (!position) {                                                                        \
+	}                                                                                         \
+	const auto a_qst = a_alias->owningQuest;                                                  \
+	GET_INSTANCE(ret);                                                                        \
+	auto position = instance->GetPosition(actor);                                             \
+	if (!position) {                                                                          \
 		a_vm->TraceStack("Position not found", a_stackID);                                    \
 		return ret;                                                                           \
 	}
@@ -109,11 +110,13 @@ namespace Papyrus::ThreadModel
 				}
 			}
 
+			Thread::Collision::CollisionHandler::GetSingleton()->AddActor(actor->GetFormID());
+
 			actor->StopCombat();
 			actor->EndDialogue();
 			actor->InterruptCast(false);
 			actor->StopInteractingQuick(true);
-			actor->SetCollision(false);
+			// actor->SetCollision(false);
 
 			if (const auto process = actor->GetActorRuntimeData().currentProcess) {
 				process->ClearMuzzleFlashes();
@@ -142,7 +145,8 @@ namespace Papyrus::ThreadModel
 			} else {
 				actor->AsActorValueOwner()->SetActorValue(RE::ActorValue::kVariable05, 0.0f);
 			}
-			actor->SetCollision(true);
+			Thread::Collision::CollisionHandler::GetSingleton()->RemoveActor(actor->GetFormID());
+			// actor->SetCollision(true);
 		}
 
 		std::vector<RE::TESForm*> StripByData(ALIASARGS, int32_t a_stripdata, std::vector<uint32_t> a_defaults, std::vector<uint32_t> a_overwrite)
@@ -151,10 +155,10 @@ namespace Papyrus::ThreadModel
 		}
 
 		std::vector<RE::TESForm*> StripByDataEx(ALIASARGS,
-			int32_t a_stripdata,
-			std::vector<uint32_t> a_defaults,				// use if a_stripData == default
-			std::vector<uint32_t> a_overwrite,			// use if exists
-			std::vector<RE::TESForm*> a_mergewith)	// [HighHeelSpell, WeaponRight, WeaponLeft, Armor...]
+		  int32_t a_stripdata,
+		  std::vector<uint32_t> a_defaults,		  // use if a_stripData == default
+		  std::vector<uint32_t> a_overwrite,	  // use if exists
+		  std::vector<RE::TESForm*> a_mergewith)  // [HighHeelSpell, WeaponRight, WeaponLeft, Armor...]
 		{
 			using Strip = Registry::Position::StripData;
 			using SlotMask = RE::BIPED_MODEL::BipedObjectSlot;
@@ -268,7 +272,7 @@ namespace Papyrus::ThreadModel
 		}
 
 #undef GET_POSITION
-	}	 // namespace ActorAlias
+	}  // namespace ActorAlias
 
 	RE::BSFixedString GetActiveScene(QUESTARGS)
 	{
@@ -319,11 +323,11 @@ namespace Papyrus::ThreadModel
 	}
 
 	void CreateInstance(QUESTARGS,
-		std::vector<RE::Actor*> a_submissives,
-		std::vector<RE::BSFixedString> a_scenesPrimary,
-		std::vector<RE::BSFixedString> a_scenesLeadIn,
-		std::vector<RE::BSFixedString> a_scenesCustom,
-		int a_furniturepref)
+	  std::vector<RE::Actor*> a_submissives,
+	  std::vector<RE::BSFixedString> a_scenesPrimary,
+	  std::vector<RE::BSFixedString> a_scenesLeadIn,
+	  std::vector<RE::BSFixedString> a_scenesCustom,
+	  int a_furniturepref)
 	{
 		const auto library = Registry::Library::GetSingleton();
 		const auto toVector = [&](const auto& a_list) {
@@ -787,4 +791,4 @@ namespace Papyrus::ThreadModel
 		instance->UpdateTimer(a_time);
 	}
 
-}	 // namespace Papyrus::ThreadModel
+}  // namespace Papyrus::ThreadModel
