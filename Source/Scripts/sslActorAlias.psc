@@ -765,7 +765,7 @@ State Animating
 		Else
 			_LoopLovenseDelay -= UPDATE_INTERVAL
 		EndIf
-		If ((_FullEnjoyment > 90) && (_Config.SeparateOrgasms || _Config.InternalEnjoymentEnabled))
+		If ((_FullEnjoyment >= 100) && (_Config.SeparateOrgasms || _Config.InternalEnjoymentEnabled))
 			DoOrgasm()
 		EndIf
 		bool NoStaminaEndScenario = (_Config.NoStaminaEndsScene && !_victim && _ActorRef.GetActorValuePercentage("Stamina") < 0.10)
@@ -827,17 +827,6 @@ State Animating
 			If (time - _LastOrgasm < cmp)
 				_hasOrgasm = false
 				return
-			EndIf
-			If (_Config.SeparateOrgasms || _Config.InternalEnjoymentEnabled)
-				If (_Config.GameEnabled && (_FullEnjoyment > 90 && _FullEnjoyment < 180) && ((time - _lastHoldBack) < FindEdgingTimeWindow()))
-					GameRewardTimedEdging()
-					_hasOrgasm = false
-					return
-				EndIf
-				If (_FullEnjoyment < 100)
-					_hasOrgasm = false
-					return
-				EndIf
 			EndIf
 		EndIf
 		UnregisterForUpdate()
@@ -922,9 +911,9 @@ State Animating
 		EndIf
 		If !_bGamePaused
 			If (KeyCode == _Config.GameRaiseEnjKey)
-				RunEnjoymentGame("Stamina")
+				_Thread.ProcessEnjGameArg("Stamina", _ActorRef, _EnjGamePartner)
 			ElseIf (KeyCode == _Config.GameHoldbackKey)
-				RunEnjoymentGame("Magicka")
+				_Thread.ProcessEnjGameArg("Magicka", _ActorRef, _EnjGamePartner)
 			ElseIf (KeyCode == _Config.GameSelectNextPos)
 				If _EnjGamePartner
 					int newIdx = _Thread.GameNextPartnerIdx(_ActorRef, _EnjGamePartner, Input.IsKeyPressed(_Config.GameUtilityKey))
@@ -1209,7 +1198,7 @@ Function UpdateBaseEnjoymentCalculations()
 	ResetEnjoymentVariables()
 	RegisterEnjGameKeys()
 	StoreExcitementState("Restore")
-	RunEnjoymentGame("Initiate")
+	_EnjGamePartner = _Thread.GameChangePartner(_ActorRef)
 	_CrtMaleHugePP = _Thread.CrtMaleHugePP()
 	_ConSubStatus = _Thread.IdentifyConsentSubStatus()
 	bool SameSexThread = _Thread.SameSexThread()
@@ -1334,10 +1323,12 @@ float Function CalcEffectiveEnjoyment()
 	float EnjInter = 0
 	If !(EffectivePain - _PainContext > 0)
 		EnjInter = (_EnjFactor * _InterFactor * _Config.EnjRaiseMultInter * ConSubMult * _ModEnjMult)
-		RunEnjoymentGame("Auto")
 	EndIf
-	float EnjEffective = _FullEnjoyment + EnjInter - EffectivePain
-	return EnjEffective
+	If (_Config.GameRequiredOnHighEnj && (_FullEnjoyment > 80) && (_ActorRef == _PlayerRef))
+		return (_FullEnjoyment - EffectivePain)
+	Else
+		return (_FullEnjoyment + EnjInter - EffectivePain)
+	EndIf
 EndFunction
 
 Function UpdateArousalStat()
@@ -1406,9 +1397,7 @@ Function StoreExcitementState(String arg = "")
 EndFunction
 
 Function RegisterEnjGameKeys()
-	bool condition = (_Config.GameEnabled && (_Config.GamePlayerAutoplay != 1) && \
-	(_ActorRef == _PlayerRef) && !(_victim && _Config.GamePlayerVictimAutoplay == 1))
-	If !condition
+	If (!_Config.GameEnabled || (_ActorRef != _PlayerRef))
 		return
 	EndIf
 	RegisterForKey(_Config.GameUtilityKey)
@@ -1426,57 +1415,36 @@ Function UnregisterEnjGameKeys()
 	UnregisterForKey(_Config.GameSelectNextPos)
 EndFunction
 
-Function RunEnjoymentGame(String arg = "")
-	If (_bGamePaused || !_Config.GameEnabled)
-		return
-	EndIf
-	If (arg == "Initiate")
-		_EnjGamePartner = _Thread.GameChangePartner(_ActorRef)
-		_Thread.ProcessEnjGameArg("", _ActorRef, _EnjGamePartner)
-	ElseIf (arg == "Auto")
-		_Thread.ProcessEnjGameArg("Auto", _ActorRef, _EnjGamePartner)
-	ElseIf (arg == "Stamina")
-		_Thread.ProcessEnjGameArg("Stamina", _ActorRef, _EnjGamePartner)
-	ElseIf (arg == "Magicka")
-		_Thread.ProcessEnjGameArg("Magicka", _ActorRef, _EnjGamePartner)
-	EndIf
-EndFunction
-
-Function GameRegisterEdgeAttempt()
-	; IDEA: expose fWindow as some UI bar when making custom widget; can be a cool minigame feature
+Function RegisterRaiseEnjAttempt()
+	; IDEA: expose timeCycle as a UI bar with a to and fro moving needle
 	If (_lastHoldBack > 0.0)
-		float window = FindEdgingTimeWindow()
-		If (SexLabUtil.GetCurrentGameRealTime() - _lastHoldBack) < (window / 2)
-			If (_Config.AllowEdgeSpamPenalty)
-				If (_EnjFactor > (_BaseFactor/2))
-					_FullEnjoyment -= (2 * (window * 2)) as int
-					_EnjFactor -= 0.03
-				Else
-					_FullEnjoyment -= 50 ; penalty for excessive edging spam
-					_EnjFactor = (_BaseFactor/2)
-				EndIf
-				If (_ActorRef == _PlayerRef)
-					_ActorRef.DamageActorValue("Stamina", _Config.GameStaminaCost)
-					_ActorRef.DamageActorValue("Magicka", _Config.GameMagickaCost)	
-				EndIf
+		float timePassed = SexLabUtil.GetCurrentGameRealTime() - _lastHoldBack
+
+		; As enjoyment gets higher, the "green zone" gets narrower
+		; At 80 Enj (2.0s timeCycle): Window is 25% of the bar (0.375 to 0.625)
+		; At 100 Enj (0.8s timeCycle): Window is 15% of the bar (0.425 to 0.575)
+		float timeCycle = 6.8 - (_FullEnjoyment * 0.06)
+		float difficultyOffset = 0.125 - ((_FullEnjoyment - 80.0) * 0.00375)
+		float windowStart = timeCycle * (0.5 - difficultyOffset)
+		float windowEnd = timeCycle * (0.5 + difficultyOffset)
+
+		If (timePassed >= windowStart) && (timePassed <= windowEnd)
+			_FullEnjoyment += 2
+			_ActorRef.RestoreActorValue("Stamina", _Config.GameStaminaCost)
+			_ActorRef.RestoreActorValue("Magicka", _Config.GameMagickaCost)
+		ElseIf (_Config.GameSpamDelayPenalty)
+			If (_EnjFactor > 0)
+				_FullEnjoyment -= 4
+				_EnjFactor -= 0.03
+			Else ; penalty for too many badly timed atttempts
+				_FullEnjoyment -= 50 
+				_EnjFactor = (_BaseFactor/2)
 			EndIf
+			_ActorRef.DamageActorValue("Stamina", 2 * _Config.GameStaminaCost)
+			_ActorRef.DamageActorValue("Magicka", 2 * _Config.GameMagickaCost)	
 		EndIf
 	EndIf
 	_lastHoldBack = SexLabUtil.GetCurrentGameRealTime()
-EndFunction
-
-Function GameRewardTimedEdging()
-	If (_Config.AllowEdgingReward)
-		_EnjFactor += 0.02 ;_EnjoymentDelay/UPDATE_INTERVAL==6); boost in 3s == 0.24
-		If (_ActorRef == _PlayerRef)
-			_ActorRef.RestoreActorValue("Stamina", _Config.GameStaminaCost)
-			_ActorRef.RestoreActorValue("Magicka", _Config.GameMagickaCost)
-		EndIf
-	EndIf
-EndFunction
-
-float Function FindEdgingTimeWindow()
-	return 3.7 - _FullEnjoyment * 0.0185
 EndFunction
 
 Function DebugBaseCalcVariables()

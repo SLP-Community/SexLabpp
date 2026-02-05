@@ -438,47 +438,14 @@ $SSL_EnjoymentSettings	Enjoyment Settings
 # ------ Primary Settings
 $SSL_bInternalEnjoymentEnabled	Enable Internal Enjoyment
 $SSL_bInternalEnjoymentEnabledHighlight	Toggles the internal enjoyment system. Should stay enabled unless an external mod desires to take full control of the enjoyment calculus.
-$SSL_bUsePhysicBasedDetection	Enable Collision Detections
-$SSL_bUsePhysicBasedDetectionHighlight	Toggles the use of advanced collision type-guessing based on relative bone positions and movements.\nCollision typing offers real-time info on the interactions an actor is involved in at any given moment.\nIf disabled, the system will instead rely upon position tags (less accurate).
 $SSL_fEnjRaiseMultInter	EnjRaise Mult: Interactions
 $SSL_fEnjRaiseMultInterHighlight	The main multiplier/factor determining the rate at which enjoyment increases for an actor based on detected interactions. Higher values mean faster enjoyment raise and vice versa.\n Can be reduced to zero if user desires enjoyment raise to depend solely on the enjoyment minigame.
-
-# ------ Game Toggles
 $SSL_bGameEnabled	Enable Enjoyment Game
 $SSL_bGameEnabledHighlight	Toggles the enjoyment minigame inspired from SLSO's implementation.
-$SSL_bGamePlayerAutoplay	Game Autoplay: Player
-$SSL_bGamePlayerAutoplayHighlight	Automates the enjoyment minigame for the player.\n Not recommended since enjoyment raise is automated through interactions-based enjoyment gain already.
-$SSL_bGamePlayerVictimAutoplay	Game Autoplay: Victim
-$SSL_bGamePlayerVictimAutoplayHighlight	Automates the enjoyment minigame for the player in victim roles.
-$SSL_bGameNPCAutoplay	Game Autoplay: NPC
-$SSL_bGameNPCAutoplayHighlight	Automates the enjoyment minigame for NPCs.\n Recommended to be left enabled.
-$SSL_bGameEnjReductionChance	Enj Reduction Chance
-$SSL_bGameEnjReductionChanceHighlight	Enables a chance factor whereby attempted enjoyment raise during the minigame might reduce enjoyment.
-$SSL_bGameHoldbackWithPartner	Holdback With Partner
-$SSL_bGameHoldbackWithPartnerHighlight	In scenes with a loved partner, the actors will try to perpetuate the scene by avoiding orgasm at the cost of magicka.
 
-# ------ Game Hotkeys
-$SSL_iGameUtilityKey	Game Modifier Key
-$SSL_iGameUtilityKeyHighlight	Modifier key for alternate functions of other enjoyment game hotkeys.
-$SSL_iGamePauseKey	Game Pause Key
-$SSL_iGamePauseKeyHighlight	Hotkey to pause/resume the enjoyment game.\nAlternative functions toggled by combining with utility key.
-$SSL_iGameRaiseEnjKey	RaiseEnj/Edge Key
-$SSL_iGameRaiseEnjKeyHighlight	Hotkey to manually raise enjoyment at the cost of stamina. To raise self/player enjoyment, combine with utility key.\nOnce enjoyment reaches 90, this hotkey is used to maintain edge state, whereby timed clicks are required to avoid spam penalties.
-$SSL_iGameHoldbackKey	ReduceEnj/Holdback Key
-$SSL_iGameHoldbackKeyHighlight	Hotkey to manually holdback/reduce enjoyment at the cost of magicka. To reduce self/player enjoyment, combine with utility key.
-$SSL_iGameSelectNextPos	Next Actor Key
-$SSL_iGameSelectNextPosHighlight	Hotkey to cycle/select the next position or actor.\nDirection of cycle will be reversed when combined with utility key.
-
-# ------ Game Hotkeys
-$SSL_iEnjGameStaminaCost	Game Stamina Cost
-$SSL_iEnjGameStaminaCostHighlight	The amount of STAMINA to be depleted upon a relevant minigame action.
-$SSL_iEnjGameMagickaCost	Game Magicka Cost
-$SSL_iEnjGameMagickaCostHighlight	The amount of MAGICKA to be depleted upon a relevant minigame action.
-$SSL_bAllowEdgingReward	Enable Edging State Reward
-$SSL_bAllowEdgingRewardHighlight	Toggles successive enjoyment rate increase and restoration of player's stamina and magicka upon maintaining edging state (enjoyment beyond 100).
-$SSL_bAllowEdgeSpamPenalty	Enable Edge Spam Penalty
-$SSL_bAllowEdgeSpamPenaltyHighlight	Toggles successive enjoyment penalties along with stamina and magicka depletion for the player upon spamming the edge hotkey before the edging time window.
 # ------ General Configs
+$SSL_bUsePhysicBasedDetection	Enable Collision Detections
+$SSL_bUsePhysicBasedDetectionHighlight	Toggles the use of advanced collision type-guessing based on relative bone positions and movements.\nCollision typing offers real-time info on the interactions an actor is involved in at any given moment.\nIf disabled, the system will instead rely upon position tags (less accurate).
 $SSL_bNoStaminaEndsScene	No Stamina Ends Scene
 $SSL_bNoStaminaEndsSceneHighlight	Ends the scene automatically when the actor's stamina is depleted.
 $SSL_bMaleOrgasmEndsScene	Male Orgasm Ends Scene
@@ -509,6 +476,28 @@ $SSL_fEnjMultDom	EnjRaise Mult: Dominant
 $SSL_fEnjMultDomHighlight	Additional enjoyment raise multiplier for dominant/non-sub actors.\n(FYI: Dominant role is defined by SLSB's submissive flags, not tags.)
 $SSL_fPainHugePPMult	Pain Mult: Huge PP
 $SSL_fPainHugePPMultHighlight	Additional factor enhancing pain for actors having penetration interactions in receiving position with actors having large schlongs. Used during penetration by certain creatures only, for now.
+
+# ------ Game Configs
+$SSL_iEnjGameStaminaCost	Game Stamina Cost
+$SSL_iEnjGameStaminaCostHighlight	The amount of STAMINA to be depleted upon a relevant minigame action.
+$SSL_iEnjGameMagickaCost	Game Magicka Cost
+$SSL_iEnjGameMagickaCostHighlight	The amount of MAGICKA to be depleted upon a relevant minigame action.
+$SSL_bGameRequiredOnHighEnj	Require Minigame on High Enj
+$SSL_bGameRequiredOnHighEnjHighlight	Toggles/disables player's enjoyment gain through collision detection when it goes above 80.\nWith this enabled, the player will have to actively rely on the minigame to reach orgasm.
+$SSL_bGameSpamDelayPenalty	Minigame Spam/Delay Penalty
+$SSL_bGameSpamDelayPenaltyHighlight	Toggles enjoyment penalties along with stamina and magicka depletion for the player upon badly timed attempts at raising enjoyment.\nNOTE: This option only works when combined with the above option.
+
+# ------ Game Hotkeys
+$SSL_iGameUtilityKey	Game Modifier Key
+$SSL_iGameUtilityKeyHighlight	Modifier key for alternate functions of other enjoyment game hotkeys.
+$SSL_iGamePauseKey	Game Pause Key
+$SSL_iGamePauseKeyHighlight	Hotkey to pause/resume the enjoyment game.\nAlternative functions toggled by combining with utility key.
+$SSL_iGameRaiseEnjKey	RaiseEnj Key
+$SSL_iGameRaiseEnjKeyHighlight	Hotkey to manually raise enjoyment at the cost of stamina. To raise self/player enjoyment, combine with utility key.\nOnce enjoyment reaches 90, this hotkey is used to maintain edge state, whereby timed clicks are required to avoid spam penalties.
+$SSL_iGameHoldbackKey	Holdback Key
+$SSL_iGameHoldbackKeyHighlight	Hotkey to manually holdback/reduce enjoyment at the cost of magicka. To reduce self/player enjoyment, combine with utility key.
+$SSL_iGameSelectNextPos	Next Actor Key
+$SSL_iGameSelectNextPosHighlight	Hotkey to cycle/select the next position or actor.\nDirection of cycle will be reversed when combined with utility key.
 
 # ------------------ Expression Editor --------------------------------------------------
 $SSL_ExpressionEditor	Expression Editor

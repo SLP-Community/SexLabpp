@@ -2090,9 +2090,6 @@ EndFunction
 ; ---------------------------------------------- ;
 
 Function GameAdjustEnj(Actor akActor, Actor akPartner = None, int AdjustBy = 0)
-    If (akPartner == None)
-        akPartner = akActor
-    EndIf
 	If (AdjustBy != 0)
 		AdjustEnjoyment(akPartner, AdjustBy)
 		return
@@ -2118,6 +2115,24 @@ Function GameHoldback(Actor akActor, Actor akPartner)
 	If (akActor.GetActorValuePercentage("Magicka") > 0.10)
 		akActor.DamageActorValue("Magicka", Config.GameMagickaCost)
 		GameAdjustEnj(akActor, akPartner, -1)
+	EndIf
+EndFunction
+
+Function ProcessEnjGameArg(String arg, Actor akPlayer, Actor akPartner)
+	Actor targetActor = None
+	If (_Positions.Length == 1 || Input.IsKeyPressed(Config.GameUtilityKey))
+		targetActor = akPlayer ;change self/player enj
+	ElseIf (_Positions.Length > 1)
+		targetActor = akPartner ;change partner enj
+	EndIf
+	If (arg == "Magicka") ;HoldbackKey
+		GameHoldback(akPlayer, targetActor)
+	ElseIf (arg == "Stamina") ;RaiseEnjKey
+		If ((Config.GameRequiredOnHighEnj) && (GetEnjoyment(targetActor) > 80) && (targetActor == akPlayer))
+			ActorAlias[GetPositionIdx(targetActor)].RegisterRaiseEnjAttempt()
+		Else
+			GameRaiseEnjoyment(akPlayer, targetActor)
+		EndIf
 	EndIf
 EndFunction
 
@@ -2172,56 +2187,6 @@ int Function GameNextPartnerIdx(Actor akActor, Actor akPartner, bool abReverse)
         i += 1
     EndWhile
     return PartnerIdx
-EndFunction
-
-Function ProcessEnjGameArg(String arg = "", Actor akActor, Actor akPartner)
-	Actor PartnerRef = None
-	int ActorEnjoyment = GetEnjoyment(akActor)
-	bool MentallyBroken = False
-	If (akActor == PlayerRef) && (Config.GamePlayerVictimAutoplay == 1) && IsVictim(akActor)
-		MentallyBroken = True
-	ElseIf (akActor.GetActorValuePercentage("Magicka") <= 0.10)
-		MentallyBroken = True
-	ElseIf (akActor.GetActorValuePercentage("Magicka") > 0.25 && MentallyBroken == True)
-		MentallyBroken = False
-	EndIf
-	;PC only (RaiseEnjKey)
-	If arg == "Stamina"
-		If MentallyBroken == False
-			If (_Positions.Length == 1 || Input.IsKeyPressed(Config.GameUtilityKey))
-				PartnerRef = akActor
-				If (ActorEnjoyment < 85)
-					GameRaiseEnjoyment(akActor, PartnerRef)
-				ElseIf (ActorEnjoyment > 90) && (PartnerRef == PlayerRef)
-					ActorAlias[GetPositionIdx(PartnerRef)].GameRegisterEdgeAttempt()
-				EndIf
-			ElseIf (_Positions.Length > 1)
-				PartnerRef = akPartner
-				GameRaiseEnjoyment(akActor, PartnerRef)
-			EndIf
-		EndIf
-	;PC only (HoldbackKey)
-	ElseIf arg == "Magicka"
-		If MentallyBroken == False
-			If (_Positions.Length == 1 || Input.IsKeyPressed(Config.GameUtilityKey))
-				PartnerRef = akActor
-				GameHoldback(akActor, PartnerRef)
-			ElseIf (_Positions.Length > 1)
-				PartnerRef = akPartner
-				GameHoldback(akActor, PartnerRef) 
-			EndIf
-		EndIf
-	;NPC and PC (auto)
-	ElseIf arg == "Auto"
-		If (!HasPlayer || (MentallyBroken == True) || ((akActor == PlayerRef) && Config.GamePlayerAutoplay) || ((akActor != PlayerRef) && Config.GameNPCAutoplay))
-			If IsAggressor(akActor) 
-				PartnerRef = akActor ;aggressor, pleasure self
-			Else
-				PartnerRef = akPartner ;not aggressor, pleasure partner
-			EndIf
-			GameRaiseEnjoyment(akActor, PartnerRef)
-		EndIf
-	EndIf
 EndFunction
 
 Function EnjBasedSkipToLastStage(bool abSkip)

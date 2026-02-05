@@ -1242,30 +1242,6 @@ bool Property GameEnabled hidden
     SetSettingBool("bGameEnabled", value)
   EndFunction
 EndProperty
-bool Property GamePlayerAutoplay hidden
-  bool Function Get()
-    return GetSettingBool("bGamePlayerAutoplay")
-  EndFunction
-  Function Set(bool value)
-    SetSettingBool("bGamePlayerAutoplay", value)
-  EndFunction
-EndProperty
-bool Property GamePlayerVictimAutoplay hidden
-  bool Function Get()
-    return GetSettingBool("bGamePlayerVictimAutoplay")
-  EndFunction
-  Function Set(bool value)
-    SetSettingBool("bGamePlayerVictimAutoplay", value)
-  EndFunction
-EndProperty
-bool Property GameNPCAutoplay hidden
-  bool Function Get()
-    return GetSettingBool("bGameNPCAutoplay")
-  EndFunction
-  Function Set(bool value)
-    SetSettingBool("bGameNPCAutoplay", value)
-  EndFunction
-EndProperty
 int Property GameUtilityKey hidden
   int Function Get()
     return GetSettingInt("iGameUtilityKey")
@@ -1322,20 +1298,20 @@ int Property GameMagickaCost hidden
     SetSettingInt("iEnjGameMagickaCost", aiSet)
   EndFunction
 EndProperty
-bool Property AllowEdgingReward hidden
+bool Property GameRequiredOnHighEnj hidden
   bool Function Get()
-    return GetSettingBool("bAllowEdgingReward")
+    return GetSettingBool("bGameRequiredOnHighEnj")
   EndFunction
   Function Set(bool value)
-    SetSettingBool("bAllowEdgingReward", value)
+    SetSettingBool("bGameRequiredOnHighEnj", value)
   EndFunction
 EndProperty
-bool Property AllowEdgeSpamPenalty hidden
+bool Property GameSpamDelayPenalty hidden
   bool Function Get()
-    return GetSettingBool("bAllowEdgeSpamPenalty")
+    return GetSettingBool("bGameSpamDelayPenalty")
   EndFunction
   Function Set(bool value)
-    SetSettingBool("bAllowEdgeSpamPenalty", value)
+    SetSettingBool("bGameSpamDelayPenalty", value)
   EndFunction
 EndProperty
 
