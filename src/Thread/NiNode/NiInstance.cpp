@@ -1,25 +1,32 @@
 #include "NiInstance.h"
 
-#include "InteractionType.h"
-#include "UserData/Settings.h"
+#include "NiInteraction.h"
 
 namespace Thread::NiNode
 {
 	NiInstance::NiInstance(const std::vector<RE::Actor*>& a_positions, const Registry::Scene* a_scene)
 	{
+		assert(a_positions.size() <= std::numeric_limits<int8_t>::max());
 		positions.reserve(a_positions.size());
 		states.reserve(a_positions.size() * (a_positions.size() - 1));
 		for (size_t i = 0; i < a_positions.size(); i++) {
 			const auto sex = a_scene->GetNthPosition(i)->data.GetSex().get();
 			positions.emplace_back(a_positions[i], sex);
 			for (size_t n = 0; n < a_positions.size(); n++) {
-				states.emplace_back(std::make_pair(i, n), PairInteractionState{});
+				states.emplace_back(
+					std::make_pair(static_cast<int8_t>(i), static_cast<int8_t>(n)), 
+					PairInteractionState{});
 			}
 		}
 	}
 
 	void NiInstance::Update(float a_timeStamp)
 	{
+		std::unique_lock lk{ _m, std::defer_lock };
+		if (!lk.try_lock()) {
+			return;
+		}
+
 		for (auto& niActor : positions) {
 			niActor.CaptureSnapshot(a_timeStamp);
 		}
@@ -28,32 +35,121 @@ namespace Thread::NiNode
 			auto& posA = positions[pair.first];
 			auto& posB = positions[pair.second];
 
-			EvaluateRuleBased(state, posA, posB, a_timeStamp);
+			EvaluateRuleBased(state, posA, posB);
 			UpdateHysteresis(state, a_timeStamp);
+			state.lastUpdateTime = a_timeStamp;
 		}
 	}
 
-	void NiInstance::EvaluateRuleBased(PairInteractionState& state, const NiActor& a, const NiActor& b, float a_timeStamp) const
+	std::vector<const NiInteraction*> NiInstance::GetInteractions(RE::FormID a_idA, RE::FormID a_idB, NiInteraction::Type type) const
 	{
-		state.interactions[static_cast<size_t>(InteractionType::Type::Kissing)] = EvaluateKissing(a, b);
+		std::vector<const NiInteraction*> ret{};
+		ForEachInteraction([&](RE::Actor* a, RE::Actor* b, const NiInteraction& interaction) {
+			ret.push_back(&interaction);
+		}, a_idA, a_idB, a_type);
+		return ret;
+	}
+	
+	std::vector<RE::Actor*> GetInteractionPartners(RE::FormID a_idA, NiInteraction::Type type) const
+	{
+		std::vector<RE::Actor*> ret{};
+		ForEachInteraction([&](RE::Actor*, RE::Actor* b, const NiInteraction&) {
+			if (std::ranges::contains(ret, b))
+				return;
+			ret.push_back(b);
+		}, a_idA, 0, a_type);
+		return ret;
+	}
+
+	std::vector<RE::Actor*> GetInteractionPartnersRev(RE::FormID a_idB, NiInteraction::Type a_type) const
+	{
+		std::vector<RE::Actor*> ret{};
+		ForEachInteraction([&](RE::Actor* a, RE::Actor*, const NiInteraction&) {
+			if (std::ranges::contains(ret, a))
+				return;
+			ret.push_back(a);
+		}, 0, a_idB, a_type);
+		return ret;
+	}
+	
+	void ForEachInteraction(
+		std::function<void(RE::Actor*, RE::Actor*, const NiInteraction&)>& callback,
+		RE::FormID a_idA = 0,
+		RE::FormID a_idB = 0,
+		NiInteraction::Type a_type = NiInteraction::Type::None) const
+	{
+		const auto idxA = GetActorIndex(a_idA);
+		const auto idxB = GetActorIndex(a_idB);
+		if ((a_idA != 0 && idxA == IDX_INVALID) || (a_idB != 0 && idxB == IDX_INVALID)) {
+			logger::error("ForEachInteraction: Actor IDs {:X} or {:X} not found", a_idA, a_idB);
+			return;
+		}
+
+		std::scoped_lock lk{ _m };
+		for (auto& [pair, state] : states) {
+			auto [first, second] = pair;
+			if (idxA != first && idxA != IDX_UNSPECIFIED)
+				continue;
+			if (idxB != second && idxB != IDX_UNSPECIFIED)
+				continue;
+			const auto& interactions = a_type != NiInteraction::Type::None 
+				? std::span(&state.interactions[static_cast<size_t>(a_type)], 1)
+				: std::span(state.interactions);
+			for (auto& interaction : interactions) {
+				if (interaction.active) {
+					callback(positions[first].actor, positions[second].actor, interaction);
+				}
+			}
+		}
+	}
+
+	int8_t NiInstance::GetActorIndex(RE::FormID id) const
+	{
+		if (id == 0) {
+			return IDX_UNSPECIFIED;
+		}
+		const auto it = std::ranges::find(positions, id, [](const auto& actor) { return actor.actor->GetFormID(); });
+		if (it == positions.end()) {
+			logger::error("GetActorIndex: Actor ID {:X} not found", id);
+			return IDX_INVALID;
+		}
+		return static_cast<int8_t>(std::distance(positions.begin(), it));
+	}
+
+	void NiInstance::EvaluateRuleBased(PairInteractionState& state, const NiActor& a, const NiActor& b) const
+	{
+		constexpr auto niTypes = magic_enum::enum_values<NiInteraction::Type>();
+		for (auto &&type : niTypes)
+		{
+			auto& result = state.interactions[static_cast<size_t>(type)];
+			result.type = type;
+			switch (type) {
+				case NiInteraction::Type::Kissing:
+					result.EvaluateKissing(result, a, b);
+					break;
+				default:
+					logger::warn("NiInstance::EvaluateRuleBased: Unknown interaction type {}", magic_enum::enum_name(type));
+					break;
+			}
+		}
 	}
 
 	void NiInstance::UpdateHysteresis(PairInteractionState& state, float a_timeStamp)
 	{
 		const float delta = a_timeStamp - state.lastUpdateTime;
-		state.lastUpdateTime = a_timeStamp;
 
-		const auto types = magic_enum::enum_values<InteractionType::Type>();
-		for (auto&& type : types) {
-			auto& activeState = state.interactions[static_cast<size_t>(type)];
-			const float confidence = activeState.confidence;
-			const auto doActive = !activeState.active && confidence >= Settings::fEnterThreshold;
-			const auto doInactive = activeState.active && confidence < Settings::fExitThreshold;
+		const auto types = magic_enum::enum_values<NiInteraction::Type>();
+		for (auto &&interaction : state.interactions)
+		{
+			const float conf = interaction.confidence;
+			assert(conf >= 0.0f && conf <= 1.0f);
+			const auto doActive = !interaction.active && conf >= Settings::fEnterThreshold;
+			const auto doInactive = interaction.active && conf < Settings::fExitThreshold;
 			if (doActive || doInactive) {
-				activeState.active = doActive;
-				activeState.duration = 0.0f;
+				interaction.active = doActive;
+				interaction.duration = 0.0f;
 			} else {
-				activeState.duration += delta;
+				interaction.duration += delta;
 			}
 		}
 	}
