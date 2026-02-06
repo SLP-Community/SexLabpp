@@ -19,6 +19,9 @@ namespace Thread::NiNode
 		const NiMotion& Motion() const { return motion; }
 
 	  public:
+		bool operator==(const NiActor& a_rhs) const { return this->actor == a_rhs.actor; }
+
+	  public:
 		RE::ActorPtr actor;
 		Node::NodeData nodes;
 		REX::EnumSet<Registry::Sex> sex;

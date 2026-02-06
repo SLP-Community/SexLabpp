@@ -24,6 +24,7 @@ namespace Thread::NiNode
 
 		static void UpdateMLTrainingState(NiInteraction::Type a_type, bool enabled);
 		static void SetMLTrainingFrameInterval(size_t interval);
+		static void ClearMLTrainingData();
 		static MLTrainingState GetMLTrainingState();
 
 	  private:

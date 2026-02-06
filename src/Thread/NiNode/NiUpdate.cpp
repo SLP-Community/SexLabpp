@@ -12,7 +12,8 @@ namespace Thread::NiNode
 			logger::critical("Failed to initialize descriptors. NiNode interactions will not work.");
 			return;
 		}
-
+	
+		SKSE::AllocTrampoline(static_cast<size_t>(1) << 5);
 		auto& trampoline = SKSE::GetTrampoline();
 		REL::Relocation<std::uintptr_t> update{ REL::RelocationID(35565, 36564), REL::VariantOffset(0x53, 0x6E, 0x68) };
 		_OnFrameUpdate = trampoline.write_call<5>(update.address(), OnFrameUpdate);
@@ -68,16 +69,17 @@ namespace Thread::NiNode
 			}
 			mlTrainingState.frameCount = 0;
 			process->ForEachInteraction([&](RE::ActorPtr a, RE::ActorPtr b, const NiInteraction& interaction) {
-				if (!a->IsPlayerRef() && !b->IsPlayerRef()) {
-					return;  // only log interactions involving the player
+				if (interaction.csvRow.empty() || !a->IsPlayerRef() && !b->IsPlayerRef()) {
+					return;  // only log interactions involving the player & interaction has likelihood
 				}
 				const auto typeName = magic_enum::enum_name(interaction.type);
-				const auto actorAName = a->GetFormID();
-				const auto actorBName = b->GetFormID();
+				const auto actorAId = a->GetFormID();
+				const auto actorBId = b->GetFormID();
 				const auto labelStr = mlTrainingState.enabled ? "1" : "0";
-				const auto row = std::format("{},{:X},{:X},{},{}", typeName, actorAName, actorBName, interaction.csvRow, labelStr);
+				const auto row = std::format("{},{:X},{:X},{},{}", typeName, actorAId, actorBId, interaction.csvRow, labelStr);
 				mlTrainingState.recordedData.push_back(row);
-			}, 0, 0, mlTrainingState.type);
+			},
+			  0, 0, mlTrainingState.type);
 		}
 	}
 
@@ -158,6 +160,14 @@ namespace Thread::NiNode
 		std::scoped_lock lk{ _mlMutex };
 		mlTrainingState.frameInterval = interval;
 		logger::info("ML Training frame interval set to {} frames", interval);
+	}
+
+	void NiUpdate::ClearMLTrainingData()
+	{
+		std::scoped_lock lk{ _mlMutex };
+		const auto dataSize = mlTrainingState.recordedData.size();
+		mlTrainingState.recordedData.clear();
+		logger::info("Cleared ML training data, removed {} rows", dataSize);
 	}
 
 	NiUpdate::MLTrainingState NiUpdate::GetMLTrainingState()

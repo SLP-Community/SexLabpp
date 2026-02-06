@@ -45,7 +45,7 @@ namespace Thread::NiNode
 	{
 		std::vector<const NiInteraction*> ret{};
 		ForEachInteraction([&](RE::ActorPtr, RE::ActorPtr, const NiInteraction& interaction) {
-			ret.push_back(&interaction);
+			if (interaction.active) ret.push_back(&interaction);
 		},
 		  a_idA, a_idB, a_type);
 		return ret;
@@ -54,7 +54,8 @@ namespace Thread::NiNode
 	std::vector<RE::Actor*> NiInstance::GetInteractionPartners(RE::FormID a_idA, NiInteraction::Type a_type) const
 	{
 		std::vector<RE::Actor*> ret{};
-		ForEachInteraction([&](RE::ActorPtr, RE::ActorPtr b, const NiInteraction&) {
+		ForEachInteraction([&](RE::ActorPtr, RE::ActorPtr b, const NiInteraction& interaction) {
+			if (!interaction.active) return;
 			if (std::ranges::contains(ret, b.get()))
 				return;
 			ret.push_back(b.get());
@@ -66,7 +67,8 @@ namespace Thread::NiNode
 	std::vector<RE::Actor*> NiInstance::GetInteractionPartnersRev(RE::FormID a_idB, NiInteraction::Type a_type) const
 	{
 		std::vector<RE::Actor*> ret{};
-		ForEachInteraction([&](RE::ActorPtr a, RE::ActorPtr, const NiInteraction&) {
+		ForEachInteraction([&](RE::ActorPtr a, RE::ActorPtr, const NiInteraction& interaction) {
+			if (!interaction.active) return;
 			if (std::ranges::contains(ret, a.get()))
 				return;
 			ret.push_back(a.get());
@@ -97,9 +99,7 @@ namespace Thread::NiNode
 				continue;
 			const auto& interactions = a_type != NiInteraction::Type::None ? std::span(&state.interactions[static_cast<size_t>(a_type)], 1) : std::span(state.interactions);
 			for (auto& interaction : interactions) {
-				if (interaction.active) {
-					callback(positions[first].actor, positions[second].actor, interaction);
-				}
+				callback(positions[first].actor, positions[second].actor, interaction);
 			}
 		}
 	}
@@ -130,6 +130,9 @@ namespace Thread::NiNode
 			case NiInteraction::Type::None:
 				break;
 			case NiInteraction::Type::Kissing:
+				if (a == b) {
+					continue;  // skip self-interaction
+				}
 				state.interactions[static_cast<size_t>(type)] = EvaluateKissing(mA, mB);
 				break;
 			default:
