@@ -984,7 +984,7 @@ State Animating
 				EndIf
 			EndIf
 		EndIf
-		int[] strips = SexLabRegistry.GetStripDataA(GetActiveScene(), "")
+		int[] strips = SexLabRegistry.GetStripDataA(GetActiveScene(), asNewStage)
 		int i = 0
 		While (i < _Positions.Length)
 			ActorAlias[i].TryLockAndUnpause()
