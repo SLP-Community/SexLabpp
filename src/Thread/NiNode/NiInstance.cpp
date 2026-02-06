@@ -14,8 +14,8 @@ namespace Thread::NiNode
 			positions.emplace_back(a_positions[i], sex);
 			for (size_t n = 0; n < a_positions.size(); n++) {
 				states.emplace_back(
-					std::make_pair(static_cast<int8_t>(i), static_cast<int8_t>(n)), 
-					PairInteractionState{});
+				  std::make_pair(static_cast<int8_t>(i), static_cast<int8_t>(n)),
+				  PairInteractionState{});
 			}
 		}
 	}
@@ -41,42 +41,45 @@ namespace Thread::NiNode
 		}
 	}
 
-	std::vector<const NiInteraction*> NiInstance::GetInteractions(RE::FormID a_idA, RE::FormID a_idB, NiInteraction::Type type) const
+	std::vector<const NiInteraction*> NiInstance::GetInteractions(RE::FormID a_idA, RE::FormID a_idB, NiInteraction::Type a_type) const
 	{
 		std::vector<const NiInteraction*> ret{};
-		ForEachInteraction([&](RE::Actor* a, RE::Actor* b, const NiInteraction& interaction) {
+		ForEachInteraction([&](RE::ActorPtr, RE::ActorPtr, const NiInteraction& interaction) {
 			ret.push_back(&interaction);
-		}, a_idA, a_idB, a_type);
-		return ret;
-	}
-	
-	std::vector<RE::Actor*> GetInteractionPartners(RE::FormID a_idA, NiInteraction::Type type) const
-	{
-		std::vector<RE::Actor*> ret{};
-		ForEachInteraction([&](RE::Actor*, RE::Actor* b, const NiInteraction&) {
-			if (std::ranges::contains(ret, b))
-				return;
-			ret.push_back(b);
-		}, a_idA, 0, a_type);
+		},
+		  a_idA, a_idB, a_type);
 		return ret;
 	}
 
-	std::vector<RE::Actor*> GetInteractionPartnersRev(RE::FormID a_idB, NiInteraction::Type a_type) const
+	std::vector<RE::Actor*> NiInstance::GetInteractionPartners(RE::FormID a_idA, NiInteraction::Type a_type) const
 	{
 		std::vector<RE::Actor*> ret{};
-		ForEachInteraction([&](RE::Actor* a, RE::Actor*, const NiInteraction&) {
-			if (std::ranges::contains(ret, a))
+		ForEachInteraction([&](RE::ActorPtr, RE::ActorPtr b, const NiInteraction&) {
+			if (std::ranges::contains(ret, b.get()))
 				return;
-			ret.push_back(a);
-		}, 0, a_idB, a_type);
+			ret.push_back(b.get());
+		},
+		  a_idA, 0, a_type);
 		return ret;
 	}
-	
-	void ForEachInteraction(
-		std::function<void(RE::Actor*, RE::Actor*, const NiInteraction&)>& callback,
-		RE::FormID a_idA = 0,
-		RE::FormID a_idB = 0,
-		NiInteraction::Type a_type = NiInteraction::Type::None) const
+
+	std::vector<RE::Actor*> NiInstance::GetInteractionPartnersRev(RE::FormID a_idB, NiInteraction::Type a_type) const
+	{
+		std::vector<RE::Actor*> ret{};
+		ForEachInteraction([&](RE::ActorPtr a, RE::ActorPtr, const NiInteraction&) {
+			if (std::ranges::contains(ret, a.get()))
+				return;
+			ret.push_back(a.get());
+		},
+		  0, a_idB, a_type);
+		return ret;
+	}
+
+	void NiInstance::ForEachInteraction(
+	  const std::function<void(RE::ActorPtr, RE::ActorPtr, const NiInteraction&)>& callback,
+	  RE::FormID a_idA,
+	  RE::FormID a_idB,
+	  NiInteraction::Type a_type) const
 	{
 		const auto idxA = GetActorIndex(a_idA);
 		const auto idxB = GetActorIndex(a_idB);
@@ -92,9 +95,7 @@ namespace Thread::NiNode
 				continue;
 			if (idxB != second && idxB != IDX_UNSPECIFIED)
 				continue;
-			const auto& interactions = a_type != NiInteraction::Type::None 
-				? std::span(&state.interactions[static_cast<size_t>(a_type)], 1)
-				: std::span(state.interactions);
+			const auto& interactions = a_type != NiInteraction::Type::None ? std::span(&state.interactions[static_cast<size_t>(a_type)], 1) : std::span(state.interactions);
 			for (auto& interaction : interactions) {
 				if (interaction.active) {
 					callback(positions[first].actor, positions[second].actor, interaction);
@@ -118,18 +119,22 @@ namespace Thread::NiNode
 
 	void NiInstance::EvaluateRuleBased(PairInteractionState& state, const NiActor& a, const NiActor& b) const
 	{
+		const auto& mA = a.Motion();
+		const auto& mB = b.Motion();
+		if (!mA.HasSufficientData() || !mB.HasSufficientData())
+			return;
+
 		constexpr auto niTypes = magic_enum::enum_values<NiInteraction::Type>();
-		for (auto &&type : niTypes)
-		{
-			auto& result = state.interactions[static_cast<size_t>(type)];
-			result.type = type;
+		for (auto&& type : niTypes) {
 			switch (type) {
-				case NiInteraction::Type::Kissing:
-					result.EvaluateKissing(result, a, b);
-					break;
-				default:
-					logger::warn("NiInstance::EvaluateRuleBased: Unknown interaction type {}", magic_enum::enum_name(type));
-					break;
+			case NiInteraction::Type::None:
+				break;
+			case NiInteraction::Type::Kissing:
+				state.interactions[static_cast<size_t>(type)] = EvaluateKissing(mA, mB);
+				break;
+			default:
+				logger::warn("NiInstance::EvaluateRuleBased: Unknown interaction type {}", magic_enum::enum_name(type));
+				break;
 			}
 		}
 	}
@@ -139,8 +144,7 @@ namespace Thread::NiNode
 		const float delta = a_timeStamp - state.lastUpdateTime;
 
 		const auto types = magic_enum::enum_values<NiInteraction::Type>();
-		for (auto &&interaction : state.interactions)
-		{
+		for (auto&& interaction : state.interactions) {
 			const float conf = interaction.confidence;
 			assert(conf >= 0.0f && conf <= 1.0f);
 			const auto doActive = !interaction.active && conf >= Settings::fEnterThreshold;

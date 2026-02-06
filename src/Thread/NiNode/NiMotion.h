@@ -36,7 +36,6 @@ namespace Thread::NiNode
 		float impulse{ 0.0f };				// high for punch-like motion
 	};
 
-	template <size_t N = WINDOW_SIZE, size_t S = MIN_MOMENTS>
 	class NiMotion
 	{
 	  public:
@@ -51,15 +50,15 @@ namespace Thread::NiNode
 		constexpr static inline size_t NUM_ANCHORS = magic_enum::enum_count<Anchor>();
 
 	  public:
-		NiMotion();
+		NiMotion(size_t capacity = WINDOW_SIZE, size_t minMoments = MIN_MOMENTS);
 		~NiMotion() = default;
 
 		void Push(const Node::NodeData& nodes, float timeStamp);
-		bool HasSufficientData() const { return _size >= S; }
+		bool HasSufficientData() const { return _size >= _minMoments; }
 
 		size_t Size() const { return _size; }
 		size_t Length() const { return _size; }
-		size_t Capacity() const { return N; }
+		size_t Capacity() const { return _capacity; }
 
 		const RE::NiPoint3& GetNthMoment(Anchor c, size_t n) const;
 		const ObjectBound& GetNthHeadBound(size_t n) const;
@@ -82,6 +81,8 @@ namespace Thread::NiNode
 		size_t AbsoluteToRelativeIndex(size_t n) const;
 
 	  private:
+		const size_t _capacity;
+		const size_t _minMoments;
 		size_t _writeIndex{ 0 };
 		size_t _size{ 0 };
 

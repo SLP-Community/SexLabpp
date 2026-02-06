@@ -4,12 +4,11 @@ namespace Thread::NiNode
 {
 	void NiUpdate::Install()
 	{
-		const auto address = REL::RelocationID(35565, 36564).address();
-		const auto offset = REL::VariantOffset(0x53, 0x6E, 0x68).offset(); 
-		REL::Relocation<std::uintptr_t> update{ address, offset };
+		auto& trampoline = SKSE::GetTrampoline();
+		REL::Relocation<std::uintptr_t> update{ REL::RelocationID(35565, 36564), REL::VariantOffset(0x53, 0x6E, 0x68) };
 		_OnFrameUpdate = trampoline.write_call<5>(update.address(), OnFrameUpdate);
 	}
-	
+
 	float NiUpdate::GetDeltaTime()
 	{
 		static REL::Relocation<float*> deltaTime{ REL::VariantID(523660, 410199, 0x30C3A08) };
@@ -60,4 +59,3 @@ namespace Thread::NiNode
 	}
 
 }  // namespace Thread::NiNode
-

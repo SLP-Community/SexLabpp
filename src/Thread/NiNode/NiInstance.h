@@ -1,7 +1,7 @@
 #pragma once
 
-#include "NiInteraction.h"
 #include "NiActor.h"
+#include "NiInteraction.h"
 #include "Registry/Define/Animation.h"
 
 namespace Thread::NiNode
@@ -25,8 +25,8 @@ namespace Thread::NiNode
 		void Update(float a_timeStamp);
 
 		/// @brief Iterate interactions matching criteria, callback receives (actorA, actorB, interaction)
-		void ForEachInteraction(std::function<void(RE::Actor*, RE::Actor*, const NiInteraction&)>& callback,
-			RE::FormID a_idA = 0, RE::FormID a_idB = 0, NiInteraction::Type a_type = NiInteraction::Type::None) const;
+		void ForEachInteraction(const std::function<void(RE::ActorPtr, RE::ActorPtr, const NiInteraction&)>& callback,
+		  RE::FormID a_idA = 0, RE::FormID a_idB = 0, NiInteraction::Type a_type = NiInteraction::Type::None) const;
 
 		/// @brief Wrapper functions for ForEachInteraction
 		std::vector<const NiInteraction*> GetInteractions(RE::FormID a_idA, RE::FormID a_idB, NiInteraction::Type a_type) const;

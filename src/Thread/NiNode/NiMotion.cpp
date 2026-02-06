@@ -2,13 +2,14 @@
 
 namespace Thread::NiNode
 {
-	NiMotion::NiMotion(size_t capacity)
+	NiMotion::NiMotion(size_t capacity, size_t minMoments) :
+	  _capacity(capacity), _minMoments(minMoments)
 	{
 		for (auto& moment : _moments) {
-			moment.resize(N);
+			moment.resize(_capacity);
 		}
-		_headBounds.resize(N);
-		_timestamps.resize(N);
+		_headBounds.resize(_capacity);
+		_timestamps.resize(_capacity);
 	}
 
 	void NiMotion::Push(const Node::NodeData& nodes, float timeStamp)
@@ -32,8 +33,8 @@ namespace Thread::NiNode
 			}
 		}
 
-		_writeIndex = (_writeIndex + 1) % N;
-		_size = std::min(_size + 1, N);
+		_writeIndex = (_writeIndex + 1) % _capacity;
+		_size = std::min(_size + 1, _capacity);
 	}
 
 	void NiMotion::ForEachMoment(Anchor c, const std::function<bool(const RE::NiPoint3&, float)>& func) const
@@ -167,7 +168,7 @@ namespace Thread::NiNode
 		assert(n < _size);
 		// If buffer is not full, physical index equals logical index
 		// If buffer is full, account for the ring buffer wraparound
-		return (_size < N) ? n : ((_writeIndex + n) % N);
+		return (_size < _capacity) ? n : ((_writeIndex + n) % _capacity);
 	}
 
 	const RE::NiPoint3& NiMotion::GetNthMoment(Anchor c, size_t n) const

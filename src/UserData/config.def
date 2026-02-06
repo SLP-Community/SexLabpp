@@ -105,6 +105,7 @@ INI_SETTING(fAdjustSchlongVaginalLimit, 55.0f, "Distance")
 
 INI_SETTING(fDistanceMouth, 5.4f, "NiType") 
 INI_SETTING(fMinKissDuration, 0.2f, "NiType")
+INI_SETTING(fMaxKissSpeed, 0.3f, "NiType")
 INI_SETTING(fEnterThreshold, 0.6f, "NiType")
 INI_SETTING(fExitThreshold, 0.35f, "NiType")
 

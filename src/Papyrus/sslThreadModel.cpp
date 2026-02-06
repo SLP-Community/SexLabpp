@@ -15,25 +15,25 @@ using Offset = Registry::CoordinateType;
 
 namespace Papyrus::ThreadModel
 {
-#define GET_INSTANCE(ret)                                     \
-	auto instance = Thread::Instance::GetInstance(a_qst);       \
-	if (!instance) {                                            \
+#define GET_INSTANCE(ret)                                         \
+	auto instance = Thread::Instance::GetInstance(a_qst);         \
+	if (!instance) {                                              \
 		a_vm->TraceStack("Thread instance not found", a_stackID); \
 		return ret;                                               \
 	}
 
 	namespace ActorAlias
 	{
-#define GET_POSITION(ret)                                                                 \
-	const auto actor = a_alias->GetActorReference();                                        \
-	if (!actor) {                                                                           \
+#define GET_POSITION(ret)                                                                     \
+	const auto actor = a_alias->GetActorReference();                                          \
+	if (!actor) {                                                                             \
 		a_vm->TraceStack("ReferenceAlias must be filled with an actor reference", a_stackID); \
 		return ret;                                                                           \
-	}                                                                                       \
-	const auto a_qst = a_alias->owningQuest;                                                \
-	GET_INSTANCE(ret);                                                                      \
-	auto position = instance->GetPosition(actor);                                           \
-	if (!position) {                                                                        \
+	}                                                                                         \
+	const auto a_qst = a_alias->owningQuest;                                                  \
+	GET_INSTANCE(ret);                                                                        \
+	auto position = instance->GetPosition(actor);                                             \
+	if (!position) {                                                                          \
 		a_vm->TraceStack("Position not found", a_stackID);                                    \
 		return ret;                                                                           \
 	}
@@ -151,10 +151,10 @@ namespace Papyrus::ThreadModel
 		}
 
 		std::vector<RE::TESForm*> StripByDataEx(ALIASARGS,
-			int32_t a_stripdata,
-			std::vector<uint32_t> a_defaults,				// use if a_stripData == default
-			std::vector<uint32_t> a_overwrite,			// use if exists
-			std::vector<RE::TESForm*> a_mergewith)	// [HighHeelSpell, WeaponRight, WeaponLeft, Armor...]
+		  int32_t a_stripdata,
+		  std::vector<uint32_t> a_defaults,		  // use if a_stripData == default
+		  std::vector<uint32_t> a_overwrite,	  // use if exists
+		  std::vector<RE::TESForm*> a_mergewith)  // [HighHeelSpell, WeaponRight, WeaponLeft, Armor...]
 		{
 			using Strip = Registry::Position::StripData;
 			using SlotMask = RE::BIPED_MODEL::BipedObjectSlot;
@@ -268,7 +268,7 @@ namespace Papyrus::ThreadModel
 		}
 
 #undef GET_POSITION
-	}	 // namespace ActorAlias
+	}  // namespace ActorAlias
 
 	RE::BSFixedString GetActiveScene(QUESTARGS)
 	{
@@ -319,11 +319,11 @@ namespace Papyrus::ThreadModel
 	}
 
 	void CreateInstance(QUESTARGS,
-		std::vector<RE::Actor*> a_submissives,
-		std::vector<RE::BSFixedString> a_scenesPrimary,
-		std::vector<RE::BSFixedString> a_scenesLeadIn,
-		std::vector<RE::BSFixedString> a_scenesCustom,
-		int a_furniturepref)
+	  std::vector<RE::Actor*> a_submissives,
+	  std::vector<RE::BSFixedString> a_scenesPrimary,
+	  std::vector<RE::BSFixedString> a_scenesLeadIn,
+	  std::vector<RE::BSFixedString> a_scenesCustom,
+	  int a_furniturepref)
 	{
 		const auto library = Registry::Library::GetSingleton();
 		const auto toVector = [&](const auto& a_list) {
@@ -473,16 +473,16 @@ namespace Papyrus::ThreadModel
 	std::vector<int> GetCollisionActions(QUESTARGS, RE::Actor* a_position, RE::Actor* a_partner)
 	{
 		GET_INSTANCE({});
-		auto instance = instance->GetNiInstance();
-		if (!instance) {
+		auto niInstance = instance->GetNiInstance();
+		if (!niInstance) {
 			a_vm->TraceStack("Not registered", a_stackID);
 			return {};
 		}
 		const auto idxA = a_position ? a_position->formID : 0;
 		const auto idxB = a_partner ? a_partner->formID : 0;
-		const auto interactions = instance->GetInteractions(idxA, idxB, NiInteraction::Type(a_type));
+		const auto interactions = niInstance->GetInteractions(idxA, idxB, Thread::NiNode::NiInteraction::Type::None);
 		const auto ret = std::ranges::fold_left(interactions, std::vector<int>{}, [](auto&& acc, const auto& it) {
-			return (acc.push_back(static_cast<int>(it.action)), acc);
+			return (acc.push_back(static_cast<int>(it->type)), acc);
 		});
 		return ret;
 	}
@@ -490,14 +490,14 @@ namespace Papyrus::ThreadModel
 	bool HasCollisionAction(QUESTARGS, int a_type, RE::Actor* a_position, RE::Actor* a_partner)
 	{
 		GET_INSTANCE({});
-		auto instance = instance->GetNiInstance();
-		if (!instance) {
+		auto niInstance = instance->GetNiInstance();
+		if (!niInstance) {
 			a_vm->TraceStack("Not registered", a_stackID);
 			return false;
 		}
 		const auto idxA = a_position ? a_position->formID : 0;
 		const auto idxB = a_partner ? a_partner->formID : 0;
-		const auto interactions = instance->GetInteractions(idxA, idxB, NiInteraction::Type(a_type));
+		const auto interactions = niInstance->GetInteractions(idxA, idxB, Thread::NiNode::NiInteraction::Type(a_type));
 		return !interactions.empty();
 	}
 
@@ -514,13 +514,13 @@ namespace Papyrus::ThreadModel
 	std::vector<RE::Actor*> GetPartnersByAction(QUESTARGS, RE::Actor* a_position, int a_type)
 	{
 		GET_INSTANCE({});
-		auto instance = instance->GetNiInstance();
-		if (!instance) {
+		auto niInstance = instance->GetNiInstance();
+		if (!niInstance) {
 			a_vm->TraceStack("Not registered", a_stackID);
 			return {};
 		}
 		const auto idxA = a_position ? a_position->formID : 0;
-		return instance->GetInteractionPartners(idxA, NiInteraction::Type(a_type));
+		return niInstance->GetInteractionPartners(idxA, Thread::NiNode::NiInteraction::Type(a_type));
 	}
 
 	RE::Actor* GetPartnerByTypeRev(QUESTARGS, RE::Actor* a_position, int a_type)
@@ -536,13 +536,13 @@ namespace Papyrus::ThreadModel
 	std::vector<RE::Actor*> GetPartnersByTypeRev(QUESTARGS, RE::Actor* a_position, int a_type)
 	{
 		GET_INSTANCE({});
-		auto instance = instance->GetNiInstance();
-		if (!instance) {
+		auto niInstance = instance->GetNiInstance();
+		if (!niInstance) {
 			a_vm->TraceStack("Not registered", a_stackID);
 			return {};
 		}
 		const auto idxB = a_position ? a_position->formID : 0;
-		return instance->GetInteractionPartnersRev(idxB, NiInteraction::Type(a_type));
+		return niInstance->GetInteractionPartnersRev(idxB, Thread::NiNode::NiInteraction::Type(a_type));
 	}
 
 	float GetActionVelocity(QUESTARGS, RE::Actor* a_position, RE::Actor* a_partner, int a_type)
@@ -556,17 +556,17 @@ namespace Papyrus::ThreadModel
 			return 0.0f;
 		}
 		GET_INSTANCE({});
-		auto instance = instance->GetNiInstance();
-		if (!instance) {
+		auto niInstance = instance->GetNiInstance();
+		if (!niInstance) {
 			a_vm->TraceStack("Not registered", a_stackID);
 			return 0.0f;
 		}
 		float ret = 0.0f;
 		const auto idxA = a_position->formID;
 		const auto idxB = a_partner ? a_partner->formID : 0;
-		const auto interactions = instance->GetInteractions(idxA, idxB, NiInteraction::Type(a_type));
+		const auto interactions = niInstance->GetInteractions(idxA, idxB, Thread::NiNode::NiInteraction::Type(a_type));
 		if (!interactions.empty()) {
-			ret = interactions.front().velocity;
+			ret = interactions.front()->velocity;
 		} else {
 			a_vm->TraceStack("No such interaction found", a_stackID);
 		}
@@ -714,4 +714,4 @@ namespace Papyrus::ThreadModel
 		instance->UpdateTimer(a_time);
 	}
 
-}	 // namespace Papyrus::ThreadModel
+}  // namespace Papyrus::ThreadModel
