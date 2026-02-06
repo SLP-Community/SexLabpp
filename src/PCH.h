@@ -37,6 +37,8 @@ using namespace std::literals;
 #define ESPNAME "SexLab.esm"
 constexpr auto YAMLPATH{ "Data\\SKSE\\SexLab\\Settings.yaml" };
 constexpr auto INIPATH{ "Data\\SKSE\\Plugins\\SexLab.ini" };
+constexpr auto MODELPATH{ "Data\\SKSE\\SexLab\\LinearModel.ini" };
+constexpr auto MODELDATAPATH{ "Data\\SKSE\\SexLab\\ModelData" };
 
 #define CONFIGPATH(path) "Data\\SKSE\\SexLab\\" path
 #define USER_CONFIGS(path) CONFIGPATH("UserData\\") path

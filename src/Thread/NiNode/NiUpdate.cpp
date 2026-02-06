@@ -1,9 +1,18 @@
 #include "NiUpdate.h"
 
+#include <SimpleIni.h>
+
+#include "NiDescriptor.h"
+
 namespace Thread::NiNode
 {
 	void NiUpdate::Install()
 	{
+		if (!InitializeDescriptors()) {
+			logger::critical("Failed to initialize descriptors. NiNode interactions will not work.");
+			return;
+		}
+
 		auto& trampoline = SKSE::GetTrampoline();
 		REL::Relocation<std::uintptr_t> update{ REL::RelocationID(35565, 36564), REL::VariantOffset(0x53, 0x6E, 0x68) };
 		_OnFrameUpdate = trampoline.write_call<5>(update.address(), OnFrameUpdate);
@@ -15,14 +24,60 @@ namespace Thread::NiNode
 		return *deltaTime.get();
 	}
 
+	bool NiUpdate::InitializeDescriptors()
+	{
+		if (!fs::exists(MODELPATH)) {
+			logger::error("Descriptors: Settings file not found at {}", MODELPATH);
+			return false;
+		}
+
+		CSimpleIniA inifile{};
+		inifile.SetUnicode();
+		const auto ec = inifile.LoadFile(MODELPATH);
+		if (ec < 0) {
+			logger::error("Descriptors: Failed to read .ini file, Error: {}", ec);
+			return false;
+		}
+
+		try {
+			KissingDescriptor::Initialize("Kissing", inifile);
+
+			logger::info("Descriptors: Model initialization complete");
+			return true;
+		} catch (const std::exception& e) {
+			logger::error("Descriptors: Initialization failed - {}", e.what());
+		}
+		return false;
+	}
+
 	void NiUpdate::OnFrameUpdate(RE::PlayerCharacter* a_this)
 	{
 		_OnFrameUpdate(a_this);
 
+		std::scoped_lock mlLk{ _mlMutex };
+		const bool isMLTraining = mlTrainingState.type != NiInteraction::Type::None;
+	
 		std::scoped_lock lk{ _m };
 		time += GetDeltaTime();
 		for (auto&& [_, process] : _instances) {
 			process->Update(time);
+			if (!isMLTraining || !process->HasActor(a_this->GetFormID()))
+				continue;
+			if (++mlTrainingState.frameCount < mlTrainingState.frameInterval) {
+				continue;
+			}
+			mlTrainingState.frameCount = 0;
+			process->ForEachInteraction([&](RE::ActorPtr a, RE::ActorPtr b, const NiInteraction& interaction) {
+				if (!a->IsPlayerRef() && !b->IsPlayerRef()) {
+					return;  // only log interactions involving the player
+				}
+				const auto typeName = magic_enum::enum_name(interaction.type);
+				const auto actorAName = a->GetFormID();
+				const auto actorBName = b->GetFormID();
+				const auto labelStr = mlTrainingState.enabled ? "1" : "0";
+				const auto row = std::format("{},{:X},{:X},{},{}", typeName, actorAName, actorBName, interaction.csvRow, labelStr);
+				mlTrainingState.recordedData.push_back(row);
+			}, 0, 0, mlTrainingState.type);
 		}
 	}
 
@@ -56,6 +111,59 @@ namespace Thread::NiNode
 			return;
 		}
 		_instances.erase(where);
+	}
+
+	void NiUpdate::UpdateMLTrainingState(NiInteraction::Type a_type, bool enabled)
+	{
+		std::scoped_lock lk{ _mlMutex };
+		if (mlTrainingState.type != a_type && mlTrainingState.recordedData.size() > 0) {
+			// Clear recorded data when changing to a different interaction type
+			const auto oldStateStr = magic_enum::enum_name(mlTrainingState.type);
+			const auto newStateStr = magic_enum::enum_name(a_type);
+			logger::info("ML Training State changing from {} to {}, clearing recorded data with {} rows", oldStateStr, newStateStr, mlTrainingState.recordedData.size());
+			const auto headerStr = InteractionDescriptor<>::CsvHeader();
+			const auto csvFile = std::ranges::fold_left(mlTrainingState.recordedData, std::format("Type,ActorA,ActorB,{},Label\n", headerStr), [](std::string acc, const std::string& row) {
+				return std::move(acc) + "\n" + row;
+			});
+			const auto folderPath = std::format("{}\\{}", MODELDATAPATH, oldStateStr);
+			size_t uniqueFileId = 0;
+			if (!fs::exists(folderPath)) {
+				fs::create_directories(folderPath);
+			} else {
+				for (const auto& entry : fs::directory_iterator(folderPath)) {
+					if (entry.is_regular_file() && entry.path().extension() == ".csv") {
+						uniqueFileId++;
+					}
+				}
+			}
+			const auto finalPath = std::format("{}\\ML_TrainingData_{}.csv", folderPath, uniqueFileId);
+			std::ofstream outFile(finalPath);
+			if (outFile.is_open()) {
+				outFile << csvFile;
+				outFile.close();
+				logger::info("Saved ML training data to {}", finalPath);
+			} else {
+				logger::error("Failed to save ML training data to {}", finalPath);
+			}
+			mlTrainingState.recordedData.clear();
+		}
+		mlTrainingState.type = a_type;
+		mlTrainingState.enabled = enabled;
+		mlTrainingState.frameCount = 0;  // reset frame count when changing state
+		logger::info("ML Training State updated: Type={}, Enabled={}", magic_enum::enum_name(a_type), enabled);
+	}
+
+	void NiUpdate::SetMLTrainingFrameInterval(size_t interval)
+	{
+		std::scoped_lock lk{ _mlMutex };
+		mlTrainingState.frameInterval = interval;
+		logger::info("ML Training frame interval set to {} frames", interval);
+	}
+
+	NiUpdate::MLTrainingState NiUpdate::GetMLTrainingState()
+	{	
+		std::scoped_lock lk{ _mlMutex };
+		return mlTrainingState;
 	}
 
 }  // namespace Thread::NiNode

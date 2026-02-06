@@ -32,8 +32,6 @@ namespace Thread::NiNode
 			const float cos = NiMath::GetCosAngle(dirA, dirB);
 			facingScore = std::clamp(-cos, 0.0f, 1.0f);
 		}
-
-		// Scores
 		const float distanceScore = 1.0f - std::clamp(mouthDistance / Settings::fDistanceMouth, 0.0f, 1.0f);
 		const float avgVelocity = 0.5f * (mouthA.avgSpeed + mouthB.avgSpeed);
 		const float velocityScore = 1.0f - std::clamp(avgVelocity / Settings::fMaxKissSpeed, 0.0f, 1.0f);
@@ -42,14 +40,15 @@ namespace Thread::NiNode
 		const float stabilityScore = 0.5f * impulseScore + 0.5f * oscillationScore;
 		const float timeScore = std::clamp(duration / Settings::fMinKissDuration, 0.0f, 1.0f);
 
-		// Save results
-		result.confidence =
-		  0.35f * distanceScore +
-		  0.25f * facingScore +
-		  0.20f * timeScore +
-		  0.10f * velocityScore +
-		  0.10f * stabilityScore;
+		KissingDescriptor descriptor{};
+		descriptor.AddValue(Feature::Distance, distanceScore);
+		descriptor.AddValue(Feature::Facing, facingScore);
+		descriptor.AddValue(Feature::Time, timeScore);
+		descriptor.AddValue(Feature::Velocity, velocityScore);
+		descriptor.AddValue(Feature::Stability, stabilityScore);
 
+		result.confidence = descriptor.Predict();
+		result.csvRow = descriptor.ToString();
 		result.duration = duration;
 		result.velocity = avgVelocity;
 		result.active = result.confidence > Settings::fEnterThreshold;

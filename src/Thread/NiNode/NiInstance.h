@@ -23,6 +23,7 @@ namespace Thread::NiNode
 		~NiInstance() = default;
 
 		void Update(float a_timeStamp);
+		bool HasActor(RE::FormID id) const { return GetActorIndex(id) != IDX_INVALID; }
 
 		/// @brief Iterate interactions matching criteria, callback receives (actorA, actorB, interaction)
 		void ForEachInteraction(const std::function<void(RE::ActorPtr, RE::ActorPtr, const NiInteraction&)>& callback,
