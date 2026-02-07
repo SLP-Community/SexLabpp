@@ -55,6 +55,14 @@ namespace Thread::NiNode
 	{
 		_OnFrameUpdate(a_this);
 
+		static auto calendar = RE::Calendar::GetSingleton();
+		static auto lastGameHour = 0.0f;
+		const auto currentGameHour = calendar->GetHour();
+		if (currentGameHour == lastGameHour) {
+			return;
+		}
+		lastGameHour = currentGameHour;
+
 		std::scoped_lock mlLk{ _mlMutex };
 		const bool isMLTraining = mlTrainingState.type != NiInteraction::Type::None;
 	
@@ -124,7 +132,7 @@ namespace Thread::NiNode
 			const auto newStateStr = magic_enum::enum_name(a_type);
 			logger::info("ML Training State changing from {} to {}, clearing recorded data with {} rows", oldStateStr, newStateStr, mlTrainingState.recordedData.size());
 			const auto headerStr = InteractionDescriptor<>::CsvHeader();
-			const auto csvFile = std::ranges::fold_left(mlTrainingState.recordedData, std::format("Type,ActorA,ActorB,{},Label\n", headerStr), [](std::string acc, const std::string& row) {
+			const auto csvFile = std::ranges::fold_left(mlTrainingState.recordedData, std::format("Type,ActorA,ActorB,{},Label", headerStr), [](std::string&& acc, const std::string& row) {
 				return std::move(acc) + "\n" + row;
 			});
 			const auto folderPath = std::format("{}\\{}", MODELDATAPATH, oldStateStr);
@@ -144,6 +152,7 @@ namespace Thread::NiNode
 				outFile << csvFile;
 				outFile.close();
 				logger::info("Saved ML training data to {}", finalPath);
+				Util::PrintConsole(std::format("Saved ML training data to {}", finalPath));
 			} else {
 				logger::error("Failed to save ML training data to {}", finalPath);
 			}
@@ -168,6 +177,12 @@ namespace Thread::NiNode
 		const auto dataSize = mlTrainingState.recordedData.size();
 		mlTrainingState.recordedData.clear();
 		logger::info("Cleared ML training data, removed {} rows", dataSize);
+	}
+
+	bool NiUpdate::IsMLTrainingEnabled()
+	{
+		std::scoped_lock lk{ _mlMutex };
+		return mlTrainingState.type != NiInteraction::Type::None;
 	}
 
 	NiUpdate::MLTrainingState NiUpdate::GetMLTrainingState()

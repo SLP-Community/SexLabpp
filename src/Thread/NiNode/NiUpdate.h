@@ -11,7 +11,7 @@ namespace Thread::NiNode
 			NiInteraction::Type type{ NiInteraction::Type::None };
 			std::vector<std::string> recordedData{};
 			bool enabled{ false };
-			size_t frameInterval{ 60 };
+			size_t frameInterval{ 20 };
 			size_t frameCount{ 0 };
 		};
 
@@ -25,6 +25,7 @@ namespace Thread::NiNode
 		static void UpdateMLTrainingState(NiInteraction::Type a_type, bool enabled);
 		static void SetMLTrainingFrameInterval(size_t interval);
 		static void ClearMLTrainingData();
+		static bool IsMLTrainingEnabled();
 		static MLTrainingState GetMLTrainingState();
 
 	  private:
