@@ -64,6 +64,7 @@ namespace Thread::NiNode
 		~NiMotion() = default;
 
 		void Push(const Node::NodeData& nodes, float timeStamp);
+		bool HasMomentData(Anchor c) const { return _size > 0 && GetLatestMoment(c) != RE::NiPoint3::Zero(); }
 		bool HasSufficientData() const { return _size >= _minMoments; }
 
 		size_t Size() const { return _size; }
