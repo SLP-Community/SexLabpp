@@ -140,53 +140,55 @@ namespace Papyrus::SystemConfig
 		return static_cast<int32_t>(Registry::Library::GetSingleton()->GetSceneCount());
 	}
 
-	static const std::unordered_map<std::string, float*> EnjoymentFactorsMap = {
-		{"pStimulation",	&Settings::f_pStimulation},
-		{"aAnimObjFace",	&Settings::f_aAnimObjFace},
-		{"pAnimObjFace",	&Settings::f_pAnimObjFace},
-		{"pSuckingToes",	&Settings::f_pSuckingToes},
-		{"pGrinding",		&Settings::f_pGrinding},
-		{"pSkullfuck",		&Settings::f_pSkullfuck},
-		{"aHandJob",		&Settings::f_aHandJob},
-		{"aFootJob",		&Settings::f_aFootJob},
-		{"aBoobJob",		&Settings::f_aBoobJob},
-		{"bKissing",		&Settings::f_bKissing},
-		{"aSuckingToes",	&Settings::f_aSuckingToes},
-		{"pFacial",			&Settings::f_pFacial},
-		{"aOral",			&Settings::f_aOral},
-		{"aLickingShaft",	&Settings::f_aLickingShaft},
-		{"aDeepthroat",		&Settings::f_aDeepthroat},
-		{"pVaginal",		&Settings::f_pVaginal},
-		{"pAnal",			&Settings::f_pAnal},
-		{"aFacial",			&Settings::f_aFacial},
-		{"aGrinding",		&Settings::f_aGrinding},
-		{"pHandJob",		&Settings::f_pHandJob},
-		{"pFootJob",		&Settings::f_pFootJob},
-		{"pBoobJob",		&Settings::f_pBoobJob},
-		{"pLickingShaft",	&Settings::f_pLickingShaft},
-		{"pOral",			&Settings::f_pOral},
-		{"pDeepthroat",		&Settings::f_pDeepthroat},
-		{"aSkullfuck",		&Settings::f_aSkullfuck},
-		{"aVaginal",		&Settings::f_aVaginal},
-		{"aAnal",			&Settings::f_aAnal}
+	static const std::vector<float*> EnjoymentFactorsList = {
+		&Settings::f_pStimulation,
+		&Settings::f_aAnimObjFace,
+		&Settings::f_pAnimObjFace,
+		&Settings::f_pSuckingToes,
+		&Settings::f_pGrinding,
+		&Settings::f_pSkullfuck,
+		&Settings::f_aHandJob,
+		&Settings::f_aFootJob,
+		&Settings::f_aBoobJob,
+		&Settings::f_bKissing,
+		&Settings::f_aSuckingToes,
+		&Settings::f_pFacial,
+		&Settings::f_aOral,
+		&Settings::f_aLickingShaft,
+		&Settings::f_aDeepthroat,
+		&Settings::f_pVaginal,
+		&Settings::f_pAnal,
+		&Settings::f_aFacial,
+		&Settings::f_aGrinding,
+		&Settings::f_pHandJob,
+		&Settings::f_pFootJob,
+		&Settings::f_pBoobJob,
+		&Settings::f_pLickingShaft,
+		&Settings::f_pOral,
+		&Settings::f_pDeepthroat,
+		&Settings::f_aSkullfuck,
+		&Settings::f_aVaginal,
+		&Settings::f_aAnal
 	};
 
 	std::vector<float> GetEnjoymentFactors(RE::StaticFunctionTag*)
 	{
 		std::vector<float> values;
-		values.reserve(EnjoymentFactorsMap.size());
-		for (const auto& [name, ptr] : EnjoymentFactorsMap) {
-			values.push_back(*ptr);
+		values.reserve(EnjoymentFactorsList.size());
+		for (float* ptr : EnjoymentFactorsList) {
+				values.push_back(ptr ? *ptr : 0.0f);
 		}
 		return values;
 	}
 
-	float GetEnjoymentFactor(RE::StaticFunctionTag*, RE::BSFixedString interType)
+	float GetEnjoymentFactor(RE::StaticFunctionTag*, int32_t idx)
 	{
-		std::string key = interType.c_str();
-		auto it = EnjoymentFactorsMap.find(key);
-		if (it != EnjoymentFactorsMap.end() && it->second != nullptr) {
-			return *(it->second);
+		if (idx < 0 || static_cast<size_t>(idx) >= EnjoymentFactorsList.size()) {
+			return 0.0f; 
+		}
+		float* ptr = EnjoymentFactorsList[idx];
+		if (ptr) {
+			return *ptr;
 		}
 		return 0.0f;
 	}
@@ -213,11 +215,6 @@ namespace Papyrus::SystemConfig
 			ret.push_back(form);
 		}
 		return ret;
-	}
-
-	float GetMinSetupTime(RE::StaticFunctionTag*)
-	{
-		return std::min<float>(Settings::fMinSetupTime, 0.1f);
 	}
 
 }	 // namespace Papyrus

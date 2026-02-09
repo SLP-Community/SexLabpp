@@ -7,6 +7,7 @@
 #include "Thread/Interface/SelectionMenu.h"
 #include "Thread/NiNode/NiUpdate.h"
 #include "UserData/StripData.h"
+#include "Thread/Collision/CollisionHandler.h"
 
 // class EventHandler :
 // 	public Singleton<EventHandler>,
@@ -51,6 +52,8 @@ static void SKSEMessageHandler(SKSE::MessagingInterface::Message* message)
 				std::_Exit(EXIT_FAILURE);
 			return;
 		}
+		SKSE::GetTrampoline().create(14 * 1);  
+		Thread::Collision::CollisionHandler::Install();
 		Registry::Library::GetSingleton()->Initialize();
 		UserData::StripData::GetSingleton()->Load();
 		Settings::InitializeData();

@@ -54,8 +54,8 @@ namespace Thread::Interface
 			UpdatePositions();
 			UpdateActiveScene();
 			input->AddEventSink<RE::InputEvent*>(this);
-			controls->ToggleControls(RE::ControlMap::UEFlag::kActivate, false);
-			controls->ToggleControls(RE::ControlMap::UEFlag::kMovement, false);
+			controls->ToggleControls(RE::ControlMap::UEFlag::kActivate, false, false);
+			controls->ToggleControls(RE::ControlMap::UEFlag::kMovement, false, false);
 			if (Settings::bHideHUD) {
 				RE::UIMessageQueue::GetSingleton()->AddMessage(RE::HUDMenu::MENU_NAME, RE::UI_MESSAGE_TYPE::kHide, nullptr);
 			}
@@ -64,8 +64,8 @@ namespace Thread::Interface
 		case Type::kHide:
 			logger::info("SceneMenu closed.");
 			RE::UIMessageQueue::GetSingleton()->AddMessage(RE::HUDMenu::MENU_NAME, RE::UI_MESSAGE_TYPE::kShow, nullptr);
-			controls->ToggleControls(RE::ControlMap::UEFlag::kActivate, true);
-			controls->ToggleControls(RE::ControlMap::UEFlag::kMovement, true);
+			controls->ToggleControls(RE::ControlMap::UEFlag::kActivate, true, false);
+			controls->ToggleControls(RE::ControlMap::UEFlag::kMovement, true, false);
 			controls->AllowTextInput(false);
 			input->RemoveEventSink(this);
 			threadInstance = nullptr;

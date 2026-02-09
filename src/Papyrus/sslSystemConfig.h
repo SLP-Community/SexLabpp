@@ -6,7 +6,7 @@ namespace Papyrus::SystemConfig
 
 	int GetAnimationCount(RE::StaticFunctionTag*);
 	std::vector<float> GetEnjoymentFactors(RE::StaticFunctionTag*);
-	float GetEnjoymentFactor(RE::StaticFunctionTag*, RE::BSFixedString interType);
+	float GetEnjoymentFactor(RE::StaticFunctionTag*, int32_t idx);
 	std::vector<RE::TESForm*> GetStrippableItems(VM* a_vm, StackID a_stackID, RE::StaticFunctionTag*, RE::Actor* a_target, bool a_wornonly);
 
 	int GetSettingInt(VM* a_vm, StackID a_stackID, RE::StaticFunctionTag*, std::string a_setting);
@@ -25,8 +25,6 @@ namespace Papyrus::SystemConfig
 
 	inline bool Register(VM* a_vm)
 	{
-		REGISTERFUNC(GetMinSetupTime, "sslSystemConfig", true);
-
 		REGISTERFUNC(GetAnimationCount, "sslSystemConfig", true);
 		REGISTERFUNC(GetEnjoymentFactors, "sslSystemConfig", true);
 		REGISTERFUNC(GetEnjoymentFactor, "sslSystemConfig", true);

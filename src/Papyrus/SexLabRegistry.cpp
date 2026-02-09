@@ -685,7 +685,7 @@ namespace Papyrus::SexLabRegistry
 	{
 		SCENE(0);
 		STAGE(0);
-		return stage->fixedlength;
+		return stage->fixedlength/1000.0f;
 	}
 
 	std::vector<RE::BSFixedString> GetClimaxStages(STATICARGS, RE::BSFixedString a_id, int32_t n)
