@@ -1,0 +1,16 @@
+FormKey: 065F97:SexLab.esm
+EditorID: SexLabUseBedMessage
+Description:
+  TargetLanguage: English
+  Value: Use nearby bed?
+INAM: 0x00000000
+Quest: 000D62:SexLab.esm
+Flags:
+- MessageBox
+MenuButtons:
+- Text:
+    TargetLanguage: English
+    Value: No
+- Text:
+    TargetLanguage: English
+    Value: Yes

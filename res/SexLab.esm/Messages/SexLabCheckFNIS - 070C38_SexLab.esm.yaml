@@ -1,0 +1,21 @@
+FormKey: 070C38:SexLab.esm
+EditorID: SexLabCheckFNIS
+Description:
+  TargetLanguage: English
+  Value: >-
+    "Fores New Idles in Skyrim" (FNIS) has not been successfully run or installed.
+
+    SexLab currently requires a working install of FNIS v5.1.1 or newer in order to function. To continue using the mod; you must install the latest FNIS followed by running the GenerateFNISforUsers.exe tool.
+
+
+    If you have installed FNIS v5.1.1 and are still seeing this message, than it has not sucesfully completed it's generation. Run the GenerateFNISforUsers.exe tool and be sure to check output window for any errors that need be corrected and that it has sucesfully completed the generation.
+
+
+    If using ModOrganizer, ensure you have installed and started the GenerateFNISforUsers.exe tool from within ModOrganizer itself.
+Name:
+  TargetLanguage: English
+  Value: 'SexLab Dependency: FNIS'
+INAM: 0x00000000
+Quest: 000D62:SexLab.esm
+Flags:
+- MessageBox

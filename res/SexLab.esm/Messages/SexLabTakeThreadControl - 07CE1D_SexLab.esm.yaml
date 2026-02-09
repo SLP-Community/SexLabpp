@@ -1,0 +1,19 @@
+FormKey: 07CE1D:SexLab.esm
+EditorID: SexLabTakeThreadControl
+Description:
+  TargetLanguage: English
+  Value: Attempting to take hotkey control of targeted actors currently running animations... This will lock player movement in place for the duration of your control over the scene. To release hotkey control and regain player movement,  you must either press the target actor hotkey again or end the animation.
+Name:
+  TargetLanguage: English
+  Value: SexLab NPC Animation Control
+INAM: 0x00000000
+Quest: 000D62:SexLab.esm
+Flags:
+- MessageBox
+MenuButtons:
+- Text:
+    TargetLanguage: English
+    Value: Cancel
+- Text:
+    TargetLanguage: English
+    Value: Control Animation

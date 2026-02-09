@@ -1,0 +1,12 @@
+Name: DogVoice01
+DisplayName: "$SSL_DogVoice01"
+Actor:
+  Sex: Any
+  Race:
+    - dogs
+Tags:
+  - female
+  - male
+  - creature
+Voices:
+  573585|SexLab.esm: 0

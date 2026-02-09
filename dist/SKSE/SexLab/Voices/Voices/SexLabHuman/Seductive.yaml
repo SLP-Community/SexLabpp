@@ -1,0 +1,23 @@
+Name: SLFemaleSeductive
+DisplayName: "$SSL_FemaleSeductive"
+
+Actor:
+  Sex: Female
+  Race: Human
+  Pitch: Normal
+
+Tags:
+  - female
+  - seductive
+
+Voices:
+  0xCA979|SexLab.esm: 0
+  0xCA978|SexLab.esm: 75
+Orgasm: 0xCA97B|SexLab.esm
+
+Extra:
+  - Voices:
+      0xCA97A|SexLab.esm: 0
+    Orgasm: 0xCA99D|SexLab.esm
+    Conditions:
+      Muffled: true

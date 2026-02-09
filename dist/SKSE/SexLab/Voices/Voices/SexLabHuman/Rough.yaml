@@ -1,0 +1,23 @@
+Name: SLFemaleRough
+DisplayName: "$SSL_FemaleRough"
+
+Actor:
+  Sex: Female
+  Race: Human
+  Pitch: Normal
+
+Tags:
+  - female
+  - quiet
+  - rough
+
+Voices:
+  0xCA971|SexLab.esm: 0
+  0xCA970|SexLab.esm: 75
+Orgasm: 0xCA973|SexLab.esm
+
+Extra:
+  - Voices:
+      0xCA972|SexLab.esm: 0
+    Conditions:
+      Muffled: true

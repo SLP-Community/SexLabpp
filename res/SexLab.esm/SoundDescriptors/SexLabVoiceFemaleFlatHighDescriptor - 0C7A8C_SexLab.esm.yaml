@@ -1,0 +1,17 @@
+FormKey: 0C7A8C:SexLab.esm
+EditorID: SexLabVoiceFemaleFlatHighDescriptor
+Type: Standard
+Category: 061429:SexLab.esm
+SoundFiles:
+- data\sound\Fx\SexLab\vfx\Flat\High\Flat_H01.wav
+- data\sound\Fx\SexLab\vfx\Flat\High\Flat_H02.wav
+- data\sound\Fx\SexLab\vfx\Flat\High\Flat_H03.wav
+- data\sound\Fx\SexLab\vfx\Flat\High\Flat_H04.wav
+- data\sound\Fx\SexLab\vfx\Flat\High\Flat_H05.wav
+- data\sound\Fx\SexLab\vfx\Flat\High\Flat_H06.wav
+- data\sound\Fx\SexLab\vfx\Flat\High\Flat_H07.wav
+OutputModel: 0D78B4:Skyrim.esm
+LoopAndRumble: {}
+PercentFrequencyVariance: 5
+Priority: 128
+Variance: 3

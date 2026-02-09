@@ -1,0 +1,18 @@
+FormKey: 067524:SexLab.esm
+EditorID: SexLabVoiceFemale01HotDescriptor
+Type: Standard
+Category: 061429:SexLab.esm
+SoundFiles:
+- data\sound\Fx\SexLab\vFemaleMoan01\hot\hot_moans_04.wav
+- data\sound\Fx\SexLab\vFemaleMoan01\hot\hot_moans_05.wav
+- data\sound\Fx\SexLab\vFemaleMoan01\hot\hot_moans_06.wav
+- data\sound\Fx\SexLab\vFemaleMoan01\hot\hot_moans_07.wav
+- data\sound\Fx\SexLab\vFemaleMoan01\hot\hot_moans_08.wav
+- data\sound\Fx\SexLab\vFemaleMoan01\hot\hot_moans_01.wav
+- data\sound\Fx\SexLab\vFemaleMoan01\hot\hot_moans_02.wav
+- data\sound\Fx\SexLab\vFemaleMoan01\hot\hot_moans_03.wav
+OutputModel: 0D78B4:Skyrim.esm
+LoopAndRumble: {}
+PercentFrequencyVariance: 5
+Priority: 128
+Variance: 3

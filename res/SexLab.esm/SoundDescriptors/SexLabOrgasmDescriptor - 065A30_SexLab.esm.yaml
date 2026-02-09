@@ -1,0 +1,11 @@
+FormKey: 065A30:SexLab.esm
+EditorID: SexLabOrgasmDescriptor
+Type: Standard
+Category: 061428:SexLab.esm
+SoundFiles:
+- data\sound\Fx\SexLab\fxOrgasm01\01.wav
+- data\sound\Fx\SexLab\fxOrgasm01\02.wav
+OutputModel: 0D78B4:Skyrim.esm
+LoopAndRumble: {}
+Priority: 128
+Variance: 2

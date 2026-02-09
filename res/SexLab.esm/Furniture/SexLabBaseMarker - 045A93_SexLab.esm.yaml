@@ -1,0 +1,33 @@
+FormKey: 045A93:SexLab.esm
+MajorRecordFlagsRaw: 8388608
+EditorID: SexLabBaseMarker
+SkyrimMajorRecordFlags:
+- 0x800000
+Name:
+  TargetLanguage: English
+  Value: SexLab Base Marker
+Model:
+  File: Furniture\WallLeanMarker.nif
+  Data: 0x020000000000000000000000
+Keywords:
+- 06E9C7:Skyrim.esm
+PNAM: 0x00000000
+Flags:
+- IgnoredBySandbox
+- 0x10000000
+WorkbenchData:
+  UsesSkill: 255
+Markers:
+- Enabled: True
+  DisabledEntryPoints:
+    Points:
+    - Right
+    - Left
+  EntryPoints:
+    Type:
+    - Lean
+    Points:
+    - Front
+ModelFilename: Furniture\WallLeanMarker.nif
+MajorFlags:
+- IsMarker

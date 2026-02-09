@@ -1,0 +1,19 @@
+FormKey: 08C080:SexLab.esm
+EditorID: SexLabVoiceTroll01Descriptor
+Type: Standard
+Category: 061429:SexLab.esm
+SoundFiles:
+- data\Sound\fx\npc\troll\npc_troll_breathe_lp.wav
+- data\Sound\fx\npc\troll\idle\npc_troll_idle_01.wav
+- data\Sound\fx\npc\troll\attack\a\npc_troll_attack_a_01.wav
+- data\Sound\fx\npc\troll\attack\a\npc_troll_attack_a_02.wav
+- data\Sound\fx\npc\troll\attack\a\npc_troll_attack_a_03.wav
+- data\Sound\fx\npc\troll\attack\b\npc_troll_attack_b_01.wav
+- data\Sound\fx\npc\troll\attack\b\npc_troll_attack_b_02.wav
+- data\Sound\fx\npc\troll\attack\b\npc_troll_attack_b_03.wav
+- data\Sound\fx\npc\troll\npc_troll_idlecombat_roar.wav
+OutputModel: 0ABEF3:Skyrim.esm
+LoopAndRumble: {}
+PercentFrequencyVariance: 5
+Priority: 128
+Variance: 5

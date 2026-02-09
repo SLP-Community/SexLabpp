@@ -1,0 +1,20 @@
+FormKey: 067529:SexLab.esm
+EditorID: SexLabVoiceFemale03MediumDescriptor
+Type: Standard
+Category: 061429:SexLab.esm
+SoundFiles:
+- data\sound\Fx\SexLab\vFemaleMoan03\medium\005.wav
+- data\sound\Fx\SexLab\vFemaleMoan03\medium\006.wav
+- data\sound\Fx\SexLab\vFemaleMoan03\medium\007.wav
+- data\sound\Fx\SexLab\vFemaleMoan03\medium\008.wav
+- data\sound\Fx\SexLab\vFemaleMoan03\medium\009.wav
+- data\sound\Fx\SexLab\vFemaleMoan03\medium\000.wav
+- data\sound\Fx\SexLab\vFemaleMoan03\medium\001.wav
+- data\sound\Fx\SexLab\vFemaleMoan03\medium\002.wav
+- data\sound\Fx\SexLab\vFemaleMoan03\medium\003.wav
+- data\sound\Fx\SexLab\vFemaleMoan03\medium\004.wav
+OutputModel: 0D78B4:Skyrim.esm
+LoopAndRumble: {}
+PercentFrequencyVariance: 5
+Priority: 128
+Variance: 3

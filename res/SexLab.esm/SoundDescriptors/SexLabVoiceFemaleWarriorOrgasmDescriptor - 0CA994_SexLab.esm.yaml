@@ -1,0 +1,14 @@
+FormKey: 0CA994:SexLab.esm
+EditorID: SexLabVoiceFemaleWarriorOrgasmDescriptor
+Type: Standard
+Category: 061429:SexLab.esm
+SoundFiles:
+- data\Sound\fx\SexLab\vfx\Warrior\Orgasm\Warrior_O01.wav"
+- data\Sound\fx\SexLab\vfx\Warrior\Orgasm\Warrior_O02.wav"
+- data\Sound\fx\SexLab\vfx\Warrior\Orgasm\Warrior_O03.wav"
+- data\Sound\fx\SexLab\vfx\Warrior\Orgasm\Warrior_O04.wav"
+OutputModel: 0D78B4:Skyrim.esm
+LoopAndRumble: {}
+PercentFrequencyVariance: 5
+Priority: 128
+Variance: 3

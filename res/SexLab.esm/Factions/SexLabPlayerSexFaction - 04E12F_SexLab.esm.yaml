@@ -1,0 +1,11 @@
+FormKey: 04E12F:SexLab.esm
+EditorID: SexLabPlayerSexFaction
+Name:
+  TargetLanguage: English
+  Value: SexLab Player Sexual Partners
+Flags:
+- HiddenFromPC
+CrimeValues:
+  Arrest: True
+  AttackOnSight: True
+VendorValues: {}

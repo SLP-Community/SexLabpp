@@ -1,0 +1,21 @@
+FormKey: 018715:SexLab.esm
+EditorID: SexLabNudeSuit
+Name:
+  TargetLanguage: English
+  Value: In The Nude
+BodyTemplate:
+  FirstPersonFlags:
+  - Body
+  ArmorType: Clothing
+  ActsLike44: True
+Race: 000019:Skyrim.esm
+Keywords:
+- 02F16E:SexLab.esm
+Description:
+  TargetLanguage: English
+  Value: ''
+Armature:
+- 018716:SexLab.esm
+Value: 1
+Weight: 1
+ArmorRating: 1

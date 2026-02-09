@@ -1,0 +1,23 @@
+FormKey: 0B3302:SexLab.esm
+EditorID: SexLabMatchMaker
+VirtualMachineAdapter:
+  Scripts:
+  - Name: sslMatchMakerMain
+    Properties:
+    - MutagenObjectType: ScriptObjectProperty
+      Name: config
+      Object: 000D62:SexLab.esm
+    - MutagenObjectType: ScriptObjectProperty
+      Name: PlayerRef
+      Object: 000014:Skyrim.esm
+    - MutagenObjectType: ScriptObjectProperty
+      Name: SexLab
+      Object: 000D62:SexLab.esm
+  Versioning:
+  - Break0
+  ExtraBindDataVersion: 0
+  FileName: ''
+Name:
+  TargetLanguage: English
+  Value: SexLab Matchmaker Menu
+NextAliasID: 0

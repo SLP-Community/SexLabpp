@@ -1,0 +1,20 @@
+FormKey: 0CA992:SexLab.esm
+EditorID: SexLabVoiceFemaleWarriorLowDescriptor
+Type: Standard
+Category: 061429:SexLab.esm
+SoundFiles:
+- data\Sound\fx\SexLab\vfx\Warrior\Low\Warrior_L01.wav"
+- data\Sound\fx\SexLab\vfx\Warrior\Low\Warrior_L02.wav"
+- data\Sound\fx\SexLab\vfx\Warrior\Low\Warrior_L03.wav"
+- data\Sound\fx\SexLab\vfx\Warrior\Low\Warrior_L04.wav"
+- data\Sound\fx\SexLab\vfx\Warrior\Low\Warrior_L05.wav"
+- data\Sound\fx\SexLab\vfx\Warrior\Low\Warrior_L06.wav"
+- data\Sound\fx\SexLab\vfx\Warrior\Low\Warrior_L07.wav"
+- data\Sound\fx\SexLab\vfx\Warrior\Low\Warrior_L08.wav"
+- data\Sound\fx\SexLab\vfx\Warrior\Low\Warrior_L09.wav"
+- data\Sound\fx\SexLab\vfx\Warrior\Low\Warrior_L10.wav"
+OutputModel: 0D78B4:Skyrim.esm
+LoopAndRumble: {}
+PercentFrequencyVariance: 5
+Priority: 128
+Variance: 3

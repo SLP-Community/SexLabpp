@@ -1,0 +1,29 @@
+Name: ExampleName # The id of the voice. Should be unique
+DisplayName: $LocalizedName # Optional, if present will be displayed in the MCM instead of the id name.
+
+Actor:
+  Sex: Female   # Male, Female or Any
+  Race: Human   # Scalar or List
+  Pitch: Normal # Low, Normal, High
+
+Tags:
+  - Tag1
+  - Tag2
+  - ...
+
+Voices: # List or Map
+  <Voice1Form>: 0
+  <Voice2Form>: 20
+  <Voice3Form>: 65
+Orgasm: <VoiceForm>  # Optional
+
+Extra:
+  - Voices:
+      - <Voice1Form>
+      - <Voice2Form>
+      - <Voice3Form>
+    Orgasm: <VoiceForm>
+    Conditions: # Optional, leave out what doesnt apply
+      Submissive: false
+      Dominant: true
+      Muffled: false

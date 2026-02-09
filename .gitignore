@@ -8,3 +8,16 @@ scripts/out/
 .xmake
 vsxmake2022
 CppProperties.json
+meta.ini
+*.rar
+*.zip
+*.7z
+*.esp
+*.sublime-project
+*.sublime-workspace
+*.bsa
+*.slr
+*.dll
+*.pdb
+*.pex
+*.swf

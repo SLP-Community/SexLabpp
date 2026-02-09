@@ -1,0 +1,16 @@
+FormKey: 065A2E:SexLab.esm
+EditorID: SexLabSuckingDescriptor
+Type: Standard
+Category: 061428:SexLab.esm
+SoundFiles:
+- data\sound\Fx\SexLab\fxOral01\cyupa01.wav
+- data\sound\Fx\SexLab\fxOral01\cyupa02.wav
+- data\sound\Fx\SexLab\fxOral01\cyupa03.wav
+- data\sound\Fx\SexLab\fxOral01\cyupa04.wav
+- data\sound\Fx\SexLab\fxOral01\fera01.wav
+- data\sound\Fx\SexLab\fxOral01\fera02.wav
+- data\sound\Fx\SexLab\fxOral01\fera03.wav
+OutputModel: 0D78B4:Skyrim.esm
+LoopAndRumble: {}
+Priority: 128
+Variance: 1

@@ -1,0 +1,33 @@
+FormKey: 08D63E:SexLab.esm
+EditorID: SexLabVaginal2Oral2Anal2Effect
+VirtualMachineAdapter:
+  Scripts:
+  - Name: sslActorCumEffect
+Name:
+  TargetLanguage: English
+  Value: Covered In Cum
+Keywords:
+- 0419DB:SexLab.esm
+- 0434D3:SexLab.esm
+- 0434D4:SexLab.esm
+- 08D685:SexLab.esm
+- 08D686:SexLab.esm
+- 08D687:SexLab.esm
+Flags:
+- NoHitEvent
+- DispelWithKeywords
+- NoMagnitude
+- NoArea
+- FXPersist
+- HideInUI
+- Painless
+- NoDeathDispel
+Archetype:
+  MutagenObjectType: MagicEffectArchetype
+  Type: Script
+DualCastScale: 1
+CastingSoundLevel: Normal
+Sounds: []
+Description:
+  TargetLanguage: English
+  Value: ''

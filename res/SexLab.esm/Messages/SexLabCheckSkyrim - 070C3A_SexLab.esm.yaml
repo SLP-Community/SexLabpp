@@ -1,0 +1,12 @@
+FormKey: 070C3A:SexLab.esm
+EditorID: SexLabCheckSkyrim
+Description:
+  TargetLanguage: English
+  Value: "Outdated or none Skyrim install detected. \r\nSexLab currently requires Skyrim v%.1f or newer in order to function. To continue using this mod; you must update your install and reload your game. "
+Name:
+  TargetLanguage: English
+  Value: 'SexLab Dependency: Skyrim'
+INAM: 0x00000000
+Quest: 000D62:SexLab.esm
+Flags:
+- MessageBox

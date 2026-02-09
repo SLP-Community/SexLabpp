@@ -1,0 +1,24 @@
+FormKey: 08C5F5:SexLab.esm
+EditorID: SexLabSelectedActorEffect
+Name:
+  TargetLanguage: English
+  Value: Selected
+Flags:
+- NoDuration
+- NoMagnitude
+- NoArea
+- FXPersist
+- HideInUI
+- Painless
+- NoDeathDispel
+Archetype:
+  MutagenObjectType: MagicEffectArchetype
+  Type: Script
+CastType: FireAndForget
+HitEffectArt: 07024B:Skyrim.esm
+DualCastScale: 1
+CastingSoundLevel: Normal
+Sounds: []
+Description:
+  TargetLanguage: English
+  Value: ''

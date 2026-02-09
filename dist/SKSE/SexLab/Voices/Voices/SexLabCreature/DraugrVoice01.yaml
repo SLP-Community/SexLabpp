@@ -1,0 +1,12 @@
+Name: DraugrVoice01
+DisplayName: "$SSL_DraugrVoice01"
+Actor:
+  Sex: Any
+  Race:
+    - draugrs
+Tags:
+  - female
+  - male
+  - creature
+Voices:
+  573580|SexLab.esm: 0

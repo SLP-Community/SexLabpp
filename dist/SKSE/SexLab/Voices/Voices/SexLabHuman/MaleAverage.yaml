@@ -1,0 +1,20 @@
+Name: MaleAverage
+DisplayName: "$SSL_MaleAverage"
+Actor:
+  Sex: Male
+  Race:
+    - Human
+Tags:
+  - male
+  - quiet
+  - normal
+  - Average
+Voices:
+  423273|SexLab.esm: 0
+  423271|SexLab.esm: 75
+Extra:
+  - Voices:
+      423272|SexLab.esm: 0
+      423271|SexLab.esm: 75
+    Conditions:
+      Submissive: true

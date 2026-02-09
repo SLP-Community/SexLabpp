@@ -1,0 +1,12 @@
+FormKey: 0CA9A1:SexLab.esm
+EditorID: SexLabVoiceFemaleSeductiveMuffledOrgasmDescriptor
+Type: Standard
+Category: 061429:SexLab.esm
+SoundFiles:
+- data\Sound\fx\SexLab\vfx\Seductive\Muffled\Orgasm\Seductive_MO01.wav"
+- data\Sound\fx\SexLab\vfx\Seductive\Muffled\Orgasm\Seductive_MO02.wav"
+OutputModel: 0D78B4:Skyrim.esm
+LoopAndRumble: {}
+PercentFrequencyVariance: 5
+Priority: 128
+Variance: 3

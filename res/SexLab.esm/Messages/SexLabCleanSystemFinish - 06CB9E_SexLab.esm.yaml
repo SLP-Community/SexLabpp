@@ -1,0 +1,16 @@
+FormKey: 06CB9E:SexLab.esm
+EditorID: SexLabCleanSystemFinish
+Description:
+  TargetLanguage: English
+  Value: >-
+    SexLab has finished it's setup and returned itself to its default state, it is now safe to continue. It is suggested that you now create a new manual save before continuining.
+
+
+    If uninstalling SexLab Framework; it is vital that you also follow the uninstall instructions for any other SexLab mods you may have installed.
+Name:
+  TargetLanguage: English
+  Value: Finished Cleaning
+INAM: 0x00000000
+Quest: 000D62:SexLab.esm
+Flags:
+- MessageBox

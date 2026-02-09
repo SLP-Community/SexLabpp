@@ -1,0 +1,13 @@
+FormKey: 0CA9A0:SexLab.esm
+EditorID: SexLabVoiceFemaleRebellious2MuffledOrgasmDescriptor
+Type: Standard
+Category: 061429:SexLab.esm
+SoundFiles:
+- data\Sound\fx\SexLab\vfx\Rebellious2\Muffled\Orgasm\Rebellious2_MO01.wav"
+- data\Sound\fx\SexLab\vfx\Rebellious2\Muffled\Orgasm\Rebellious2_MO02.wav"
+- data\Sound\fx\SexLab\vfx\Rebellious2\Muffled\Orgasm\Rebellious2_MO03.wav"
+OutputModel: 0D78B4:Skyrim.esm
+LoopAndRumble: {}
+PercentFrequencyVariance: 5
+Priority: 128
+Variance: 3

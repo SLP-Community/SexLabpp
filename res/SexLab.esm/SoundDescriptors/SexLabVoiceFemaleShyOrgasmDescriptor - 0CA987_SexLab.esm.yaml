@@ -1,0 +1,21 @@
+FormKey: 0CA987:SexLab.esm
+EditorID: SexLabVoiceFemaleShyOrgasmDescriptor
+Type: Standard
+Category: 061429:SexLab.esm
+SoundFiles:
+- data\Sound\fx\SexLab\vfx\Shy\Orgasm\Shy_O01.wav"
+- data\Sound\fx\SexLab\vfx\Shy\Orgasm\Shy_O02.wav"
+- data\Sound\fx\SexLab\vfx\Shy\Orgasm\Shy_O03.wav"
+- data\Sound\fx\SexLab\vfx\Shy\Orgasm\Shy_O04.wav"
+- data\Sound\fx\SexLab\vfx\Shy\Orgasm\Shy_O05.wav"
+- data\Sound\fx\SexLab\vfx\Shy\Orgasm\Shy_O06.wav"
+- data\Sound\fx\SexLab\vfx\Shy\Orgasm\Shy_O07.wav"
+- data\Sound\fx\SexLab\vfx\Shy\Orgasm\Shy_O08.wav"
+- data\Sound\fx\SexLab\vfx\Shy\Orgasm\Shy_O09.wav"
+- data\Sound\fx\SexLab\vfx\Shy\Orgasm\Shy_O10.wav"
+- data\Sound\fx\SexLab\vfx\Shy\Orgasm\Shy_O11.wav"
+OutputModel: 0D78B4:Skyrim.esm
+LoopAndRumble: {}
+PercentFrequencyVariance: 5
+Priority: 128
+Variance: 3

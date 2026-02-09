@@ -1,0 +1,23 @@
+FormKey: 068591:SexLab.esm
+Flags: {}
+PreviousDialog: Null
+FavorLevel: None
+Responses:
+- EmotionValue: 50
+  ResponseNumber: 1
+  Unknown2: 0x000000
+  Unknown3: 0x000000
+  Text:
+    TargetLanguage: English
+    Value: ' '
+  ScriptNotes: ''
+  Edits: ''
+Conditions:
+- MutagenObjectType: ConditionFloat
+  Data:
+    MutagenObjectType: GetIsVoiceTypeConditionData
+    VoiceTypeOrList: 02CBBC:SexLab.esm
+  ComparisonValue: 1
+Prompt:
+  TargetLanguage: English
+  Value: ' '

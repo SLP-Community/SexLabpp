@@ -1,0 +1,25 @@
+FormKey: 065A2F:SexLab.esm
+EditorID: SexLabSexMixedDescriptor
+Type: Standard
+Category: 061428:SexLab.esm
+SoundFiles:
+- data\sound\Fx\SexLab\fxSex01\000.wav
+- data\sound\Fx\SexLab\fxSex01\001.wav
+- data\sound\Fx\SexLab\fxSex01\003.wav
+- data\sound\Fx\SexLab\fxSex01\004.wav
+- data\sound\Fx\SexLab\fxSex01\005.wav
+- data\sound\Fx\SexLab\fxSex01\006.wav
+- data\sound\Fx\SexLab\fxSex01\007.wav
+- data\sound\Fx\SexLab\fxSex01\008.wav
+- data\sound\Fx\SexLab\fxSex01\009.wav
+- data\sound\Fx\SexLab\fxOral01\cyupa01.wav
+- data\sound\Fx\SexLab\fxOral01\cyupa02.wav
+- data\sound\Fx\SexLab\fxOral01\cyupa03.wav
+- data\sound\Fx\SexLab\fxOral01\cyupa04.wav
+- data\sound\Fx\SexLab\fxOral01\fera01.wav
+- data\sound\Fx\SexLab\fxOral01\fera02.wav
+- data\sound\Fx\SexLab\fxOral01\fera03.wav
+OutputModel: 0D78B4:Skyrim.esm
+LoopAndRumble: {}
+Priority: 128
+Variance: 2

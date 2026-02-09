@@ -1,0 +1,19 @@
+Name: FemaleQuiet
+DisplayName: "$SSL_FemaleQuiet"
+Actor:
+  Sex: Female
+  Race:
+    - Human
+Tags:
+  - female
+  - Timid
+  - quiet
+Voices:
+  423252|SexLab.esm: 0
+  423250|SexLab.esm: 75
+Extra:
+  - Voices:
+      423251|SexLab.esm: 0
+      423250|SexLab.esm: 75
+    Conditions:
+      Submissive: true

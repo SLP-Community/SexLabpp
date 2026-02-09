@@ -1,0 +1,14 @@
+FormKey: 067542:SexLab.esm
+EditorID: SexLabVoiceMale03MildDescriptor
+Type: Standard
+Category: 061429:SexLab.esm
+SoundFiles:
+- data\sound\Fx\SexLab\vMaleMoan03\mild\mild_2.wav
+- data\sound\Fx\SexLab\vMaleMoan03\mild\mild_3.wav
+- data\sound\Fx\SexLab\vMaleMoan03\mild\mild_4.wav
+- data\sound\Fx\SexLab\vMaleMoan03\mild\mild_1.wav
+OutputModel: 0D78B4:Skyrim.esm
+LoopAndRumble: {}
+PercentFrequencyVariance: 5
+Priority: 128
+Variance: 5

@@ -1,0 +1,17 @@
+FormKey: 0CA97D:SexLab.esm
+EditorID: SexLabVoiceFemaleSeductiveLowDescriptor
+Type: Standard
+Category: 061429:SexLab.esm
+SoundFiles:
+- data\Sound\fx\SexLab\vfx\Seductive\Low\Seductive_L01.wav"
+- data\Sound\fx\SexLab\vfx\Seductive\Low\Seductive_L02.wav"
+- data\Sound\fx\SexLab\vfx\Seductive\Low\Seductive_L03.wav"
+- data\Sound\fx\SexLab\vfx\Seductive\Low\Seductive_L05.wav"
+- data\Sound\fx\SexLab\vfx\Seductive\Low\Seductive_L06.wav"
+- data\Sound\fx\SexLab\vfx\Seductive\Low\Seductive_L07.wav"
+- data\Sound\fx\SexLab\vfx\Seductive\Low\Seductive_L08.wav"
+OutputModel: 0D78B4:Skyrim.esm
+LoopAndRumble: {}
+PercentFrequencyVariance: 5
+Priority: 128
+Variance: 3

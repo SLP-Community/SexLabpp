@@ -1,0 +1,28 @@
+FormKey: 01A22A:SexLab.esm
+EditorID: SexLabCalypsStrapon
+Name:
+  TargetLanguage: English
+  Value: Calyps Strapon
+BodyTemplate:
+  FirstPersonFlags:
+  - Decapitate
+  ArmorType: Clothing
+  ActsLike44: True
+Race: 000019:Skyrim.esm
+Keywords:
+- 06BBE9:Skyrim.esm
+- 08F95A:Skyrim.esm
+- 0A8664:Skyrim.esm
+- 10CD08:Skyrim.esm
+- 10CD09:Skyrim.esm
+- 10CD12:Skyrim.esm
+- 02F16E:SexLab.esm
+Description:
+  TargetLanguage: English
+  Value: ''
+Armature:
+- 016757:Skyrim.esm
+- 016760:Skyrim.esm
+- 01B251:SexLab.esm
+Value: 250
+Weight: 3

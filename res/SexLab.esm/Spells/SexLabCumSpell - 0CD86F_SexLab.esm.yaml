@@ -1,0 +1,17 @@
+FormKey: 0CD86F:SexLab.esm
+EditorID: SexLabCumSpell
+Name:
+  TargetLanguage: English
+  Value: Sexual Encounter
+EquipmentType: 013F44:Skyrim.esm
+Description:
+  TargetLanguage: English
+  Value: ''
+Flags:
+- IgnoreResistance
+- NoAbsorbOrReflect
+- NoDualCastModification
+Type: Ability
+Effects:
+- BaseEffect: 0CD86D:SexLab.esm
+  Data: {}

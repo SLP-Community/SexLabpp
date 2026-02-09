@@ -1,0 +1,90 @@
+Furniture\dwemer\dwe_tablebench2seater.nif:
+  - Type: Table
+    Offset:
+      - [-129.4, 0.0, 0.0, 90]
+      - [0.0, 66.7, 0.0, 180]
+      - [129.4, 0.0, 0.0, 270]
+  - Type: Bench
+    Offset:
+      - [-0.5, -98, 0.0, 180]
+Furniture\dwemer\dwe_tablebench4seater.nif:
+  - Type: Table
+    Offset:
+      - [-129.4, 0.0, 0.0, 90]
+      - [129.4, 0.0, 0.0, 270]
+  - Type: Bench
+    Offset:
+      - [-0.5, -98, 0.0, 180]
+      - [-0.5, 100, 0.0, 0.0]
+Furniture\dwemer\dwefurniturebeddouble01.nif:
+  - Type: BedDouble
+    Offset:
+      - [0.0, 0.0, 33.7, 0.0]
+  - Type: BenchMisc
+    Offset:
+      - [-60.6, 0.0, 0.0, 270]
+      - [60.6, 0.0, 0.0, 90]
+Furniture\dwemer\dwefurniturebedsingle01.nif:
+  - Type: BedSingle
+    Offset:
+      - [0.0, 0.0, 33.7, 0.0]
+  - Type: BenchMisc
+    Offset:
+      - [-34.4, 0.0, 0.0, 270]
+      - [34.4, 0.0, 0.0, 90]
+Furniture\dwemer\dwefurniturebench01.nif:
+  Type: BenchMisc
+  Offset:
+    - [0.0, 0.0, -30, 0.0]
+Furniture\dwemer\dwefurniturechair01.nif:
+  Type: Chair
+  Offset:
+    - [0.0, 1, -30, 0.0]
+Furniture\dwemer\dwefurniturechair02.nif:
+  Type: ChairMisc
+  Offset:
+    - [0.0, 0.0, 0.0, 0.0]
+Furniture\dwemer\dwefurniturehighbench01.nif:
+  Type: BenchMisc
+  Offset:
+    - [-85.6, -16.9, -39, 0.0]
+Furniture\dwemer\dwefurniturehighbenchshort01.nif:
+  Type: BenchMisc
+  Offset:
+    - [-52, -17, -42, 0.0]
+Furniture\dwemer\dwefurniturehighchair01.nif:
+  Type: Chair
+  Offset:
+    - [-3, -17, -39, 0.0]
+Furniture\dwemer\dwefurniturehighchair02.nif:
+  Type: ChairBar
+  Offset:
+    - [-3, -17, -39, 0.0]
+Furniture\dwemer\dwefurnituretablea01.nif:
+  Type: Table
+  Offset:
+    - [-130, 0.0, 0.0, 90]
+    - [130, 0.0, 0.0, 270]
+    - [0.0, 67.1, 0.0, 180]
+    - [0.0, -67.1, 0.0, 0.0]
+Furniture\dwemer\dwefurnituretablea02.nif:
+  Type: Table
+  Offset:
+    - [-130, 0.0, 0.0, 90]
+    - [130, 0.0, 0.0, 270]
+    - [0.0, 67.1, 0.0, 180]
+    - [0.0, -67.1, 0.0, 0.0]
+Furniture\dwemer\dwefurnituretableathin01.nif:
+  Type: Table
+  Offset:
+    - [-130, 0.0, 0.0, 90]
+    - [130, 0.0, 0.0, 270]
+    - [0.0, 51.1, 0.0, 180]
+    - [0.0, -51.1, 0.0, 0.0]
+Furniture\dwemer\dwefurnituretablesqa01.nif:
+  Type: Table
+  Offset:
+    - [-66.8, 0.0, 0.0, 90]
+    - [66.8, 0.0, 0.0, 270]
+    - [0.0, 66.8, 0.0, 180]
+    - [0.0, -66.8, 0.0, 0.0]

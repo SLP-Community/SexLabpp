@@ -1,0 +1,23 @@
+Name: SLFemaleShy2
+DisplayName: "$SSL_FemaleShy2"
+
+Actor:
+  Sex: Female
+  Race: Human
+  Pitch: High
+
+Tags:
+  - female
+  - quiet
+  - shy
+
+Voices:
+  0xCA989|SexLab.esm: 0
+  0xCA988|SexLab.esm: 75
+Orgasm: 0xCA98B|SexLab.esm
+
+Extra:
+  - Voices:
+      0xCA98A|SexLab.esm: 0
+    Conditions:
+      Muffled: true

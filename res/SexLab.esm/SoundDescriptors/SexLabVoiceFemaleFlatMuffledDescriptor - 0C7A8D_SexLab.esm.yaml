@@ -1,0 +1,14 @@
+FormKey: 0C7A8D:SexLab.esm
+EditorID: SexLabVoiceFemaleFlatMuffledDescriptor
+Type: Standard
+Category: 061429:SexLab.esm
+SoundFiles:
+- data\sound\Fx\SexLab\vfx\Flat\Muffled\Flat_M01.wav
+- data\sound\Fx\SexLab\vfx\Flat\Muffled\Flat_M02.wav
+- data\sound\Fx\SexLab\vfx\Flat\Muffled\Flat_M03.wav
+- data\sound\Fx\SexLab\vfx\Flat\Muffled\Flat_M04.wav
+OutputModel: 0D78B4:Skyrim.esm
+LoopAndRumble: {}
+PercentFrequencyVariance: 5
+Priority: 128
+Variance: 3

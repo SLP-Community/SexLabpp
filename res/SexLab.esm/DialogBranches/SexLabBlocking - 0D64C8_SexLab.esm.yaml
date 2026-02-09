@@ -1,0 +1,7 @@
+FormKey: 0D64C8:SexLab.esm
+EditorID: SexLabBlocking
+Quest: 000D62:SexLab.esm
+Category: Player
+Flags:
+- TopLevel
+StartingTopic: 0D64C9:SexLab.esm

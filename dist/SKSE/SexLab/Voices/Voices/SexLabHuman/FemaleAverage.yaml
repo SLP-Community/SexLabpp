@@ -1,0 +1,20 @@
+Name: FemaleAverage
+DisplayName: "$SSL_FemaleAverage"
+Actor:
+  Sex: Female
+  Race:
+    - Human
+Tags:
+  - female
+  - Harsh
+  - normal
+  - Average
+Voices:
+  423258|SexLab.esm: 0
+  423256|SexLab.esm: 75
+Extra:
+  - Voices:
+      423257|SexLab.esm: 0
+      423256|SexLab.esm: 75
+    Conditions:
+      Submissive: true

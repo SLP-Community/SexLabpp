@@ -1,0 +1,8 @@
+Furniture\workbenches\alchemyworkbench01.nif:
+  Type: CraftAlchemy
+  Offset:
+    - [0.0, -44.5, 0.0, 0.0]
+Furniture\workbenches\enchantingworkbench01.nif:
+  Type: CraftEnchanting
+  Offset:
+    - [0.0, -116, 0.0, 0.0]

@@ -1,0 +1,15 @@
+FormKey: 067525:SexLab.esm
+EditorID: SexLabVoiceFemale02MildDescriptor
+Type: Standard
+Category: 061429:SexLab.esm
+SoundFiles:
+- data\sound\Fx\SexLab\vFemaleMoan02\mild\RS_mild_moans_04.wav
+- data\sound\Fx\SexLab\vFemaleMoan02\mild\RS_mild_moans_05.wav
+- data\sound\Fx\SexLab\vFemaleMoan02\mild\RS_mild_moans_01.wav
+- data\sound\Fx\SexLab\vFemaleMoan02\mild\RS_mild_moans_02.wav
+- data\sound\Fx\SexLab\vFemaleMoan02\mild\RS_mild_moans_03.wav
+OutputModel: 0D78B4:Skyrim.esm
+LoopAndRumble: {}
+PercentFrequencyVariance: 5
+Priority: 128
+Variance: 3

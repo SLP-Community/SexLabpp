@@ -1,0 +1,19 @@
+Name: FemaleYoung
+DisplayName: "$SSL_FemaleYoung"
+Actor:
+  Sex: Female
+  Race:
+    - Human
+Tags:
+  - female
+  - Loud
+  - Young
+Voices:
+  423246|SexLab.esm: 0
+  423244|SexLab.esm: 75
+Extra:
+  - Voices:
+      423245|SexLab.esm: 0
+      423244|SexLab.esm: 75
+    Conditions:
+      Submissive: true

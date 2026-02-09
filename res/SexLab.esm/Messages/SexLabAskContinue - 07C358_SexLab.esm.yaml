@@ -1,0 +1,19 @@
+FormKey: 07C358:SexLab.esm
+EditorID: SexLabAskContinue
+Description:
+  TargetLanguage: English
+  Value: Response
+Name:
+  TargetLanguage: English
+  Value: SexLab Troubleshoot
+INAM: 0x00000000
+Quest: 07BDF5:SexLab.esm
+Flags:
+- MessageBox
+MenuButtons:
+- Text:
+    TargetLanguage: English
+    Value: No
+- Text:
+    TargetLanguage: English
+    Value: Yes

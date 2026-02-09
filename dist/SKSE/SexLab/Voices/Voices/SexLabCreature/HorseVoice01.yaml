@@ -1,0 +1,12 @@
+Name: HorseVoice01
+DisplayName: "$SSL_HorseVoice01"
+Actor:
+  Sex: Any
+  Race:
+    - horses
+Tags:
+  - female
+  - male
+  - creature
+Voices:
+  573581|SexLab.esm: 0

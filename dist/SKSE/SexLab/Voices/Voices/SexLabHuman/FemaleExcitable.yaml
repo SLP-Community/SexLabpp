@@ -1,0 +1,20 @@
+Name: FemaleExcitable
+DisplayName: "$SSL_FemaleExcitable"
+Actor:
+  Sex: Female
+  Race:
+    - Human
+Tags:
+  - female
+  - Loud
+  - Excited
+  - Excitable
+Voices:
+  423255|SexLab.esm: 0
+  423253|SexLab.esm: 75
+Extra:
+  - Voices:
+      423254|SexLab.esm: 0
+      423253|SexLab.esm: 75
+    Conditions:
+      Submissive: true

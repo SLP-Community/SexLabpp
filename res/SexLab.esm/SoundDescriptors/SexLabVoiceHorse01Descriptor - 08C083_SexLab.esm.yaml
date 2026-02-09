@@ -1,0 +1,19 @@
+FormKey: 08C083:SexLab.esm
+EditorID: SexLabVoiceHorse01Descriptor
+Type: Standard
+Category: 061429:SexLab.esm
+SoundFiles:
+- Data\Sound\FX\NPC\Horse\NPC_Horse_RearUp_02.wav
+- Data\Sound\FX\NPC\Horse\NPC_Horse_RearUp_03.wav
+- Data\Sound\FX\NPC\Horse\Idle\FST_Horse_Idle_Head_01_A_01.wav
+- Data\Sound\FX\NPC\Horse\Idle\FST_Horse_Idle_Head_01_A_02.wav
+- Data\Sound\FX\NPC\Horse\Idle\FST_Horse_Idle_Head_01_A_03.wav
+- Data\Sound\FX\NPC\Horse\Idle\FST_Horse_Idle_Head_01_B_01.wav
+- Data\Sound\FX\NPC\Horse\Idle\FST_Horse_Idle_Head_01_B_02.wav
+- Data\Sound\FX\NPC\Horse\Idle\FST_Horse_Idle_Head_01_B_03.wav
+- Data\Sound\FX\NPC\Horse\Idle\FST_Horse_Idle_Head_03_01.wav
+- Data\Sound\FX\NPC\Horse\Idle\FST_Horse_Idle_Head_03_02.wav
+OutputModel: 0ABEF3:Skyrim.esm
+LoopAndRumble: {}
+PercentFrequencyVariance: 8
+Priority: 128

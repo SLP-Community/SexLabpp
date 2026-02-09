@@ -1,0 +1,21 @@
+Name: MaleNeutral
+DisplayName: "$SSL_MaleNeutral"
+
+Actor:
+  Sex: Male
+  Race:
+    - Human
+Tags:
+  - male
+  - normal
+  - quiet
+  - Neutral
+Voices:
+  423264|SexLab.esm: 0
+  423262|SexLab.esm: 75
+Extra:
+  - Voices:
+      423263|SexLab.esm: 0
+      423262|SexLab.esm: 75
+    Conditions:
+      Submissive: true

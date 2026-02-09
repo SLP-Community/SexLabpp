@@ -1,0 +1,17 @@
+FormKey: 043A3D:SexLab.esm
+EditorID: SexLabCumVaginalAnalSpell
+Name:
+  TargetLanguage: English
+  Value: Sexual Encounter
+EquipmentType: 013F44:Skyrim.esm
+Description:
+  TargetLanguage: English
+  Value: ''
+Flags:
+- IgnoreResistance
+- NoAbsorbOrReflect
+- NoDualCastModification
+Effects:
+- BaseEffect: 0434CE:SexLab.esm
+  Data:
+    Duration: 172800

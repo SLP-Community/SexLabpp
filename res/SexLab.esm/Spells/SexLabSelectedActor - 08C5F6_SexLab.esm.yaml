@@ -1,0 +1,16 @@
+FormKey: 08C5F6:SexLab.esm
+EditorID: SexLabSelectedActor
+Name:
+  TargetLanguage: English
+  Value: Selected
+EquipmentType: 013F44:Skyrim.esm
+Description:
+  TargetLanguage: English
+  Value: ''
+Flags:
+- IgnoreResistance
+- NoDualCastModification
+CastType: FireAndForget
+Effects:
+- BaseEffect: 08C5F5:SexLab.esm
+  Data: {}

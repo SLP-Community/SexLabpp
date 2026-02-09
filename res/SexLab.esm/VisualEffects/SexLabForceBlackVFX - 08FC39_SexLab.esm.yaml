@@ -1,0 +1,6 @@
+FormKey: 08FC39:SexLab.esm
+EditorID: SexLabForceBlackVFX
+EffectArt: 08FC37:SexLab.esm
+Flags:
+- AttachToCamera
+- InheritRotation

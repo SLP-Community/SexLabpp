@@ -1,0 +1,23 @@
+Name: SLFemaleFlat
+DisplayName: "$SSL_FemaleFlat"
+
+Actor:
+  Sex: Female
+  Race: Human
+  Pitch: Normal
+
+Tags:
+  - female
+  - quiet
+  - flat
+
+Voices:
+  0xCA957|SexLab.esm: 0
+  0xCA958|SexLab.esm: 75
+Orgasm: 0xCA95A|SexLab.esm
+
+Extra:
+  - Voices:
+      0xCA959|SexLab.esm: 0
+    Conditions:
+      Muffled: true

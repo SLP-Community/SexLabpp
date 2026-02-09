@@ -1,0 +1,19 @@
+FormKey: 0CA984:SexLab.esm
+EditorID: SexLabVoiceFemaleShyHighDescriptor
+Type: Standard
+Category: 061429:SexLab.esm
+SoundFiles:
+- data\Sound\fx\SexLab\vfx\Shy\High\Shy_H01.wav"
+- data\Sound\fx\SexLab\vfx\Shy\High\Shy_H02.wav"
+- data\Sound\fx\SexLab\vfx\Shy\High\Shy_H03.wav"
+- data\Sound\fx\SexLab\vfx\Shy\High\Shy_H04.wav"
+- data\Sound\fx\SexLab\vfx\Shy\High\Shy_H05.wav"
+- data\Sound\fx\SexLab\vfx\Shy\High\Shy_H06.wav"
+- data\Sound\fx\SexLab\vfx\Shy\High\Shy_H07.wav"
+- data\Sound\fx\SexLab\vfx\Shy\High\Shy_H08.wav"
+- data\Sound\fx\SexLab\vfx\Shy\High\Shy_H09.wav"
+OutputModel: 0D78B4:Skyrim.esm
+LoopAndRumble: {}
+PercentFrequencyVariance: 5
+Priority: 128
+Variance: 3

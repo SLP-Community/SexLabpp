@@ -1,0 +1,15 @@
+FormKey: 0AA6A6:SexLab.esm
+EditorID: SexLabConfirmInvalidNewCenter
+Description:
+  TargetLanguage: English
+  Value: New center for currently controlled scene is invalid and no alternative can be found nearby. What do you want to do?
+INAM: 0x00000000
+Flags:
+- MessageBox
+MenuButtons:
+- Text:
+    TargetLanguage: English
+    Value: Keep old Center
+- Text:
+    TargetLanguage: English
+    Value: End Scene

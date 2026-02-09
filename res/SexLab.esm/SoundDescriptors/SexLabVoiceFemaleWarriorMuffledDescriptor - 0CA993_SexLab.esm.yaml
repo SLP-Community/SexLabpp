@@ -1,0 +1,19 @@
+FormKey: 0CA993:SexLab.esm
+EditorID: SexLabVoiceFemaleWarriorMuffledDescriptor
+Type: Standard
+Category: 061429:SexLab.esm
+SoundFiles:
+- data\Sound\fx\SexLab\vfx\Warrior\Muffled\Warrior_M01.wav"
+- data\Sound\fx\SexLab\vfx\Warrior\Muffled\Warrior_M02.wav"
+- data\Sound\fx\SexLab\vfx\Warrior\Muffled\Warrior_M03.wav"
+- data\Sound\fx\SexLab\vfx\Warrior\Muffled\Warrior_M04.wav"
+- data\Sound\fx\SexLab\vfx\Warrior\Muffled\Warrior_M05.wav"
+- data\Sound\fx\SexLab\vfx\Warrior\Muffled\Warrior_M06.wav"
+- data\Sound\fx\SexLab\vfx\Warrior\Muffled\Warrior_M07.wav"
+- data\Sound\fx\SexLab\vfx\Warrior\Muffled\Warrior_M08.wav"
+- data\Sound\fx\SexLab\vfx\Warrior\Muffled\Warrior_M09.wav"
+OutputModel: 0D78B4:Skyrim.esm
+LoopAndRumble: {}
+PercentFrequencyVariance: 5
+Priority: 128
+Variance: 3

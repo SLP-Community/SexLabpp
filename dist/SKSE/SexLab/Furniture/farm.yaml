@@ -1,0 +1,20 @@
+Furniture\farm\farmbench01.nif:
+  Type: BenchMisc
+  Offset:
+    - [0.0, -0.3, 0.0, 0.0]
+Furniture\farm\farmtable01.nif:
+  Type: Table
+  Offset:
+    - [-103.6, -0.5, 0.0, 90]
+    - [100, -0.5, 0.0, 270]
+    - [1.6, -51.2, 0.0, 0]
+    - [1.6, 51.2, 0.0, 180]
+Furniture\farm\farmtablebench01.nif:
+  Type: Bench
+  Offset:
+    - [0.0, 85.7, 0.0, 180]
+Furniture\farm\farmtablebench02.nif:
+  Type: Bench
+  Offset:
+    - [0.0, 85.7, 0.0, 0]
+    - [0.0, -85.7, 0.0, 180]

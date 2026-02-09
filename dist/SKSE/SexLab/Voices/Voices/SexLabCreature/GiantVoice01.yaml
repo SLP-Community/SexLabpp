@@ -1,0 +1,12 @@
+Name: GiantVoice01
+DisplayName: "$SSL_GiantVoice01"
+Actor:
+  Sex: Any
+  Race:
+    - giants
+Tags:
+  - female
+  - male
+  - creature
+Voices:
+  573582|SexLab.esm: 0

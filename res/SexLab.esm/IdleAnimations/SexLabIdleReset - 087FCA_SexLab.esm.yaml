@@ -1,0 +1,10 @@
+FormKey: 087FCA:SexLab.esm
+EditorID: SexLabIdleReset
+Filename: Actors\Character\Behaviors\0_Master.hkx
+AnimationEvent: IdleForceDefaultState
+RelatedIdles:
+- Null
+- Null
+Flags:
+- Parent
+AnimationGroupSection: 36

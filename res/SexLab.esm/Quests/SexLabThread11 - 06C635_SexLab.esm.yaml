@@ -1,0 +1,175 @@
+FormKey: 06C635:SexLab.esm
+EditorID: SexLabThread11
+VirtualMachineAdapter:
+  Scripts:
+  - Name: sslThreadController
+    Properties:
+    - MutagenObjectType: ScriptObjectListProperty
+      Name: ActorAlias
+      Objects:
+      - Name: ''
+        Object: 06C635:SexLab.esm
+        Alias: 1
+      - Name: ''
+        Object: 06C635:SexLab.esm
+        Alias: 2
+      - Name: ''
+        Object: 06C635:SexLab.esm
+        Alias: 3
+      - Name: ''
+        Object: 06C635:SexLab.esm
+        Alias: 4
+      - Name: ''
+        Object: 06C635:SexLab.esm
+        Alias: 5
+    - MutagenObjectType: ScriptObjectProperty
+      Name: CenterAlias
+      Object: 06C635:SexLab.esm
+      Alias: 6
+    - MutagenObjectType: ScriptObjectProperty
+      Name: config
+      Object: 000D62:SexLab.esm
+    - MutagenObjectType: ScriptObjectProperty
+      Name: DoNothingPackage
+      Object: 00E50E:SexLab.esm
+    - MutagenObjectType: ScriptObjectProperty
+      Name: InvalidCenterMsg
+      Object: 0AA6A6:SexLab.esm
+    - MutagenObjectType: ScriptObjectProperty
+      Name: PlayerMarriedFaction
+      Object: 0C6472:Skyrim.esm
+    - MutagenObjectType: ScriptObjectProperty
+      Name: PlayerRef
+      Object: 000014:Skyrim.esm
+    - MutagenObjectType: ScriptObjectProperty
+      Name: RepositionInfoMsg
+      Object: 0A77DD:SexLab.esm
+    - MutagenObjectType: ScriptObjectProperty
+      Name: SpouseAssocation
+      Object: 0142CA:Skyrim.esm
+  FileName: ''
+  Aliases:
+  - Property:
+      Name: ''
+      Object: 06C635:SexLab.esm
+      Alias: 5
+    Scripts:
+    - Name: sslActorAlias
+  - Property:
+      Name: ''
+      Object: 06C635:SexLab.esm
+      Alias: 4
+    Scripts:
+    - Name: sslActorAlias
+  - Property:
+      Name: ''
+      Object: 06C635:SexLab.esm
+      Alias: 3
+    Scripts:
+    - Name: sslActorAlias
+  - Property:
+      Name: ''
+      Object: 06C635:SexLab.esm
+      Alias: 2
+    Scripts:
+    - Name: sslActorAlias
+  - Property:
+      Name: ''
+      Object: 06C635:SexLab.esm
+      Alias: 1
+    Scripts:
+    - Name: sslActorAlias
+Name:
+  TargetLanguage: English
+  Value: SexLab Thread 11
+Flags:
+- StartGameEnabled
+- 0x10
+Priority: 100
+Type: Misc
+Filter: SexLab\
+Objectives:
+- Flags: []
+  DisplayText:
+    TargetLanguage: English
+    Value: SexLab Scene
+  Targets:
+  - AliasID: 6
+NextAliasID: 7
+Aliases:
+- ID: 5
+  Name: ActorAlias004
+  Flags:
+  - ReservesLocationOrReference
+  - Optional
+  Keywords:
+  - 012B24:SexLab.esm
+  Factions:
+  - 00E50F:SexLab.esm
+  - 10FCB4:Skyrim.esm
+  PackageData:
+  - 08A022:SexLab.esm
+  - 00E50E:SexLab.esm
+  VoiceTypes: 02CBBC:SexLab.esm
+- ID: 4
+  Name: ActorAlias003
+  Flags:
+  - ReservesLocationOrReference
+  - Optional
+  Keywords:
+  - 012B24:SexLab.esm
+  Factions:
+  - 00E50F:SexLab.esm
+  - 10FCB4:Skyrim.esm
+  PackageData:
+  - 08A022:SexLab.esm
+  - 00E50E:SexLab.esm
+  VoiceTypes: 02CBBC:SexLab.esm
+- ID: 3
+  Name: ActorAlias002
+  Flags:
+  - ReservesLocationOrReference
+  - Optional
+  Keywords:
+  - 012B24:SexLab.esm
+  Factions:
+  - 00E50F:SexLab.esm
+  - 10FCB4:Skyrim.esm
+  PackageData:
+  - 08A022:SexLab.esm
+  - 00E50E:SexLab.esm
+  VoiceTypes: 02CBBC:SexLab.esm
+- ID: 2
+  Name: ActorAlias001
+  Flags:
+  - ReservesLocationOrReference
+  - Optional
+  Keywords:
+  - 012B24:SexLab.esm
+  Factions:
+  - 00E50F:SexLab.esm
+  - 10FCB4:Skyrim.esm
+  PackageData:
+  - 08A022:SexLab.esm
+  - 00E50E:SexLab.esm
+  VoiceTypes: 02CBBC:SexLab.esm
+- ID: 1
+  Name: ActorAlias000
+  Flags:
+  - ReservesLocationOrReference
+  - Optional
+  Keywords:
+  - 012B24:SexLab.esm
+  Factions:
+  - 00E50F:SexLab.esm
+  - 10FCB4:Skyrim.esm
+  PackageData:
+  - 08A022:SexLab.esm
+  - 00E50E:SexLab.esm
+  VoiceTypes: 02CBBC:SexLab.esm
+- ID: 6
+  Name: CenterAlias
+  Flags:
+  - Optional
+  - AllowReuseInQuest
+  VoiceTypes: Null

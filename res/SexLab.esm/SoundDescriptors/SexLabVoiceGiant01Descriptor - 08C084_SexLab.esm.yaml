@@ -1,0 +1,17 @@
+FormKey: 08C084:SexLab.esm
+EditorID: SexLabVoiceGiant01Descriptor
+Type: Standard
+Category: 061429:SexLab.esm
+SoundFiles:
+- Data\Sound\FX\NPC\Giant\AttackVocal\NPC_Giant_AttackVocal_01.wav
+- Data\Sound\FX\NPC\Giant\AttackVocal\NPC_Giant_AttackVocal_02.wav
+- Data\Sound\FX\NPC\Giant\AttackVocal\NPC_Giant_AttackVocal_03.wav
+- Data\Sound\FX\NPC\Giant\AttackVocal\NPC_Giant_AttackVocal_04.wav
+- Data\Sound\FX\NPC\Giant\AttackVocal\NPC_Giant_AttackVocal_05.wav
+- Data\Sound\FX\NPC\Giant\AttackVocal\NPC_Giant_AttackVocal_06.wav
+- Data\Sound\FX\NPC\Giant\AttackVocal\NPC_Giant_AttackVocal_07.wav
+OutputModel: 0ABEF3:Skyrim.esm
+LoopAndRumble: {}
+PercentFrequencyVariance: 10
+Priority: 128
+Variance: 3

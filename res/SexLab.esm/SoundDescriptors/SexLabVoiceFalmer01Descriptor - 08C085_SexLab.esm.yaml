@@ -1,0 +1,18 @@
+FormKey: 08C085:SexLab.esm
+EditorID: SexLabVoiceFalmer01Descriptor
+Type: Standard
+Category: 061429:SexLab.esm
+SoundFiles:
+- data\Sound\fx\npc\falmer\aggrowarning\npc_falmer_aggrowarning_01.wav
+- data\Sound\fx\npc\falmer\aggrowarning\npc_falmer_aggrowarning_02.wav
+- data\Sound\fx\npc\falmer\aggrowarning\npc_falmer_aggrowarning_03.wav
+- data\Sound\fx\npc\falmer\attack\npc_falmer_attack_01.wav
+- data\Sound\fx\npc\falmer\attack\npc_falmer_attack_02.wav
+- data\Sound\fx\npc\falmer\attack\npc_falmer_attack_03.wav
+- data\Sound\fx\npc\falmer\attackpower\npc_falmer_attackpower_01.wav
+- data\Sound\fx\npc\falmer\attackpower\npc_falmer_attackpower_02.wav
+OutputModel: 0ABEF3:Skyrim.esm
+LoopAndRumble: {}
+PercentFrequencyVariance: 8
+Priority: 128
+Variance: 3

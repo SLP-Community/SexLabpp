@@ -1,0 +1,11 @@
+FormKey: 08AAEA:SexLab.esm
+EditorID: SexLabHotkeyUp1Descriptor
+Type: Standard
+SoundFiles:
+- Data\Sound\FX\ITM\Generic\Up\ITM_Generic_Up_01.wav
+OutputModel: 0B5183:Skyrim.esm
+LoopAndRumble: {}
+PercentFrequencyShift: 50
+PercentFrequencyVariance: 10
+Priority: 128
+Variance: 3

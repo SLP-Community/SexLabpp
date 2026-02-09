@@ -1,0 +1,7 @@
+Furniture\common\commonbench01.nif:
+  - Type: BenchMisc
+    Offset:
+    - [0.0, 0.0, 0.0, 180]
+  - Type: ChairCommon
+    Offset:
+    - [0.0, 1, 0.0, 180]

@@ -1,0 +1,16 @@
+FormKey: 08C082:SexLab.esm
+EditorID: SexLabVoiceSpriggan01Descriptor
+Type: Standard
+Category: 061429:SexLab.esm
+SoundFiles:
+- Data\Sound\FX\NPC\Spriggan\Foot\Walk\NPC_Spriggan_Foot_Walk_01.wav
+- Data\Sound\FX\NPC\Spriggan\Foot\Walk\NPC_Spriggan_Foot_Walk_02.wav
+- Data\Sound\FX\NPC\Spriggan\Foot\Walk\NPC_Spriggan_Foot_Walk_03.wav
+- Data\Sound\FX\NPC\Spriggan\Foot\Walk\NPC_Spriggan_Foot_Walk_04.wav
+- Data\Sound\FX\NPC\Spriggan\Injured\NPC_Spriggan_Injured_01.wav
+- Data\Sound\FX\NPC\Spriggan\Injured\NPC_Spriggan_Injured_02.wav
+- Data\Sound\FX\NPC\Spriggan\Injured\NPC_Spriggan_Injured_03.wav
+OutputModel: 0ABEF3:Skyrim.esm
+LoopAndRumble: {}
+PercentFrequencyVariance: 8
+Priority: 128

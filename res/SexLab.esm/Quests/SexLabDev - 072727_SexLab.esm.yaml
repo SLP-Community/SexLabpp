@@ -1,0 +1,22 @@
+FormKey: 072727:SexLab.esm
+EditorID: SexLabDev
+VirtualMachineAdapter:
+  Scripts:
+  - Name: sslBenchmark
+    Properties:
+    - MutagenObjectType: ScriptObjectProperty
+      Name: ThreadSlots
+      Object: 000D62:SexLab.esm
+  Versioning:
+  - Break0
+  ExtraBindDataVersion: 0
+  FileName: ''
+Name:
+  TargetLanguage: English
+  Value: SexLab Development Utility
+Flags:
+- StartGameEnabled
+- 0x10
+Priority: 50
+Filter: SexLab\
+NextAliasID: 0

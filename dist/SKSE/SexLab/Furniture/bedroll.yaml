@@ -1,0 +1,9 @@
+Furniture\bedroll\bedroll01.nif:
+  Type: BedRoll
+  Offset:
+    - [0.0, 0.0, 5.5, 180]
+
+Furniture\bedroll\bedrollhay01.nif:
+  Type: BedRoll
+  Offset:
+    - [0.0, 0.0, 1.3, 180]

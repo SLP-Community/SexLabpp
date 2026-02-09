@@ -1,0 +1,18 @@
+0x13ADC|Skyrim.esm: High    # FemaleYoungEager
+0x13ADD|Skyrim.esm: High    # FemaleEvenToned
+0x13ADE|Skyrim.esm: Normal  # FemaleCommoner
+0x13AE0|Skyrim.esm: Low     # FemaleSultry
+0x13AE1|Skyrim.esm: Normal  # FemaleOldKindly
+0x13AE2|Skyrim.esm: Normal  # FemaleOldGrumpy
+0x13AE3|Skyrim.esm: Normal  # FemaleCommander
+0x13AE4|Skyrim.esm: High    # FemaleCondescending
+0x13AE5|Skyrim.esm: Normal  # FemaleCoward
+0x13AE7|Skyrim.esm: Normal  # FemaleNord
+0x13AEB|Skyrim.esm: Low     # FemaleOrc
+0x13AED|Skyrim.esm: Low     # FemaleKhajiit
+0x13AEF|Skyrim.esm: Low     # FemaleArgonian
+0x13AF1|Skyrim.esm: Normal  # FemaleElfHaughty
+0x13AF3|Skyrim.esm: Low     # FemaleDarkElf
+0x13BC3|Skyrim.esm: High    # FemaleShrill
+
+# TODO: Male default voices

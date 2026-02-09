@@ -1,0 +1,18 @@
+FormKey: 0CA95D:SexLab.esm
+EditorID: SexLabVoiceFemaleRebelliousLowDescriptor
+Type: Standard
+Category: 061429:SexLab.esm
+SoundFiles:
+- data\Sound\fx\SexLab\vfx\Rebellious\Low\Rebellious_L01.wav"
+- data\Sound\fx\SexLab\vfx\Rebellious\Low\Rebellious_L02.wav"
+- data\Sound\fx\SexLab\vfx\Rebellious\Low\Rebellious_L03.wav"
+- data\Sound\fx\SexLab\vfx\Rebellious\Low\Rebellious_L04.wav"
+- data\Sound\fx\SexLab\vfx\Rebellious\Low\Rebellious_L05.wav"
+- data\Sound\fx\SexLab\vfx\Rebellious\Low\Rebellious_L06.wav"
+- data\Sound\fx\SexLab\vfx\Rebellious\Low\Rebellious_L07.wav"
+- data\Sound\fx\SexLab\vfx\Rebellious\Low\Rebellious_L08.wav"
+OutputModel: 0D78B4:Skyrim.esm
+LoopAndRumble: {}
+PercentFrequencyVariance: 5
+Priority: 128
+Variance: 3

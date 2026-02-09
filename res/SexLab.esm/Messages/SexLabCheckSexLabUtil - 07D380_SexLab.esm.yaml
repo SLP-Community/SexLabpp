@@ -1,0 +1,17 @@
+FormKey: 07D380:SexLab.esm
+EditorID: SexLabCheckSexLabUtil
+Description:
+  TargetLanguage: English
+  Value: >-
+    Outdated or missing "SexLabUtil" SKSE plugin detected.
+
+    This should NEVER happen unless you have improperly updated SexLab to the current version, or you have some other mod that is overwriting the proper up to date version of the SexLabUtil used by this version of SexLab.
+
+    Reinstall your SexLab using all the latest files, and ensure the "SexLabUtil.dll" file is properly located in your /Skyrim/Data/SKSE/Plugins/ folder.
+Name:
+  TargetLanguage: English
+  Value: 'SexLab Dependency: SexLabUtil'
+INAM: 0x00000000
+Quest: 000D62:SexLab.esm
+Flags:
+- MessageBox

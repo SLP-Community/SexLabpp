@@ -1,0 +1,25 @@
+FormKey: 0C7A8E:SexLab.esm
+EditorID: SexLabVoiceFemaleFlatOrgasmDescriptor
+Type: Standard
+Category: 061429:SexLab.esm
+SoundFiles:
+- data\sound\Fx\SexLab\vfx\Flat\Orgasm\Flat_O01.wav
+- data\sound\Fx\SexLab\vfx\Flat\Orgasm\Flat_O02.wav
+- data\sound\Fx\SexLab\vfx\Flat\Orgasm\Flat_O03.wav
+- data\sound\Fx\SexLab\vfx\Flat\Orgasm\Flat_O04.wav
+- data\sound\Fx\SexLab\vfx\Flat\Orgasm\Flat_O05.wav
+- data\sound\Fx\SexLab\vfx\Flat\Orgasm\Flat_O06.wav
+- data\sound\Fx\SexLab\vfx\Flat\Orgasm\Flat_O07.wav
+- data\sound\Fx\SexLab\vfx\Flat\Orgasm\Flat_O08.wav
+- data\sound\Fx\SexLab\vfx\Flat\Orgasm\Flat_O09.wav
+- data\sound\Fx\SexLab\vfx\Flat\Orgasm\Flat_O10.wav
+- data\sound\Fx\SexLab\vfx\Flat\Orgasm\Flat_O11.wav
+- data\sound\Fx\SexLab\vfx\Flat\Orgasm\Flat_O12.wav
+- data\sound\Fx\SexLab\vfx\Flat\Orgasm\Flat_O13.wav
+- data\sound\Fx\SexLab\vfx\Flat\Orgasm\Flat_O14.wav
+- data\sound\Fx\SexLab\vfx\Flat\Orgasm\Flat_O15.wav
+OutputModel: 0D78B4:Skyrim.esm
+LoopAndRumble: {}
+PercentFrequencyVariance: 5
+Priority: 128
+Variance: 3

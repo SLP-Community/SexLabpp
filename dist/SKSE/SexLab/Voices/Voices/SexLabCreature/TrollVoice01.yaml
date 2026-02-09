@@ -1,0 +1,12 @@
+Name: TrollVoice01
+DisplayName: "$SSL_TrollVoice01"
+Actor:
+  Sex: Any
+  Race:
+    - trolls
+Tags:
+  - female
+  - male
+  - creature
+Voices:
+  573577|SexLab.esm: 0

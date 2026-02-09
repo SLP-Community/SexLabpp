@@ -1,0 +1,251 @@
+FormKey: 000D62:SexLab.esm
+EditorID: SexLabQuestFramework
+VirtualMachineAdapter:
+  Scripts:
+  - Name: SexLabFramework
+    Properties:
+    - MutagenObjectType: ScriptObjectProperty
+      Name: ActorLib
+      Object: 000D62:SexLab.esm
+    - MutagenObjectType: ScriptObjectProperty
+      Name: config
+      Object: 000D62:SexLab.esm
+    - MutagenObjectType: ScriptObjectProperty
+      Name: ThreadLib
+      Object: 000D62:SexLab.esm
+    - MutagenObjectType: ScriptObjectProperty
+      Name: ThreadSlots
+      Object: 000D62:SexLab.esm
+  - Name: sslActorLibrary
+    Properties:
+    - MutagenObjectType: ScriptObjectProperty
+      Name: abCumFX
+      Object: 0CD86F:SexLab.esm
+    - MutagenObjectType: ScriptObjectProperty
+      Name: CumAnalSpell
+      Object: 0434D7:SexLab.esm
+    - MutagenObjectType: ScriptObjectProperty
+      Name: CumOralSpell
+      Object: 0434D5:SexLab.esm
+    - MutagenObjectType: ScriptObjectProperty
+      Name: CumVaginalSpell
+      Object: 041478:SexLab.esm
+    - MutagenObjectType: ScriptObjectProperty
+      Name: ForbiddenFaction
+      Object: 049068:SexLab.esm
+    - MutagenObjectType: ScriptObjectProperty
+      Name: GenderFaction
+      Object: 043A43:SexLab.esm
+    - MutagenObjectType: ScriptObjectProperty
+      Name: ThreadSlots
+      Object: 000D62:SexLab.esm
+  - Name: sslActorStats
+    Properties:
+    - MutagenObjectType: ScriptObjectProperty
+      Name: ThreadSlots
+      Object: 000D62:SexLab.esm
+  - Name: sslSystemConfig
+    Properties:
+    - MutagenObjectType: ScriptObjectProperty
+      Name: AudioSFX
+      Object: 061428:SexLab.esm
+    - MutagenObjectType: ScriptObjectProperty
+      Name: AudioVoice
+      Object: 061429:SexLab.esm
+    - MutagenObjectType: ScriptObjectProperty
+      Name: BardBystander1
+      Object: 1062A7:Skyrim.esm
+      Alias: 343
+    - MutagenObjectType: ScriptObjectProperty
+      Name: BardBystander2
+      Object: 1062A7:Skyrim.esm
+      Alias: 341
+    - MutagenObjectType: ScriptObjectProperty
+      Name: BardBystander3
+      Object: 1062A7:Skyrim.esm
+      Alias: 342
+    - MutagenObjectType: ScriptObjectProperty
+      Name: BardBystander4
+      Object: 1062A7:Skyrim.esm
+      Alias: 344
+    - MutagenObjectType: ScriptObjectProperty
+      Name: BardBystander5
+      Object: 1062A7:Skyrim.esm
+      Alias: 345
+    - MutagenObjectType: ScriptObjectProperty
+      Name: BardExcludeFaction
+      Object: 10FCB4:Skyrim.esm
+    - MutagenObjectType: ScriptObjectProperty
+      Name: BlurAndBackImod
+      Object: 0B0438:SexLab.esm
+    - MutagenObjectType: ScriptObjectProperty
+      Name: CalypsStrapon
+      Object: 01A22A:SexLab.esm
+    - MutagenObjectType: ScriptObjectProperty
+      Name: CheckPapyrusUtil
+      Object: 070C3B:SexLab.esm
+    - MutagenObjectType: ScriptObjectProperty
+      Name: CheckSKSE
+      Object: 070C39:SexLab.esm
+    - MutagenObjectType: ScriptObjectProperty
+      Name: CheckSkyrim
+      Object: 070C3A:SexLab.esm
+    - MutagenObjectType: ScriptObjectProperty
+      Name: CheckSkyUI
+      Object: 070C3C:SexLab.esm
+    - MutagenObjectType: ScriptObjectProperty
+      Name: CleanSystemFinish
+      Object: 06CB9E:SexLab.esm
+    - MutagenObjectType: ScriptObjectProperty
+      Name: FadeToBlackAndBackImod
+      Object: 0AD56F:SexLab.esm
+    - MutagenObjectType: ScriptObjectListProperty
+      Name: HotkeyDown
+      Objects:
+      - Name: ''
+        Object: 08AAF3:SexLab.esm
+      - Name: ''
+        Object: 08AAF4:SexLab.esm
+      - Name: ''
+        Object: 08AAF5:SexLab.esm
+    - MutagenObjectType: ScriptObjectListProperty
+      Name: HotkeyUp
+      Objects:
+      - Name: ''
+        Object: 08AAF0:SexLab.esm
+      - Name: ''
+        Object: 08AAF1:SexLab.esm
+      - Name: ''
+        Object: 08AAF2:SexLab.esm
+    - MutagenObjectType: ScriptObjectListProperty
+      Name: MatchMakerSpells
+      Objects:
+      - Name: ''
+        Object: 0B3306:SexLab.esm
+      - Name: ''
+        Object: 0B3307:SexLab.esm
+      - Name: ''
+        Object: 0B3309:SexLab.esm
+      - Name: ''
+        Object: 0B3308:SexLab.esm
+    - MutagenObjectType: ScriptObjectProperty
+      Name: OrgasmFX
+      Object: 065A34:SexLab.esm
+    - MutagenObjectType: ScriptObjectProperty
+      Name: SelectedSpell
+      Object: 08C5F6:SexLab.esm
+    - MutagenObjectType: ScriptObjectProperty
+      Name: SexMixedFX
+      Object: 065A33:SexLab.esm
+    - MutagenObjectType: ScriptObjectProperty
+      Name: SquishingFX
+      Object: 065A31:SexLab.esm
+    - MutagenObjectType: ScriptObjectProperty
+      Name: SuckingFX
+      Object: 065A32:SexLab.esm
+    - MutagenObjectType: ScriptObjectProperty
+      Name: TakeThreadControl
+      Object: 07CE1D:SexLab.esm
+    - MutagenObjectType: ScriptObjectProperty
+      Name: ThreadSlots
+      Object: 000D62:SexLab.esm
+  - Name: sslThreadLibrary
+    Properties:
+    - MutagenObjectType: ScriptObjectProperty
+      Name: BedRollsList
+      Object: 06198C:SexLab.esm
+    - MutagenObjectType: ScriptObjectProperty
+      Name: BedsList
+      Object: 0181B1:SexLab.esm
+    - MutagenObjectType: ScriptObjectProperty
+      Name: DoubleBedsList
+      Object: 0854B8:SexLab.esm
+    - MutagenObjectType: ScriptObjectProperty
+      Name: FurnitureBedRoll
+      Object: 0E4AD6:Skyrim.esm
+    - MutagenObjectType: ScriptObjectProperty
+      Name: ThreadSlots
+      Object: 000D62:SexLab.esm
+  - Name: sslThreadSlots
+    Properties:
+    - MutagenObjectType: ScriptObjectListProperty
+      Name: Threads
+      Objects:
+      - Name: ''
+        Object: 061EEF:SexLab.esm
+      - Name: ''
+        Object: 062452:SexLab.esm
+      - Name: ''
+        Object: 06C62C:SexLab.esm
+      - Name: ''
+        Object: 06C62D:SexLab.esm
+      - Name: ''
+        Object: 06C62E:SexLab.esm
+      - Name: ''
+        Object: 06C62F:SexLab.esm
+      - Name: ''
+        Object: 06C630:SexLab.esm
+      - Name: ''
+        Object: 06C631:SexLab.esm
+      - Name: ''
+        Object: 06C632:SexLab.esm
+      - Name: ''
+        Object: 06C633:SexLab.esm
+      - Name: ''
+        Object: 06C634:SexLab.esm
+      - Name: ''
+        Object: 06C635:SexLab.esm
+      - Name: ''
+        Object: 06C636:SexLab.esm
+      - Name: ''
+        Object: 06C637:SexLab.esm
+      - Name: ''
+        Object: 06C638:SexLab.esm
+  FileName: ''
+  Aliases:
+  - Property:
+      Name: ''
+      Object: 000D62:SexLab.esm
+      Alias: 3
+    Scripts:
+    - Name: sslSystemAlias
+      Properties:
+      - MutagenObjectType: ScriptObjectProperty
+        Name: ActorLib
+        Object: 000D62:SexLab.esm
+      - MutagenObjectType: ScriptObjectProperty
+        Name: config
+        Object: 000D62:SexLab.esm
+      - MutagenObjectType: ScriptObjectProperty
+        Name: ExpressionSlots
+        Object: 0664FB:SexLab.esm
+      - MutagenObjectType: ScriptObjectProperty
+        Name: SexLab
+        Object: 000D62:SexLab.esm
+      - MutagenObjectType: ScriptObjectProperty
+        Name: Stats
+        Object: 000D62:SexLab.esm
+      - MutagenObjectType: ScriptObjectProperty
+        Name: ThreadLib
+        Object: 000D62:SexLab.esm
+      - MutagenObjectType: ScriptObjectProperty
+        Name: ThreadSlots
+        Object: 000D62:SexLab.esm
+      - MutagenObjectType: ScriptObjectProperty
+        Name: VoiceSlots
+        Object: 0664FB:SexLab.esm
+Name:
+  TargetLanguage: English
+  Value: SexLab Framework
+Flags:
+- StartGameEnabled
+- 0x10
+Priority: 99
+Filter: SexLab\
+NextAliasID: 4
+Aliases:
+- ID: 3
+  Name: PlayerAlias
+  Flags: []
+  ForcedReference: 000014:Skyrim.esm
+  VoiceTypes: Null

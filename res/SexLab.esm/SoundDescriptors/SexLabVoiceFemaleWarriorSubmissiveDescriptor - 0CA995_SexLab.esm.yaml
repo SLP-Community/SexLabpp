@@ -1,0 +1,13 @@
+FormKey: 0CA995:SexLab.esm
+EditorID: SexLabVoiceFemaleWarriorSubmissiveDescriptor
+Type: Standard
+Category: 061429:SexLab.esm
+SoundFiles:
+- data\Sound\fx\SexLab\vfx\Warrior\Submissive\Warrior_S01.wav"
+- data\Sound\fx\SexLab\vfx\Warrior\Submissive\Warrior_S02.wav"
+- data\Sound\fx\SexLab\vfx\Warrior\Submissive\Warrior_S03.wav"
+OutputModel: 0D78B4:Skyrim.esm
+LoopAndRumble: {}
+PercentFrequencyVariance: 5
+Priority: 128
+Variance: 3

@@ -1,0 +1,12 @@
+Name: WerewolfVoice01
+DisplayName: "$SSL_WerewolfVoice01"
+Actor:
+  Sex: Any
+  Race:
+    - werewolves
+Tags:
+  - female
+  - male
+  - creature
+Voices:
+  573578|SexLab.esm: 0

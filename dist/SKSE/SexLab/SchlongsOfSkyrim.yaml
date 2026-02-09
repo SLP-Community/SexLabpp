@@ -1,0 +1,36 @@
+# The blacklist is used to ensure that SexLab does not understand a SoS "pube addon" as a Schlong, thus assuming an actor as "futa" incorrectly
+# A mod using SoS to add pubes to actors will include a faction to identify their addon. Add this faction to this list to ensure SexLab wont understand
+# actors using this addon as a futa
+Blacklist:
+  - ESP: BDHoodieFemale.esp
+    ID: 0x90C
+  - ESP: SOS - Pubic Hair for Females Addon.esp
+    ID: 3427
+  - ESP: SOS - BakaFire Addon.esp
+    ID: 3427
+  - ESP: SOS - BakaV Addon.esp
+    ID: 3427
+  - ESP: SOS - BakaTree Addon.esp
+    ID: 3427
+  - ESP: SOS - BakaLStrip Addon.esp
+    ID: 3427
+  - ESP: SOS Female Schlongifier (No Schlong Addon by Erundil).esp
+    ID: 0xD63
+  - ESP: SOS - No Futanari Schlong - Addon.esp
+    ID: 0xD63
+  - ESP: SOS - No Futanari Schlong - Addon ESL.esp
+    ID: 1
+  - ESP: SOS - Female Pubics.esp
+    ID:
+      - 0x802
+      - 0x849
+      - 0x890
+      - 0x8D7
+      - 0x91E
+      - 0x965
+      - 0x9AC
+      - 0x9F3
+      - 0xA3A
+      - 0xA83
+      - 0xB02
+      - 0xD63

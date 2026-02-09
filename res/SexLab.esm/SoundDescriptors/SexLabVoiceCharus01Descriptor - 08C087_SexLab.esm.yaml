@@ -1,0 +1,17 @@
+FormKey: 08C087:SexLab.esm
+EditorID: SexLabVoiceCharus01Descriptor
+Type: Standard
+Category: 061429:SexLab.esm
+SoundFiles:
+- Data\Sound\FX\NPC\Charus\Mandibles\NPC_Chaurus_Mandibles_01.wav
+- Data\Sound\FX\NPC\Charus\Mandibles\NPC_Chaurus_Mandibles_02.wav
+- Data\Sound\FX\NPC\Charus\Mandibles\NPC_Chaurus_Mandibles_03.wav
+- Data\Sound\FX\NPC\Charus\Injured\NPC_Chaurus_Injured_01.wav
+- Data\Sound\FX\NPC\Charus\Injured\NPC_Chaurus_Injured_02.wav
+- Data\Sound\FX\NPC\Charus\Feed\NPC_Chaurus_Feed_01.wav
+- data\Sound\fx\npc\charus\attack\npc_chaurus_attack_01.wav
+- Data\Sound\FX\NPC\Charus\NPC_Chaurus_Taunt_01.wav
+OutputModel: 0ABEF3:Skyrim.esm
+LoopAndRumble: {}
+PercentFrequencyVariance: 5
+Priority: 128

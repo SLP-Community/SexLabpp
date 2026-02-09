@@ -1,0 +1,79 @@
+FormKey: 08A022:SexLab.esm
+EditorID: SexLabPathToThread11
+Flags:
+- MustComplete
+- PreferredSpeed
+- AllowSwimming
+- IgnoreCombat
+- NoCombatAlert
+Type: Package
+PreferredSpeed: FastWalk
+Unknown: 32
+ScheduleMonth: -1
+ScheduleDayOfWeek: Any
+ScheduleHour: -1
+ScheduleMinute: -1
+Unknown3: 0x000000
+Conditions:
+- MutagenObjectType: ConditionFloat
+  Data:
+    MutagenObjectType: GetFactionRankConditionData
+    Faction: 00E50F:SexLab.esm
+  ComparisonValue: 2
+OwnerQuest: 06C635:SexLab.esm
+PackageTemplate: 0C8EA5:Skyrim.esm
+DataInputVersion: 5
+Data:
+- Key: 0
+  Value:
+    MutagenObjectType: PackageDataLocation
+    Location:
+      Target:
+        MutagenObjectType: LocationFallback
+        Type: AliasForReference
+        Data: 6
+      Radius: 50
+- Key: 2
+  Value:
+    MutagenObjectType: PackageDataBool
+- Key: 4
+  Value:
+    MutagenObjectType: PackageDataBool
+    Data: True
+- Key: 14
+  Value:
+    MutagenObjectType: PackageDataLocation
+    Location:
+      Target:
+        MutagenObjectType: LocationFallback
+        Type: AliasForReference
+        Data: 6
+      Radius: 1200
+- Key: 16
+  Value:
+    MutagenObjectType: PackageDataLocation
+    Location:
+      Target:
+        MutagenObjectType: LocationFallback
+        Type: AliasForReference
+        Data: 6
+      Radius: 800
+- Key: 18
+  Value:
+    MutagenObjectType: PackageDataLocation
+    Location:
+      Target:
+        MutagenObjectType: LocationFallback
+        Type: AliasForReference
+        Data: 6
+      Radius: 400
+XnamMarker: 0x13
+OnBegin:
+  Topics:
+  - MutagenObjectType: TopicReference
+OnEnd:
+  Topics:
+  - MutagenObjectType: TopicReference
+OnChange:
+  Topics:
+  - MutagenObjectType: TopicReference

@@ -1,0 +1,14 @@
+FormKey: 0CA976:SexLab.esm
+EditorID: SexLabVoiceFemaleRoughMuffledDescriptor
+Type: Standard
+Category: 061429:SexLab.esm
+SoundFiles:
+- data\Sound\fx\SexLab\vfx\Rough\Muffled\Rough_M01.wav"
+- data\Sound\fx\SexLab\vfx\Rough\Muffled\Rough_M02.wav"
+- data\Sound\fx\SexLab\vfx\Rough\Muffled\Rough_M03.wav"
+- data\Sound\fx\SexLab\vfx\Rough\Muffled\Rough_M04.wav"
+OutputModel: 0D78B4:Skyrim.esm
+LoopAndRumble: {}
+PercentFrequencyVariance: 5
+Priority: 128
+Variance: 3

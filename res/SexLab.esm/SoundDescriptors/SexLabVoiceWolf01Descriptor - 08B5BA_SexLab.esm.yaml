@@ -1,0 +1,21 @@
+FormKey: 08B5BA:SexLab.esm
+EditorID: SexLabVoiceWolf01Descriptor
+Type: Standard
+Category: 061429:SexLab.esm
+SoundFiles:
+- Data\Sound\FX\NPC\Wolf\BreatheRun\NPC_Wolf_BreatheRun_01.wav
+- Data\Sound\FX\NPC\Wolf\BreatheRun\NPC_Wolf_BreatheRun_02.wav
+- Data\Sound\FX\NPC\Wolf\BreatheRun\NPC_Wolf_BreatheRun_03.wav
+- Data\Sound\FX\NPC\Wolf\BreatheRun\NPC_Wolf_BreatheRun_04.wav
+- Data\Sound\FX\NPC\Wolf\BreatheRun\NPC_Wolf_BreatheRun_05.wav
+- Data\Sound\FX\NPC\Wolf\BreatheRun\NPC_Wolf_BreatheRun_06.wav
+- Data\Sound\FX\NPC\Wolf\BreatheRun\NPC_Wolf_BreatheRun_07.wav
+- Data\Sound\FX\NPC\Wolf\Breathe\NPC_Wolf_Breathe_01.wav
+- Data\Sound\FX\NPC\Wolf\Breathe\NPC_Wolf_Breathe_02.wav
+- Data\Sound\FX\NPC\Wolf\Breathe\NPC_Wolf_Breathe_03.wav
+- Data\Sound\FX\NPC\Wolf\Breathe\NPC_Wolf_Breathe_04.wav
+OutputModel: 0ABEF3:Skyrim.esm
+LoopAndRumble: {}
+PercentFrequencyVariance: 8
+Priority: 128
+Variance: 3

@@ -1,0 +1,46 @@
+# - ID: 0xE2826
+#   ESP: Skyrim.esm
+#   Type: BedSingle
+#   Offset: [0, 0, 0, 0]
+
+# - ID: 0xD4848
+#   ESP: Skyrim.esm
+#   Type: BedSingle
+#   Offset: [0, 0, 39, 90]
+
+# Furniture\Common\CommonBench01.nif:
+#   Type: BenchMisc
+#   Offset:
+#     - 0.0
+#     - 0.0
+#     - 0.0
+#     - 180.0
+
+# Furniture\Farm\FarmBench01.nif:
+#   Type: BenchMisc
+#   Offset:
+#     - 0.0
+#     - 0.0
+#     - 0.0
+#     - 180.0
+
+# TODO: Test if the bench offset here is working
+# Furniture\Dwemer\Dwe_TableBench4Seater.nif:
+#   - Type: Table
+#     Offset:
+#       - [129.4, 0.0, 0.0, 0.0]
+#       - [-129.4, 0.0, 0.0, 180.0]
+#   - Type: Bench
+#     Offset:
+#       - [-0.5, 100.5, 0.0, 90.0]
+#       - [-0.5, -98, 0.0, 270.0]
+
+# Furniture\Dwemer\Dwe_TableBench2Seater.nif:
+#   - Type: Table
+#     Offset:
+#       - [129.4, 0.0, 0.0, 0.0]
+#       - [-129.4, 0.0, 0.0, 180.0]
+#       - [0.0, 67.3 ,0.0, 90.0]
+#   - Type: Bench
+#     Offset:
+#       - [-0.5, -98, 0.0, 270.0]

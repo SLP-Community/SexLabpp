@@ -1,0 +1,17 @@
+FormKey: 08D66B:SexLab.esm
+EditorID: SexLabVaginal2Oral1Spell
+Name:
+  TargetLanguage: English
+  Value: Sexual Encounter
+EquipmentType: 013F44:Skyrim.esm
+Description:
+  TargetLanguage: English
+  Value: ''
+Flags:
+- IgnoreResistance
+- NoAbsorbOrReflect
+- NoDualCastModification
+Effects:
+- BaseEffect: 08D644:SexLab.esm
+  Data:
+    Duration: 172800

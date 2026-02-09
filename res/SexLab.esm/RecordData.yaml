@@ -1,0 +1,26 @@
+SpriggitSource:
+  PackageName: Spriggit.Yaml.Skyrim
+  Version: 0.40
+ModKey: SexLab.esm
+GameRelease: SkyrimSE
+ModHeader:
+  Flags:
+  - Master
+  Author: Ashal, Scrab
+  Description: >+
+    Version 2.0 P+ Edited 2023/08/15 
+
+    LoversLab.com
+  MasterReferences:
+  - Master: Skyrim.esm
+    FileSize: 0
+  - Master: Update.esm
+    FileSize: 0
+  - Master: Dawnguard.esm
+    FileSize: 0
+  - Master: HearthFires.esm
+    FileSize: 0
+  - Master: Dragonborn.esm
+    FileSize: 0
+  INTV: 1
+  INCC: 0

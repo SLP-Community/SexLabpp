@@ -1,0 +1,23 @@
+FormKey: 0CA97F:SexLab.esm
+EditorID: SexLabVoiceFemaleSeductiveOrgasmDescriptor
+Type: Standard
+Category: 061429:SexLab.esm
+SoundFiles:
+- data\Sound\fx\SexLab\vfx\Seductive\Orgasm\Seductive_O01.wav"
+- data\Sound\fx\SexLab\vfx\Seductive\Orgasm\Seductive_O02.wav"
+- data\Sound\fx\SexLab\vfx\Seductive\Orgasm\Seductive_O03.wav"
+- data\Sound\fx\SexLab\vfx\Seductive\Orgasm\Seductive_O04.wav"
+- data\Sound\fx\SexLab\vfx\Seductive\Orgasm\Seductive_O05.wav"
+- data\Sound\fx\SexLab\vfx\Seductive\Orgasm\Seductive_O06.wav"
+- data\Sound\fx\SexLab\vfx\Seductive\Orgasm\Seductive_O07.wav"
+- data\Sound\fx\SexLab\vfx\Seductive\Orgasm\Seductive_O08.wav"
+- data\Sound\fx\SexLab\vfx\Seductive\Orgasm\Seductive_O09.wav"
+- data\Sound\fx\SexLab\vfx\Seductive\Orgasm\Seductive_O10.wav"
+- data\Sound\fx\SexLab\vfx\Seductive\Orgasm\Seductive_O11.wav"
+- data\Sound\fx\SexLab\vfx\Seductive\Orgasm\Seductive_O12.wav"
+- data\Sound\fx\SexLab\vfx\Seductive\Orgasm\Seductive_O13.wav"
+OutputModel: 0D78B4:Skyrim.esm
+LoopAndRumble: {}
+PercentFrequencyVariance: 5
+Priority: 128
+Variance: 3

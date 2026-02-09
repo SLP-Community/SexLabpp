@@ -1,0 +1,12 @@
+FormKey: 02803E:SexLab.esm
+MajorRecordFlagsRaw: 8388608
+EditorID: SexLabLocationMarker
+SkyrimMajorRecordFlags:
+- 0x800000
+Model:
+  File: MarkerX.nif
+  Data: 0x020000000000000000000000
+MaxAngle: 90
+Unused: 0x000000
+MajorFlags:
+- IsMarker

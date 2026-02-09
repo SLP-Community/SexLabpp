@@ -1,0 +1,38 @@
+FormKey: 0B3301:SexLab.esm
+EditorID: SexLabMatchMakerSolo
+VirtualMachineAdapter:
+  Scripts:
+  - Name: sslMatchMakerSolo
+    Properties:
+    - MutagenObjectType: ScriptObjectProperty
+      Name: MatchMakerMain
+      Object: 0B3302:SexLab.esm
+    - MutagenObjectType: ScriptObjectProperty
+      Name: SexLab
+      Object: 000D62:SexLab.esm
+Name:
+  TargetLanguage: English
+  Value: SexLab MatchMaker (S)
+Flags:
+- NoDuration
+- NoMagnitude
+- NoArea
+- Painless
+MagicSkill: Illusion
+Archetype:
+  MutagenObjectType: MagicEffectArchetype
+  Type: Script
+Projectile: 02F774:Skyrim.esm
+CastType: FireAndForget
+CastingArt: 03CDFC:Skyrim.esm
+HitEffectArt: 07024B:Skyrim.esm
+DualCastScale: 1
+CastingSoundLevel: Silent
+Sounds: []
+Description:
+  TargetLanguage: English
+  Value: Starts a scene with just the player.
+Conditions:
+- MutagenObjectType: ConditionFloat
+  Data:
+    MutagenObjectType: IsChildConditionData

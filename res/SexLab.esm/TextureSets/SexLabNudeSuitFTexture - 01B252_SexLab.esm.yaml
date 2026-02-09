@@ -1,0 +1,8 @@
+FormKey: 01B252:SexLab.esm
+EditorID: SexLabNudeSuitFTexture
+Diffuse: SexLab\femalenudesuit_1.dds
+NormalOrGloss: SexLab\femalenudesuit_1_msn.DDS
+BacklightMaskOrSpecular: SexLab\femalenudesuit_1_s.dds
+Flags:
+- FaceGenTextures
+- HasModelSpaceNormalMap

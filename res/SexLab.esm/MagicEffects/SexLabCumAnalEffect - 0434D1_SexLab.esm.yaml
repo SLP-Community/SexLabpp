@@ -1,0 +1,23 @@
+FormKey: 0434D1:SexLab.esm
+EditorID: SexLabCumAnalEffect
+Name:
+  TargetLanguage: English
+  Value: Covered In Cum (Anal)
+Keywords:
+- 0434D3:SexLab.esm
+Flags:
+- NoHitEvent
+- NoDuration
+- NoMagnitude
+- NoArea
+- Painless
+- NoHitEffect
+Archetype:
+  MutagenObjectType: MagicEffectArchetype
+  Type: Script
+DualCastScale: 1
+CastingSoundLevel: Normal
+Sounds: []
+Description:
+  TargetLanguage: English
+  Value: ''

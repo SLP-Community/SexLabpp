@@ -1,0 +1,21 @@
+Name: FemaleMature
+DisplayName: "$SSL_FemaleMature"
+Actor:
+  Sex: Female
+  Race:
+    - Human
+Tags:
+  - female
+  - Rough
+  - Harsh
+  - Old
+  - Mature
+Voices:
+  423261|SexLab.esm: 0
+  423259|SexLab.esm: 75
+Extra:
+  - Voices:
+      423260|SexLab.esm: 0
+      423259|SexLab.esm: 75
+    Conditions:
+      Submissive: true

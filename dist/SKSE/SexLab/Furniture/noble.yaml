@@ -1,0 +1,262 @@
+Furniture\noble\noblebeddouble01.nif:
+  - Type: BedDouble
+    Offset:
+      - [0.0, 2.1, 39, 0.0]
+  - Type: BenchMisc
+    Offset:
+      - [0.0, 80, 0.0, 0.0]
+      - [-57.4, 2.1, 0.0, 270]
+      - [57.4, 2.1, 0.0, 90]
+Furniture\noble\noblebeddouble02.nif:
+  - Type: BedDouble
+    Offset:
+      - [0.0, 6.9, 41, 0.0]
+  - Type: BenchMisc
+    Offset:
+      - [0.0, 80, 0.0, 0.0]
+      - [-57.4, 6.9, 0.0, 270]
+      - [57.4, 6.9, 0.0, 90]
+Furniture\noble\noblebedsingle01.nif:
+  - Type: BedSingle
+    Offset:
+      - [0.0, 6.1, -13, 0.0]
+  - Type: BenchMisc
+    Offset:
+      - [0.0, 86, 0.0, 0.0]
+      - [-31.5, 6.1, 0.0, 270]
+      - [31.5, 6.1, 0.0, 90]
+Furniture\noble\noblebench01.nif:
+  Type: BenchMisc
+  Offset:
+    - [0.0, 100, -7, 0.0]
+Furniture\noble\noblebench02.nif:
+  Type: Bench
+  Offset:
+    - [0.2, 0.0, 0.0, 0.0]
+Furniture\noble\noblebench03.nif:
+  Type: Bench
+  Offset:
+    - [0.0, 0.0, 0.0, 0.0]
+Furniture\noble\noblebench04.nif:
+  Type: BenchNoble
+  Offset:
+    - [0.2, 0.0, 0.0, 0.0]
+Furniture\noble\noblebench05.nif:
+  Type: BenchMisc
+  Offset:
+    - [0.0, 100, 0.0, -7]
+Furniture\noble\noblechair01.nif:
+  Type: ChairNoble
+  Offset:
+    - [0.0, 0.0, -1.8, 0.0]
+Furniture\noble\noblechair02.nif:
+  Type: ChairNoble
+  Offset:
+    - [0.0, 0.0, -1.8, 0.0]
+Furniture\noble\noblechest01.nif:
+  Type: BenchMisc
+  Offset:
+    - [0.0, 2.1, 0.2, 0.0]
+Furniture\noble\noblechestdrawers01.nif:
+  Type: TableCounter
+  Offset:
+    - [-0.5, -56.6, 0.0, 0.0]
+Furniture\noble\nobledesk01.nif:
+  Type: Table
+  Offset:
+    - [-0.5, -56.6, -0.2, 0.0]
+Furniture\noble\nobledesk02.nif:
+  Type: Table
+  Offset:
+    - [37.3, -56.6, -0.2, 0.0]
+Furniture\noble\nobledivider01.nif:
+  Type: Wall
+  Offset:
+    - [40.2, 12.7, 0.0, 180]
+Furniture\noble\nobleendtable01.nif:
+  Type: TableCounter
+  Offset:
+    - [19, -52, 0.0, 0.0]
+    - [-1, -32, 0.0, 90]
+    - [19, -12, 0.0, 180]
+    - [39, -32, 0.0, 270]
+Furniture\noble\nobleendtable02.nif:
+  Type: TableCounter
+  Offset:
+    - [19, -56, 0.0, 0.0]
+    - [2, -49, 0.0, 45]
+    - [-5, -32, 0.0, 90]
+    - [2, -15, 0.0, 135]
+    - [19, -8, 0.0, 180]
+    - [36, -15, 0.0, 225]
+    - [43, -32, 0.0, 270]
+    - [36, -49, 0.0, 315]
+Furniture\noble\nobleendtable03.nif:
+  Type: TableCounter
+  Offset:
+    - [19, -56, 0.0, 0.0]
+    - [2, -49, 0.0, 45]
+    - [-5, -32, 0.0, 90]
+    - [2, -15, 0.0, 135]
+    - [19, -8, 0.0, 180]
+    - [36, -15, 0.0, 225]
+    - [43, -32, 0.0, 270]
+    - [36, -49, 0.0, 315]
+Furniture\noble\nobleendtable04.nif:
+  Type: TableCounter
+  Offset:
+    - [19, -52, 0.0, 0.0]
+    - [-1, -32, 0.0, 90]
+    - [19, -12, 0.0, 180]
+    - [39, -32, 0.0, 270]
+Furniture\noble\noblelongtablewindhelm.nif:
+  Type: Table
+  Offset:
+    - [-442.7, 0.0, 0.0, 90]
+    - [442.7, 0.0, 0.0, 270]
+Furniture\noble\noblesideboard01.nif:
+  Type: TableCounter
+  Offset:
+    - [-0.5, -56.6, 0.0, 0.0]
+Furniture\noble\nobletablelong01.nif:
+  Type: Table
+  Offset:
+    - [69.4, -55.5, 0.0, 0.0]
+    - [-69.4, -55.5, 0.0, 0.0]
+    - [-161.4, 0.0, 0.0, 90]
+    - [69.4, 55.5, 0.0, 180]
+    - [-69.4, 55.5, 0.0, 180]
+    - [161.4, 0.0, 0.0, 270]
+Furniture\noble\nobletablelong02.nif:
+  Type: Table
+  Offset:
+    - [211.8, -55.5, 0.0, 0.0]
+    - [-211.8, -55.5, 0.0, 0.0]
+    - [345, -55.5, 0.0, 0.0]
+    - [-345, -55.5, 0.0, 0.0]
+    - [-69.4, -55.5, 0.0, 0.0]
+    - [69.4, -55.5, 0.0, 0.0]
+    - [-69.4, -55.5, 0.0, 0.0]
+    - [-442.7, 0.0, 0.0, 90]
+    - [211.8, 55.5, 0.0, 180]
+    - [-211.8, 55.5, 0.0, 180]
+    - [345, 55.5, 0.0, 180]
+    - [-345, 55.5, 0.0, 180]
+    - [69.4, 55.5, 0.0, 180]
+    - [-69.4, 55.5, 0.0, 180]
+    - [442.7, 0.0, 0.0, 270]
+Furniture\noble\nobletablelong03.nif:
+  Type: Table
+  Offset:
+    - [211.8, -55.5, 0.0, 0.0]
+    - [345, -55.5, 0.0, 0.0]
+    - [-345, -55.5, 0.0, 0.0]
+    - [-69.4, -55.5, 0.0, 0.0]
+    - [69.4, -55.5, 0.0, 0.0]
+    - [-69.4, -55.5, 0.0, 0.0]
+    - [211.8, 55.5, 0.0, 180]
+    - [345, 55.5, 0.0, 180]
+    - [-345, 55.5, 0.0, 180]
+    - [69.4, 55.5, 0.0, 180]
+    - [-69.4, 55.5, 0.0, 180]
+    - [442.7, 0.0, 0.0, 270]
+Furniture\noble\nobletablelong04.nif:
+  Type: Table
+  Offset:
+    - [-70.7, -55.5, 0.0, 0.0]
+    - [-154.8, 0.0, 0.0, 90]
+    - [-70.7, 55.5, 0.0, 180]
+    - [13.2, 0.0, 0.0, 270]
+Furniture\noble\nobletablelongbench01.nif:
+  - Type: Table
+    Offset:
+      - [-161.4, 0.0, 0.0, 90]
+      - [69.4, 55.5, 0.0, 180]
+      - [-69.4, 55.5, 0.0, 180]
+      - [161.4, 0.0, 0.0, 270]
+  - Type: Bench
+    Offset:
+      - [58.8, -91.8, 0.0, 180]
+      - [-60.7, -91.8, 0.0, 180]
+Furniture\noble\nobletablelongbench02.nif:
+  - Type: Table
+    Offset:
+      - [-161.4, 0.0, 0.0, 90]
+      - [161.4, 0.0, 0.0, 270]
+  - Type: Bench
+    Offset:
+      - [58.8, -91.8, 0.0, 180]
+      - [-60.7, -91.8, 0.0, 180]
+      - [58.8, 91.8, 0.0, 0.0]
+      - [-60.7, 91.8, 0.0, 0.0]
+Furniture\noble\nobletablelongbench03.nif:
+  - Type: Table
+    Offset:
+      - [-83.5, 0.0, 0.0, 90]
+      - [0.0, 55.5, 0.0, 180]
+      - [83.5, 0.0, 0.0, 270]
+  - Type: Bench
+    Offset:
+      - [-1, -91.8, 0.0, 180]
+Furniture\noble\nobletablelongbench04.nif:
+  - Type: Table
+    Offset:
+      - [-83.5, 0.0, 0.0, 90]
+      - [83.5, 0.0, 0.0, 270]
+  - Type: Bench
+    Offset:
+      - [-1, -91.8, 0.0, 180]
+      - [-1, 91.8, 0.0, 0.0]
+Furniture\noble\nobletableraound01.nif:
+  Type: Table
+  Offset:
+    - [0.0, -60, 0.0, 0.0]
+    - [-42.5, -42.5, 0.0, 45]
+    - [-60, 0.0, 0.0, 90]
+    - [-42.5, 42.5, 0.0, 135]
+    - [0.0, 60, 0.0, 180]
+    - [42.5, 42.5, 0.0, 225]
+    - [60, 0.0, 0.0, 270]
+    - [42.5, -42.5, 0.0, 315]
+Furniture\noble\nobletableshort01.nif:
+  Type: Table
+  Offset:
+    - [0.0, -55.5, 0.0, 0.0]
+    - [-83.5, 0.0, 0.0, 90]
+    - [83.5, 0.0, 0.0, 270]
+    - [0.0, 55.5, 0.0, 180]
+Furniture\noble\nobletablesquare01.nif:
+  Type: Table
+  Offset:
+    - [-99, -47.4, 0.0, 0.0]
+    - [-146.7, 0.0, 0.0, 90]
+    - [99, 47.4, 0.0, 180]
+    - [-51.8, 0.0, 0.0, 270]
+Furniture\noble\noblewardrobe01.nif:
+  Type: Wall
+  Offset:
+    - [0.0, -14.4, 0.0, 0.0]
+Furniture\noble\sthrone.nif:
+  Type: Throne
+  Offset:
+    - [0.0, 2.5, 0.0, 0.0]
+Furniture\noble\thronedawnstar01.nif:
+  Type: Throne
+  Offset:
+    - [0.0, 0.0, 0.0, 0.0]
+Furniture\noble\thronefalkreath01.nif:
+  Type: Throne
+  Offset:
+    - [0.0, 0.0, 0.0, 0.0]
+Furniture\noble\thronehjaalmarch01.nif:
+  Type: Throne
+  Offset:
+    - [0.0, 0.0, 0.0, 0.0]
+Furniture\noble\throneriften01.nif:
+  Type: ThroneRiften
+  Offset:
+    - [0.0, 6, 0.0, 0.0]
+Furniture\noble\thronewinterhold01.nif:
+  Type: Throne
+  Offset:
+    - [0.0, 0.0, 0.0, 0.0]

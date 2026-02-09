@@ -1,0 +1,24 @@
+FormKey: 0CA95F:SexLab.esm
+EditorID: SexLabVoiceFemaleRebelliousOrgasmDescriptor
+Type: Standard
+Category: 061429:SexLab.esm
+SoundFiles:
+- data\Sound\fx\SexLab\vfx\Rebellious\Orgasm\Rebellious_O01.wav"
+- data\Sound\fx\SexLab\vfx\Rebellious\Orgasm\Rebellious_O02.wav"
+- data\Sound\fx\SexLab\vfx\Rebellious\Orgasm\Rebellious_O03.wav"
+- data\Sound\fx\SexLab\vfx\Rebellious\Orgasm\Rebellious_O04.wav"
+- data\Sound\fx\SexLab\vfx\Rebellious\Orgasm\Rebellious_O05.wav"
+- data\Sound\fx\SexLab\vfx\Rebellious\Orgasm\Rebellious_O06.wav"
+- data\Sound\fx\SexLab\vfx\Rebellious\Orgasm\Rebellious_O07.wav"
+- data\Sound\fx\SexLab\vfx\Rebellious\Orgasm\Rebellious_O08.wav"
+- data\Sound\fx\SexLab\vfx\Rebellious\Orgasm\Rebellious_O09.wav"
+- data\Sound\fx\SexLab\vfx\Rebellious\Orgasm\Rebellious_O10.wav"
+- data\Sound\fx\SexLab\vfx\Rebellious\Orgasm\Rebellious_O11.wav"
+- data\Sound\fx\SexLab\vfx\Rebellious\Orgasm\Rebellious_O12.wav"
+- data\Sound\fx\SexLab\vfx\Rebellious\Orgasm\Rebellious_O13.wav"
+- data\Sound\fx\SexLab\vfx\Rebellious\Orgasm\Rebellious_O14.wav"
+OutputModel: 0D78B4:Skyrim.esm
+LoopAndRumble: {}
+PercentFrequencyVariance: 5
+Priority: 128
+Variance: 3

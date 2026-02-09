@@ -1,0 +1,13 @@
+FormKey: 0CA990:SexLab.esm
+EditorID: SexLabVoiceFemaleWarriorAgressiveDescriptor
+Type: Standard
+Category: 061429:SexLab.esm
+SoundFiles:
+- data\Sound\fx\SexLab\vfx\Warrior\Aggressive\Warrior_A01.wav"
+- data\Sound\fx\SexLab\vfx\Warrior\Aggressive\Warrior_A02.wav"
+- data\Sound\fx\SexLab\vfx\Warrior\Aggressive\Warrior_A03.wav"
+OutputModel: 0D78B4:Skyrim.esm
+LoopAndRumble: {}
+PercentFrequencyVariance: 5
+Priority: 128
+Variance: 3

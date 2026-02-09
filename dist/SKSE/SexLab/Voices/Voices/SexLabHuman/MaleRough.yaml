@@ -1,0 +1,22 @@
+Name: MaleRough
+DisplayName: "$SSL_MaleRough"
+
+Actor:
+  Sex: Male
+  Race:
+    - Human
+Tags:
+  - male
+  - Old
+  - Loud
+  - Harsh
+  - Rough
+Voices:
+  423270|SexLab.esm: 0
+  423268|SexLab.esm: 75
+Extra:
+  - Voices:
+      423269|SexLab.esm: 0
+      423268|SexLab.esm: 75
+    Conditions:
+      Submissive: true

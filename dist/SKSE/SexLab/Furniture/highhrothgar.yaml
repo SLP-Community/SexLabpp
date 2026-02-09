@@ -1,0 +1,32 @@
+Furniture\highhrothgar\hhfurniturebedsingle01.nif:
+  - Type: BedSingle
+    Offset:
+      - [0.0, 0.0, 33.7, 0.0]
+  - Type: BenchMisc
+    Offset:
+      - [-34, 0.0, 0.0, 270]
+      - [34, 0.0, 0.0, 90]
+Furniture\highhrothgar\hhfurniturebench01.nif:
+  Type: Bench
+  Offset:
+    - [0.0, -2.2, -30, 0]
+Furniture\highhrothgar\hhfurniturechair01.nif:
+  Type: ChairMisc
+  Offset:
+    - [0.0, 5.1, -30, 0]
+Furniture\highhrothgar\hhfurniturechair02.nif:
+  Type: Chair
+  Offset:
+    - [0.0, 5.1, 0, 0]
+Furniture\highhrothgar\hhfurnituretable01.nif:
+  Type: TableCounter
+  Offset:
+    - [-178, -32, 0.0, 90]
+Furniture\highhrothgar\hhfurnituretable02.nif:
+  Type: TableCounter
+  Offset:
+    - [-169, -32, 0.0, 90]
+Furniture\highhrothgar\hhfurnituretableround01.nif:
+  Type: Table
+  Offset:
+    - [-115, 119, 0.0, 135]

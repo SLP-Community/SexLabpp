@@ -1,0 +1,28 @@
+FormKey: 00E50F:SexLab.esm
+EditorID: SexLabAnimatingFaction
+Name:
+  TargetLanguage: English
+  Value: SexLab Animating Actors
+Flags:
+- HiddenFromPC
+CrimeValues:
+  Arrest: True
+  AttackOnSight: True
+Ranks:
+- Number: 0
+  Title:
+    Male:
+      TargetLanguage: English
+      Value: Slotted
+    Female:
+      TargetLanguage: English
+      Value: Slotted
+- Number: 1
+  Title:
+    Male:
+      TargetLanguage: English
+      Value: Locked
+    Female:
+      TargetLanguage: English
+      Value: Locked
+VendorValues: {}

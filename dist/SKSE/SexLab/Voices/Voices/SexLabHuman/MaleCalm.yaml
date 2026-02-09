@@ -1,0 +1,19 @@
+Name: MaleCalm
+DisplayName: "$SSL_MaleCalm"
+Actor:
+  Sex: Male
+  Race:
+    - Human
+Tags:
+  - male
+  - quiet
+  - Calm
+Voices:
+  423267|SexLab.esm: 0
+  423265|SexLab.esm: 75
+Extra:
+  - Voices:
+      423266|SexLab.esm: 0
+      423265|SexLab.esm: 75
+    Conditions:
+      Submissive: true

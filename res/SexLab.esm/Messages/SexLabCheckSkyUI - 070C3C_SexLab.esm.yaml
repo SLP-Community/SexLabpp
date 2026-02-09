@@ -1,0 +1,18 @@
+FormKey: 070C3C:SexLab.esm
+EditorID: SexLabCheckSkyUI
+Description:
+  TargetLanguage: English
+  Value: >-
+    Outdated or missing SkyUI install detected.
+
+    SexLab currently requires SkyUI v%.1f or newer in order to function. To continue using the mod; you must update and enable your SkyUI install. 
+
+
+    If you do not like the UI changes provided by SkyUI, you may also install the mod "SkyUI Away" to remove it's changes while keeping the Mod Configuration functionality that is needed by SexLab.
+Name:
+  TargetLanguage: English
+  Value: 'SexLab Dependency: SkyUI'
+INAM: 0x00000000
+Quest: 000D62:SexLab.esm
+Flags:
+- MessageBox

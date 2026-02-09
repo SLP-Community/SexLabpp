@@ -1,0 +1,14 @@
+FormKey: 0CA95E:SexLab.esm
+EditorID: SexLabVoiceFemaleRebelliousMuffledDescriptor
+Type: Standard
+Category: 061429:SexLab.esm
+SoundFiles:
+- data\Sound\fx\SexLab\vfx\Rebellious\Muffled\Rebellious_M01.wav"
+- data\Sound\fx\SexLab\vfx\Rebellious\Muffled\Rebellious_M02.wav"
+- data\Sound\fx\SexLab\vfx\Rebellious\Muffled\Rebellious_M03.wav"
+- data\Sound\fx\SexLab\vfx\Rebellious\Muffled\Rebellious_M04.wav"
+OutputModel: 0D78B4:Skyrim.esm
+LoopAndRumble: {}
+PercentFrequencyVariance: 5
+Priority: 128
+Variance: 3

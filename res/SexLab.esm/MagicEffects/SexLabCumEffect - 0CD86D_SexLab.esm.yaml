@@ -1,0 +1,31 @@
+FormKey: 0CD86D:SexLab.esm
+EditorID: SexLabCumEffect
+VirtualMachineAdapter:
+  Scripts:
+  - Name: sslActorCumEffect
+    Properties:
+    - MutagenObjectType: ScriptObjectProperty
+      Name: ActorLib
+      Object: 000D62:SexLab.esm
+Name:
+  TargetLanguage: English
+  Value: SexLab Cum Effect (Main)
+Keywords:
+- 0D35FF:SexLab.esm
+Flags:
+- NoHitEvent
+- NoDuration
+- NoMagnitude
+- NoArea
+- HideInUI
+- Painless
+- NoHitEffect
+Archetype:
+  MutagenObjectType: MagicEffectArchetype
+  Type: Script
+DualCastScale: 1
+CastingSoundLevel: Normal
+Sounds: []
+Description:
+  TargetLanguage: English
+  Value: ''

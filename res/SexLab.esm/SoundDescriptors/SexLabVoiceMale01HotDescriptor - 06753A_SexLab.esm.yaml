@@ -1,0 +1,17 @@
+FormKey: 06753A:SexLab.esm
+EditorID: SexLabVoiceMale01HotDescriptor
+Type: Standard
+Category: 061429:SexLab.esm
+SoundFiles:
+- data\sound\Fx\SexLab\vMaleMoan01\hot\13.wav
+- data\sound\Fx\SexLab\vMaleMoan01\hot\19.wav
+- data\sound\Fx\SexLab\vMaleMoan01\hot\21.wav
+- data\sound\Fx\SexLab\vMaleMoan01\hot\23.wav
+- data\sound\Fx\SexLab\vMaleMoan01\hot\24.wav
+- data\sound\Fx\SexLab\vMaleMoan01\hot\05.wav
+- data\sound\Fx\SexLab\vMaleMoan01\hot\12.wav
+OutputModel: 0D78B4:Skyrim.esm
+LoopAndRumble: {}
+PercentFrequencyVariance: 5
+Priority: 128
+Variance: 3

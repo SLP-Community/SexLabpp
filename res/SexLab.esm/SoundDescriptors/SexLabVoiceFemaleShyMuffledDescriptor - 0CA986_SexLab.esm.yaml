@@ -1,0 +1,16 @@
+FormKey: 0CA986:SexLab.esm
+EditorID: SexLabVoiceFemaleShyMuffledDescriptor
+Type: Standard
+Category: 061429:SexLab.esm
+SoundFiles:
+- data\Sound\fx\SexLab\vfx\Shy\Muffled\Shy_M01.wav"
+- data\Sound\fx\SexLab\vfx\Shy\Muffled\Shy_M02.wav"
+- data\Sound\fx\SexLab\vfx\Shy\Muffled\Shy_M03.wav"
+- data\Sound\fx\SexLab\vfx\Shy\Muffled\Shy_M04.wav"
+- data\Sound\fx\SexLab\vfx\Shy\Muffled\Shy_M05.wav"
+- data\Sound\fx\SexLab\vfx\Shy\Muffled\Shy_M06.wav"
+OutputModel: 0D78B4:Skyrim.esm
+LoopAndRumble: {}
+PercentFrequencyVariance: 5
+Priority: 128
+Variance: 3

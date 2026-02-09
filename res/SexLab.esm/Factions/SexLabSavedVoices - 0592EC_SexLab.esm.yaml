@@ -1,0 +1,11 @@
+FormKey: 0592EC:SexLab.esm
+EditorID: SexLabSavedVoices
+Name:
+  TargetLanguage: English
+  Value: SexLab NPC Saved Voices
+Flags:
+- HiddenFromPC
+CrimeValues:
+  Arrest: True
+  AttackOnSight: True
+VendorValues: {}

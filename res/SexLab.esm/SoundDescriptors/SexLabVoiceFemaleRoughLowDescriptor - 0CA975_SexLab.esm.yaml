@@ -1,0 +1,18 @@
+FormKey: 0CA975:SexLab.esm
+EditorID: SexLabVoiceFemaleRoughLowDescriptor
+Type: Standard
+Category: 061429:SexLab.esm
+SoundFiles:
+- data\Sound\fx\SexLab\vfx\Rough\Low\Rough_L01.wav"
+- data\Sound\fx\SexLab\vfx\Rough\Low\Rough_L02.wav"
+- data\Sound\fx\SexLab\vfx\Rough\Low\Rough_L03.wav"
+- data\Sound\fx\SexLab\vfx\Rough\Low\Rough_L04wav"
+- data\Sound\fx\SexLab\vfx\Rough\Low\Rough_L05.wav"
+- data\Sound\fx\SexLab\vfx\Rough\Low\Rough_L06.wav"
+- data\Sound\fx\SexLab\vfx\Rough\Low\Rough_L07.wav"
+- data\Sound\fx\SexLab\vfx\Rough\Low\Rough_L08.wav"
+OutputModel: 0D78B4:Skyrim.esm
+LoopAndRumble: {}
+PercentFrequencyVariance: 5
+Priority: 128
+Variance: 3

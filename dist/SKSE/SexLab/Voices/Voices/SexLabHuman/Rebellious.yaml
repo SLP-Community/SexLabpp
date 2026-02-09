@@ -1,0 +1,22 @@
+Name: SLFemaleRebellious
+DisplayName: "$SSL_FemaleRebellious"
+
+Actor:
+  Sex: Female
+  Race: Human
+  Pitch: Normal
+
+Tags:
+  - female
+  - Rebellious
+
+Voices:
+  0xCA962|SexLab.esm: 0
+  0xCA961|SexLab.esm: 75
+Orgasm: 0xCA964|SexLab.esm
+
+Extra:
+  - Voices:
+      0xCA963|SexLab.esm: 0
+    Conditions:
+      Muffled: true

@@ -1,0 +1,12 @@
+Name: SprigganVoice01
+DisplayName: "$SSL_SprigganVoice01"
+Actor:
+  Sex: Any
+  Race:
+    - spriggans
+Tags:
+  - female
+  - male
+  - creature
+Voices:
+  573579|SexLab.esm: 0

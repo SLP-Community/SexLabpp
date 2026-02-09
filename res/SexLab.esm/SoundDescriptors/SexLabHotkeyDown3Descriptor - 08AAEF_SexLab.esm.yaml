@@ -1,0 +1,11 @@
+FormKey: 08AAEF:SexLab.esm
+EditorID: SexLabHotkeyDown3Descriptor
+Type: Standard
+SoundFiles:
+- Data\Sound\FX\ITM\Ingredient\ITM_Ingredient_BeeHiveHusk_Up_01.wav
+OutputModel: 0B5183:Skyrim.esm
+LoopAndRumble: {}
+PercentFrequencyShift: 30
+PercentFrequencyVariance: 10
+Priority: 128
+Variance: 3

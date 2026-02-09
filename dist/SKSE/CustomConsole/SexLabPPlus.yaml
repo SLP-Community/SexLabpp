@@ -1,0 +1,44 @@
+name: SexLab
+alias: sl
+script: sslConsoleCommands
+help: SexLab debug script
+subs:
+  - name: ml-start
+    alias: mlstart
+    func: MLStart
+    help: Start recording of data to train typing models
+    args:
+      - name: type
+        type: String
+        required: true
+        help: Type of the action to record
+      - name: enabled
+        type: bool
+        required: true
+        help: If the given type is currently active
+  - name: ml-switch
+    alias: mlswitch
+    func: MLSwitch
+    help: Switch the enabled state of the trained type
+    args:
+      - name: enabled
+        type: int
+        default: -1
+        required: false
+        help: If the given type is currently active (-1 to switch, 0 to disable, 1 to enable)
+  - name: ml-stop
+    alias: mlstop
+    func: MLStop
+    help: Stop recording of data to train typing models
+  - name: ml-set-interval
+    alias: mlsetinterval
+    func: MLSetInterval
+    help: Set the frame interval for recording data to train typing models
+    args:
+      - name: frameInterval
+        type: int
+        required: true
+        help: The number of frames to wait between recorded data points (e.g. 1 = record every frame, 2 = record every other frame, etc.)
+  - name: ml-drop
+    func: MLDrop
+    help: Clear recorded data for training typing models
