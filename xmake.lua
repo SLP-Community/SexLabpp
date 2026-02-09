@@ -54,6 +54,23 @@ option("install_path")
     end)
 option_end()
 
+option("build_assets")
+    set_category("build")
+    set_description("Enable 'assets' target")
+    set_default(true)
+option("build_dll")
+    set_category("build")
+    set_description("Enable '" .. PROJECT_NAME .. "' target")
+    set_default(true)
+option("build_papyrus")
+    set_category("build")
+    set_description("Enable 'papyrus' target")
+    set_default(true)
+option("build_spriggit")
+    set_category("build")
+    set_description("Enable 'SexLab.esm' target")
+    set_default(true)
+
 -- ensure dotenv is loaded before imported options
 option("papyrus_path")
     add_deps("dotenv")
@@ -132,6 +149,7 @@ add_rules("common")
 
 -- Target
 target(PROJECT_NAME)
+    set_enabled(get_config("build_dll"))
     -- Dependencies
     add_packages("yaml-cpp", "magic_enum", "nlohmann_json", "simpleini", "glm", "eigen")
 
@@ -203,6 +221,7 @@ target(PROJECT_NAME)
 target_end()
 
 target("papyrus")
+    set_enabled(get_config("build_papyrus"))
     set_kind("object")
     set_targetdir("dist/Scripts")
     set_basename("SexLab")
@@ -241,6 +260,7 @@ target("papyrus")
 target_end()
 
 target("SexLab.esm")
+    set_enabled(get_config("build_spriggit"))
     set_kind("object")
     set_targetdir("dist")
 
@@ -252,6 +272,7 @@ target("SexLab.esm")
 target_end()
 
 target("assets")
+    set_enabled(get_config("build_assets"))
     set_kind("phony")
 
     add_installfiles("dist/(Interface/SexLab/**)")
