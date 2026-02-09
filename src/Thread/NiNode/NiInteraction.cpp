@@ -63,10 +63,13 @@ namespace Thread::NiNode
 			return result;
 		}
 
-		const auto pVaginaEnd = a_motionA.GetLatestMoment(NiMotion::pVaginalEnd);
-		const auto vVagina = vaginalEntryMotion.DescribesMotion() ? vaginalEntryMotion.trajectory.Vector() : (pVaginaEnd - pVaginaStart);
-		const auto vSchlong = schlongTipMotion.DescribesMotion() ? schlongTipMotion.trajectory.Vector() : sSchlong.Vector();
 		const float avgVelocity = 0.5f * (vaginalEntryMotion.avgSpeed + schlongTipMotion.avgSpeed);
+		const auto vSchlong = schlongTipMotion.DescribesMotion() ? schlongTipMotion.trajectory.Vector() : sSchlong.Vector();
+		const auto pVaginaEnd = a_motionA.GetLatestMoment(NiMotion::pVaginalEnd);
+		auto vVagina = vaginalEntryMotion.DescribesMotion() ? vaginalEntryMotion.trajectory.Vector() : (pVaginaEnd - pVaginaStart);
+		if (vVagina.Dot(vSchlong) < 0.0f) {
+			vVagina = -vVagina;
+		}
 
 		const float distanceScore = 1.0f - std::clamp(distance / Settings::fDistanceCrotch, 0.0f, 1.0f);
 		const float velocityScore = 1.0f - std::clamp(avgVelocity / Settings::fMinSpeedPenetration, 0.0f, 1.0f);
@@ -110,10 +113,13 @@ namespace Thread::NiNode
 			return result;
 		}
 
-		const auto pAnalEnd = a_motionA.GetLatestMoment(NiMotion::pAnalEnd);
-		const auto vAnal = analEntryMotion.DescribesMotion() ? analEntryMotion.trajectory.Vector() : (pAnalEnd - pAnalStart);
-		const auto vSchlong = schlongTipMotion.DescribesMotion() ? schlongTipMotion.trajectory.Vector() : sSchlong.Vector();
 		const float avgVelocity = 0.5f * (analEntryMotion.avgSpeed + schlongTipMotion.avgSpeed);
+		const auto vSchlong = schlongTipMotion.DescribesMotion() ? schlongTipMotion.trajectory.Vector() : sSchlong.Vector();
+		const auto pAnalEnd = a_motionA.GetLatestMoment(NiMotion::pAnalEnd);
+		auto vAnal = analEntryMotion.DescribesMotion() ? analEntryMotion.trajectory.Vector() : (pAnalEnd - pAnalStart);
+		if (vAnal.Dot(vSchlong) < 0.0f) {
+			vAnal = -vAnal;
+		}
 
 		const float distanceScore = 1.0f - std::clamp(distance / Settings::fDistanceCrotch, 0.0f, 1.0f);
 		const float velocityScore = 1.0f - std::clamp(avgVelocity / Settings::fMinSpeedPenetration, 0.0f, 1.0f);
@@ -163,8 +169,8 @@ namespace Thread::NiNode
 		}
 
 		const float avgVelocity = 0.5f * (crotchEntryMotion.avgSpeed + schlongTipMotion.avgSpeed);
-		const auto pCrotchEnd = a_motionA.GetLatestMoment(NiMotion::pCrotchEnd);
 		const auto vSchlong = schlongTipMotion.DescribesMotion() ? schlongTipMotion.trajectory.Vector() : sSchlong.Vector();
+		const auto pCrotchEnd = a_motionA.GetLatestMoment(NiMotion::pCrotchEnd);
 		auto vCrotch = crotchEntryMotion.DescribesMotion() ? crotchEntryMotion.trajectory.Vector() : (pCrotchEnd - pCrotchStart);
 		// Ensure vCrotch is in the same general direction as vSchlong
 		if (vCrotch.Dot(vSchlong) < 0.0f) {
