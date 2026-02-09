@@ -118,28 +118,28 @@ Function SetConsent(bool abIsConsent)
 EndFunction
 
 ; ------------------------------------------------------- ;
-; --- Interaction		                                  --- ;
+; --- Collision Type-Guessing (Physic)                --- ;
 ; ------------------------------------------------------- ;
 ;/
-	Lookup interaction data
-	This data is based on the actors 3D, its reliably thus heavily depends on 
+	Lookup interaction data based on real-time collision type guessing
+	This data is based on the actors 3D, it's reliable and heavily depends on 
 	how well aligned the animation is
 /;
 
-int Property CTYPE_ANY					= -1 	AutoReadOnly
-int Property CTYPE_Vaginal 			= 1 	AutoReadOnly	; Position is being penetrated by partner
-int Property CTYPE_Anal 				= 2 	AutoReadOnly	; Position is being penetrated by partner
-int Property CTYPE_Oral 				= 3 	AutoReadOnly	; Position is licking/sucking partner
-int Property CTYPE_Grinding 		= 4 	AutoReadOnly	; Position is being grinded against by partner (crotch area)
-int Property CTYPE_Deepthroat 	= 5 	AutoReadOnly	; Implies Oral, partner's penis close to/at maximum depth
-int Property CTYPE_Skullfuck 		= 6 	AutoReadOnly	; Positions head penetrated in an unexpected way by partner (Usually gore)
-int Property CTYPE_LickingShaft = 7 	AutoReadOnly	; Position licking partners shaft
-int Property CTYPE_FootJob 			= 8 	AutoReadOnly	; Position pleasuring partner using at least one foot
-int Property CTYPE_HandJob 			= 9 	AutoReadOnly	; Position pleasuring partner using at least one hand
-int Property CTYPE_Kissing 			= 10 	AutoReadOnly	; Position kissing partner
-int Property CTYPE_Facial 			= 11 	AutoReadOnly	; Positions face in front of partner penis
-int Property CTYPE_AnimObjFace 	= 12 	AutoReadOnly	; Position mouth close to partner anim object node
-int Property CTYPE_SuckingToes	= 13	AutoReadOnly	; Position mouth close to partner toes
+int Property CTYPE_ANY				= -1 	AutoReadOnly
+int Property CTYPE_Vaginal			= 1 	AutoReadOnly	; Position is being penetrated by partner
+int Property CTYPE_Anal				= 2 	AutoReadOnly	; Position is being penetrated by partner
+int Property CTYPE_Oral				= 3 	AutoReadOnly	; Position is licking/sucking partner
+int Property CTYPE_Grinding			= 4 	AutoReadOnly	; Position is being grinded against by partner (crotch area)
+int Property CTYPE_Deepthroat		= 5 	AutoReadOnly	; Implies Oral, partner's penis close to/at maximum depth
+int Property CTYPE_Skullfuck		= 6 	AutoReadOnly	; Positions head penetrated in an unexpected way by partner (Usually gore)
+int Property CTYPE_LickingShaft		= 7 	AutoReadOnly	; Position licking partners shaft
+int Property CTYPE_FootJob			= 8 	AutoReadOnly	; Position pleasuring partner using at least one foot
+int Property CTYPE_HandJob			= 9 	AutoReadOnly	; Position pleasuring partner using at least one hand
+int Property CTYPE_Kissing			= 10 	AutoReadOnly	; Position kissing partner
+int Property CTYPE_Facial			= 11 	AutoReadOnly	; Positions face in front of partner penis
+int Property CTYPE_AnimObjFace		= 12 	AutoReadOnly	; Position mouth close to partner anim object node
+int Property CTYPE_SuckingToes		= 13	AutoReadOnly	; Position mouth close to partner toes
 
 ; If collision related data is currently available or not
 bool Function IsInteractionRegistered()
@@ -175,20 +175,115 @@ EndFunction
 Actor[] Function GetPartnersByTypeRev(Actor akPartner, int aiType)
 EndFunction
 
-; Returns a string containing detected CTYPEs, separated by ","
-; String CTYPEs can start with various prefixes, such as
-; a: active (akPosition is giving/doing CTYPE), e.g. aAnimObjFace
-; p: passive (akPosition is receiving/taking CTYPE) e.g. pHandJob
-string Function GetInteractionString(Actor akPosition)
-EndFunction
-
 ; Return the velocity of the specified interaction type
 ; Velocity may be positive or negative, depending on the direction of movement
 float Function GetVelocity(Actor akPosition, Actor akPartner, int aiType)
 EndFunction
 
 ; ------------------------------------------------------- ;
-; --- Time Data			                                  --- ;
+; --- Interactions Info                               --- ;
+; ------------------------------------------------------- ;
+;/
+	Detailed interpretations of an actor's interactions during scene at any given moment.
+	These detections rely upon collision type-guessing and optionally upon position tags as fallback.
+/;
+
+;--> actor is getting non-penile stimulation
+int Property pStimulation			= 0  AutoReadOnly Hidden	;pos_crotch is being fingered, fisted, or toys_inserted
+int Property aAnimObjFace			= 1  AutoReadOnly Hidden	;pos_anim_obj is in front of partner's face
+int Property pAnimObjFace			= 2  AutoReadOnly Hidden	;pos_face is in front of partner's anim_obj
+;--> actor's body is receiving/doing something
+int Property pSuckingToes			= 3  AutoReadOnly Hidden	;pos_toes are closer to partner's mouth
+int Property pGrinding				= 4  AutoReadOnly Hidden	;pos_body is being grinded against by partner's crotch
+int Property pSkullfuck				= 5  AutoReadOnly Hidden	;pos_head is being penetrated by partner's pp
+int Property aHandJob				= 6  AutoReadOnly Hidden	;pos_hand is moving around partner's pp
+int Property aFootJob				= 7  AutoReadOnly Hidden	;pos_foot is moving around partner's pp
+int Property aBoobJob				= 8  AutoReadOnly Hidden	;pos_boob is moving around partner's pp
+;--> actor's mouth is doing something
+int Property bKissing				= 9  AutoReadOnly Hidden	;pos_face is in front of partner's face
+int Property aSuckingToes			= 10  AutoReadOnly Hidden	;pos_face is in front of partner's toes
+int Property pFacial				= 11  AutoReadOnly Hidden	;pos_face is in front of partner's pp
+int Property aOral					= 12  AutoReadOnly Hidden	;pos_mouth is licking/sucking partner's crotch
+int Property aLickingShaft			= 13  AutoReadOnly Hidden	;pos_mouth is licking shaft of partner's pp
+int Property aDeepthroat			= 14  AutoReadOnly Hidden	;pos_mouth is deep-throating partner's pp
+;--> actor is getting penile penetration
+int Property pVaginal				= 15  AutoReadOnly Hidden	;pos_vag is being penetrated by partner's pp
+int Property pAnal					= 16  AutoReadOnly Hidden	;pos_anus is being penetrated by partner's pp
+;--> actor's pp is doing something
+int Property aFacial				= 17  AutoReadOnly Hidden	;pos_pp is in front of partner's face
+int Property aGrinding				= 18  AutoReadOnly Hidden	;pos_crotch is grinding against partner's body
+int Property pHandJob				= 19  AutoReadOnly Hidden	;pos_pp is being pleasured by partner's hands
+int Property pFootJob				= 20  AutoReadOnly Hidden	;pos_pp is being pleasured by partner's feet
+int Property pBoobJob				= 21  AutoReadOnly Hidden	;pos_pp is being pleasured by partner's boobs
+int Property pLickingShaft			= 22  AutoReadOnly Hidden	;pos_pp's shaft is being licked by partner's tongue
+int Property pOral					= 23  AutoReadOnly Hidden	;pos_crotch is being licked/sucked by partner's mouth
+int Property pDeepthroat			= 24  AutoReadOnly Hidden	;pos_pp is deep inside partner's mouth
+int Property aSkullfuck				= 25  AutoReadOnly Hidden	;pos_pp is penetrating partner's head
+int Property aVaginal				= 26  AutoReadOnly Hidden	;pos_pp is penetrating partner's vagina
+int Property aAnal					= 27  AutoReadOnly Hidden	;pos_pp is penetrating partner's anus
+
+int Property SUPPORTED_INTER_COUNT	= 28  AutoReadOnly Hidden
+
+; Returns an array of 28 bools listed in order mentioned above for specified actor.
+; Only those idx-es in the array will be TRUE in which the actor is engaged.
+; Flags are updated with OnUpdate() in Alias for enjoyment; safe for frequent calls.
+; Example Use: You need to detect if a female is engaged in double penetration
+;		SexLabThread _Thread = SexLab.GetThreadByActor(akPosition)
+;		bool[] interFlags = _Thread.GetCurrentInteractionFlags(akPosition)
+;	 	If (interFlags[15] && interFlags[16]) // 15:pVaginal, 16:pAnal
+;			// DO_SOMETHING
+; Tip: You can rely on _Thread.pVaginal for the idx as well:
+;		If (interFlags[_Thread.pVaginal] && interFlags[_Thread.pAnal])
+;			// DO_SOMETHING
+bool[] Function GetCurrentInteractionFlags(Actor akPosition)
+EndFunction
+
+; Checks if the given InterType (range: 0 to 27) is detected for the specified actor.
+; Example Use: You need to detect if an actor is currently receiving oral
+;		If (_Thread.HasCurrentInteractionFlag(akPosition, _Thread.pOral)
+;			// DO_SOMETHING
+; Example Use: You need to detect if an actor is either giving or receiving footjob
+;		int[] typesFJ = new int[2]
+;		typesFJ[0] = _Thread.aFootJob
+;		typesFJ[1] = _Thread.pFootJob
+;		If (_Thread.HasCurrentInteractionFlagsAny(akPosition, typesFJ)
+;			// DO_SOMETHING
+bool Function HasCurrentInteractionFlag(Actor akPosition, int InterType)
+EndFunction
+bool Function HasCurrentInteractionFlagsAll(Actor akPosition, int[] InterTypes)
+EndFunction
+bool Function HasCurrentInteractionFlagsAny(Actor akPosition, int[] InterTypes)
+EndFunction
+
+; Returns a comma separated string (or a string array) containing detected InterTypes
+; These are created upon request, so calling them is not as efficient as the bool[] approach
+; Example Use: You need a human readable list of detected interactions for debug purposes
+;		MiscUtil.PrintConsole(GetCurrentInteractionString(akPosition))
+; Example Use: You need to find detected interactions using strings instead of bools
+;		string[] interStr = GetCurrentInteractionStringA(akPosition)
+;		If interStr.Find("aOral") 
+;			/ DO_SOMETHING
+string Function GetCurrentInteractionString(Actor akPosition)
+EndFunction
+string[] Function GetCurrentInteractionStringA(Actor akPosition)
+EndFunction
+
+; ------------------------------------------------------- ;
+; --- Specific Detections                             --- ;
+; ------------------------------------------------------- ;
+;/
+	Superior alternatives to tag-based detectors
+/;
+
+bool Function IsVaginalComplex(Actor akPosition)
+EndFunction
+bool Function IsAnalComplex(Actor akPosition)
+EndFunction
+bool Function IsOralComplex(Actor akPosition)
+EndFunction
+
+; ------------------------------------------------------- ;
+; --- Time Data                                       --- ;
 ; ------------------------------------------------------- ;
 ;/
 	Time related data

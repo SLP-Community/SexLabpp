@@ -800,54 +800,85 @@ EndFunction
 
 Function EnjoymentSettings()
 	SetCursorFillMode(TOP_TO_BOTTOM)
-	
+	bool enj_flag = !Config.InternalEnjoymentEnabled
+	int enj_header = DoDisable(enj_flag)
+	bool game_flag = !Config.GameEnabled || !Config.InternalEnjoymentEnabled
+	int game_header = DoDisable(game_flag)
+
 	AddHeaderOption("Primary Settings")
-	AddStateOptionBool("bInternalEnjoymentEnabled", "$SSL_bInternalEnjoymentEnabled")
-	AddStateOptionSlider("iInterDetectionStrength", "$SSL_iInterDetectionStrength", 4, 1, 4, 1, "{0}")
-	AddStateOptionSlider("fEnjRaiseMultInter", "$SSL_fEnjRaiseMultInter", 1.2, 0, 3, 0.1, "{1}")
+	AddToggleOptionST("InternalEnjoymentEnabled", "$SSL_bInternalEnjoymentEnabled", Config.InternalEnjoymentEnabled)
 
-	AddHeaderOption("Game Toggles")
-	AddStateOptionBool("bGameEnabled", "$SSL_bGameEnabled")
-	AddStateOptionBool("bGamePlayerAutoplay", "$SSL_bGamePlayerAutoplay")
-	AddStateOptionBool("bGamePlayerVictimAutoplay", "$SSL_bGamePlayerVictimAutoplay")
-	AddStateOptionBool("bGameNPCAutoplay", "$SSL_bGameNPCAutoplay")
-	AddStateOptionBool("bGameEnjReductionChance", "$SSL_bGameEnjReductionChance")
-	AddStateOptionBool("bGameHoldbackWithPartner", "$SSL_bGameHoldbackWithPartner")
+	AddHeaderOption("General Configs", enj_header)
+	AddStateOptionBool("bFallbackToTagsForDetection", "$SSL_bFallbackToTagsForDetection", enj_flag)
+	AddStateOptionBool("bNoStaminaEndsScene", "$SSL_bNoStaminaEndsScene", enj_flag)
+	AddStateOptionBool("bMaleOrgasmEndsScene", "$SSL_bMaleOrgasmEndsScene", enj_flag)
+	AddStateOptionBool("bDomMustOrgasm", "$SSL_bDomMustOrgasm", enj_flag)
+	AddStateOptionBool("bPlayerMustOrgasm", "$SSL_bPlayerMustOrgasm", enj_flag)
+	AddStateOptionBool("bHighEnjOrgasmWait", "$SSL_bHighEnjOrgasmWait", enj_flag)
+	AddStateOptionSlider("iMaxNoPainOrgasmMale", "$SSL_iMaxNoPainOrgasmMale", 1, 1, 4, 1, "{0}", enj_flag)
+	AddStateOptionSlider("iMaxNoPainOrgasmFemale", "$SSL_iMaxNoPainOrgasmFemale", 2, 1, 5, 1, "{0}", enj_flag)
+	AddStateOptionSlider("iNoPainRequiredTime", "$SSL_iNoPainRequiredTime", 50, 0, 180, 10, "{0}", enj_flag)
+	AddStateOptionSlider("iNoPainRequiredXP", "$SSL_iNoPainRequiredXP", 50, 0, 100, 5, "{0}", enj_flag)
 
-	AddHeaderOption("Game Hotkeys")
-	AddStateOptionKey("iGameUtilityKey", "$SSL_iGameUtilityKey")
-	AddStateOptionKey("iGamePauseKey", "$SSL_iGamePauseKey")
-	AddStateOptionKey("iGameRaiseEnjKey", "$SSL_iGameRaiseEnjKey")
-	AddStateOptionKey("iGameHoldbackKey", "$SSL_iGameHoldbackKey")
-	AddStateOptionKey("iGameSelectNextPos", "$SSL_iGameSelectNextPos")
+	AddHeaderOption("Rate Multipliers", enj_header)
+	AddStateOptionSlider("fEnjRaiseMultInter", "$SSL_fEnjRaiseMultInter", 1.2, 0, 3, 0.1, "{1}", enj_flag)
+	AddStateOptionSlider("fEnjMultVictim", "$SSL_fEnjMultVictim", 0.8, 0, 2, 0.1, "{1}", enj_flag)
+	AddStateOptionSlider("fEnjMultSub", "$SSL_fEnjMultSub", 0.8, 0, 2, 0.1, "{1}", enj_flag)
 
-	AddHeaderOption("Game Modifiers")
-	AddStateOptionSlider("iEnjGameStaminaCost", "$SSL_iEnjGameStaminaCost", 10, 0, 50, 1, "{0}")
-	AddStateOptionSlider("iEnjGameMagickaCost", "$SSL_iEnjGameMagickaCost", 10, 0, 50, 1, "{0}")
 	SetCursorPosition(1)
 	AddEmptyOption()
-	AddStateOptionSlider("iEdgingRewardType", "$SSL_iEdgingRewardType", 0, 0, 3, 1, "{0}")
-	AddStateOptionSlider("iEdgeSpamPunishType", "$SSL_iEdgeSpamPunishType", 0, 0, 3, 1, "{0}")
+	AddToggleOptionST("GameEnabled", "$SSL_bGameEnabled", Config.GameEnabled, enj_header)
 
-	AddHeaderOption("General Configs")
-	AddStateOptionSlider("iEnjGainOnStageSkip", "$SSL_iEnjGainOnStageSkip", 15, 0, 30, 1, "{0}")
-	AddStateOptionBool("bNoStaminaEndsScene", "$SSL_bNoStaminaEndsScene")
-	AddStateOptionBool("bMaleOrgasmEndsScene", "$SSL_bMaleOrgasmEndsScene")
-	AddStateOptionBool("bDomMustOrgasm", "$SSL_bDomMustOrgasm")
-	AddStateOptionBool("bPlayerMustOrgasm", "$SSL_bPlayerMustOrgasm")
-	AddStateOptionBool("bHighEnjOrgasmWait", "$SSL_bHighEnjOrgasmWait")
-	AddStateOptionSlider("iMaxNoPainOrgasmMale", "$SSL_iMaxNoPainOrgasmMale", 1, 1, 4, 1, "{0}")
-	AddStateOptionSlider("iMaxNoPainOrgasmFemale", "$SSL_iMaxNoPainOrgasmFemale", 2, 1, 5, 1, "{0}")
-	AddStateOptionSlider("iNoPainRequiredTime", "$SSL_iNoPainRequiredTime", 50, 0, 180, 10, "{0}")
-	AddStateOptionSlider("iNoPainRequiredXP", "$SSL_iNoPainRequiredXP", 50, 0, 100, 5, "{0}")
+	AddHeaderOption("Game Configs", game_header)
+	AddStateOptionSlider("iEnjGameStaminaCost", "$SSL_iEnjGameStaminaCost", 10, 0, 50, 1, "{0}", game_flag)
+	AddStateOptionSlider("iEnjGameMagickaCost", "$SSL_iEnjGameMagickaCost", 10, 0, 50, 1, "{0}", game_flag)
+	AddStateOptionBool("bGameRequiredOnHighEnj", "$SSL_bGameRequiredOnHighEnj", game_flag)
+	AddStateOptionBool("bGameSpamDelayPenalty", "$SSL_bGameSpamDelayPenalty", game_flag)
 
-	AddHeaderOption("Misc Multipliers")
-	AddStateOptionSlider("fEnjMultVictim", "$SSL_fEnjMultVictim", 0.8, 0, 2, 0.1, "{1}")
-	AddStateOptionSlider("fEnjMultAggressor", "$SSL_fEnjMultAggressor", 1.2, 0, 2, 0.1, "{1}")
-	AddStateOptionSlider("fEnjMultSub", "$SSL_fEnjMultSub", 0.8, 0, 2, 0.1, "{1}")
-	AddStateOptionSlider("fEnjMultDom", "$SSL_fEnjMultDom", 1.2, 0, 2, 0.1, "{1}")
-	AddStateOptionSlider("fPainHugePPMult", "$SSL_fPainHugePPMult", 0.5, 0, 2, 0.1, "{1}")
+	AddHeaderOption("Game Hotkeys", game_header)
+	AddStateOptionKey("iGameUtilityKey", "$SSL_iGameUtilityKey", true, true, abDisable=game_flag)
+	AddStateOptionKey("iGamePauseKey", "$SSL_iGamePauseKey", true, true, abDisable=game_flag)
+	AddStateOptionKey("iGameRaiseEnjKey", "$SSL_iGameRaiseEnjKey", true, true, abDisable=game_flag)
+	AddStateOptionKey("iGameHoldbackKey", "$SSL_iGameHoldbackKey", true, true, abDisable=game_flag)
+	AddStateOptionKey("iGameSelectNextPos", "$SSL_iGameSelectNextPos", true, true, abDisable=game_flag)
+
+	AddEmptyOption()
+	AddStateOptionSlider("fPainHugePPMult", "$SSL_fPainHugePPMult", 0.5, 0, 2, 0.1, "{1}", enj_flag)
+	AddStateOptionSlider("fEnjMultAggressor", "$SSL_fEnjMultAggressor", 1.2, 0, 2, 0.1, "{1}", enj_flag)
+	AddStateOptionSlider("fEnjMultDom", "$SSL_fEnjMultDom", 1.2, 0, 2, 0.1, "{1}", enj_flag)
 EndFunction
+
+State InternalEnjoymentEnabled
+	Event OnSelectST()
+		Config.InternalEnjoymentEnabled = !Config.InternalEnjoymentEnabled
+		SetToggleOptionValueST(Config.InternalEnjoymentEnabled)
+		ForcePageReset()
+	EndEvent
+	Event OnDefaultST()
+		Config.InternalEnjoymentEnabled = True
+		SetToggleOptionValueST(Config.InternalEnjoymentEnabled)
+		ForcePageReset()
+	EndEvent
+	Event OnHighlightST()
+		SetInfoText("$SSL_bInternalEnjoymentEnabledHighlight")
+	EndEvent
+EndState
+
+State GameEnabled
+	Event OnSelectST()
+		Config.GameEnabled = !Config.GameEnabled
+		SetToggleOptionValueST(Config.GameEnabled)
+		ForcePageReset()
+	EndEvent
+	Event OnDefaultST()
+		Config.GameEnabled = True
+		SetToggleOptionValueST(Config.GameEnabled)
+		ForcePageReset()
+	EndEvent
+	Event OnHighlightST()
+		SetInfoText("$SSL_bGameEnabledHighlight")
+	EndEvent
+EndState
 
 ; ------------------------------------------------------- ;
 ; --- Debug & installation							              --- ;
@@ -971,7 +1002,7 @@ Function AddStateOptionKey(String asOption, String asOptionText, bool abMandator
     If (needsRegister)
         asState = "R_" + asState
     EndIf
-	AddKeyMapOptionST(asState, asOptionText, sslSystemConfig.GetSettingInt(asOption))
+	AddKeyMapOptionST(asState, asOptionText, sslSystemConfig.GetSettingInt(asOption), DoDisable(abDisable))
 EndFunction
 
 Event OnSelectST()
@@ -1448,15 +1479,16 @@ function PlayerHotkeys()
 	AddHeaderOption("$SSL_SceneManipulation")
 	AddEmptyOption()
 	AddStateOptionKey("iKeyUp", "$SSL_iKeyUp", true, true)
-	AddStateOptionKey("iKeyExtra2", "$SSL_iKeyExtra2", true, true)
+	AddStateOptionKey("iKeyExtra2", "$SSL_iKeyExtra2", true, true) ;open SL menu
 	AddStateOptionKey("iKeyDown", "$SSL_iKeyDown", true, true)
-	AddStateOptionKey("iKeyMod", "$SSL_iKeyMod", true, true)
+	AddStateOptionKey("iKeyMod", "$SSL_iKeyMod", true, true) ;modifier
 	AddStateOptionKey("iKeyLeft", "$SSL_iKeyLeft", true, true)
-	AddStateOptionKey("iKeyReset", "$SSL_iKeyReset", true, true)
+	AddStateOptionKey("iKeyReset", "$SSL_iKeyReset", true, true) ;inverse action
 	AddStateOptionKey("iKeyRight", "$SSL_iKeyRight", true, true)
-	AddStateOptionKey("iKeyEnd", "$SSL_iKeyEnd", true, true)
+	AddStateOptionKey("iMoveScene", "$SSL_iMoveScene", true, true)
 	AddStateOptionKey("iKeyAdvance", "$SSL_iKeyAdvance", true, true)
-	;AddStateOptionKey("iChangeAnimation", "$SSL_iChangeAnimation", true, true)
+	AddStateOptionKey("iChangeAnimation", "$SSL_iChangeAnimation", true, true)
+	AddStateOptionKey("iKeyEnd", "$SSL_iKeyEnd", true, true)
 endFunction
 
 State ForceRegisterVoices

@@ -55,14 +55,29 @@ String Function _GetName()
 EndFunction
 
 String[] Function _GetTags()
-	return SexLabRegistry.GetSceneTags(Registry)
+	return PapyrusUtil.MergeStringArray(SexLabRegistry.GetSceneTags(Registry), SexLabRegistry.GetSceneAnnotations(Registry))
 EndFunction
 Function _SetTags(String[] asSet)
+	int i = 0
+	While(i < asSet.Length)
+		AddTag(asSet[i])
+		i += 1
+	EndWhile
 EndFunction
 bool function AddTag(string Tag)
+	string[] Tags = _GetTags()
+	if (Tag != "" && !Tags.Length || Tags.Find(Tag) == -1)
+		SexLabRegistry.AddSceneAnnotation(Registry, Tag)
+		return true
+	endIf
 	return false
 endFunction
 bool function RemoveTag(string Tag)
+	string[] Tags = _GetTags()
+	if (Tag != "" && !Tags.Length || Tags.Find(Tag) != -1)
+		SexLabRegistry.RemoveSceneAnnotation(Registry, Tag)
+		return true
+	endIf
 	return false
 endFunction
 

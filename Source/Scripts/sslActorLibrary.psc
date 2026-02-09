@@ -259,7 +259,6 @@ EndFunction
 ; ----------------------------------------------------------------------------- ;
 ; *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-* ;
 
-bool Function HasVehicle(Actor akActor) native global
 Form[] Function UnequipSlots(Actor akActor, int aiSlots) native global
 
 String Function PickRandomFxSet(int asType) native global
@@ -436,6 +435,8 @@ EndFunction
 ;               ╚══════╝╚══════╝ ╚═════╝ ╚═╝  ╚═╝ ╚═════╝   ╚═╝                 ;
 ; ----------------------------------------------------------------------------- ;
 ; *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-* ;
+
+bool Function HasVehicle(Actor akActor) native global
 
 Faction property AnimatingFaction hidden
 	Faction Function Get()
