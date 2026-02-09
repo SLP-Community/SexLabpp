@@ -199,22 +199,36 @@ namespace Thread::NiNode::NiMath
 			+ K * std::sinf(step)
 			+ (K * K) * (1.0f - std::cosf(step));
 	}
-
+	
+	float GetAngle(const RE::NiPoint3& v1, const RE::NiPoint3& v2)
+	{
+		return std::acosf(GetAngleCos(v1, v2));
+	}
+	
 	float GetAngleCos(const RE::NiPoint3& v1, const RE::NiPoint3& v2)
 	{
 		const auto dot = v1.Dot(v2);
 		const auto l = v1.Length() * v2.Length();
 		return std::clamp(dot / l, -1.0f, 1.0f);
 	}
-	
-	float GetAngle(const RE::NiPoint3& v1, const RE::NiPoint3& v2)
-	{
-		return std::acosf(GetAngleCos(v1, v2));
-	}
 
 	float GetAngleDegree(const RE::NiPoint3& v1, const RE::NiPoint3& v2)
 	{
 		return RE::rad_to_deg(GetAngle(v1, v2));
+	}
+
+	void EnsureParallelDirection(RE::NiPoint3& v, const RE::NiPoint3& reference)
+	{
+		if (v.Dot(reference) < 0.0f) {
+			v = -v;
+		}
+	}
+
+	void EnsureAntiParallelDirection(RE::NiPoint3& v, const RE::NiPoint3& reference)
+	{
+		if (v.Dot(reference) > 0.0f) {
+			v = -v;
+		}
 	}
 
 	float GetAngleXY(const RE::NiMatrix3& rot)

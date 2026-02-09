@@ -39,6 +39,13 @@ namespace Thread::NiNode::NiMath
 	float GetAngleCos(const RE::NiPoint3& v1, const RE::NiPoint3& v2);
 	float GetAngleDegree(const RE::NiPoint3& v1, const RE::NiPoint3& v2);
 
+	/// @brief Ensure v is pointing in the same general direction as reference; if not, reverse v
+	/// @param v The vector to potentially reverse
+	/// @param reference The reference vector to compare against
+	/// @return v, potentially reversed to point in the same general direction as reference
+	void EnsureParallelDirection(RE::NiPoint3& v, const RE::NiPoint3& reference);
+	void EnsureAntiParallelDirection(RE::NiPoint3& v, const RE::NiPoint3& reference);
+
 	/// @brief Get the angle when projecting the matrix onto a specific plane
 	/// @param rot The rotation matrix to extract the angle from
 	/// @return The rotation when viewed from the specified plane
