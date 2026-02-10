@@ -92,7 +92,7 @@ option_end()
 
 -- Dependencies & Includes
 -- https://github.com/xmake-io/xmake-repo/tree/dev
-add_requires("yaml-cpp", "magic_enum", "nlohmann_json", "simpleini", "glm", "eigen")
+add_requires("yaml-cpp", "magic_enum", "nlohmann_json", "simpleini", "glm")
 
 -- policies
 set_policy("package.requires_lock", true)
@@ -151,7 +151,7 @@ add_rules("common")
 target(PROJECT_NAME)
     set_enabled(get_config("build_dll"))
     -- Dependencies
-    add_packages("yaml-cpp", "magic_enum", "nlohmann_json", "simpleini", "glm", "eigen")
+    add_packages("yaml-cpp", "magic_enum", "nlohmann_json", "simpleini", "glm")
 
     -- CommonLibSSE
     add_deps("commonlibsse-ng")

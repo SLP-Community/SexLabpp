@@ -105,6 +105,12 @@ namespace Papyrus::SexLabUtil
 		return "";
 	}
 
+	bool IsGodModeEnabled(RE::StaticFunctionTag*)
+	{
+		const auto player = RE::PlayerCharacter::GetSingleton();
+		return player->IsGodMode();
+	}
+
 	inline bool Register(VM* a_vm)
 	{
 		REGISTERFUNC(HasKeywordSub, "SexLabUtil", true);
@@ -117,6 +123,7 @@ namespace Papyrus::SexLabUtil
 		REGISTERFUNC(MakeActorArray, "SexLabUtil", true);
 		REGISTERFUNC(GetCurrentGameRealTime, "SexLabUtil", true);
 		REGISTERFUNC(GetTranslation, "SexLabUtil", true);
+		REGISTERFUNC(IsGodModeEnabled, "SexLabUtil", true);
 
 		return true;
 	}

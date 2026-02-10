@@ -11,6 +11,7 @@
 #include "sslObject/sslVoiceSlots.h"
 #include "sslSystemConfig.h"
 #include "sslThreadModel.h"
+#include "sslConsoleCommand.h"
 
 namespace Papyrus
 {
@@ -32,6 +33,7 @@ namespace Papyrus
 		papyrus->Register(Papyrus::ThreadLibrary::Register);
 		papyrus->Register(Papyrus::ThreadModel::Register);
 		papyrus->Register(Papyrus::VoiceSlots::Register);
+		papyrus->Register(Papyrus::ConsoleCommand::Register);
 
 		return true;
 	}
