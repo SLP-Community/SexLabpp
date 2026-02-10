@@ -4,20 +4,20 @@
 
 namespace Thread::NiNode::Node
 {
-	static constexpr std::string_view HEAD{ "NPC Head [Head]"sv };				 // Back of throat
-	static constexpr std::string_view PELVIS{ "NPC Pelvis [Pelv]"sv };		 // bottom mid (front)
-	static constexpr std::string_view SPINELOWER{ "NPC Spine [Spn0]"sv };	 // bottom mid (back)
+	static constexpr std::string_view HEAD{ "NPC Head [Head]"sv };		   // Back of throat
+	static constexpr std::string_view PELVIS{ "NPC Pelvis [Pelv]"sv };	   // bottom mid (front)
+	static constexpr std::string_view SPINELOWER{ "NPC Spine [Spn0]"sv };  // bottom mid (back)
 
-	static constexpr std::string_view HANDLEFT{ "NPC L Hand [LHnd]"sv };	// Base hand
+	static constexpr std::string_view HANDLEFT{ "NPC L Hand [LHnd]"sv };  // Base hand
 	static constexpr std::string_view HANDRIGHT{ "NPC R Hand [RHnd]"sv };
 	static constexpr std::string_view HANDLEFTREF{ "SHIELD"sv };
 	static constexpr std::string_view HANDRIGHTREF{ "WEAPON"sv };
 	static constexpr std::string_view FINGERLEFT{ "NPC L Finger20 [LF20]"sv };	// Base of the middle finger
 	static constexpr std::string_view FINGERRIGHT{ "NPC R Finger20 [RF20]"sv };
-	static constexpr std::string_view THUMBLEFT{ "NPC L Finger02 [LF02]"sv };	// Thumb
+	static constexpr std::string_view THUMBLEFT{ "NPC L Finger02 [LF02]"sv };  // Thumb
 	static constexpr std::string_view THUMBRIGHT{ "NPC R Finger02 [RF02]"sv };
 
-	static constexpr std::string_view FOOTLEFT{ "NPC L Foot [Lft ]"sv };	// Ankle
+	static constexpr std::string_view FOOTLEFT{ "NPC L Foot [Lft ]"sv };  // Ankle
 	static constexpr std::string_view FOOTRIGHT{ "NPC R Foot [Rft ]"sv };
 	static constexpr std::string_view TOELEFT{ "NPC L Toe0 [LToe]"sv };	 // base of middle toe
 	static constexpr std::string_view TOERIGHT{ "NPC R Toe0 [RToe]"sv };
@@ -38,9 +38,9 @@ namespace Thread::NiNode::Node
 	struct SchlongInfo
 	{
 		constexpr SchlongInfo(std::string_view a_base, std::string_view a_mid, std::string_view a_tip) :
-			base(a_base), mid(a_mid), tip(a_tip), rot(glm::mat3(1.0f)) {}
+		  base(a_base), mid(a_mid), tip(a_tip), rot(glm::mat3(1.0f)) {}
 		constexpr SchlongInfo(std::string_view a_base, glm::mat3 a_rotation) :
-			base(a_base), mid(""), tip(""), rot(a_rotation) {}
+		  base(a_base), mid(""), tip(""), rot(a_rotation) {}
 
 		std::string_view base, mid, tip;
 		glm::mat3 rot;
@@ -92,13 +92,13 @@ namespace Thread::NiNode::Node
 		struct FakeSchlong : public Schlong
 		{
 			FakeSchlong(const NodeData& a_ownerNodes) :
-				ownerNodes(a_ownerNodes) {}
+			  ownerNodes(a_ownerNodes) {}
 			~FakeSchlong() = default;
 
 			virtual NiMath::Segment GetReferenceSegment() const override;
 			virtual RE::NiPointer<RE::NiNode> GetBaseReferenceNode() const override;
 
-		private:
+		  private:
 			const NodeData& ownerNodes;
 
 			RE::NiPoint3 ApproximateTip() const;
@@ -115,15 +115,15 @@ namespace Thread::NiNode::Node
 			virtual NiMath::Segment GetReferenceSegment() const override;
 			virtual RE::NiPointer<RE::NiNode> GetBaseReferenceNode() const override;
 
-		private:
+		  private:
 			std::vector<RE::NiPointer<RE::NiNode>> nodes{};
 			RE::NiMatrix3 rot;
 
-		public:
+		  public:
 			bool operator==(const SchlongData& a_rhs) const { return this->nodes.size() == a_rhs.nodes.size() && this->nodes.front() == a_rhs.nodes.front(); }
 		};
 
-	public:
+	  public:
 		NodeData(RE::Actor* a_actor, bool a_forceSchlong);
 		~NodeData() = default;
 
@@ -155,7 +155,7 @@ namespace Thread::NiNode::Node
 		RE::NiPointer<RE::NiNode> animobj_l;
 		RE::NiPointer<RE::NiNode> animobj_r;
 
-	public:
+	  public:
 		std::optional<NiMath::Segment> GetVaginalSegment() const;
 		std::optional<NiMath::Segment> GetAnalSegment() const;
 		std::optional<RE::NiPoint3> GetToeVectorLeft() const;
