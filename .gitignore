@@ -4,7 +4,7 @@
 *.code-workspace
 build/
 /vcpkg_installed
-scripts/out/
+scripts/**/out/
 .xmake
 vsxmake2022
 CppProperties.json
@@ -20,6 +20,9 @@ meta.ini
 *.dll
 *.pdb
 *.pex
+
+__pycache__/
+.venv
 
 .env*
 !.env.example
