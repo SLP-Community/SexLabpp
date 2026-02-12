@@ -12,7 +12,7 @@ NI_TYPE(LickingShaft, Head)
 // NI_TYPE(FootJob, Footjob)
 // NI_TYPE(HandJob, Handjob)
 
-NI_TYPE(Kissing, Kissing)
+NI_TYPE(Kissing, KissingCl)
 // NI_TYPE(Facial, Head)
 // NI_TYPE(AnimObjFace, Misc)
 // NI_TYPE(FootWorship, FootWorship)

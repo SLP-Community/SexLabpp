@@ -147,7 +147,7 @@ namespace Thread::NiNode
 		if (a == b) {
 			return;
 		}
-		state.interactionClusters[static_cast<size_t>(NiType::Cluster::Kissing)] = EvaluateKissingCluster(mA, mB);
+		state.interactionClusters[static_cast<size_t>(NiType::Cluster::KissingCl)] = EvaluateKissingCluster(mA, mB);
 	}
 
 	void NiInstance::UpdateHysteresis(PairInteractionState&, float)
