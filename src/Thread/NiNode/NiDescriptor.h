@@ -182,7 +182,8 @@ namespace Thread::NiNode
 			}
 			const auto features = magic_enum::enum_entries<Feature>();
 			for (const auto& [feature, name] : features) {
-				const auto value = static_cast<float>(inifile.GetDoubleValue(section.c_str(), name.data(), NaN));
+				const auto lowerName = StringUtil::CastLower(std::string { name });
+				const auto value = static_cast<float>(inifile.GetDoubleValue(section.c_str(), lowerName.c_str(), NaN));
 				if (std::isnan(value)) {
 					const auto err = std::format("Descriptor '{}': Missing value for feature '{}'", section, name);
 					throw std::runtime_error(err);
