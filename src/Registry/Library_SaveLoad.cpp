@@ -14,7 +14,8 @@ namespace Registry
 			std::thread{ [this]() { InitializeScenes(); } },
 			std::thread{ [this]() { InitializeVoice(); } },
 			std::thread{ [this]() { InitializeExpressions(); } },
-			std::thread{ [this]() { InitializeFurnitures(); } }
+			std::thread{ [this]() { InitializeFurnitures(); } },
+			std::thread{ [this]() { InitializeCumFx(); } }
 		};
 		for (auto& thread : threads) {
 			thread.join();
@@ -33,6 +34,8 @@ namespace Registry
 		logger::info("Loaded {} VoiceType-Pitches", savedPitches.size());
 		logger::info("Loaded {} Cached Voices", savedVoices.size());
 		logger::info("Loaded {} Expressions", expressions.size());
+		logger::info("Loaded {} CumFx Textures", std::accumulate(fxList.begin(), fxList.end(), 0ull, 
+			[](auto acc, auto&& it) { return acc + it.size(); }));
 		logger::info("Loaded {} Furnitures", furnitures.size());
 		logger::info("Library loaded in {}ms", ms.count());
 	}
@@ -324,6 +327,77 @@ namespace Registry
 		} catch (const std::exception& e) {
 			logger::error("InitializeVoice: Error while loading cached voices: {}", e.what());
 		}
+	}
+
+	void Library::InitializeCumFx() noexcept
+	{
+		std::unique_lock lock{ _mCumFx };
+		if (!FolderExists(CUM_FX_PATH, true)) return;
+		const auto fxTypes = magic_enum::enum_entries<Registry::Library::FxType>();
+		for (auto&& [value, name] : fxTypes) {
+			logger::info("Initializing FX type: {}", name);
+			const auto path = std::format("{}{}", CUM_FX_PATH, name);
+			if (fs::exists(path) && fs::is_empty(path)) {
+				for (auto& profileEntry : fs::directory_iterator(path)) {
+					if (!profileEntry.is_directory())
+						continue;
+					const auto typeCount = InitializeCumFxType(profileEntry);
+					if (typeCount == 0) {
+						logger::error("Failed to parse profile: {}", profileEntry.path().string());
+						continue;
+					}
+					const auto profileName = profileEntry.path().filename().string();
+					fxList[static_cast<size_t>(value)].emplace_back(RE::BSFixedString(profileName), typeCount);
+					logger::info("Loaded profile: {}", profileName);
+				}
+			}
+			if (fxList[static_cast<size_t>(value)].empty()) {
+				logger::error("No valid FX profiles found for type: {}", name);
+			}
+		}
+	}
+
+	uint8_t Library::InitializeCumFxType(const fs::directory_entry& a_typePath) const noexcept
+	{
+		std::vector<uint8_t> fxFiles;
+		for (const auto& file : fs::directory_iterator(a_typePath.path())) {
+			if (!file.is_regular_file() || file.path().extension() != ".dds") {
+				logger::warn("Invalid file type: {}. Expected .dds", file.path().string());
+				continue;
+			}
+			std::string fileName = file.path().filename().string();
+			size_t dotPos = fileName.find_last_of('.');
+			std::string numberPart = fileName.substr(0, dotPos);
+			try {
+				size_t number = std::stoul(numberPart);
+				if (number > std::numeric_limits<uint8_t>::max()) {
+					logger::warn("File number {} exceeds maximum value of 255", number);
+					continue;
+				}
+				fxFiles.push_back(static_cast<uint8_t>(number));
+			} catch (const std::exception& e) {
+				logger::warn("Invalid number in file name: {}. Error: {}", numberPart, e.what());
+				continue;
+			}
+		}
+		if (fxFiles.empty()) {
+			logger::error("No valid files found in directory: {}", a_typePath.path().string());
+			return 0;
+		}
+		std::sort(fxFiles.begin(), fxFiles.end());
+		if (fxFiles.front() != 1) {
+			logger::error("First file number is not 1 in directory: {}", a_typePath.path().string());
+			return 0;
+		}
+		uint8_t expectedFileNumber = 1;
+		for (const auto fileNumber : fxFiles) {
+			if (fileNumber != expectedFileNumber) {
+				logger::error("Missing file number {} in directory: {}", expectedFileNumber, a_typePath.path().string());
+				return 0;
+			}
+			++expectedFileNumber;
+		}
+		return static_cast<uint8_t>(fxFiles.size());
 	}
 
 	void Library::Save() const noexcept

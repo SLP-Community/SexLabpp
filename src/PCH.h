@@ -44,7 +44,6 @@ constexpr auto MODELDATAPATH{ "Data\\SKSE\\SexLab\\ModelData" };
 #define USER_CONFIGS(path) CONFIGPATH("UserData\\") path
 #define SCHLONGPATH CONFIGPATH("SchlongsOfSkyrim.yaml")
 #define STRIP_PATH USER_CONFIGS("Stripping.yaml")
-#define CUM_FX_PATH "Data/Textures/SexLab/CumFx/"
 
 #ifdef SKYRIM_SUPPORT_AE
 #define OFFSET(SE, AE) AE

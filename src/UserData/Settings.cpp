@@ -6,6 +6,7 @@ void Settings::Initialize()
 {
 	InitializeYAML();
 	InitializeINI();
+	InitializeData();
 }
 
 template <typename T>

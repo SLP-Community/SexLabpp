@@ -545,7 +545,7 @@ namespace Registry
 		}
 		std::sort(assignments.begin(), assignments.end());
 
-#ifndef NDEBUG
+#ifdef DEBUG
 		logger::info("Scene: {} | Found {} assignments", id, assignments.size());
 		for (auto&& assignment : assignments) {
 			std::string str{};

@@ -7,8 +7,7 @@ struct StringCmp
 
 struct Settings
 {
-	static void Initialize();			 // Pre LoadData
-	static void InitializeData();	 // Post LoadData
+	static void Initialize();
 	static void Save();
 
 	// --- Key Codes
@@ -60,4 +59,5 @@ struct Settings
 private:
 	static void InitializeYAML();
 	static void InitializeINI();
+	static void InitializeData();
 };

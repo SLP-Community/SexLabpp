@@ -510,6 +510,30 @@ namespace Registry
 		w->second.SetEnabled(a_enabled);
 	}
 
+
+RE::BSFixedString Library::PickRandomFxSet(FxType a_type) const
+{
+	const auto typeIdx = static_cast<size_t>(a_type);
+	if (fxList[typeIdx].empty()) {
+		return "";
+	}
+	const auto i = Random::draw<size_t>(0, fxList[typeIdx].size() - 1);
+	return fxList[typeIdx][i].first;
+}
+
+uint8_t Library::GetFxCount(FxType a_type, RE::BSFixedString a_set) const
+{
+	const auto typeIdx = static_cast<size_t>(a_type);
+	const auto it = std::find_if(fxList[typeIdx].begin(), fxList[typeIdx].end(), [&](const auto& pair) {
+		return pair.first == a_set;
+	});
+	if (it != fxList[typeIdx].end()) {
+		return it->second;
+	}
+	logger::error("FX set {} not found", a_set.c_str());
+	return 0;
+}
+
 	const FurnitureDetails* Library::GetFurnitureDetails(const RE::TESObjectREFR* a_ref) const
 	{
 		if (a_ref->Is(RE::FormType::ActorCharacter)) {
