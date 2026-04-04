@@ -126,7 +126,7 @@ namespace Thread
         std::promise<bool> promise;
         auto future = promise.get_future();
         const auto selectionMethod = GetSelectionMethod(furniturePreference);
-        SKSE::GetTaskInterface()->AddUITask([&]() mutable {
+        SKSE::GetTaskInterface()->AddTask([&]() mutable {
             try {
                 if (center.GetRef() && InitializeFixedCenter(centerAct, prioScenes, sceneTypes)) {
                     logger::info("Using fixed center {:X} with offset {}.", center.GetRef()->GetFormID(), center.offset.type.ToString());

@@ -68,6 +68,10 @@ Raycast::RayResult Raycast::hkpCastRay(const glm::vec4& start, const glm::vec4& 
 
 Raycast::RayResult Raycast::hkpCastRay(const glm::vec4& start, const glm::vec4& end, const std::vector<RE::NiAVObject*>& a_filter) noexcept
 {
+    if (((bool (*)(void))Offsets::NotOnGameThread.address())()) {
+        logger::error("hkpCastRay was called on wrong thread, this should never happen and can cause random CTD/freezes");
+    }
+    
     const auto hkpScale = RE::bhkWorld::GetWorldScale();
     const auto dif = end - start;
 

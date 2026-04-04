@@ -4,7 +4,8 @@
 #include "Registry/Util/Scale.h"
 #include "Thread/Interface/SceneMenu.h"
 #include "Util/Script.h"
-
+#include "Registry/Util/RayCast/Offsets.h"
+#include <future>
 namespace Thread
 {
     bool Instance::CreateInstance(RE::TESQuest* a_linkedQst, const std::vector<RE::Actor*> a_submissives, const SceneMapping& a_scenes, FurniturePreference a_furniturePreference)
@@ -215,12 +216,17 @@ namespace Thread
             }
             center.SetReference(a_ref, {});
         } else {
-            const auto inBounds = details->GetClosestCoordinatesInBound(a_ref, center.offset.type.value, center.GetRef());
-            if (inBounds.empty()) {
-                logger::warn("Reference {:X} is not compatible with any scene.", a_ref->GetFormID());
+            if (((bool (*)(void))Offsets::NotOnGameThread.address())()) {
+                logger::error("ReplaceCenterRef called on non-game thread, this should never happen, skipping execution!");
                 return false;
+            } else {
+                const auto inBounds = details->GetClosestCoordinatesInBound(a_ref, center.offset.type.value, center.GetRef());
+                if (inBounds.empty()) {
+                    logger::warn("Reference {:X} is not compatible with any scene.", a_ref->GetFormID());
+                    return false;
+                }
+                center.SetReference(a_ref, inBounds.front());
             }
-            center.SetReference(a_ref, inBounds.front());
         }
         baseCoordinates = center.offset.offset.ApplyReturn(center.GetRef());
         activeScene->furnitureOffset.Apply(baseCoordinates);
