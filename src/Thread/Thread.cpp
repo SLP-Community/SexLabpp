@@ -3,6 +3,7 @@
 #include "Registry/Library.h"
 #include "Registry/Util/Scale.h"
 #include "Thread/Interface/SceneMenu.h"
+#include "Registry/Util/RayCast/Offsets.h"
 #include "Util/Script.h"
 
 namespace Thread
@@ -198,6 +199,9 @@ namespace Thread
 
 	bool Instance::ReplaceCenterRef(RE::TESObjectREFR* a_ref)
 	{
+		if (((bool (*)(void))Offsets::NotOnGameThread.address())()) {
+			logger::error("ReplaceCenterRef is not on valid thread, this should never happen and can cause random CTD/freezes");
+		}
 		assert(a_ref);
 		if (a_ref == center.GetRef() && !a_ref->IsPlayerRef()) {
 			return false;

@@ -3,6 +3,7 @@
 #include "Registry/Util/RayCast.h"
 #include "Registry/Util/RayCast/ObjectBound.h"
 #include "Thread/Interface/SelectionMenu.h"
+#include "Registry/Util/RayCast/Offsets.h"
 #include "Util/World.h"
 #include <future>
 
@@ -123,7 +124,10 @@ namespace Thread
 		std::promise<bool> promise;
 		auto future = promise.get_future();
 		const auto selectionMethod = GetSelectionMethod(furniturePreference);
-		SKSE::GetTaskInterface()->AddUITask([&]() mutable {
+		SKSE::GetTaskInterface()->AddTask([&]() mutable {
+			if (((bool (*)(void))Offsets::NotOnGameThread.address())()) {
+				logger::error("Task is not on valid thread, this should never happen and can cause random CTD/freezes");
+			}
 			try {
 				if (center.GetRef() && InitializeFixedCenter(centerAct, prioScenes, sceneTypes)) {
 					logger::info("Using fixed center {:X} with offset {}.", center.GetRef()->GetFormID(), center.offset.type.ToString());
@@ -172,19 +176,25 @@ namespace Thread
 	bool Instance::InitializeFixedCenter(RE::Actor* centerAct, std::vector<const Registry::Scene*>& prioScenes, REX::EnumSet<Registry::FurnitureType::Value> sceneTypes)
 	{
 		const auto& details = center.details = Registry::Library::GetSingleton()->GetFurnitureDetails(center.GetRef());
-		auto inBounds = details ? details->GetClosestCoordinatesInBound(center.GetRef(), sceneTypes, centerAct) : std::vector<Registry::FurnitureOffset>{};
-		for (auto i = inBounds.begin(); i < inBounds.end(); i++) {
-			if (std::ranges::any_of(prioScenes, [type = i->type](const auto& scene) { return scene->IsCompatibleFurniture(type); })) {
-				center.offset = *i;
+		if (((bool (*)(void))Offsets::NotOnGameThread.address())()) {
+			logger::error("Initialize Fixed Center called on wrong thread, not executing!");
+			return false;
+		} else {
+			auto inBounds = details ? details->GetClosestCoordinatesInBound(center.GetRef(), sceneTypes, centerAct) : std::vector<Registry::FurnitureOffset>{};
+
+			for (auto i = inBounds.begin(); i < inBounds.end(); i++) {
+				if (std::ranges::any_of(prioScenes, [type = i->type](const auto& scene) { return scene->IsCompatibleFurniture(type); })) {
+					center.offset = *i;
+					return true;
+				}
+			}
+			if (std::ranges::any_of(prioScenes, [](const auto& scene) { return scene->IsCompatibleFurniture(Registry::FurnitureType::None); })) {
+				center.offset = { Registry::FurnitureType::None, {} };
 				return true;
 			}
+			logger::warn("Center reference {:X} is not compatible with any scene.", center.GetRef()->GetFormID());
+			return false;
 		}
-		if (std::ranges::any_of(prioScenes, [](const auto& scene) { return scene->IsCompatibleFurniture(Registry::FurnitureType::None); })) {
-			center.offset = { Registry::FurnitureType::None, {} };
-			return true;
-		}
-		logger::warn("Center reference {:X} is not compatible with any scene.", center.GetRef()->GetFormID());
-		return false;
 	}
 
 	Instance::CenterSelection Instance::GetSelectionMethod(FurniturePreference furniturePreference)
