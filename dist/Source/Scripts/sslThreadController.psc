@@ -44,6 +44,7 @@ EndFunction
 
 String[] _MenuEvents
 int _AutoAdvanceCache
+bool _SkipMenuEvents = False
 
 Function EnableMenuEvents()
 	If (!TryOpenSceneMenu())
@@ -76,6 +77,11 @@ Function DisableMenuEvents()
 EndFunction
 
 Event MenuEvent(string asEventName, string asStringArg, float afNumArg, form akSender)
+	If (Utility.IsInMenuMode() || _SkipMenuEvents)
+		return
+	EndIf
+	_SkipMenuEvents = true
+	_SkipHotkeyEvents = true
 	Log("MenuEvent: " + asEventName)
 	If (asEventName == "SL_SetActiveScene")
 		PickRandomScene(asStringArg)
@@ -111,6 +117,8 @@ Event MenuEvent(string asEventName, string asStringArg, float afNumArg, form akS
 	ElseIf (asEventName == "SL_StartAdjustOffset")
 		; TODO: impl
 	EndIf
+	_SkipMenuEvents = false
+	_SkipHotkeyEvents = false
 EndEvent
 
 ; ------------------------------------------------------- ;
@@ -312,6 +320,7 @@ Event OnKeyDown(int aiKey)
 		return
 	EndIf
 	_SkipHotkeyEvents = true
+	_SkipMenuEvents = true
 	bool abModifier = Config.ModifierPressed()
 	bool abAdjustTarget = abModifier
 	If (aiKey == Hotkeys[kChangeAnimation])
@@ -331,6 +340,7 @@ Event OnKeyDown(int aiKey)
 	; Legacy
 	If (Config.UseSceneMenu)
 		_SkipHotkeyEvents = false
+		_SkipMenuEvents = false
 		return
 	EndIf
 	If (aiKey == Hotkeys[kAdvanceAnimation])
@@ -354,6 +364,7 @@ Event OnKeyDown(int aiKey)
 		HandleOffsetAdjustment(asOffsetType, aiKey, abAdjustTarget)
 	EndIf
 	_SkipHotkeyEvents = false
+	_SkipMenuEvents = false
 EndEvent
 
 Function InitLegacyHotkeys()
