@@ -211,7 +211,7 @@ Function SetActorMovement(Actor akActor, int aiMovement) global
 	Else
 		Game.SetPlayerAIDriven(false)
 		If (aiMovement == 1) ;UNLOCK
-			Game.DisablePlayerControls(abMovement=false, abCamSwitch=true, abSneaking=true, abMenu=false)
+			Game.EnablePlayerControls(abFighting=false, abCamSwitch=false, abSneaking=false, abActivate=false)
 		Else ;RELEASE
 			Game.EnablePlayerControls()
 		EndIf
