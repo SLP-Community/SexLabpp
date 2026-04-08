@@ -68,6 +68,7 @@ namespace Papyrus::ThreadModel
 	int SelectNextStage(QUESTARGS, std::vector<RE::BSFixedString> a_tags);
 	bool SetActiveScene(QUESTARGS, RE::BSFixedString a_sceneid);
 	bool ReassignCenter(QUESTARGS, RE::TESObjectREFR* a_centeron);
+	bool SetNextPermutation(QUESTARGS, RE::Actor* a_position);
 	void UpdatePlacement(QUESTARGS, RE::Actor* a_position);
 
 	bool IsCollisionRegistered(QUESTARGS);
@@ -108,6 +109,7 @@ namespace Papyrus::ThreadModel
 		REGISTERFUNC(SetActiveScene, "sslThreadModel", false);
 		REGISTERFUNC(ReassignCenter, "sslThreadModel", false);
 		REGISTERFUNC(UpdatePlacement, "sslThreadModel", false);
+		REGISTERFUNC(SetNextPermutation, "sslThreadModel", false);
 
 		REGISTERFUNC(IsCollisionRegistered, "sslThreadModel", true);
 		REGISTERFUNC(UnregisterCollision, "sslThreadModel", true);

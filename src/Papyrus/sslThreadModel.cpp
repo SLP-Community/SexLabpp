@@ -455,6 +455,12 @@ namespace Papyrus::ThreadModel
 		return instance->ReplaceCenterRef(a_centeron);
 	}
 
+	bool SetNextPermutation(QUESTARGS, RE::Actor* a_position)
+	{
+		GET_INSTANCE(false);
+		return instance->SetNextPermutation(a_position);
+	}
+
 	void UpdatePlacement(QUESTARGS, RE::Actor* a_position)
 	{
 		GET_INSTANCE();

@@ -103,7 +103,7 @@ namespace Thread
 		void SetGhostMode(RE::Actor* a_position, bool a_ghostMode);
 		int32_t GetUniquePermutations(RE::Actor* a_position);
 		int32_t GetCurrentPermutation(RE::Actor* a_position);
-		void SetNextPermutation(RE::Actor* a_position);
+		bool SetNextPermutation(RE::Actor* a_position);
 
 	private:
 		RE::TESQuest* linkedQst;

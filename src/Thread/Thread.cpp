@@ -399,16 +399,16 @@ namespace Thread
 		throw std::runtime_error("Failed to find current permutation for actor.");
 	}
 
-	void Instance::SetNextPermutation(RE::Actor* a_actor)
+	bool Instance::SetNextPermutation(RE::Actor* a_actor)
 	{
 		const auto position = GetPosition(a_actor);
 		if (!position) {
 			logger::error("Actor {} is not part of the current scene.", a_actor->GetFormID());
-			return;
+			return false;
 		}
 		if (position->uniquePermutations < 2) {
 			logger::info("Actor {} has no alternative permutations.", a_actor->GetFormID());
-			return;
+			return false;
 		}
 		auto targetPermutation = GetCurrentPermutation(a_actor) + 1;
 		if (targetPermutation > position->uniquePermutations) {
@@ -419,18 +419,19 @@ namespace Thread
 			const auto idx = std::distance(it->begin(), std::find(it->begin(), it->end(), a_actor));
 			if (idx < 0 || static_cast<size_t>(idx) == it->size()) {
 				logger::warn("Actor {} is not part of the current assignment.", a_actor->GetFormID());
-				return;
+				return false;
 			} else if (!seenPermutations.contains(idx)) {
 				seenPermutations.insert(idx);
 				if (seenPermutations.size() == targetPermutation) {
 					activeAssignment = it;
 					AdvanceScene(activeStage);
 					logger::info("Actor {} changed to permutation {}.", a_actor->GetFormID(), targetPermutation);
-					return;
+					return true;
 				}
 			}
 		}
 		logger::warn("Actor {} has no alternative permutations.", a_actor->GetFormID());
+		return false;
 	}
 
 }	 // namespace Thread

@@ -1485,6 +1485,7 @@ String[] Function AdvanceScene(String[] asHistory, String asNextStageId) native
 int Function SelectNextStage(String[] asThreadTags) native
 bool Function SetActiveScene(String asScene) native
 bool Function ReassignCenter(ObjectReference CenterOn) native
+bool Function SetNextPermutation(Actor akActor) native
 Function UpdatePlacement(Actor akActor) native
 ; Physics/SFX Related
 bool Function IsCollisionRegistered() native
