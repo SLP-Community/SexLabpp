@@ -906,102 +906,21 @@ EndFunction
 ; ----------------------------------------------------------------------------- ;
 ; *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-* ;
 
-;int[] Hotkeys
-;int Property kAdvanceAnimation = 0 AutoReadOnly
-;int Property kChangeAnimation  = 1 AutoReadOnly
-;int Property kChangePositions  = 2 AutoReadOnly
-;int Property kAdjustChange     = 3 AutoReadOnly
-int Property kAdjustForward    = 4 AutoReadOnly
-int Property kAdjustSideways   = 5 AutoReadOnly
-int Property kAdjustUpward     = 6 AutoReadOnly
-;int Property kRealignActors    = 7 AutoReadOnly
-;int Property kRestoreOffsets   = 8 AutoReadOnly
-;int Property kMoveScene        = 9 AutoReadOnly
-int Property kRotateScene      = 10 AutoReadOnly
-;int Property kEndAnimation     = 11 AutoReadOnly
-;int Property kAdjustSchlong    = 12 AutoReadOnly
-;/
-Event OnKeyDown(int KeyCode)
-	If(Utility.IsInMenuMode() || _SkipHotkeyEvents)
-		return
-	EndIf
-	_SkipHotkeyEvents = true
-	int hotkey = Hotkeys.Find(KeyCode)
-	If(hotkey == kAdvanceAnimation)
-		If (Config.BackwardsPressed())
-			AdvanceStage(true)
-		Else
-			AdvanceStage(false)
-		EndIf
-	ElseIf(hotkey == kChangeAnimation)
-		ChangeAnimation(Config.BackwardsPressed())
-	ElseIf(hotkey == kAdjustForward)
-		AdjustForward(Config.BackwardsPressed(), Config.AdjustStagePressed())
-	ElseIf(hotkey == kAdjustUpward)
-		AdjustUpward(Config.BackwardsPressed(), Config.AdjustStagePressed())
-	ElseIf(hotkey == kAdjustSideways)
-		AdjustSideways(Config.BackwardsPressed(), Config.AdjustStagePressed())
-	ElseIf(hotkey == kRotateScene)
-		RotateScene(Config.BackwardsPressed())
-	ElseIf(hotkey == kAdjustSchlong)
-		; AdjustSchlongEx(Config.BackwardsPressed(), Config.AdjustStagePressed())
-	ElseIf(hotkey == kAdjustChange) ; Change Adjusting Position
-		AdjustChange(Config.BackwardsPressed())
-	ElseIf(hotkey == kRealignActors)
-		RealignActors()
-	ElseIf(hotkey == kChangePositions)
-		ChangePositions()
-	ElseIf(hotkey == kRestoreOffsets)
-		RestoreOffsets()
-	ElseIf(hotkey == kMoveScene)
-		MoveScene()
-	ElseIf(hotkey == kEndAnimation)
-		EndAnimation()
-	EndIf
-	_SkipHotkeyEvents = false
-EndEvent
-/;
-
 Function ChangeAnimation(bool backwards = false)
 	return PickRandomScene("")
 EndFunction
 
 Function AdjustCoordinate(bool abBackwards, bool abStageOnly, float afValue, int aiKeyIdx, int aiOffsetType)
-	; aiOffsetType := [X, Y, Z, Rotation]
-	UnregisterForUpdate()
-	String scene_ = GetActiveScene()
-	String stage_ = ""
-	If (!abStageOnly)
-		stage_ = GetActiveStage()
-	EndIf
-	int AdjustPos = GetAdjustPos()
-	bool first_pass = true
-	While(true)
-		PlayHotkeyFX(0, abBackwards)
-		SexLabRegistry.SetStageOffset(scene_, stage_, AdjustPos, afValue, aiOffsetType)
-		; UpdatePlacement(AdjustAlias.GetActorReference())
-		Utility.Wait(0.1)
-		If(!Input.IsKeyPressed(Hotkeys[aiKeyIdx]))
-			UpdateTimer(5)
-			OnUpdate()
-			return
-		ElseIf (first_pass)
-			first_pass = false
-			Utility.Wait(0.4)
-		EndIf
-	EndWhile
+	LogRedundant("AdjustCoordinate")
 EndFunction
 Function AdjustForward(bool backwards = false, bool AdjustStage = false)
-	float value = 0.5 - (backwards as float)
-	AdjustCoordinate(backwards, AdjustStage, value, kAdjustForward, 0)
+	LogRedundant("AdjustForward")
 EndFunction
 Function AdjustSideways(bool backwards = false, bool AdjustStage = false)
-	float value = 0.5 - (backwards as float)
-	AdjustCoordinate(backwards, AdjustStage, value, kAdjustSideways, 1)
+	LogRedundant("AdjustSideways")
 EndFunction
 Function AdjustUpward(bool backwards = false, bool AdjustStage = false)
-	float value = 0.5 - (backwards as float)
-	AdjustCoordinate(backwards, AdjustStage, value, kAdjustUpward, 2)
+	LogRedundant("AdjustUpward")
 EndFunction
 
 Function RotateScene(bool backwards = false)
@@ -1024,7 +943,7 @@ Function RotateScene(bool backwards = false)
 		EndIf
 		CenterOnCoords(coords[0], coords[1], coords[2], 0, 0, coords[5], true)
 		Utility.Wait(0.03)
-		If(!Input.IsKeyPressed(Hotkeys[kRotateScene]))
+		If(!Input.IsKeyPressed(Hotkeys[kDirectionLeft])) ;kRotateScene
 			RegisterForSingleUpdate(0.2)
 			return
 		ElseIf (first_pass)
