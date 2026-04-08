@@ -1389,23 +1389,16 @@ State Animating
 		return ResetAnimation(akNewPositions, akSubmissives, akCenter)
 	EndFunction
 
-	bool Function ResetAnimationQuick(Actor[] akRearranged, String asTagString = "", bool abKeepScenes = false)
+	bool Function ResetAnimationQuick(String asTagString = "")
 		UnregisterForUpdate()
-		If (PapyrusUtil.GetDiffActor(_Positions, akRearranged , true, true).Length > 0)
+		String[] validScenes = SexLabRegistry.LookupScenesA(_Positions, asTagString, GetSubmissives(), _furniStatus, CenterRef)
+		If ((validScenes.Length < 1) || (validScenes[0] == ""))
 			ReStartTimer()
 			return false
 		EndIf
-		_Positions = akRearranged ;Ignored; requires some native SetPositions() or SwapPositions() later
-		If (!abKeepScenes)
-			String[] validScenes = SexLabRegistry.LookupScenesA(akRearranged, asTagString, GetSubmissives(), _furniStatus, CenterRef)
-			If ((validScenes.Length < 1) || (validScenes[0] == ""))
-				ReStartTimer()
-				return false
-			EndIf
-		EndIf
 		_QuickResetScenes = true
 		EndAnimation()
-		return ResetAnimationQuick(akRearranged, asTagString, abKeepScenes)
+		return ResetAnimationQuick(asTagString)
 	EndFunction
 
 	int Function GetStatus()
@@ -1509,30 +1502,31 @@ float Function GetActionVelocity(Actor akPosition, Actor akPartner, int aiType) 
 
 State Ending
 	Event OnBeginState()
-		If (!_QuickResetScenes)
-			Config.DisableThreadControl(self as sslThreadController)
-			SendModEvent("SSL_CLEAR_Thread" + tid, "", 1.0)
-			MoveActorsAwayFromPlayer()
-			UnregisterCollision()
-			If(IsObjectiveDisplayed(0))
-				SetObjectiveDisplayed(0, False)
-			EndIf
-			If (Config.HideHUD)
-				SexLabUtil.HideElementsGameHUD(false)
-			EndIf
-			UpdateAllEncounters()
-			int i = 0
-			While (i < ActorAlias.Length)
-				If (ActorAlias[i].GetState() == ActorAlias[i].STATE_IDLE)
-					i += 1
-				Else
-					Utility.Wait(0.05)
-				EndIf
-			EndWhile
-			SendThreadEvent("AnimationEnding")
-			SendThreadEvent("AnimationEnd")
-			RunHook(Config.HOOKID_END)
+		If (_QuickResetScenes)
+			return
 		EndIf
+		Config.DisableThreadControl(self as sslThreadController)
+		SendModEvent("SSL_CLEAR_Thread" + tid, "", 1.0)
+		MoveActorsAwayFromPlayer()
+		UnregisterCollision()
+		If(IsObjectiveDisplayed(0))
+			SetObjectiveDisplayed(0, False)
+		EndIf
+		If (Config.HideHUD)
+			SexLabUtil.HideElementsGameHUD(false)
+		EndIf
+		UpdateAllEncounters()
+		int i = 0
+		While (i < ActorAlias.Length)
+			If (ActorAlias[i].GetState() == ActorAlias[i].STATE_IDLE)
+				i += 1
+			Else
+				Utility.Wait(0.05)
+			EndIf
+		EndWhile
+		SendThreadEvent("AnimationEnding")
+		SendThreadEvent("AnimationEnd")
+		RunHook(Config.HOOKID_END)
 		; Cant use default OnUpdate() event as the previous state could leak a registration into this one here
 		; any attempt to prevent this leak without artificially slowing down the code have failed
 		; 0.1 gametime = 6ig minutes = 360 ig seconds = 360 / 20 rt seconds = 18 rt seconds with default timescale
@@ -1569,38 +1563,23 @@ State Ending
 		return AddActorsA(akNewPositions, akSubmissives) && StartThread()
 	EndFunction
 
-	bool Function ResetAnimationQuick(Actor[] akRearranged, String asTagString = "", bool abKeepScenes = false)
+	bool Function ResetAnimationQuick(String asTagString = "")
 		UnregisterForUpdateGameTime()
-		String[] validScenes
-		If (!abKeepScenes)
-			validScenes = SexLabRegistry.LookupScenesA(akRearranged, asTagString, GetSubmissives(), _furniStatus, CenterRef)
-		Else
-			string[] asPlayingScenes = GetPlayingScenes()
-			validScenes = SexLabUtil.ShuffleStringArray(asPlayingScenes, GetActiveScene(), asPlayingScenes.Length)
-			validScenes = PapyrusUtil.PushString(validScenes, GetActiveStage())
-		EndIf
+		String[] validScenes = SexLabRegistry.LookupScenesA(_Positions, asTagString, GetSubmissives(), _furniStatus, CenterRef)
 		DestroyInstance()
 		GoToState(STATE_SETUP)
 		SetScenes(validScenes)
 		If (!StartThread())
 			_QuickResetScenes = false
+			GoToState(STATE_END)
 			return false
 		EndIf
 		GoToState(STATE_PLAYING)
-		bool abSceneKept = false
-		If (abKeepScenes)
-			abSceneKept = SetActiveScene(validScenes[0])
-		EndIf
 		_PrimaryScenes = GetPrimaryScenes()
 		_ThreadTags = SexLabRegistry.GetCommonTags(_PrimaryScenes)
 		string activeScene = GetActiveScene()
 		Log("Thread validated, playing animation: " + activeScene + ", " + SexLabRegistry.GetSceneName(activeScene), "StartThread()")
-		string asPlayStage = ""
-		If (abSceneKept)
-			int idxStr = validScenes.Length - 1
-			asPlayStage = validScenes[idxStr]
-		EndIf
-		StartStage(Utility.CreateStringArray(0), asPlayStage)
+		StartStage(Utility.CreateStringArray(0), "")
 		_QuickResetScenes = false
 		return true
 	EndFunction
@@ -1721,7 +1700,7 @@ bool Function ResetAnimation(Actor[] akNewPositions, Actor[] akSubmissives, Obje
 	Log("ResetAnimation(), Function called from invalid state: " + GetState())
 	return false
 EndFunction
-bool Function ResetAnimationQuick(Actor[] akRearranged, String asTagString = "", bool abKeepScenes = false)
+bool Function ResetAnimationQuick(String asTagString = "")
 	Log("ResetAnimationQuick(), Function called from invalid state: " + GetState())
 	return false
 EndFunction

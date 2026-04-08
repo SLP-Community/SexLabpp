@@ -575,7 +575,7 @@ Function SceneSelectorMenu()
 		If (asTypedText == "")
 			return
 		EndIf
-		bool aiNewScenes = ResetAnimationQuick(GetPositions(), asTypedText, false)
+		bool aiNewScenes = ResetAnimationQuick(asTypedText)
 		If (!aiNewScenes)
 			string asNewScene = SexLabRegistry.GetSceneByName(asTypedText)
 			If (asNewScene)
