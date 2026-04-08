@@ -617,6 +617,8 @@ State Paused
 			Utility.Wait(0.5)	; extra async call to ensure erection
 			Debug.SendAnimationEvent(_ActorRef, "SOSBend0")
 		EndIf
+		_HomoTypes = _Thread.CheckActiveHomoTypes()
+		UpdateBaseEnjoymentCalculations()
 	EndEvent
 
 	Function SetStrapon(Form ToStrapon)
@@ -741,8 +743,6 @@ int _VRIKRestoreInTicks
 State Animating
 	Event OnBeginState()
 		RegisterForModEvent("SSL_ORGASM_Thread" + _Thread.tid, "OnOrgasm")
-		_HomoTypes = _Thread.CheckActiveHomoTypes()
-		UpdateBaseEnjoymentCalculations()
 		_LoopLovenseDelay = 0
 		_LovenseGenital = false
 		_LovenseAnal = false
