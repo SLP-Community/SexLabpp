@@ -963,13 +963,13 @@ bool function CheckSystemPart(string CheckSystem)
   elseIf CheckSystem == "PapyrusUtil"
     return PapyrusUtil.GetVersion() >= 36
   elseIf CheckSystem == "RaceMenu"
-		return SKSE.GetPluginVersion("SKEE64") >= 7
+    return (SKSE.GetPluginVersion("skee64") >= 7) || (NiOverride.GetScriptVersion() >= 7)
   elseIf CheckSystem == "MfgFixNG"
-		return SKSE.GetPluginVersion("mfgfix") > -1
+    return SKSE.GetPluginVersion("mfgfix") > -1
   elseIf CheckSystem == "PPA"
-		return SKSE.GetPluginVersion("AccuratePenetration") > -1
+    return SKSE.GetPluginVersion("AccuratePenetration") > -1
   elseIf CheckSystem == "CrossHairRef"
-		return SKSE.GetPluginVersion("CrosshairRefEventsFix") > -1
+    return SKSE.GetPluginVersion("CrosshairRefEventsFix") > -1
   elseIf CheckSystem == "UIExtensions"
     return Game.GetModByName("UIExtensions.esp") != 255
   elseif CheckSystem == "VRIK"
