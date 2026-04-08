@@ -139,6 +139,25 @@ namespace Papyrus::SexLabUtil
 		return arr;
 	}
 
+	static constexpr std::array<std::string_view, 21> HUD_ELEMENTS = {
+		"HUD Menu", "LootMenu", "TrueHUD", "BTPS Menu", "BTPS Ovelay Menu", "oxygenMeter2", "CastingBar", "MiniMapMenu", 
+		"Floating Damage V2", "Durability Menu", "KNNWidgetMeter", "KNNWidgetMeterOp", "lvlWidget", "goldWidget",
+		"gametimeWidget", "shoutWidget", "resistWidget", "playtimeWidget", "weightWidget", "equipWidget_STB", "STBActiveEffects"
+	};
+
+	void HideElementsGameHUD(RE::StaticFunctionTag*, bool a_hide)
+	{
+		SKSE::GetTaskInterface()->AddUITask([a_hide]() {
+			RE::GFxValue alphaValue{ a_hide ? 0.0 : 100.0 };
+			auto ui = RE::UI::GetSingleton();
+			for (const auto& name : HUD_ELEMENTS) {
+				if (auto uiMovie = ui->GetMovieView(name)) {
+					uiMovie->SetVariable("_root._alpha", alphaValue);
+				}
+			}
+		});
+	}
+
 	inline bool Register(VM* a_vm)
 	{
 		REGISTERFUNC(HasKeywordSub, "SexLabUtil", true);
@@ -153,6 +172,7 @@ namespace Papyrus::SexLabUtil
 		REGISTERFUNC(GetTranslation, "SexLabUtil", true);
 		REGISTERFUNC(IsGodModeEnabled, "SexLabUtil", true);
 		REGISTERFUNC(ShuffleStringArray, "SexLabUtil", true);
+		REGISTERFUNC(HideElementsGameHUD, "SexLabUtil", true);
 
 		return true;
 	}

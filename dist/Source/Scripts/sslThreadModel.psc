@@ -929,6 +929,9 @@ State Making_M
 		If (_lockAsyncCount < (_Positions.Length + 1))
 			return
 		EndIf
+		If (Config.HideHUD)
+			SexLabUtil.HideElementsGameHUD(true)
+		EndIf
 		If (!UndressAndStripActors())
 			EndAnimation()
 			return
@@ -1512,6 +1515,9 @@ State Ending
 			UnregisterCollision()
 			If(IsObjectiveDisplayed(0))
 				SetObjectiveDisplayed(0, False)
+			EndIf
+			If (Config.HideHUD)
+				SexLabUtil.HideElementsGameHUD(false)
 			EndIf
 			UpdateAllEncounters()
 			int i = 0

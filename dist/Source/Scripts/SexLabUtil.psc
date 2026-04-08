@@ -86,6 +86,7 @@ float function GetCurrentGameRealTime() global native
 bool Function IsGodModeEnabled() global native
 String Function GetTranslation(String asStr) global native
 String[] Function ShuffleStringArray(String[] asArray, String asSetFirst = "", int aiMaxLen = 128) native global
+Function HideElementsGameHUD(bool abHide = true) native global
 
 String[] Function MergeSplitTags(String asTags, String asTagsSuppress, bool abRequireAll) global
   String[] ret1 = PapyrusUtil.ClearEmpty(PapyrusUtil.StringSplit(asTags, ","))
