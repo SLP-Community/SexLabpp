@@ -728,8 +728,7 @@ Function ToggleThreadControl()
 EndFunction
 
 bool function ModifierPressed()
-  return (Input.GetNumKeysPressed() > 1 && (Input.IsKeyPressed(ModifierKey) \
-    || Input.IsKeyPressed(42) || Input.IsKeyPressed(54))) ; Shift keys
+  return ((Input.IsKeyPressed(ModifierKey) || Input.IsKeyPressed(42) || Input.IsKeyPressed(54))) ; Shift keys
 endFunction
 
 ; ------------------------------------------------------- ;
