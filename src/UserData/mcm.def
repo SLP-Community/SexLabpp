@@ -138,5 +138,6 @@ MCM_SETTING(iGameHoldbackKey, 0x101)       // LMB
 
 MCM_SETTING(iEnjGameStaminaCost, 10)
 MCM_SETTING(iEnjGameMagickaCost, 10)
+MCM_SETTING(iGameEnjAdjAmount, 1)
 MCM_SETTING(bGameRequiredOnHighEnj, false)
 MCM_SETTING(bGameSpamDelayPenalty, false)

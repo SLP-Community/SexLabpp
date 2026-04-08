@@ -460,6 +460,12 @@ $SSL_bSubmissiveTargetHighlight	Filter scenes with target actor in the submissiv
 
 # ------------------ Enjoyment --------------------------------------------------
 $SSL_EnjoymentSettings	Enjoyment Settings
+$SSL_EnjPrimarySettings	Primary Settings
+$SSL_EnjGeneralConfigs	General Configs
+$SSL_EnjGameConfigs	Game Configs
+$SSL_EnjPainConfigs	Pain Configs
+$SSL_EnjGameHotkeys	Game Hotkeys
+$SSL_EnjMiscRateMult	Misc Rate Mult
 
 # ------ Primary Settings
 $SSL_bInternalEnjoymentEnabled	Enable Internal Enjoyment
@@ -508,6 +514,8 @@ $SSL_iEnjGameStaminaCost	Game Stamina Cost
 $SSL_iEnjGameStaminaCostHighlight	The amount of STAMINA to be depleted upon a relevant minigame action.
 $SSL_iEnjGameMagickaCost	Game Magicka Cost
 $SSL_iEnjGameMagickaCostHighlight	The amount of MAGICKA to be depleted upon a relevant minigame action.
+$SSL_iGameEnjAdjAmount	Enjoyment Adjust Amount
+$SSL_iGameEnjAdjAmountHighlight	The amount of enjoyment increased or depleted upon a relevant minigame action.
 $SSL_bGameRequiredOnHighEnj	Require Minigame on High Enj
 $SSL_bGameRequiredOnHighEnjHighlight	Toggles/disables player's enjoyment gain through collision detection when it goes above 80.\nWith this enabled, the player will have to actively rely on the minigame to reach orgasm.
 $SSL_bGameSpamDelayPenalty	Minigame Spam/Delay Penalty

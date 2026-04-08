@@ -483,6 +483,18 @@ $SSL_bSubmissiveTargetHighlight	Filtra escenas donde el actor objetivo está en 
 
 # ------------------ Enjoyment --------------------------------------------------
 $SSL_EnjoymentSettings	Configuración de disfrute
+# TODO: $SSL_EnjPrimarySettings
+$SSL_EnjPrimarySettings	Primary Settings
+# TODO: $SSL_EnjGeneralConfigs
+$SSL_EnjGeneralConfigs	General Configs
+# TODO: $SSL_EnjGameConfigs
+$SSL_EnjGameConfigs	Game Configs
+# TODO: $SSL_EnjPainConfigs
+$SSL_EnjPainConfigs	Pain Configs
+# TODO: $SSL_EnjGameHotkeys
+$SSL_EnjGameHotkeys	Game Hotkeys
+# TODO: $SSL_EnjMiscRateMult
+$SSL_EnjMiscRateMult	Misc Rate Mult
 
 # ------ Primary Settings
 $SSL_bInternalEnjoymentEnabled	Activar sistema de disfrute interno
@@ -531,6 +543,10 @@ $SSL_iEnjGameStaminaCost	Coste de resistencia del minijuego
 $SSL_iEnjGameStaminaCostHighlight	Cantidad de RESISTENCIA que se consume en una acción relevante del minijuego.
 $SSL_iEnjGameMagickaCost	Coste de magia del minijuego
 $SSL_iEnjGameMagickaCostHighlight	Cantidad de MAGIA que se consume en una acción relevante del minijuego.
+# TODO: $SSL_iGameEnjAdjAmount
+$SSL_iGameEnjAdjAmount	Enjoyment Adjust Amount
+# TODO: $SSL_iGameEnjAdjAmountHighlight
+$SSL_iGameEnjAdjAmountHighlight	The amount of enjoyment increased or depleted upon a relevant minigame action.
 $SSL_bGameRequiredOnHighEnj	Requerir minijuego con alto disfrute
 $SSL_bGameRequiredOnHighEnjHighlight	Desactiva el aumento de disfrute por detección de colisiones cuando supera 80.\nCon esto activo, el jugador deberá usar el minijuego para alcanzar el orgasmo.
 $SSL_bGameSpamDelayPenalty	Penalización por spam/tiempo incorrecto

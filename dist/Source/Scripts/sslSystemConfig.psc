@@ -1286,6 +1286,14 @@ int Property GameMagickaCost hidden
     SetSettingInt("iEnjGameMagickaCost", aiSet)
   EndFunction
 EndProperty
+int Property GameEnjAdjAmount hidden
+  int Function Get()
+    return GetSettingInt("iGameEnjAdjAmount")
+  EndFunction
+  Function Set(int aiSet)
+    SetSettingInt("iGameEnjAdjAmount", aiSet)
+  EndFunction
+EndProperty
 bool Property GameRequiredOnHighEnj hidden
   bool Function Get()
     return GetSettingBool("bGameRequiredOnHighEnj")

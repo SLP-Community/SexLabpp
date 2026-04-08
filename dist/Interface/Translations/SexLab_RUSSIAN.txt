@@ -204,7 +204,6 @@ $SSL_fCumTimer	Таймер эффектов спермы
 $SSL_fCumTimerHighlight	Определяет время, в течении которого следы спермы будут отображаться на персонаже.
 $SSL_bUseExpressions	Использовать эмоции
 $SSL_bUseExpressionsHighlight	Применяет выбранные установки MFG к персонажам, участвующим в сцене, которые увеличиваются по мере продвижения анимации в зависимости от применимых навыков этого конкретного персонажа.\nВНИМАНИЕ: Использование установок MFG в сочетании с функцией синхронизации рта может вызвать различные графические дефекты.
-$SSL_UseLipSync	Использовать анимацию рта
 $SSL_bUseLipSync	Использовать анимацию рта
 $SSL_bUseLipSyncHighlight	Всякий раз, когда актер стонет, будет воспроизводиться основная анимация рта.\nВНИМАНИЕ: Использование функции синхронизации рта в сочетании с установками MFG может привести к некорректному проигрыванию анимации рта.
 
@@ -461,6 +460,18 @@ $SSL_bSubmissiveTargetHighlight	Использовать сцены где вы�
 
 # ------------------ Enjoyment --------------------------------------------------
 $SSL_EnjoymentSettings	Настройки наслаждения
+# TODO: $SSL_EnjPrimarySettings
+$SSL_EnjPrimarySettings	Primary Settings
+# TODO: $SSL_EnjGeneralConfigs
+$SSL_EnjGeneralConfigs	General Configs
+# TODO: $SSL_EnjGameConfigs
+$SSL_EnjGameConfigs	Game Configs
+# TODO: $SSL_EnjPainConfigs
+$SSL_EnjPainConfigs	Pain Configs
+# TODO: $SSL_EnjGameHotkeys
+$SSL_EnjGameHotkeys	Game Hotkeys
+# TODO: $SSL_EnjMiscRateMult
+$SSL_EnjMiscRateMult	Misc Rate Mult
 
 # ------ Primary Settings
 $SSL_bInternalEnjoymentEnabled	Включить наслаждение
@@ -509,6 +520,10 @@ $SSL_iEnjGameStaminaCost	Стоимость игры. Выносливость
 $SSL_iEnjGameStaminaCostHighlight	Сколько будет потрачено выносливости для соответствующего действия в мини-игре.
 $SSL_iEnjGameMagickaCost	Стоимость игры. Магия
 $SSL_iEnjGameMagickaCostHighlight	Сколько будет потрачено магии для соответствующего действия в мини-игре.
+# TODO: $SSL_iGameEnjAdjAmount
+$SSL_iGameEnjAdjAmount	Enjoyment Adjust Amount
+# TODO: $SSL_iGameEnjAdjAmountHighlight
+$SSL_iGameEnjAdjAmountHighlight	The amount of enjoyment increased or depleted upon a relevant minigame action.
 $SSL_bGameRequiredOnHighEnj	Требовать мини-игру для оргазма
 $SSL_bGameRequiredOnHighEnjHighlight	Включает/отключает получение наслаждения игроком от мини-игры за счет внутренних расчётов, когда значение превышает 80. При включении этой функции игроку придется активно полагаться на мини-игру, чтобы достичь оргазма.
 $SSL_bGameSpamDelayPenalty	Штрафы в мини-игре

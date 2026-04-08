@@ -2279,21 +2279,21 @@ EndFunction
 
 Function GameRaiseEnjoyment(Actor akTarget)
 	If (SexLabUtil.IsGodModeEnabled())
-		AdjustEnjoyment(akTarget, 1)
+		AdjustEnjoyment(akTarget, Config.GameEnjAdjAmount)
 		return
 	ElseIf (PlayerRef.GetActorValue("Stamina") > Config.GameStaminaCost)
 		PlayerRef.DamageActorValue("Stamina", Config.GameStaminaCost)
-		AdjustEnjoyment(akTarget, 1)
+		AdjustEnjoyment(akTarget, Config.GameEnjAdjAmount)
 	EndIf
 EndFunction
 
 Function GameHoldback(Actor akTarget)
 	If (SexLabUtil.IsGodModeEnabled())
-		AdjustEnjoyment(akTarget, -1)
+		AdjustEnjoyment(akTarget, -Config.GameEnjAdjAmount)
 		return
 	ElseIf (PlayerRef.GetActorValue("Magicka") > Config.GameMagickaCost)
 		PlayerRef.DamageActorValue("Magicka", Config.GameMagickaCost)
-		AdjustEnjoyment(akTarget, -1)
+		AdjustEnjoyment(akTarget, -Config.GameEnjAdjAmount)
 	EndIf
 EndFunction
 
