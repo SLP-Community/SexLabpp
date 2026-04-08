@@ -1522,10 +1522,10 @@ State Ending
 					Utility.Wait(0.05)
 				EndIf
 			EndWhile
+			SendThreadEvent("AnimationEnding")
+			SendThreadEvent("AnimationEnd")
+			RunHook(Config.HOOKID_END)
 		EndIf
-		SendThreadEvent("AnimationEnding")
-		SendThreadEvent("AnimationEnd")
-		RunHook(Config.HOOKID_END)
 		; Cant use default OnUpdate() event as the previous state could leak a registration into this one here
 		; any attempt to prevent this leak without artificially slowing down the code have failed
 		; 0.1 gametime = 6ig minutes = 360 ig seconds = 360 / 20 rt seconds = 18 rt seconds with default timescale
@@ -1588,14 +1588,12 @@ State Ending
 		_ThreadTags = SexLabRegistry.GetCommonTags(_PrimaryScenes)
 		string activeScene = GetActiveScene()
 		Log("Thread validated, playing animation: " + activeScene + ", " + SexLabRegistry.GetSceneName(activeScene), "StartThread()")
-		SendThreadEvent("AnimationStarting")
 		string asPlayStage = ""
 		If (abSceneKept)
 			int idxStr = validScenes.Length - 1
 			asPlayStage = validScenes[idxStr]
 		EndIf
 		StartStage(Utility.CreateStringArray(0), asPlayStage)
-		SendThreadEvent("AnimationStart")
 		_QuickResetScenes = false
 		return true
 	EndFunction
