@@ -630,18 +630,11 @@ Function SceneSelectorMenu()
 EndFunction
 
 int Function GetAdjustPos()
-	If (_AdjustActor)
-		return GetPositionIdx(_AdjustActor)
-	EndIf
 	int AdjustIdx = -1
-	If (Config.TargetRef)
-		AdjustIdx = GetPositionIdx(Config.TargetRef)
+	If (HasPlayer)
+		AdjustIdx = IndexTravelComplex(GetPositionIdx(PlayerRef))
 	Else
-		If (HasPlayer)
-			AdjustIdx = IndexTravelComplex(GetPositionIdx(PlayerRef))
-		Else
-			AdjustIdx = (GetPositions().Length > 1) as int
-		EndIf
+		AdjustIdx = (GetPositions().Length > 1) as int
 	EndIf
 	_AdjustActor = GetIdxPosition(AdjustIdx)
 	Config.SetTargetActor(_AdjustActor)
@@ -665,6 +658,7 @@ Function ChangeTargetPartner(bool abBackwards = false)
 	Config.SetTargetActor(_AdjustActor)
 	Config.SelectedSpell.Cast(_AdjustActor)	; SFX for visual feedback
 	PlayHotkeyFX(0, !abBackwards)
+	Debug.Notification("SexLab partner selected: " + SexLabUtil.ActorName(_AdjustActor))
 	Log("ChangeTargetPartner(), currently focused partner: " + SexLabUtil.ActorName(_AdjustActor))
 EndFunction
 
