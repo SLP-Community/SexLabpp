@@ -161,6 +161,9 @@ target(PROJECT_NAME)
         description = "Backend for skyrims adult animation framework 'SexLab'."
         })
 
+    -- PrismaUI
+    add_includedirs("lib/PrismaUI")
+
     -- Source files
     set_pcxxheader("src/PCH.h")
     add_files("src/**.cpp")
@@ -203,6 +206,13 @@ target(PROJECT_NAME)
             clib:set("build_after", nil)
         end
     end)
+
+    -- Before Build
+    before_build(function(target)
+        import("prismaui")
+        prismaui.fetch_latest(target)
+    end)
+
     -- Post Build 
     after_build(function (target)
         import("lib.detect.find_tool")
