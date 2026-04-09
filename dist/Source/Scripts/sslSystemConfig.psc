@@ -962,7 +962,7 @@ bool function CheckSystemPart(string CheckSystem)
   elseIf CheckSystem == "PapyrusUtil"
     return PapyrusUtil.GetVersion() >= 36
   elseIf CheckSystem == "RaceMenu"
-    return (SKSE.GetPluginVersion("skee64") >= 7) || (NiOverride.GetScriptVersion() >= 7)
+    return (SKSE.GetPluginVersion("skee64") > -1) || (SKSE.GetPluginVersion("skeevr") > -1)
   elseIf CheckSystem == "MfgFixNG"
     return SKSE.GetPluginVersion("mfgfix") > -1
   elseIf CheckSystem == "PPA"

@@ -420,8 +420,11 @@ int Function GetOffsetAdjustMode()
 EndFunction
 
 Function SetOffsetAdjustMode(int aiSet)
-	If (aiSet < AdjMode_None || aiSet > AdjMode_SceneRZ)
+	If ((aiSet == _AdjustMode) || (aiSet < AdjMode_None) || (aiSet > AdjMode_SceneRZ))
 		return
+	EndIf
+	If (_AdjustMode == AdjMode_None)
+		SexLabUtil.ForceThirdPerson()
 	EndIf
 	_AdjustMode = aiSet
 	If (_AdjustMode == AdjMode_None)
@@ -652,6 +655,39 @@ EndFunction
 ; ----------------------------------------------------------------------------- ;
 ; *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-* ;
 
+;# Requires: Thumbstick OR Trackpad (L+R)
+;#--------------------------------------------------#;
+;# {Mode 1/2} SLVR Gestures - NORMAL
+;#--------------------------------------------------#;
+;#   L_Tap     : ToggleAdjustSelf
+;#   L_Up      : GameRaiseEnj
+;#   L_Down    : GameHoldback
+;#   L_Left    : TargetPartnerPrev
+;#   L_Right   : TargetPartnerNext
+;#   L_Back    : ToggleFreeCam
+;#   L_Forward : SceneSelectorMenu
+;#   R_Tap     : CyclePOVModes
+;#   R_Up      : SceneChange
+;#   R_Down    : SceneEnd
+;#   R_Left    : StagePrev
+;#   R_Right   : StageNext
+;#   R_Back    : MoveScene
+;#   R_Forward : ChangePositions
+;#--------------------------------------------------#;
+;# {Mode 2/2} SLVR Gestures - OFFSET
+;#--------------------------------------------------#;
+;#   L_Tap     : ToggleAdjustSelf
+;#   L_Up      : ToggleAdjustStage
+;#   L_Down    : RestoreOffsets
+;#   L_Left    : OffsetAdjModePrev
+;#   L_Right   : OffsetAdjModeNext
+;#   R_Tap     : OffsetHoldAdj
+;#   R_Up      : OffsetAdjUp    (Y/Z)
+;#   R_Down    : OffsetAdjDown  (Y/Z)
+;#   R_Left    : OffsetAdjLeft  (X/R)
+;#   R_Right   : OffsetAdjRight (X/R)
+;#--------------------------------------------------#;
+
 bool _SkipGestureEvents = False
 bool _AdjustSelfVR = True
 
@@ -669,36 +705,20 @@ Function EnableGesturesVR()
 		return
 	EndIf
 	VRIK.VrikBeginGestureProfile()
-	; L1 -> EnjGame + TargetActor
-	RegisterGesture(1, "ToggleAdjustSelf")          ; L (tap) = Left Thumbstick Press or Trackpad Tap
-	If (Config.GameEnabled && HasPlayer)
-		RegisterGesture(2, "GameRaiseEnj")          ; L + up
-		RegisterGesture(3, "GameHoldback")          ; L + down
-	EndIf
-	RegisterGesture(4, "TargetPartnerPrev")         ; L + left
-	RegisterGesture(5, "TargetPartnerNext")         ; L + right
-	RegisterGesture(6, "SwitchPOVPrev")             ; L + back
-	RegisterGesture(7, "SwitchPOVNext")             ; L + forward
-	; R1 -> SceneControl Main
-	RegisterGesture(14, "ToggleFreeCam")            ; R (tap) = Right Thumbstick Press or Trackpad Tap
-	RegisterGesture(15, "SceneChange")              ; R + up
-	RegisterGesture(16, "SceneEnd")                 ; R + down
-	RegisterGesture(17, "StagePrev")                ; R + left
-	RegisterGesture(18, "StageNext")                ; R + right
-	; L2 -> OffsetAdjust Inputs
-	RegisterGesture(27, "AdjustStageToggle")        ; L2 (tap) = Left Index Touchpad Press
-	RegisterGesture(28, "OffsetUp")                 ; L2 + up
-	RegisterGesture(29, "OffsetDown")               ; L2 + down
-	RegisterGesture(30, "OffsetLeft")               ; L2 + left
-	RegisterGesture(31, "OffsetRight")              ; L2 + right
-	; R2 -> SceneControl Complex
-	RegisterGesture(40, "SceneSelectorMenu")        ; R2 (tap) = Right Index Touchpad Press
-	RegisterGesture(41, "AdjOffsetModeNext")        ; R2 + up
-	RegisterGesture(42, "AdjOffsetModePrev")        ; R2 + down
-	RegisterGesture(43, "ChangePositions")          ; R2 + left
-	;RegisterGesture(44, "ChangePosBackward")        ; R2 + right
-	RegisterGesture(45, "RestoreOffsets")           ; R2 + back
-	RegisterGesture(46, "MoveScene")                ; R2 + forward
+	RegisterGesture(1, "L_Tap")
+	RegisterGesture(2, "L_Up")
+	RegisterGesture(3, "L_Down")
+	RegisterGesture(4, "L_Left")
+	RegisterGesture(5, "L_Right")
+	RegisterGesture(6, "L_Back")
+	RegisterGesture(7, "L_Forward")
+	RegisterGesture(14, "R_Tap")
+	RegisterGesture(15, "R_Up")
+	RegisterGesture(16, "R_Down")
+	RegisterGesture(17, "R_Left")
+	RegisterGesture(18, "R_Right")
+	RegisterGesture(19, "R_Back")
+	RegisterGesture(20, "R_Forward")
 EndFunction
 
 Function DisableGesturesVR()
@@ -706,30 +726,20 @@ Function DisableGesturesVR()
 		return
 	EndIf
 	VRIK.VrikEndGestureProfile()
-	UnregisterGesture("ToggleAdjustSelf")
-	UnregisterGesture("GameRaiseEnj")
-	UnregisterGesture("GameHoldback")
-	UnregisterGesture("TargetPartnerPrev")
-	UnregisterGesture("TargetPartnerNext")
-	UnregisterGesture("SwitchPOVPrev")
-	UnregisterGesture("SwitchPOVNext")
-	UnregisterGesture("ToggleFreeCam")
-	UnregisterGesture("SceneChange")
-	UnregisterGesture("SceneEnd")
-	UnregisterGesture("StagePrev")
-	UnregisterGesture("StageNext")
-	UnregisterGesture("AdjustStageToggle")
-	UnregisterGesture("OffsetUp")
-	UnregisterGesture("OffsetDown")
-	UnregisterGesture("OffsetLeft")
-	UnregisterGesture("OffsetRight")
-	UnregisterGesture("SceneSelectorMenu")
-	UnregisterGesture("AdjOffsetModeNext")
-	UnregisterGesture("AdjOffsetModePrev")
-	UnregisterGesture("ChangePositions")
-	;UnregisterGesture("ChangePosBackward")
-	UnregisterGesture("RestoreOffsets")
-	UnregisterGesture("MoveScene")
+	UnregisterGesture("L_Tap")
+	UnregisterGesture("L_Up")
+	UnregisterGesture("L_Down")
+	UnregisterGesture("L_Left")
+	UnregisterGesture("L_Right")
+	UnregisterGesture("L_Back")
+	UnregisterGesture("L_Forward")
+	UnregisterGesture("R_Tap")
+	UnregisterGesture("R_Up")
+	UnregisterGesture("R_Down")
+	UnregisterGesture("R_Left")
+	UnregisterGesture("R_Right")
+	UnregisterGesture("R_Back")
+	UnregisterGesture("R_Forward")
 EndFunction
 
 Function VRHandleGesture(String asEventName, String Foobar, float Presses, Form Sender)
@@ -738,65 +748,64 @@ Function VRHandleGesture(String asEventName, String Foobar, float Presses, Form 
 	EndIf
 	_SkipGestureEvents = true
 	bool abAdjustTarget = !_AdjustSelfVR
-	If (HasPlayer && Config.GameEnabled)
-		If (asEventName == "SLVR_GameRaiseEnj")
-			ProcessEnjGameArg("Stamina", GetTargetPartner(), abAdjustTarget)
-		ElseIf (asEventName == "SLVR_GameHoldback")
-			ProcessEnjGameArg("Magicka", GetTargetPartner(), abAdjustTarget)
-		EndIf
-	EndIf
-	If (asEventName == "SLVR_ToggleAdjustSelf")
+	String asEvent = StringUtil.Substring(asEventName, 5)
+	If (asEvent == "L_Tap")
 		_AdjustSelfVR = !_AdjustSelfVR
 		Debug.Notification("SexLab: AdjustSelf: " + _AdjustSelfVR)
-	ElseIf (asEventName == "SLVR_TargetPartnerPrev")
-		ChangeTargetPartner(true)
-	ElseIf (asEventName == "SLVR_TargetPartnerNext")
-		ChangeTargetPartner()
-	ElseIf (asEventName == "SLVR_SwitchPOVPrev")
-		CyclePOVModesVR(true)
-	ElseIf (asEventName == "SLVR_SwitchPOVNext")
-		CyclePOVModesVR()
-	ElseIf (asEventName == "SLVR_ToggleFreeCam")
-		SexLabUtil.ToggleFreeCamera()
-	ElseIf (asEventName == "SLVR_SceneChange")
-		PickRandomScene("")
-	ElseIf (asEventName == "SLVR_SceneEnd")
-		EndAnimation()
-	ElseIf (asEventName == "SLVR_StagePrev")
-		AdvanceStage(true)
-	ElseIf (asEventName == "SLVR_StageNext")
-		AdvanceStage()
-	ElseIf (asEventName == "SLVR_AdjustStageToggle")
-		Config.AdjustStage = !Config.AdjustStage
-		Debug.Notification("SexLab: AdjustStage: " + Config.AdjustStage)
-	ElseIf (asEventName == "SLVR_AdjOffsetModeNext")
-		If (GetOffsetAdjustMode() == AdjMode_None)
-			SexLabUtil.ForceThirdPerson()
-		EndIf
-		CycleOffsetAdjustModes()
-	ElseIf (asEventName == "SLVR_AdjOffsetModePrev")
-		If (GetOffsetAdjustMode() == AdjMode_None)
-			SexLabUtil.ForceThirdPerson()
-		EndIf
-		CycleOffsetAdjustModes(true)
-	ElseIf (asEventName == "SLVR_ChangePositions")
-		ChangePositions(abAdjustTarget)
-	ElseIf (asEventName == "SLVR_MoveScene")
-		MoveScene()
-	ElseIf (asEventName == "SLVR_RestoreOffsets")
-		RestoreOffsets()
-	ElseIf (asEventName == "SLVR_SceneSelectorMenu")
-		SceneSelectorMenu()
+		_SkipGestureEvents = false
+		return
 	EndIf
-	If (GetOffsetAdjustMode() > AdjMode_None)
+	If (GetOffsetAdjustMode() == AdjMode_None)
+		If (HasPlayer && Config.GameEnabled)
+			If (asEvent == "L_Up")
+				ProcessEnjGameArg("Stamina", GetTargetPartner(), abAdjustTarget)
+			ElseIf (asEvent == "L_Down")
+				ProcessEnjGameArg("Magicka", GetTargetPartner(), abAdjustTarget)
+			EndIf
+		EndIf
+		If (asEvent == "L_Left")
+			ChangeTargetPartner(true)
+		ElseIf (asEvent == "L_Right")
+			ChangeTargetPartner()
+		ElseIf (asEvent == "L_Back")
+			SexLabUtil.ToggleFreeCamera()
+		ElseIf (asEvent == "L_Forward")
+			SceneSelectorMenu()
+		ElseIf (asEvent == "R_Tap")
+			CyclePOVModesVR()
+		ElseIf (asEvent == "R_Up")
+			PickRandomScene("")
+		ElseIf (asEvent == "R_Down")
+			EndAnimation()
+		ElseIf (asEvent == "R_Left")
+			AdvanceStage(true)
+		ElseIf (asEvent == "R_Right")
+			AdvanceStage()
+		ElseIf (asEvent == "R_Back")
+			MoveScene()
+		ElseIf (asEvent == "R_Forward")
+			ChangePositions(abAdjustTarget)
+		EndIf
+		_SkipGestureEvents = false
+		return
+	Else
 		string[] asOffsetType = Utility.CreateStringArray(2, "")
-		If (asEventName == "SLVR_OffsetUp")
+		If (asEvent == "L_Up")
+			Config.AdjustStage = !Config.AdjustStage
+			Debug.Notification("SexLab: AdjustStage: " + Config.AdjustStage)
+		ElseIf (asEvent == "L_Down")
+			RestoreOffsets()
+		ElseIf (asEvent == "L_Left")
+			CycleOffsetAdjustModes(true)
+		ElseIf (asEvent == "L_Right")
+			CycleOffsetAdjustModes()
+		ElseIf (asEvent == "R_Up")
 			asOffsetType = DetermineOffsetAdjustInputType(Config.DirectionUp)
-		ElseIf (asEventName == "SLVR_OffsetDown")
+		ElseIf (asEvent == "R_Down")
 			asOffsetType = DetermineOffsetAdjustInputType(Config.DirectionDown)
-		ElseIf (asEventName == "SLVR_OffsetLeft")
+		ElseIf (asEvent == "R_Left")
 			asOffsetType = DetermineOffsetAdjustInputType(Config.DirectionLeft)
-		ElseIf (asEventName == "SLVR_OffsetRight")
+		ElseIf (asEvent == "R_Right")
 			asOffsetType = DetermineOffsetAdjustInputType(Config.DirectionRight)
 		EndIf
 		HandleOffsetAdjustmentVR(asOffsetType, abAdjustTarget)
@@ -835,17 +844,17 @@ Function HandleOffsetAdjustmentVR(String[] asOffsetType, bool abAdjustTarget)
 	int aiAdjMode = GetOffsetAdjustMode()
 	bool abAdjustingPos = (aiAdjMode == AdjMode_PosXY)  || (aiAdjMode == AdjMode_PosRZ)
 	ApplyOffsetAdjustment(akAffectedActor, afValue, asOffsetType, abAdjustingPos)
-	float refX = VRIK.VrikGetHandX(true)
-	float refY = VRIK.VrikGetHandY(true)
-	float refZ = VRIK.VrikGetHandZ(true)
+	float refX = VRIK.VrikGetHandX(false)
+	float refY = VRIK.VrikGetHandY(false)
+	float refZ = VRIK.VrikGetHandZ(false)
 	float newX = 0.0
 	float newY = 0.0
 	float newZ = 0.0
 	float curDrift = 0.0
-	While (VRIK.VrikIsTriggerPressed(true))
-		newX = VRIK.VrikGetHandX(true)
-		newY = VRIK.VrikGetHandY(true)
-		newZ = VRIK.VrikGetHandZ(true)
+	While (VRIK.VrikIsThumbstickPressed(false))
+		newX = VRIK.VrikGetHandX(false)
+		newY = VRIK.VrikGetHandY(false)
+		newZ = VRIK.VrikGetHandZ(false)
 		curDrift = Math.Abs(newX - refX) + Math.Abs(newY - refY) + Math.Abs(newZ - refZ)
 		If (curDrift > 30.0) ;hand moved too much, not roughly in place
 			PauseTimer(false)
@@ -859,7 +868,7 @@ Function HandleOffsetAdjustmentVR(String[] asOffsetType, bool abAdjustTarget)
 		EndIf
 	EndWhile
 	If (Config.GestureHaptics)
-		VRIK.VrikHapticPulse(true, 2, 800)
+		VRIK.VrikHapticPulse(false, 2, 800)
 	EndIf
 	PauseTimer(false)
 EndFunction
