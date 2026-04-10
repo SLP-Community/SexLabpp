@@ -105,6 +105,8 @@ namespace Thread
 		int32_t GetCurrentPermutation(RE::Actor* a_position);
 		bool SetNextPermutation(RE::Actor* a_position);
 
+		void OpenSLToolsMenu();
+
 	private:
 		RE::TESQuest* linkedQst;
 		std::shared_ptr<NiNode::NiInstance> niInstance{ nullptr };

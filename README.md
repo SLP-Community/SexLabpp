@@ -20,8 +20,6 @@ A high performance and stability patch for SexLab for Skyrim SE.
 	* MfgFix NG: [Nexus][MFG-Nexus] | [GitHub][MFG-GitHub]
 	* SkyrimLovense: [Nexus][SL-Nexus] | [GitHub][SL-GitHub]
 	* VRIK Player Avatar: [Nexus][VR-Nexus]
-	* UIExtensions: [Nexus][UIX-Nexus]
-		* Extract BSA using [Bathesda Archive Extractor][BAE-Nexus]
 
 ## Building
 

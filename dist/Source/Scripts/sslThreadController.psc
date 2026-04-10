@@ -321,6 +321,10 @@ Event OnKeyDown(int aiKey)
 	EndIf
 	_SkipHotkeyEvents = true
 	_SkipMenuEvents = true
+	If (aiKey == Hotkeys[kSceneSelector])
+		InitPrismaMenu()
+		return
+	EndIf
 	bool abModifier = Config.ModifierPressed()
 	bool abAdjustTarget = abModifier
 	If (aiKey == Hotkeys[kChangeAnimation])
@@ -356,8 +360,6 @@ Event OnKeyDown(int aiKey)
 		Debug.Notification("SexLab: AdjustStage: " + Config.AdjustStage)
 	ElseIf (aiKey == Hotkeys[kRestoreOffsets])
 		RestoreOffsets()
-	ElseIf (aiKey == Hotkeys[kSceneSelector])
-		SceneSelectorMenu()
 	EndIf
 	If (_AdjustMode > AdjMode_None)
 		string[] asOffsetType = DetermineOffsetAdjustInputType(aiKey)
@@ -533,76 +535,6 @@ Function RestoreOffsets()
 	RealignActors()
 EndFunction
 
-Function SceneSelectorMenu()
-	If (Game.GetModByName("UIExtensions.esp") == 255)
-		return
-	EndIf
-	string asActiveScene = GetActiveScene()
-	string asActSceneName = SexlabRegistry.GetSceneName(asActiveScene)
-	string[] asPlayingScenes = GetPlayingScenes()
-	int aiPlayingLen = asPlayingScenes.Length
-	; Init Menus
-	UIListMenu ListMenu = UIExtensions.GetMenu("UIListMenu") as UIListMenu
-	int alOffsetAdjMode = ListMenu.AddEntryItem("$SSL_SS_OffsetAdjustMode", entryHasChildren=True)
-	int alPlayingScenes = ListMenu.AddEntryItem("$SSL_SS_ChangeCurrentScene", entryHasChildren=True)
-	int alCustomInput   = ListMenu.AddEntryItem("$SSL_SS_ResetScenesByTagName")
-	ListMenu.AddEntryItem("$SSL_SS_AdjNone", entryParent=alOffsetAdjMode)
-	ListMenu.AddEntryItem("$SSL_SS_AdjPosXY", entryParent=alOffsetAdjMode)
-	ListMenu.AddEntryItem("$SSL_SS_AdjPosRZ", entryParent=alOffsetAdjMode)
-	ListMenu.AddEntryItem("$SSL_SS_AdjSceneXY", entryParent=alOffsetAdjMode)
-	ListMenu.AddEntryItem("$SSL_SS_AdjSceneRZ", entryParent=alOffsetAdjMode)
-	If (aiPlayingLen > 120) ; Range for AddEntryItem 0-127 (hardcoded: 8 above)
-		aiPlayingLen = 120
-		asPlayingScenes = SexLabUtil.ShuffleStringArray(asPlayingScenes, asActiveScene, 120)
-	EndIf
-	int i = 0
-	While (i < aiPlayingLen)
-		If (asPlayingScenes[i] == asActiveScene)
-			ListMenu.AddEntryItem(">>> " + asActSceneName, entryParent=alPlayingScenes)
-		Else
-			string asSceneName = SexlabRegistry.GetSceneName(asPlayingScenes[i])
-			ListMenu.AddEntryItem(asSceneName, entryParent=alPlayingScenes)
-		EndIf
-		i += 1
-	EndWhile
-	; Exec Menus
-	ListMenu.OpenMenu()
-	string asOptSelected = ListMenu.GetResultString()
-	If (asOptSelected == "")
-		return
-	EndIf
-	If (asOptSelected == "$SSL_SS_ResetScenesByTagName")
-		UITextEntryMenu TextMenu = UIExtensions.GetMenu("UITextEntryMenu") as UITextEntryMenu
-		TextMenu.OpenMenu()
-		string asTypedText = TextMenu.GetResultString()
-		If (asTypedText == "")
-			return
-		EndIf
-		bool aiNewScenes = ResetAnimationQuick(asTypedText)
-		If (!aiNewScenes)
-			string asNewScene = SexLabRegistry.GetSceneByName(asTypedText)
-			If (asNewScene)
-				ResetScene(asNewScene)
-			EndIf
-		EndIf
-	ElseIf (asOptSelected == "$SSL_SS_AdjNone")
-		SetOffsetAdjustMode(AdjMode_None)
-	ElseIf (asOptSelected == "$SSL_SS_AdjPosXY")
-		SetOffsetAdjustMode(AdjMode_PosXY)
-	ElseIf (asOptSelected == "$SSL_SS_AdjPosRZ")
-		SetOffsetAdjustMode(AdjMode_PosRZ)
-	ElseIf (asOptSelected == "$SSL_SS_AdjSceneXY")
-		SetOffsetAdjustMode(AdjMode_SceneXY)
-	ElseIf (asOptSelected == "$SSL_SS_AdjSceneRZ")
-		SetOffsetAdjustMode(AdjMode_SceneRZ)		
-	Else
-		If (asOptSelected != ">>> " + asActSceneName)
-			string asSelectedScene = SexLabRegistry.GetSceneByName(asOptSelected)
-			ResetScene(asSelectedScene)
-		EndIf
-	EndIf
-EndFunction
-
 int Function GetAdjustPos()
 	int AdjustIdx = -1
 	If (HasPlayer)
@@ -642,6 +574,68 @@ Function PlayHotkeyFX(int i, bool abBackwards)
 	Else
 		Config.HotkeyUp[i].Play(PlayerRef)
 	EndIf
+EndFunction
+
+; ------------------------------------------------------- ;
+; --- Prisma UI                                       --- ;
+; ------------------------------------------------------- ;
+
+Function InitPrismaMenu()
+	; TODO: Exapand (PrismaUI author suggest one PrismaView per plugin)
+	OnPrismaMenuOpened()
+	OpenSLToolsMenu()
+EndFunction
+
+Function OnPrismaMenuEvent(String asEventCategory, String asOptSelected)
+	If (asOptSelected == "")
+		OnPrismaMenuClosed()
+		return
+	EndIf
+	If (asEventCategory == "OnSceneSelected")
+		If (asOptSelected == SexlabRegistry.GetSceneName(GetActiveScene()))
+			OnPrismaMenuClosed()
+			return
+		EndIf
+		string asSelectedScene = SexLabRegistry.GetSceneByName(asOptSelected)
+		If (asSelectedScene)
+			ResetScene(asSelectedScene)
+		EndIf
+	ElseIf (asEventCategory == "OnSceneResetBySearch")
+		bool aiNewScenes = ResetAnimationQuick(asOptSelected)
+		If (!aiNewScenes)
+			string asSelectedScene = SexLabRegistry.GetSceneByName(asOptSelected)
+			If (asSelectedScene)
+				ResetScene(asSelectedScene)
+			EndIf
+		EndIf
+	ElseIf (asEventCategory == "OnOffsetModeSelected")
+		If (asOptSelected == "None")
+			SetOffsetAdjustMode(AdjMode_None)
+		ElseIf (asOptSelected == "PosXY")
+			SetOffsetAdjustMode(AdjMode_PosXY)
+		ElseIf (asOptSelected == "PosRZ")
+			SetOffsetAdjustMode(AdjMode_PosRZ)
+		ElseIf (asOptSelected == "SceneXY")
+			SetOffsetAdjustMode(AdjMode_SceneXY)
+		ElseIf (asOptSelected == "SceneRZ")
+			SetOffsetAdjustMode(AdjMode_SceneRZ)
+		EndIf
+	EndIf
+	OnPrismaMenuClosed()
+EndFunction
+
+Function OnPrismaMenuOpened()
+	PauseTimer(true)
+	_SkipMenuEvents = true
+	_SkipHotkeyEvents = true
+	_SkipGestureEvents = true
+EndFunction
+
+Function OnPrismaMenuClosed()
+	PauseTimer(false)
+	_SkipMenuEvents = false
+	_SkipHotkeyEvents = false
+	_SkipMenuEvents = false
 EndFunction
 
 ; *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-* ;
@@ -770,7 +764,7 @@ Function VRHandleGesture(String asEventName, String Foobar, float Presses, Form 
 		ElseIf (asEvent == "L_Back")
 			SexLabUtil.ToggleFreeCamera()
 		ElseIf (asEvent == "L_Forward")
-			SceneSelectorMenu()
+			;InitPrismaMenu() ; awaiting VR support
 		ElseIf (asEvent == "R_Tap")
 			CyclePOVModesVR()
 		ElseIf (asEvent == "R_Up")

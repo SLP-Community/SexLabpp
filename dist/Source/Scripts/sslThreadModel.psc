@@ -637,6 +637,7 @@ bool Function IsOwningSceneMenu() native
 bool Function TryOpenSceneMenu() native
 bool Function TryCloseSceneMenu() native
 Function TryUpdateMenuTimer(float afTime) native
+Function OpenSLToolsMenu() native
 
 ; ------------------------------------------------------- ;
 ; --- Thread Data                                     --- ;

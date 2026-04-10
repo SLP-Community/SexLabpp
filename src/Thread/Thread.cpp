@@ -3,6 +3,7 @@
 #include "Registry/Library.h"
 #include "Registry/Util/Scale.h"
 #include "Thread/Interface/SceneMenu.h"
+#include "Thread/Interface/SLToolsMenu.h"
 #include "Registry/Util/RayCast/Offsets.h"
 #include "Util/Script.h"
 
@@ -432,6 +433,18 @@ namespace Thread
 		}
 		logger::warn("Actor {} has no alternative permutations.", a_actor->GetFormID());
 		return false;
+	}
+
+	void Instance::OpenSLToolsMenu()
+	{
+		std::vector<const Registry::Scene*> playingScenes = GetThreadScenes();
+		std::vector<RE::BSFixedString> playingScenesNames;
+		playingScenesNames.reserve(playingScenes.size());
+		for (const Registry::Scene* playingScene : playingScenes) {
+			playingScenesNames.push_back(playingScene->name);
+		}
+		Script::ObjectPtr scriptObj = Script::GetScriptObject(linkedQst, "sslThreadController");
+		PrismaUI::SLToolsMenu::Open(scriptObj, activeScene->name, playingScenesNames);
 	}
 
 }	 // namespace Thread

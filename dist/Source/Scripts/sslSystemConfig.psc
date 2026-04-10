@@ -969,8 +969,8 @@ bool function CheckSystemPart(string CheckSystem)
     return SKSE.GetPluginVersion("AccuratePenetration") > -1
   elseIf CheckSystem == "CrossHairRef"
     return SKSE.GetPluginVersion("CrosshairRefEventsFix") > -1
-  elseIf CheckSystem == "UIExtensions"
-    return Game.GetModByName("UIExtensions.esp") != 255
+  elseIf CheckSystem == "PrismaUI"
+    return SKSE.GetPluginVersion("PrismaUI") > -1
   elseif CheckSystem == "VRIK"
     return CheckForVRIK()
   endIf
@@ -995,8 +995,8 @@ bool function CheckSystem()
     return false
   ElseIf (!CheckSystemPart("PPA"))
     Debug.MessageBox("[SexLab]\nMissing 'Procedural Penis Animations'.\nThis mod is highly recommended for schlong allignments to work properly.")
-  ElseIf (!CheckSystemPart("UIExtensions"))
-    Debug.MessageBox("[SexLab]\nMissing 'UIExtensions'.\nThis mod is a soft dependency required for the internal Scene Selector Menu only.")
+  ElseIf (!CheckSystemPart("PrismaUI"))
+    Debug.MessageBox("[SexLab]\nMissing 'Prisma UI'.\nThis mod is currently a soft dependency required for the SceneSelectorMenu only.")
   EndIf
   If (CheckForSkyrimVR() && !CheckSystemPart("VRIK"))
       Debug.MessageBox("[SexLab]\nMissing VRIK.\nThis mod is mandatory for SexLab to function properly in VR.")

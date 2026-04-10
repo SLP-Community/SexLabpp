@@ -90,6 +90,7 @@ namespace Papyrus::ThreadModel
 	bool TryOpenSceneMenu(QUESTARGS);
 	bool TryCloseSceneMenu(QUESTARGS);
 	void TryUpdateMenuTimer(QUESTARGS, float a_time);
+	void OpenSLToolsMenu(QUESTARGS);
 
 	inline bool Register(VM* a_vm)
 	{
@@ -130,6 +131,7 @@ namespace Papyrus::ThreadModel
 		REGISTERFUNC(TryOpenSceneMenu, "sslThreadModel", true);
 		REGISTERFUNC(TryCloseSceneMenu, "sslThreadModel", true);
 		REGISTERFUNC(TryUpdateMenuTimer, "sslThreadModel", true);
+		REGISTERFUNC(OpenSLToolsMenu, "sslThreadModel", true);
 
 		return ActorAlias::Register(a_vm);
 	}
