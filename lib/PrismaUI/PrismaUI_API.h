@@ -137,7 +137,7 @@ namespace PRISMA_UI_API {
     /// Recommended: Send your request during or after SKSEMessagingInterface::kMessage_PostLoad to make sure the dll
     /// has already been loaded
     [[nodiscard]] inline void* RequestPluginAPI(InterfaceVersion a_interfaceVersion = InterfaceVersion::V1) {
-        auto pluginHandle = GetModuleHandle(L"PrismaUI.dll");
+        auto pluginHandle = GetModuleHandle("PrismaUI.dll");
         if (!pluginHandle) {
             return nullptr;
         }
