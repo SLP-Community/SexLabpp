@@ -1,16 +1,7 @@
 name: Clang Format
 
 on:
-  push:
-    branches:
-      - master
-    paths:
-      - 'src/**'
-      - '.clang-format'
-  pull_request:
-    paths:
-      - 'src/**'
-      - '.clang-format'
+  workflow_dispatch:
 
 jobs:
   format:
