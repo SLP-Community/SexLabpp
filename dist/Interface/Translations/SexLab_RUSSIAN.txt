@@ -460,18 +460,12 @@ $SSL_bSubmissiveTargetHighlight	Использовать сцены где вы�
 
 # ------------------ Enjoyment --------------------------------------------------
 $SSL_EnjoymentSettings	Настройки наслаждения
-# TODO: $SSL_EnjPrimarySettings
-$SSL_EnjPrimarySettings	Primary Settings
-# TODO: $SSL_EnjGeneralConfigs
-$SSL_EnjGeneralConfigs	General Configs
-# TODO: $SSL_EnjGameConfigs
-$SSL_EnjGameConfigs	Game Configs
-# TODO: $SSL_EnjPainConfigs
-$SSL_EnjPainConfigs	Pain Configs
-# TODO: $SSL_EnjGameHotkeys
-$SSL_EnjGameHotkeys	Game Hotkeys
-# TODO: $SSL_EnjMiscRateMult
-$SSL_EnjMiscRateMult	Misc Rate Mult
+$SSL_EnjPrimarySettings	Основные настройки
+$SSL_EnjGeneralConfigs	Главная конфигурация
+$SSL_EnjGameConfigs	Конфигурация мини-игры
+$SSL_EnjPainConfigs	Конфигурация боли
+$SSL_EnjGameHotkeys	Клавиши мини-игры
+$SSL_EnjMiscRateMult	Множители наслаждения
 
 # ------ Primary Settings
 $SSL_bInternalEnjoymentEnabled	Включить наслаждение
@@ -479,7 +473,7 @@ $SSL_bInternalEnjoymentEnabledHighlight	Включает/выключает вн
 $SSL_fEnjRaiseMultInter	Главный множитель наслаждения
 $SSL_fEnjRaiseMultInterHighlight	Основной множитель/фактор, определяющий скорость увеличения наслаждения для персонажа на основе обнаруженных взаимодействий. Более высокие значения означают более быстрое увеличение наслаждения и наоборот. Может быть уменьшен до нуля, если пользователь желает, чтобы увеличение удовольствия зависело исключительно от мини-игры.
 $SSL_bGameEnabled	Включить мини-игру
-$SSL_bGameEnabledHighlight	Включает мини-игру влияющую на наслаждение, подобную той которая была в SLSO.
+$SSL_bGameEnabledHighlight	Включает мини-игру влияющую на наслаждение, подобную той которая была в SLSO.\n!!!Внимание!!! По умолчанию воздействие идёт на вашего персонажа. Чтобы воздействовать на партнёров используйте клавиши мини-игры вместе с вспомогательной клавишей. Переключение на другого партнёра (если их больше одного) происходит с помощью кнопки выбора партнёра.
 
 # ------ General Configs
 $SSL_bFallbackToTagsForDetection	Разрешить откат на теги поз
@@ -520,10 +514,8 @@ $SSL_iEnjGameStaminaCost	Стоимость игры. Выносливость
 $SSL_iEnjGameStaminaCostHighlight	Сколько будет потрачено выносливости для соответствующего действия в мини-игре.
 $SSL_iEnjGameMagickaCost	Стоимость игры. Магия
 $SSL_iEnjGameMagickaCostHighlight	Сколько будет потрачено магии для соответствующего действия в мини-игре.
-# TODO: $SSL_iGameEnjAdjAmount
-$SSL_iGameEnjAdjAmount	Enjoyment Adjust Amount
-# TODO: $SSL_iGameEnjAdjAmountHighlight
-$SSL_iGameEnjAdjAmountHighlight	The amount of enjoyment increased or depleted upon a relevant minigame action.
+$SSL_iGameEnjAdjAmount	Количество наслаждения
+$SSL_iGameEnjAdjAmountHighlight	Количество увеличения или уменьшения наслаждения на одно действие во время мини-игры.
 $SSL_bGameRequiredOnHighEnj	Требовать мини-игру для оргазма
 $SSL_bGameRequiredOnHighEnjHighlight	Включает/отключает получение наслаждения игроком от мини-игры за счет внутренних расчётов, когда значение превышает 80. При включении этой функции игроку придется активно полагаться на мини-игру, чтобы достичь оргазма.
 $SSL_bGameSpamDelayPenalty	Штрафы в мини-игре

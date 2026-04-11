@@ -893,10 +893,7 @@ Function RebuildClean()
 	AddTextOptionST("ResetStripOverrides","$SSL_ResetStripOverrides", "$SSL_ClickHere")
 	AddTextOptionST("CleanSystem","$SSL_CleanSystem", "$SSL_ClickHere")
 	AddTextOptionST("ForceRegisterVoices", "$SSL_ForceRegisterVoices", "$SSL_ClickHere")
-	AddHeaderOption("System Requirements")
-	SystemCheckOptions()
-
-	SetCursorPosition(1)
+	
 	AddHeaderOption("Registry Info")
 	; IDEA: Allow clicking on this for more info, custom swf mayhaps?
 	AddTextOption("$SSL_Animations", sslSystemConfig.GetAnimationCount(), OPTION_FLAG_DISABLED)
@@ -910,6 +907,10 @@ Function RebuildClean()
 		String Name = Config.Strapons[i].GetName()
 		AddTextOptionST("toggleStrapon_" + i, Name, "$SSL_Remove")
 	EndWhile
+
+	SetCursorPosition(1)
+	AddHeaderOption("System Requirements")
+	SystemCheckOptions()
 EndFunction
 
 Function InstallMenu()
@@ -1509,12 +1510,11 @@ function PlayerHotkeys()
 	AddStateOptionKey("iToggleFreeCamera", "$SSL_iToggleFreeCamera", needsRegister = true)
 	AddToggleOptionST("UseSceneMenu", "$SSL_bUseSceneMenu", Config.UseSceneMenu)
 	bool menu_flag = Config.UseSceneMenu
-	bool ss_menu_flag = (menu_flag || (SKSE.GetPluginVersion("PrismaUI") > -1))
 	
 	AddHeaderOption("$SSL_LegacyHotkeys")
 	AddStateOptionKey("iChangeAnimation", "$SSL_iChangeAnimation", true, true)
 	AddStateOptionKey("iMoveScene", "$SSL_iMoveScene", true, true)
-	AddStateOptionKey("iSceneSelectorMenu", "$SSL_iSceneSelectorMenu", true, true, abDisable=ss_menu_flag)
+	AddStateOptionKey("iSceneSelectorMenu", "$SSL_iSceneSelectorMenu", true, true, abDisable=menu_flag)
 	AddStateOptionKey("iChangePositions", "$SSL_iChangePositions", true, true, abDisable=menu_flag)
 	AddStateOptionKey("iOffsetAdjustMode", "$SSL_iOffsetAdjustMode", true, true, abDisable=menu_flag)
 	AddStateOptionKey("iToggleAdjustStage", "$SSL_iToggleAdjustStage", true, true, abDisable=menu_flag)

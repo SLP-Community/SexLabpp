@@ -962,7 +962,7 @@ bool function CheckSystemPart(string CheckSystem)
   elseIf CheckSystem == "PapyrusUtil"
     return PapyrusUtil.GetVersion() >= 36
   elseIf CheckSystem == "RaceMenu"
-    return (SKSE.GetPluginVersion("skee64") > -1) || (SKSE.GetPluginVersion("skeevr") > -1)
+    return ((SKSE.GetPluginVersion("skee64") > -1) || (SKSE.GetPluginVersion("skeevr") > -1) || (NiOverride.GetScriptVersion() >= 7))
   elseIf CheckSystem == "MfgFixNG"
     return SKSE.GetPluginVersion("mfgfix") > -1
   elseIf CheckSystem == "PPA"
@@ -978,31 +978,36 @@ bool function CheckSystemPart(string CheckSystem)
 endFunction
 
 bool function CheckSystem()
+  bool ret = true
   If (!CheckSystemPart("SKSE"))
     CheckSKSE.Show(2.22)
-    return false
+    ret = false
   ElseIf (!CheckSystemPart("SexLabUtil"))
     Debug.MessageBox("[SexLab]\nMissing SexLabUtil.dll.\nThis plugin is mandatory for SexLab to function.")
-    return false
+    ret = false
   ElseIf (!CheckSystemPart("SkyUI"))
     CheckSkyUI.Show(5.2)
-    return false
+    ret = false
   ElseIf (!CheckSystemPart("PapyrusUtil"))
     CheckPapyrusUtil.Show(4.4)
-    return false
+    ret = false
   ElseIf (!CheckSystemPart("CrossHairRef"))
     Debug.MessageBox("[SexLab]\nMissing 'CrosshairRefEvents Hang Fix'.\nThis mod is mandatory to avoid soft-locks during scene startup.")
-    return false
+    ret = false
+  ElseIf (!CheckSystemPart("PrismaUI"))
+    Debug.MessageBox("[SexLab]\nMissing 'Prisma UI'.\nThis mod is mandatory for the 'Scene Selection Menu' and the 'Furniture Selection Menu' to work.")
+    ret = false
   ElseIf (!CheckSystemPart("PPA"))
     Debug.MessageBox("[SexLab]\nMissing 'Procedural Penis Animations'.\nThis mod is highly recommended for schlong allignments to work properly.")
-  ElseIf (!CheckSystemPart("PrismaUI"))
-    Debug.MessageBox("[SexLab]\nMissing 'Prisma UI'.\nThis mod is currently a soft dependency required for the SceneSelectorMenu only.")
   EndIf
   If (CheckForSkyrimVR() && !CheckSystemPart("VRIK"))
-      Debug.MessageBox("[SexLab]\nMissing VRIK.\nThis mod is mandatory for SexLab to function properly in VR.")
-    return false
+    Debug.MessageBox("[SexLab]\nMissing VRIK.\nThis mod is mandatory for SexLab to function properly in VR.")
+    ret = false
   EndIf
-  return true
+  If (ret == false)
+    Debug.MessageBox("[SexLab]\nMissing one or more mandatory requirements. SexLab will not be installed!")
+  EndIf
+  return ret
 endFunction
 
 Function Reload()
