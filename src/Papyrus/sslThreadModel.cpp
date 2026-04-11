@@ -361,10 +361,7 @@ namespace Papyrus::ThreadModel
 			toVector(a_scenesCustom)
 		};
 		std::thread([=]() {
-			bool result = Thread::Instance::CreateInstance(a_qst, a_submissives, scenes, preference);
-			auto handle = Script::GetScriptObject(a_qst, "sslThreadModel");
-			Script::CallbackPtr callbackPtr{};
-			Script::DispatchMethodCall(handle, "ContinueSetup", callbackPtr, std::move(result));
+			Thread::Instance::CreateInstance(a_qst, a_submissives, scenes, preference);
 		}).detach();
 	}
 

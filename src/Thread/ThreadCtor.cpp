@@ -2,7 +2,7 @@
 
 #include "Registry/Util/RayCast.h"
 #include "Registry/Util/RayCast/ObjectBound.h"
-#include "Thread/Interface/SelectionMenu.h"
+#include "Thread/Interface/FurnSelectionMenu.h"
 #include "Registry/Util/RayCast/Offsets.h"
 #include "Util/World.h"
 #include <future>
@@ -27,7 +27,16 @@ namespace Thread
 	{
 		const auto centerAct = InitializeReferences(a_submissives);
 		const auto fragments = InitializeScenes(a_scenes, a_furniturepref);
-		auto& priorityScenes = InitializeCenter(centerAct, a_furniturepref);
+		InitializeCenter(centerAct, a_furniturepref);
+		if (Instance::pendingQst != nullptr) {
+			return;  // pending impl handled by FinalizeCenterRefSelection()
+		} 
+		FinalizeInstanceMake();
+	}
+
+	void Instance::FinalizeInstanceMake()
+	{
+		auto& priorityScenes = scenes[SceneType::Custom].empty() ? scenes[SceneType::Primary] : scenes[SceneType::Custom];
 		const auto& centerTy = center.offset.type;
 		for (auto&& sceneArr : scenes) {
 			const auto removed = std::erase_if(sceneArr, [&](const auto& scene) {
@@ -154,13 +163,7 @@ namespace Thread
 			logger::info("No furniture found in range. Using actor {:X} as center.", centerAct->GetFormID());
 			center.SetReference(centerAct, {});
 		} else if (selectionMethod == CenterSelection::SelectionMenu) {
-			const auto [selectedRef, selectedType] = SelectCenterRefMenu(furnitureMap, centerAct);
-			center.SetReference(selectedRef, selectedType);
-			if (selectedType.type.Is(Registry::FurnitureType::None)) {
-				logger::info("Selected actor {:X} as center.", centerAct->GetFormID());
-			} else {
-				logger::info("Selected furniture {:X} with offset {} as center.", selectedRef->GetFormID(), selectedType.type.ToString());
-			}
+			InitializeCenterRefMenu(furnitureMap, centerAct);
 		} else {
 			const auto [ref, type] = furnitureMap.front();
 			center.SetReference(ref, type);
@@ -243,9 +246,9 @@ namespace Thread
 		}
 	}
 
-	Instance::FurnitureMapping::value_type Instance::SelectCenterRefMenu(const FurnitureMapping& a_furnitures, RE::Actor* a_tmpCenter)
+	void Instance::InitializeCenterRefMenu(const FurnitureMapping& a_furnitures, RE::Actor* a_tmpCenter)
 	{
-		std::vector<Interface::SelectionMenu::Item> items;
+		std::vector<PrismaUI::FurnSelectionMenu::Item> items;
 		const auto actName = std::format("{}, 0x{:X}", a_tmpCenter->GetDisplayFullName(), a_tmpCenter->GetFormID());
 		items.emplace_back(actName, "$SSL_None");
 		for (const auto& [ref, offset] : a_furnitures) {
@@ -253,12 +256,59 @@ namespace Thread
 			const auto itemValue = std::format("{}", offset.type.ToString());
 			items.emplace_back(itemName, itemValue);
 		}
-		auto it = Interface::SelectionMenu::CreateSelectionAndWait(items);
-		if (it == items.end() || it == items.begin()) {
-			return { a_tmpCenter, {} };
+		Instance::pendingFurnitureMap = a_furnitures;
+		Instance::pendingCenterAct = a_tmpCenter;
+		Instance::pendingQst = linkedQst;
+		PrismaUI::FurnSelectionMenu::Open(linkedQst, items);
+	}
+
+	void Instance::SetCenterRefSelected(size_t a_index)
+	{
+		// Called by PrismaUI::FurnSelectionMenu
+		if (a_index == 0 || a_index > pendingFurnitureMap.size()) {
+			logger::info("SetCenterRefSelected: using actor {:X} as center.", Instance::pendingCenterAct->GetFormID());
+			center.SetReference(Instance::pendingCenterAct, {});
+		} else {
+			const auto [selectedRef, selectedType] = pendingFurnitureMap.at(a_index - 1);
+			center.SetReference(selectedRef, selectedType);
+			if (selectedType.type.Is(Registry::FurnitureType::None)) {
+				logger::info("SetCenterRefSelected: using actor {:X} as center.", pendingCenterAct->GetFormID());
+			} else {
+				logger::info("SetCenterRefSelected: using furniture {:X} with offset {} as center.", selectedRef->GetFormID(), selectedType.type.ToString());
+			}
 		}
-		const auto selected = std::distance(items.cbegin(), it);
-		return a_furnitures.at(selected - 1);
+		Instance::pendingFurnitureMap.clear();
+		Instance::pendingCenterAct = nullptr;
+		const auto qst = Instance::pendingQst;
+		Instance::pendingQst = nullptr;
+		FinalizeCenterRefSelection(qst);
+	}
+
+	void Instance::FinalizeCenterRefSelection(RE::TESQuest* a_linkedQst)
+	{
+		std::thread([a_linkedQst]() {
+			std::unique_ptr<Instance> instance{};
+			{
+				std::unique_lock lock{ _mInstances };
+				const auto it = std::ranges::find_if(pendingInstances, [a_linkedQst](const auto& i) { return i->linkedQst == a_linkedQst; });
+				if (it == pendingInstances.end()) {
+					logger::error("FinalizeCenterRefSelection: no pending instance found for TESQuest {:X}.", a_linkedQst->formID);
+					DispatchContinueSetup(a_linkedQst, false);
+					return;
+				}
+				instance = std::move(*it);
+				pendingInstances.erase(it);
+			}
+			try {
+				instance->FinalizeInstanceMake();
+				std::unique_lock lock{ _mInstances };
+				instances.emplace_back(std::move(instance));
+				DispatchContinueSetup(a_linkedQst, true);
+			} catch (const std::exception& e) {
+				logger::error("FinalizeCenterRefSelection: Failed to complete thread instance: {}", e.what());
+				DispatchContinueSetup(a_linkedQst, false);
+			}
+		}).detach();
 	}
 
 	Instance::FurnitureMapping Instance::GetUniqueFurnituesOfTypeInBound(RE::Actor* a_centerAct, REX::EnumSet<Registry::FurnitureType::Value> a_furnitureTypes)

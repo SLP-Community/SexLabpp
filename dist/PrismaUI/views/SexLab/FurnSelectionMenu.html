@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<link rel="stylesheet" href="slp_stylesheet.css" />
+</head>
+<body>
+
+<div class="sl-menu">
+  <div class="sl-menu-title">Furniture Selection Menu</div>
+  <div class="sl-list" id="list">
+    <div class="sl-empty" id="empty">No items available.</div>
+  </div>
+</div>
+
+<script>
+  const list  = document.getElementById('list');
+  const empty = document.getElementById('empty');
+
+  window.populateItems = function(payloadStr) {
+    let payload;
+    try { payload = JSON.parse(payloadStr); } catch(e) { return; }
+    const items = Array.isArray(payload.items) ? payload.items : [];
+
+    while (list.firstChild && list.firstChild !== empty)
+      list.removeChild(list.firstChild);
+
+    if (!items.length) { empty.style.display = 'block'; return; }
+    empty.style.display = 'none';
+
+    const frag = document.createDocumentFragment();
+    items.forEach(function(item) {
+      const row = document.createElement('div');
+      row.className = 'sl-row';
+      row.dataset.index = item.index;
+      row.innerHTML =
+        '<span style="flex:1">' + escHtml(item.name) + '</span>' +
+        (item.type ? '<span class="sl-row-value">' + escHtml(item.type) + '</span>' : '');
+      row.addEventListener('click', function() { selectItem(item.index); });
+      frag.appendChild(row);
+    });
+    list.insertBefore(frag, empty);
+  };
+
+  function selectItem(index) {
+    list.querySelectorAll('.sl-row').forEach(function(r) { r.classList.remove('active'); });
+    const el = list.querySelector('[data-index="' + index + '"]');
+    if (el) el.classList.add('active');
+    setTimeout(function() { window.OnFurnItemSelected(String(index)); }, 80);
+  }
+
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') { window.OnMenuClosed(''); return; }
+    if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+      e.preventDefault();
+      const rows = Array.from(list.querySelectorAll('.sl-row'));
+      if (!rows.length) return;
+      const cur = list.querySelector('.sl-row.active');
+      const idx = cur ? rows.indexOf(cur) : -1;
+      const next = e.key === 'ArrowDown'
+        ? rows[Math.min(idx + 1, rows.length - 1)]
+        : rows[Math.max(idx - 1, 0)];
+      if (cur) cur.classList.remove('active');
+      next.classList.add('active');
+      next.scrollIntoView({ block: 'nearest' });
+    }
+    if (e.key === 'Enter') {
+      const sel = list.querySelector('.sl-row.active');
+      if (sel) selectItem(Number(sel.dataset.index));
+    }
+  });
+
+  function escHtml(str) {
+    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+</script>
+</body>
+</html>

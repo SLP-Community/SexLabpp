@@ -9,20 +9,28 @@
 
 namespace Thread
 {
-	bool Instance::CreateInstance(RE::TESQuest* a_linkedQst, const std::vector<RE::Actor*> a_submissives, const SceneMapping& a_scenes, FurniturePreference a_furniturePreference)
+	void Instance::CreateInstance(RE::TESQuest* a_linkedQst, const std::vector<RE::Actor*> a_submissives, const SceneMapping& a_scenes, FurniturePreference a_furniturePreference)
 	{
 		if (GetInstance(a_linkedQst)) {
 			logger::warn("Thread instance already exists for quest {:X}.", a_linkedQst->formID);
-			return false;
+			DispatchContinueSetup(a_linkedQst, false);
+			return;
 		}
 		try {
 			auto instance = std::make_unique<Instance>(a_linkedQst, a_submissives, a_scenes, a_furniturePreference);
 			std::unique_lock lock{_mInstances};
-			instances.emplace_back(std::move(instance));
-			return true;
+			if (instance->pendingQst != nullptr) {
+				pendingInstances.emplace_back(std::move(instance));
+				// DispatchContinueSetup() called by Instance::FinalizeCenterRefSelection()
+			} else {
+				instances.emplace_back(std::move(instance));
+				DispatchContinueSetup(a_linkedQst, true);
+			}
+			return;
 		} catch (const std::exception& e) {
 			logger::error("Failed to create thread instance: {}", e.what());
-			return false;
+			DispatchContinueSetup(a_linkedQst, false);
+			return;
 		}
 	}
 
@@ -41,6 +49,24 @@ namespace Thread
 			}
 		}
 		return nullptr;
+	}
+
+	Instance* Instance::GetPendingInstance(RE::TESQuest* a_linkedQst)
+	{
+		std::shared_lock lock{ _mInstances };
+		for (auto&& instance : pendingInstances) {
+			if (instance->linkedQst == a_linkedQst) {
+				return instance.get();
+			}
+		}
+		return nullptr;
+	}
+
+	void Instance::DispatchContinueSetup(RE::TESQuest* a_linkedQst, bool a_result)
+	{
+		const auto handle = Script::GetScriptObject(a_linkedQst, "sslThreadModel");
+		Script::CallbackPtr callbackPtr{};
+		Script::DispatchMethodCall(handle, "ContinueSetup", callbackPtr, std::move(a_result));
 	}
 
 	void Instance::Center::SetReference(RE::TESObjectREFR* a_ref, Registry::FurnitureOffset a_offset)

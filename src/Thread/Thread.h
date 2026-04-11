@@ -60,9 +60,11 @@ namespace Thread
 		Instance(RE::TESQuest* a_linkedQst, const std::vector<RE::Actor*>& a_submissives, const SceneMapping& a_scenes, FurniturePreference a_furniturePreference);
 		~Instance() = default;
 
-		static bool CreateInstance(RE::TESQuest* a_linkedQst, const std::vector<RE::Actor*> a_submissives, const SceneMapping& a_scenes, FurniturePreference a_furniturePreference);
+		static void CreateInstance(RE::TESQuest* a_linkedQst, const std::vector<RE::Actor*> a_submissives, const SceneMapping& a_scenes, FurniturePreference a_furniturePreference);
 		static void DestroyInstance(RE::TESQuest* a_linkedQst);
 		static Instance* GetInstance(RE::TESQuest* a_linkedQst);
+		static Instance* GetPendingInstance(RE::TESQuest* a_linkedQst);
+		static void DispatchContinueSetup(RE::TESQuest* a_linkedQst, bool a_result);
 
 	public:
 		bool HasNiInstance() const { return niInstance != nullptr; }
@@ -89,6 +91,7 @@ namespace Thread
 		RE::TESObjectREFR* GetCenterRef() { return center.GetRef(); }
 		Registry::FurnitureType GetFurnitureType() { return center.offset.type; }
 		bool ReplaceCenterRef(RE::TESObjectREFR* a_ref);
+		void SetCenterRefSelected(size_t a_index);
 
 		bool GetAutoplayEnabled();
 		void SetAutoplayEnabled(bool a_enabled);
@@ -120,6 +123,11 @@ namespace Thread
 		const Registry::Stage* activeStage{ nullptr };
 		SceneMapping scenes{};
 
+		// used during center selection through menu
+		RE::TESQuest* pendingQst{ nullptr };
+		FurnitureMapping pendingFurnitureMap{};
+		RE::Actor* pendingCenterAct{ nullptr };
+
 	private:
 		enum class CenterSelection
 		{
@@ -128,17 +136,20 @@ namespace Thread
 			SelectionMenu,
 		};
 
+		void FinalizeInstanceMake();
 		RE::Actor* InitializeReferences(const std::vector<RE::Actor*>& a_submissives);
 		std::vector<Registry::ActorFragment> InitializeScenes(const SceneMapping& a_scenes, FurniturePreference a_furniturePreference);
 		std::vector<const Registry::Scene*>& InitializeCenter(RE::Actor* centerAct, FurniturePreference furniturePreference);
 		bool InitializeFixedCenter(RE::Actor* centerAct, std::vector<const Registry::Scene*>& prioScenes, REX::EnumSet<Registry::FurnitureType::Value> sceneTypes);
 		CenterSelection GetSelectionMethod(FurniturePreference furniturePreference);
-		FurnitureMapping::value_type SelectCenterRefMenu(const FurnitureMapping& a_furnitures, RE::Actor* a_tmpCenter);
+		void InitializeCenterRefMenu(const FurnitureMapping& a_furnitures, RE::Actor* a_tmpCenter);
+		static void FinalizeCenterRefSelection(RE::TESQuest* a_linkedQst);
 		FurnitureMapping GetUniqueFurnituesOfTypeInBound(RE::Actor* a_centerAct, REX::EnumSet<Registry::FurnitureType::Value> a_furnitureTypes);
 
 	private:
 		static inline std::shared_mutex _mInstances{};
 		static inline std::vector<std::unique_ptr<Instance>> instances{};
+		static inline std::vector<std::unique_ptr<Instance>> pendingInstances{};
 	};
 
 }	 // namespace Thread
