@@ -1,9 +1,9 @@
 //   #define INI_SETTING(STR, DEFAULT, CAT) ...
 
-INI_SETTING(fFurniturePreference, 0.75f, "Animation")
+INI_SETTING(fFurniturePreference, 0.5f, "Animation")
 INI_SETTING(fFurnitureScanRadius, 750.0f, "Animation")
 INI_SETTING(fMinScale, 0.88f, "Animation")
-INI_SETTING(bAllowDead, false, "Animation")
+INI_SETTING(bAllowDead, true, "Animation")
 INI_SETTING(fAdjustStepSizeIncrement, 0.1f, "Animation")
 INI_SETTING(bAdjustNodes, false, "Animation")
 INI_SETTING(fGhostModeAlpha, 0.6f, "Animation")
