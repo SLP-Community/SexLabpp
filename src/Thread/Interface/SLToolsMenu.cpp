@@ -11,12 +11,9 @@ namespace Thread::PrismaUI
 				logger::error("SLToolsMenu::Initialize >> FAILED - PrismaUI unavailable");
 				return false;
 			}
-		} else {
-			PrismaAPI = Thread::PrismaUI::GetAPI();
 		}
-		
 		if (!PrismaAPI->IsValid(view)) {
-			view = Thread::PrismaUI::CreateView("SexLab/SLToolsMenu.html");
+			view = Thread::PrismaUI::CreateView(FILEPATH.data());
 			if (!view) {
 				logger::error("SLToolsMenu::Initialize >> FAILED - CreateView returned null");
 				return false;
@@ -64,7 +61,7 @@ namespace Thread::PrismaUI
 			s_result[1].clear();
 			// Show
 			PrismaAPI->Show(view);
-			PrismaAPI->Focus(view);
+			PrismaAPI->Focus(view, false); // second arg -> pauseGame
 		}
 	}
 

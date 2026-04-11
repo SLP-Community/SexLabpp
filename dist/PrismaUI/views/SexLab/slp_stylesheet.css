@@ -1,0 +1,185 @@
+/* ── Shared PrismaUI stylesheet for SexLab P+ ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg-body       : transparent;
+  --bg-menu       : #1c1c1e;
+  --bg-header     : #252527;
+  --bg-item-hover : #2a2a2e;
+  --bg-item-active: #222226;
+  --bg-sub        : #161618;
+  --border        : #3a3a3a;
+  --border-sub    : #2a2a2a;
+  --text-primary  : #ddd8d0;
+  --text-secondary: #b0a898;
+  --text-muted    : #888078;
+  --shadow        : 0 4px 24px rgba(0,0,0,0.9);
+  --radius        : 4px;
+  --font          : 'Segoe UI', sans-serif;
+  --transition    : 120ms ease;
+}
+
+body {
+  font-family: var(--font);
+  background: var(--bg-body);
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+.sl-menu {
+  background: var(--bg-menu);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  width: 420px;
+  max-height: 75vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+
+.sl-menu-title {
+  padding: 12px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  background: var(--bg-header);
+  border-bottom: 1px solid var(--border);
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  flex-shrink: 0;
+}
+
+/* ── Scrollable list ── */
+.sl-list {
+  overflow-y: auto;
+  flex: 1 1 auto;
+  padding: 4px 0;
+  scrollbar-width: thin;
+  scrollbar-color: #3a3a3a transparent;
+}
+.sl-list::-webkit-scrollbar       { width: 4px; }
+.sl-list::-webkit-scrollbar-thumb { background: #3a3a3a; border-radius: 2px; }
+
+/* ── Generic row ── */
+.sl-row {
+  padding: 9px 16px;
+  cursor: pointer;
+  font-size: 12px;
+  color: var(--text-secondary);
+  border-bottom: 1px solid var(--border-sub);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  user-select: none;
+  transition: background var(--transition), color var(--transition);
+}
+.sl-row:hover  { background: var(--bg-item-hover);  color: var(--text-primary); }
+.sl-row.active { background: var(--bg-item-active); color: var(--text-primary); }
+
+.sl-row-value {
+  font-size: 11px;
+  color: var(--text-muted);
+  flex-shrink: 0;
+  margin-left: 12px;
+}
+
+/* ── Submenu ── */
+.arrow { font-size: 9px; opacity: 0.5; }
+
+.submenu { display: none; max-height: 200px; overflow-y: auto; }
+.submenu.open { display: block; }
+
+.submenu-item {
+  padding: 7px 16px 7px 28px;
+  cursor: pointer;
+  font-size: 12px;
+  color: var(--text-muted);
+  border-bottom: 1px solid #222;
+  background: var(--bg-sub);
+  transition: background var(--transition), color var(--transition);
+}
+.submenu-item:hover { background: var(--bg-item-active); color: var(--text-primary); }
+.submenu-item.active-scene { color: #70b870; }
+
+/* ── Text entry overlay ── */
+.sl-menu { position: relative; }
+
+#text-entry {
+  display: none;
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.75);
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius);
+}
+#text-entry.open { display: flex; }
+
+#text-entry-box {
+  background: var(--bg-menu);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  width: 320px;
+}
+#text-entry-box label {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--text-secondary);
+  font-size: 12px;
+  letter-spacing: 0.3px;
+}
+#text-entry-box input {
+  width: 100%;
+  background: #111113;
+  border: 1px solid var(--border);
+  color: var(--text-primary);
+  padding: 7px 10px;
+  font-size: 12px;
+  border-radius: 3px;
+  outline: none;
+  margin-bottom: 12px;
+  font-family: var(--font);
+}
+#text-entry-box input:focus { border-color: #607090; }
+
+.btn-row { display: flex; gap: 8px; justify-content: flex-end; }
+.btn {
+  padding: 6px 14px;
+  border: 1px solid var(--border);
+  background: var(--bg-header);
+  color: var(--text-secondary);
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 11px;
+  font-family: var(--font);
+  transition: background var(--transition), color var(--transition);
+}
+.btn:hover { background: #2e2e32; color: var(--text-primary); }
+.btn.primary { border-color: #506070; color: #90b0c8; }
+
+/* ── Index column ── */
+.sl-row-index {
+  font-size: 10px;
+  color: var(--text-muted);
+  width: 18px;
+  text-align: right;
+  flex-shrink: 0;
+  margin-right: 10px;
+}
+
+/* ── Empty state ── */
+.sl-empty {
+  padding: 32px 16px;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  display: none;
+}
