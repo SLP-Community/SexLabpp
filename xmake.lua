@@ -2,7 +2,7 @@ set_xmakever("2.9.5")
 
 -- Globals
 PROJECT_NAME = "SexLabUtil"
-PROJECT_VERSION = "2.17.1"
+PROJECT_VERSION = "2.17.2"
 
 -- Includes
 includes("lib/CommonLibSSE-NG/xmake.lua")
