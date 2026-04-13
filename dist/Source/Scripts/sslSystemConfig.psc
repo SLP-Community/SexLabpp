@@ -292,6 +292,14 @@ bool property HideHUD hidden
 EndProperty
 
 ; Integers
+int property ClimaxType hidden
+  int Function Get()
+    return GetSettingInt("iClimaxType")
+  EndFunction
+  Function Set(int aiSet)
+    SetSettingInt("iClimaxType", aiSet)
+  EndFunction
+EndProperty
 int property AskBed hidden
   int Function Get()
     return GetSettingInt("iAskBed")
@@ -995,7 +1003,7 @@ bool function CheckSystem()
     Debug.MessageBox("[SexLab]\nMissing 'CrosshairRefEvents Hang Fix'.\nThis mod is mandatory to avoid soft-locks during scene startup.")
     ret = false
   ElseIf (!CheckSystemPart("PrismaUI"))
-    Debug.MessageBox("[SexLab]\nMissing 'Prisma UI'.\nThis mod is mandatory for the 'Scene Selection Menu' and the 'Furniture Selection Menu' to work.")
+    Debug.MessageBox("[SexLab]\nMissing 'Prisma UI'.\nThis mod is mandatory for certain menus and overlays to work.")
     ret = false
   ElseIf (!CheckSystemPart("PPA"))
     Debug.MessageBox("[SexLab]\nMissing 'Procedural Penis Animations'.\nThis mod is highly recommended for schlong allignments to work properly.")

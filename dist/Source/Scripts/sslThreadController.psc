@@ -536,6 +536,9 @@ Function RestoreOffsets()
 EndFunction
 
 int Function GetAdjustPos()
+	If (_AdjustActor)
+		return GetPositionIdx(_AdjustActor)
+	EndIf
 	int AdjustIdx = -1
 	If (HasPlayer)
 		AdjustIdx = IndexTravelComplex(GetPositionIdx(PlayerRef))
@@ -555,7 +558,8 @@ Actor Function GetTargetPartner()
 EndFunction
 
 Function ChangeTargetPartner(bool abBackwards = false)
-	If (Positions.Length < 3)
+	int len = GetPositions().Length
+	If ((HasPlayer() && len < 3) || (!HasPlayer() && len < 2))
 		return
 	EndIf
 	int curIdx = GetAdjustPos()
@@ -563,6 +567,9 @@ Function ChangeTargetPartner(bool abBackwards = false)
 	_AdjustActor = GetIdxPosition(newIdx)
 	Config.SetTargetActor(_AdjustActor)
 	Config.SelectedSpell.Cast(_AdjustActor)	; SFX for visual feedback
+	If (!Config.HasVRIK)
+		EnjBarsChangeHighlightedPartner(_AdjustActor)
+	EndIf
 	PlayHotkeyFX(0, !abBackwards)
 	Debug.Notification("SexLab partner selected: " + SexLabUtil.ActorName(_AdjustActor))
 	Log("ChangeTargetPartner(), currently focused partner: " + SexLabUtil.ActorName(_AdjustActor))
@@ -581,7 +588,9 @@ EndFunction
 ; ------------------------------------------------------- ;
 
 Function InitPrismaMenu()
-	; TODO: Exapand (PrismaUI author suggest one PrismaView per plugin)
+	If (Config.HasVRIK)
+		return
+	EndIf
 	OnPrismaMenuOpened()
 	OpenSLToolsMenu()
 EndFunction
@@ -764,7 +773,7 @@ Function VRHandleGesture(String asEventName, String Foobar, float Presses, Form 
 		ElseIf (asEvent == "L_Back")
 			SexLabUtil.ToggleFreeCamera()
 		ElseIf (asEvent == "L_Forward")
-			;InitPrismaMenu() ; awaiting VR support
+			InitPrismaMenu() ; awaiting VR support
 		ElseIf (asEvent == "R_Tap")
 			CyclePOVModesVR()
 		ElseIf (asEvent == "R_Up")

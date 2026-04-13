@@ -33,6 +33,9 @@ namespace Papyrus::ThreadModel
 
 		void UpdateEnjoyment(ALIASARGS, float a_enjoyment);
 
+		void EnjBarsUpdateSlider(ALIASARGS, float a_enjoyment, RE::BSFixedString a_interactions);
+		void RegisterRaiseEnjAttempt(ALIASARGS, float a_nextTimeCycle);
+
 		inline bool Register(VM* a_vm)
 		{
 			REGISTERFUNC(GetActorVoice, "sslActorAlias", false);
@@ -48,6 +51,9 @@ namespace Papyrus::ThreadModel
 			REGISTERFUNC(StripByDataEx, "sslActorAlias", false);
 
 			REGISTERFUNC(UpdateEnjoyment, "sslActorAlias", false);
+
+			REGISTERFUNC(EnjBarsUpdateSlider, "sslActorAlias", false);
+			REGISTERFUNC(RegisterRaiseEnjAttempt, "sslActorAlias", false);
 
 			return true;
 		}
@@ -92,6 +98,11 @@ namespace Papyrus::ThreadModel
 	void TryUpdateMenuTimer(QUESTARGS, float a_time);
 	void OpenSLToolsMenu(QUESTARGS);
 
+	void EnjBarsInit(QUESTARGS, const std::vector<RE::Actor*> a_positions);
+	void EnjBarsClose(QUESTARGS);
+	void EnjBarsToggle(QUESTARGS);
+	void EnjBarsChangeHighlightedPartner(QUESTARGS, RE::Actor* a_actor);
+
 	inline bool Register(VM* a_vm)
 	{
 		REGISTERFUNC(GetActiveScene, "sslThreadModel", true);
@@ -132,6 +143,11 @@ namespace Papyrus::ThreadModel
 		REGISTERFUNC(TryCloseSceneMenu, "sslThreadModel", true);
 		REGISTERFUNC(TryUpdateMenuTimer, "sslThreadModel", true);
 		REGISTERFUNC(OpenSLToolsMenu, "sslThreadModel", true);
+
+		REGISTERFUNC(EnjBarsInit, "sslThreadModel", true);
+		REGISTERFUNC(EnjBarsClose, "sslThreadModel", true);
+		REGISTERFUNC(EnjBarsToggle, "sslThreadModel", true);
+		REGISTERFUNC(EnjBarsChangeHighlightedPartner, "sslThreadModel", true);
 
 		return ActorAlias::Register(a_vm);
 	}

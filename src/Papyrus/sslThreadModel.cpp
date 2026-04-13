@@ -284,6 +284,20 @@ namespace Papyrus::ThreadModel
 			instance->SetEnjoyment(a_alias->GetActorReference(), a_enjoyment);
 		}
 
+		void EnjBarsUpdateSlider(ALIASARGS, float a_enjoyment, RE::BSFixedString a_interactions)
+		{
+			const auto& a_qst = a_alias->owningQuest;
+			GET_INSTANCE();
+			instance->EnjBarsUpdateSlider(a_alias->GetActorReference(), a_enjoyment, a_interactions);
+		}
+
+		void RegisterRaiseEnjAttempt(ALIASARGS, float a_nextTimeCycle)
+		{
+			const auto& a_qst = a_alias->owningQuest;
+			GET_INSTANCE();
+			instance->RegisterRaiseEnjAttempt(a_alias->GetActorReference(), a_nextTimeCycle);
+		}
+
 #undef GET_POSITION
 	}  // namespace ActorAlias
 
@@ -744,6 +758,30 @@ namespace Papyrus::ThreadModel
 	{
 		GET_INSTANCE();
 		return instance->OpenSLToolsMenu();
+	}
+
+	void EnjBarsInit(QUESTARGS, const std::vector<RE::Actor*> a_positions)
+	{
+		GET_INSTANCE();
+		return instance->EnjBarsInit(a_positions);
+	}
+
+	void EnjBarsClose(QUESTARGS)
+	{
+		GET_INSTANCE();
+		return instance->EnjBarsClose();
+	}
+
+	void EnjBarsToggle(QUESTARGS)
+	{
+		GET_INSTANCE();
+		return instance->EnjBarsToggle();
+	}
+
+	void EnjBarsChangeHighlightedPartner(QUESTARGS, RE::Actor* a_actor)
+	{
+		GET_INSTANCE();
+		return instance->EnjBarsChangeHighlightedPartner(a_actor);
 	}
 
 }  // namespace Papyrus::ThreadModel

@@ -774,7 +774,13 @@ State Animating
 		EndIf
 		_CurrentInteractions = _Thread.ListDetectedInteractionsInternal(_ActorRef)
 		UpdateEffectiveEnjoymentCalculations()
+		If (!_Config.UseSceneMenu && !_Config.HasVRIK)
+			EnjBarsUpdateSlider(_FullEnjoyment as float, _Thread.GetCurrentInteractionString(_ActorRef))
+		EndIf
 		int strength = CalcReaction()
+		If (strength == 100)
+			DoOrgasm()
+		EndIf
 		If (_LoopVoiceDelay >= _VoiceDelay && !IsSilent)
 			_LoopVoiceDelay = 0.0
 			bool lipsync = !OpenMouth && _Config.UseLipSync && _sex <= 2
@@ -1200,6 +1206,9 @@ EndFunction
 
 Function UpdateEnjoyment(float afEnjoyment) native
 
+Function EnjBarsUpdateSlider(float afEnjoyment, string asInteractions) native
+Function RegisterRaiseEnjAttempt(float afNextTimeCycle) native
+
 ; Defaults
 float _EnjoymentDelay
 float _LoopEnjoymentDelay
@@ -1221,8 +1230,6 @@ float _PainInterBackup
 float _PainInterDecayBackup
 float _PainInterCur
 int _FullEnjoyment
-; Game
-float _lastHoldBack
 
 Function ResetEnjoymentVariables()
 	; Defaults
@@ -1246,8 +1253,6 @@ Function ResetEnjoymentVariables()
 	_PainInterDecayBackup = 0.0
 	_PainInterCur = 0
 	_FullEnjoyment = 0
-	; Game
-	_lastHoldBack = 0.0
 EndFunction
 
 Function UpdateBaseEnjoymentCalculations()
@@ -1467,39 +1472,35 @@ Function StoreExcitementState(String arg = "")
 	EndIf
 EndFunction
 
-Function RegisterRaiseEnjAttempt()
-	If  (_ActorRef != _PlayerRef)
+Function InitRaiseEnjAttempt()
+	If (_ActorRef != _PlayerRef)
 		return
 	EndIf
-	If (_lastHoldBack > 0.0)
-		; IDEA: expose timeCycle as a UI bar with a to and fro moving needle
-		float timePassed = SexLabUtil.GetCurrentGameRealTime() - _lastHoldBack
-		; As enjoyment gets higher, the "green zone" gets narrower
-		; At 80 Enj (2.0s timeCycle): Window is 25% of the bar (0.375 to 0.625)
-		; At 100 Enj (0.8s timeCycle): Window is 15% of the bar (0.425 to 0.575)
-		float timeCycle = 6.8 - (_FullEnjoyment * 0.06)
-		float difficultyOffset = 0.125 - ((_FullEnjoyment - 80.0) * 0.00375)
-		float windowStart = timeCycle * (0.5 - difficultyOffset)
-		float windowEnd = timeCycle * (0.5 + difficultyOffset)
-		If (timePassed >= windowStart) && (timePassed <= windowEnd)
-			_FullEnjoyment += 2
-			_ActorRef.RestoreActorValue("Stamina", _Config.GameStaminaCost)
-			_ActorRef.RestoreActorValue("Magicka", _Config.GameMagickaCost)
-		ElseIf (_Config.GameSpamDelayPenalty)
-			If (_EnjFactor > 0)
-				_FullEnjoyment -= 4
-				_EnjFactor -= 0.03
-			Else ; penalty for too many badly timed atttempts
-				_FullEnjoyment -= 50 
-				_EnjFactor = (_BaseFactor/2)
-			EndIf
-			If (!SexLabUtil.IsGodModeEnabled())
-				_ActorRef.DamageActorValue("Stamina", 2 * _Config.GameStaminaCost)
-				_ActorRef.DamageActorValue("Magicka", 2 * _Config.GameMagickaCost)
-			EndIf
+	; As enjoyment gets higher, the "green zone" gets narrower
+	; At 80 Enj (2.0s nextTimeCycle): Window will be 25% of the bar (0.375 to 0.625)
+	; At 100 Enj (0.8s nextTimeCycle): Window will be 15% of the bar (0.425 to 0.575)
+	float nextTimeCycle = 6.8 - (_FullEnjoyment * 0.06)
+	RegisterRaiseEnjAttempt(nextTimeCycle)
+EndFunction
+
+Function OnRaiseEnjAttemptResult(bool abSuccess)
+	If (abSuccess)
+		_FullEnjoyment += _Config.GameEnjAdjAmount * 2
+		_PlayerRef.RestoreActorValue("Stamina", _Config.GameStaminaCost)
+		_PlayerRef.RestoreActorValue("Magicka", _Config.GameMagickaCost)
+	ElseIf (_Config.GameSpamDelayPenalty)
+		If (_EnjFactor > 0)
+			_FullEnjoyment -= _Config.GameEnjAdjAmount * 2
+			_EnjFactor -= 0.04
+		Else ; penalty for too many badly timed atttempts
+			_FullEnjoyment -= 50
+			_EnjFactor = (_BaseFactor / 2)
+		EndIf
+		If (!SexLabUtil.IsGodModeEnabled())
+			_PlayerRef.DamageActorValue("Stamina", 2 * _Config.GameStaminaCost)
+			_PlayerRef.DamageActorValue("Magicka", 2 * _Config.GameMagickaCost)
 		EndIf
 	EndIf
-	_lastHoldBack = SexLabUtil.GetCurrentGameRealTime()
 EndFunction
 
 Function DebugBaseCalcVariables()

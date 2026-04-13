@@ -1107,6 +1107,9 @@ State Animating
 		If(LeadIn)
 			SendThreadEvent("LeadInStart")
 		EndIf
+		If ((HasPlayer) && (!Config.UseSceneMenu) && (!Config.HasVRIK) && (Config.ClimaxType == Config.CLIMAXTYPE_SLSO))
+			EnjBarsInit(_Positions)
+		EndIf
 	EndFunction
 
 	bool Function ResetScene(String asNewScene)
@@ -1512,6 +1515,9 @@ State Ending
 		UnregisterCollision()
 		If(IsObjectiveDisplayed(0))
 			SetObjectiveDisplayed(0, False)
+		EndIf
+		If ((HasPlayer()) && (!Config.UseSceneMenu) && (!Config.HasVRIK) && (Config.ClimaxType == Config.CLIMAXTYPE_SLSO))
+			EnjBarsClose()
 		EndIf
 		If (Config.HideHUD)
 			SexLabUtil.HideElementsGameHUD(false)
@@ -2045,6 +2051,11 @@ EndFunction
 ; *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-* ;
 ; preferably move these to a separate script sslEnjoymentUtils
 
+Function EnjBarsInit(Actor[] akPositions) native
+Function EnjBarsClose() native
+Function EnjBarsToggle() native
+Function EnjBarsChangeHighlightedPartner(Actor akActor) native
+
 Int Property CONSENT_CONNONSUB 		= 0 AutoReadOnly Hidden
 Int Property CONSENT_NONCONNONSUB 	= 1 AutoReadOnly Hidden
 Int Property CONSENT_CONSUB 		= 2 AutoReadOnly Hidden
@@ -2293,11 +2304,19 @@ Function ProcessEnjGameArg(String arg, Actor akPartner, bool abAdjustTarget)
 		GameHoldback(akTarget)
 	ElseIf (arg == "Stamina")
 		If ((Config.GameRequiredOnHighEnj) && (GetEnjoyment(PlayerRef) > 80))
-			ActorAlias[GetPositionIdx(PlayerRef)].RegisterRaiseEnjAttempt()
+			ActorAlias[GetPositionIdx(PlayerRef)].InitRaiseEnjAttempt()
 		Else
 			GameRaiseEnjoyment(akTarget)
 		EndIf
 	EndIf
+EndFunction
+
+Function OnRaiseEnjAttemptResult(int aiSuccess)
+	sslActorAlias ref = ActorAlias(PlayerRef)
+	If (!ref)
+		return
+	EndIf ; Called by Thread::PrismaUI::EnjoymentBars
+	return ref.OnRaiseEnjAttemptResult(aiSuccess as bool)
 EndFunction
 
 Function EnjBasedSkipToLastStage(bool abSkip)

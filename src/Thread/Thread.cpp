@@ -4,6 +4,7 @@
 #include "Registry/Util/Scale.h"
 #include "Thread/Interface/SceneMenu.h"
 #include "Thread/Interface/SLToolsMenu.h"
+#include "Thread/Interface/EnjoymentBars.h"
 #include "Registry/Util/RayCast/Offsets.h"
 #include "Util/Script.h"
 
@@ -471,6 +472,37 @@ namespace Thread
 		}
 		Script::ObjectPtr scriptObj = Script::GetScriptObject(linkedQst, "sslThreadController");
 		PrismaUI::SLToolsMenu::Open(scriptObj, activeScene->name, playingScenesNames);
+	}
+
+	void Instance::EnjBarsInit(const std::vector<RE::Actor*>& a_positions)
+	{
+		Script::ObjectPtr scriptObj = Script::GetScriptObject(linkedQst, "sslThreadController");
+		PrismaUI::EnjoymentBars::InitAndShow(scriptObj, a_positions);
+	}
+
+	void Instance::EnjBarsClose()
+	{
+		PrismaUI::EnjoymentBars::HideAndClear();
+	}
+
+	void Instance::EnjBarsToggle()
+	{
+		PrismaUI::EnjoymentBars::ToggleEnjoymentBars();
+	}
+
+	void Instance::EnjBarsChangeHighlightedPartner(RE::Actor* a_partner)
+	{
+		PrismaUI::EnjoymentBars::UpdateHighlightedPartner(a_partner);
+	}
+
+	void Instance::EnjBarsUpdateSlider(RE::Actor* a_position, float a_enjoyment, RE::BSFixedString a_interactions)
+	{
+		PrismaUI::EnjoymentBars::UpdateSlider(a_position, a_enjoyment, a_interactions);
+	}
+
+	void Instance::RegisterRaiseEnjAttempt(RE::Actor* a_position, float a_nextTimeCycle)
+	{
+		PrismaUI::EnjoymentBars::RegisterRaiseEnjAttempt(a_position, a_nextTimeCycle);
 	}
 
 }	 // namespace Thread

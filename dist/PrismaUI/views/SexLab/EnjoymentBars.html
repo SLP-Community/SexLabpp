@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<link rel="stylesheet" href="slp_stylesheet.css" />
+</head>
+<body>
+
+<div class="enj-stack" id="stack"></div>
+
+<script>
+  var raf;
+  var actorsInfo = [];                /* { id, name, enj, intr, isTarget, isGameDpt } */
+  var EnjGameClickTimeCycle = 0.0;
+  var EnjGameNeedlePos = 0.5;
+  var EnjGameNeedleDir = 1;
+  var EnjGameGreenZoneStart = 0.375;
+  var EnjGameGreenZoneEnd   = 0.625;
+
+  window.EnjBars_InitActors = function(payloadStr) {
+    var data;
+    try { data = JSON.parse(payloadStr); } catch(e) { return; }
+    actorsInfo = (data.actorsInfo || []).slice(0, 5).map(function(a) {
+      return { id: Number(a.id), name: a.name, enj: 0, intr: '', isTarget: false, isGameDpt: false };
+    });
+    EnjGameNeedlePos = 0.5;
+    EnjGameNeedleDir = 1;
+    buildDOM();
+    cancelAnimationFrame(raf);
+    loop();
+  };
+
+  window.EnjBars_ClearActors = function() {
+    actorsInfo = [];
+    buildDOM();
+    cancelAnimationFrame(raf);
+  };
+
+  window.EnjBars_UpdateSlider = function(payloadStr) {
+    // payloadStr format: id^enj^intr
+    const parts = payloadStr.split('^');
+    if (parts.length < 3) return;
+    const id = parts[0];
+    const enj = parseFloat(parts[1]);
+    const intrRaw = parts[2];
+    var a = findActorById(id);
+    if (!a) return;
+    a.enj = enj;
+    a.intr = parseIntr(intrRaw);
+    var intrEl = document.getElementById('ei' + a._idx);
+    if (intrEl) intrEl.textContent = a.intr;
+    if (a.isGameDpt && a.enj < 75) {
+      a.isGameDpt = false;
+      updateGameActorDOM(a);
+    }
+  };
+
+  window.EnjBars_UpdateHighlightedPartner = function(partnerId) {
+    var searchId = Number(partnerId)
+    actorsInfo.forEach(function(a, i) {
+      var wasTarget = a.isTarget;
+      a.isTarget = (Number(a.id) === searchId);
+      if (wasTarget !== a.isTarget) {
+        var wrap = document.getElementById('wrap' + i);
+        if (wrap) wrap.classList.toggle('enj-highlight--target', a.isTarget);
+      }
+    });
+  };
+
+  window.EnjBars_RaiseEnjAttempt = function(payloadStr) {
+    // payloadStr format: id^nextTC
+    const parts = payloadStr.split('^');
+    if (parts.length < 2) return;
+    const id = parts[0];
+    const nextTC = parseFloat(parts[1]);
+    var a = findActorById(id);
+    if (!a) return;
+    if (a.enj >= 75 && !a.isGameDpt) {
+      a.isGameDpt = true;
+      updateGameActorDOM(a);
+    }
+    var hit = (EnjGameNeedlePos >= EnjGameGreenZoneStart && EnjGameNeedlePos <= EnjGameGreenZoneEnd);
+    if (hit) {
+      ShowEnjGameFeedback(a._idx, 'hit');
+      reportBackResult(true);
+    } else {
+      ShowEnjGameFeedback(a._idx, 'miss');
+      reportBackResult(false);
+    }
+    EnjGameClickTimeCycle = nextTC;
+  };
+
+  function reportBackResult(isHit) {
+    var callback = isHit ? window.EnjBars_OnTimedAttempt : window.EnjBars_OnMissedAttempt;
+    if (callback) {
+        callback("");
+    }
+  };
+
+  /* ── helpers ── */
+  function findActorById(id) {
+    searchId = Number(id)
+    for (var i = 0; i < actorsInfo.length; i++) {
+      if (Number(actorsInfo[i].id) === searchId) {
+        actorsInfo[i]._idx = i;
+        return actorsInfo[i];
+      }
+    }
+    return null;
+  }
+
+  function barFillPct(enj) {
+    if (enj < 0) return Math.min(Math.abs(enj) / 100, 1);
+    var m = enj % 100;
+    return (m === 0 && enj > 0) ? 1 : Math.min(m / 100, 1);
+  }
+
+  function barColorClass(enj) {
+    if (enj < 0)   return 'enj-fill--neg';
+    if (enj > 100) return 'enj-fill--over';
+    return 'enj-fill--normal';
+  }
+
+  function parseIntr(raw) {
+    if (!raw || !raw.length) return '';
+    return raw.split(',').map(function(s) { return s.trim(); }).filter(Boolean).join(' · ');
+  }
+
+  /* ── DOM build ── */
+  function buildDOM() {
+    var stack = document.getElementById('stack');
+    stack.innerHTML = '';
+    actorsInfo.forEach(function(a, i) {
+      a._idx = i;
+
+      var wrap  = elc('div', 'enj-bar-wrap'); wrap.id = 'wrap' + i;
+      if (a.isTarget) wrap.classList.add('enj-highlight--target');
+
+      var row   = elc('div', 'enj-label-row');
+      var nm    = elc('span', 'enj-name');  nm.textContent = a.name;
+      var intr  = elc('span', 'enj-intr');  intr.id = 'ei' + i;
+      intr.textContent = a.intr;
+      var vl    = elc('span', 'enj-value'); vl.id = 'ev' + i;
+      row.appendChild(nm);
+      row.appendChild(intr);
+      row.appendChild(vl);
+
+      var frame = elc('div', 'enj-frame'); frame.id = 'ef' + i;
+      var fill  = elc('div', 'enj-fill');  fill.id  = 'eb' + i;
+      frame.appendChild(fill);
+
+      wrap.appendChild(row);
+      wrap.appendChild(frame);
+      stack.appendChild(wrap);
+    });
+  }
+
+  function updateGameActorDOM(a) {
+    var idx   = a._idx;
+    var frame = document.getElementById('ef' + idx);
+    if (!frame) return;
+    var hasGameDOM = !!document.getElementById('ez' + idx);
+    if (a.isGameDpt && !hasGameDOM) {
+      var zone   = elc('div', 'enj-zone');        zone.id   = 'ez' + idx;
+      var center = elc('div', 'enj-zone-center'); center.id = 'ec' + idx;
+      zone.appendChild(center);
+      frame.appendChild(zone);
+
+      var needle = elc('div', 'enj-needle'); needle.id = 'en' + idx;
+      frame.appendChild(needle);
+
+      var flash  = elc('div', 'enj-flash');    flash.id  = 'efl' + idx;
+      var fbtext = elc('div', 'enj-feedback'); fbtext.id = 'efb' + idx;
+      frame.appendChild(flash);
+      frame.appendChild(fbtext);
+    } else if (!a.isGameDpt && hasGameDOM) {
+      ['ez', 'en', 'efl', 'efb'].forEach(function(prefix) {
+        var node = document.getElementById(prefix + idx);
+        if (node) node.parentNode.removeChild(node);
+      });
+    }
+  }
+
+  function elc(tag, cls) {
+    var e = document.createElement(tag);
+    if (cls) e.className = cls;
+    return e;
+  }
+
+  /* ── animation loop ── */
+  var lastT = 0, pulseT = 0;
+  function loop() {
+    raf = requestAnimationFrame(function(t) {
+      var dt = Math.min((t - lastT) / 1000, 0.1);
+      lastT = t;
+
+      if (EnjGameClickTimeCycle > 0 &&
+          actorsInfo.some(function(a) { return a.isGameDpt && a.enj >= 80; })) {
+        EnjGameNeedlePos += EnjGameNeedleDir * (1 / EnjGameClickTimeCycle) * dt;
+        if (EnjGameNeedlePos >= 1) { EnjGameNeedlePos = 1; EnjGameNeedleDir = -1; }
+        if (EnjGameNeedlePos <= 0) { EnjGameNeedlePos = 0; EnjGameNeedleDir =  1; }
+        pulseT += dt;
+      }
+
+      draw();
+      loop();
+    });
+  }
+
+  function draw() {
+    actorsInfo.forEach(function(a, i) {
+      var vl = document.getElementById('ev' + i);
+      var bl = document.getElementById('eb' + i);
+      if (!vl || !bl) return;
+
+      var enj = a.enj;
+      vl.textContent = Math.round(enj);
+      vl.className   = 'enj-value'
+                     + (enj > 100 ? ' enj-value--over' : enj < 0 ? ' enj-value--neg' : '');
+
+      bl.className = 'enj-fill ' + barColorClass(enj) + (enj < 0 ? ' enj-fill--rtl' : '');
+      bl.style.width = (barFillPct(enj) * 100) + '%';
+      bl.classList.toggle('enj-fill--pulse', enj >= 90);
+
+      if (!a.isGameDpt || enj < 80) return;
+
+      var ze = document.getElementById('ez' + i);
+      var ne = document.getElementById('en' + i);
+      var ce = document.getElementById('ec' + i);
+      if (!ze || !ne || !ce) return;
+
+      var doff = Math.max(0.02, 0.125 - ((enj - 80) * 0.00375));
+      EnjGameGreenZoneStart = 0.5 - doff;
+      EnjGameGreenZoneEnd   = 0.5 + doff;
+
+      ze.style.left  = (EnjGameGreenZoneStart * 100) + '%';
+      ze.style.width = ((EnjGameGreenZoneEnd - EnjGameGreenZoneStart) * 100) + '%';
+
+      var inZone = (EnjGameNeedlePos >= EnjGameGreenZoneStart && EnjGameNeedlePos <= EnjGameGreenZoneEnd);
+      ze.className = 'enj-zone' + (inZone ? ' enj-zone--active' : '');
+      ce.className = 'enj-zone-center' + (inZone ? ' enj-zone-center--active' : '');
+
+      ne.style.left = (EnjGameNeedlePos * 100) + '%';
+      ne.className  = 'enj-needle' + (inZone ? ' enj-needle--active' : '');
+    });
+  }
+
+  /* ── visual feedback (cosmetic only) ── */
+  var feedbackTimer = null;
+  function ShowEnjGameFeedback(idx, result) {
+    var fbEl = document.getElementById('efb' + idx);
+    var flEl = document.getElementById('efl' + idx);
+    if (!fbEl || !flEl) return;
+
+    var isHit = result === 'hit';
+    flEl.className = 'enj-flash ' + (isHit ? 'enj-flash--hit' : 'enj-flash--miss');
+    flEl.classList.add('enj-flash--active');
+    fbEl.textContent = isHit ? 'HIT' : 'MISS';
+    fbEl.style.color = isHit ? 'var(--enj-col-hit)' : 'var(--enj-col-miss)';
+    fbEl.classList.add('enj-feedback--visible');
+
+    clearTimeout(feedbackTimer);
+    feedbackTimer = setTimeout(function() {
+      flEl.classList.remove('enj-flash--active');
+      fbEl.classList.remove('enj-feedback--visible');
+    }, 600);
+  }
+</script>
+</body>
+</html>

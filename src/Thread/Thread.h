@@ -64,6 +64,7 @@ namespace Thread
 		static void DestroyInstance(RE::TESQuest* a_linkedQst);
 		static Instance* GetInstance(RE::TESQuest* a_linkedQst);
 		static Instance* GetPendingInstance(RE::TESQuest* a_linkedQst);
+		static void FinalizeCenterRefSelection(RE::TESQuest* a_linkedQst);
 		static void DispatchContinueSetup(RE::TESQuest* a_linkedQst, bool a_result);
 
 	public:
@@ -110,6 +111,13 @@ namespace Thread
 
 		void OpenSLToolsMenu();
 
+		void EnjBarsInit(const std::vector<RE::Actor*>& a_positions);
+		void EnjBarsClose();
+		void EnjBarsToggle();
+		void EnjBarsChangeHighlightedPartner(RE::Actor* a_target);
+		void EnjBarsUpdateSlider(RE::Actor* a_position, float a_enjoyment, RE::BSFixedString a_interactions);
+		void RegisterRaiseEnjAttempt(RE::Actor* a_position, float a_nextTimeCycle);
+
 	private:
 		RE::TESQuest* linkedQst;
 		std::shared_ptr<NiNode::NiInstance> niInstance{ nullptr };
@@ -143,7 +151,6 @@ namespace Thread
 		bool InitializeFixedCenter(RE::Actor* centerAct, std::vector<const Registry::Scene*>& prioScenes, REX::EnumSet<Registry::FurnitureType::Value> sceneTypes);
 		CenterSelection GetSelectionMethod(FurniturePreference furniturePreference);
 		void InitializeCenterRefMenu(const FurnitureMapping& a_furnitures, RE::Actor* a_tmpCenter);
-		static void FinalizeCenterRefSelection(RE::TESQuest* a_linkedQst);
 		FurnitureMapping GetUniqueFurnituesOfTypeInBound(RE::Actor* a_centerAct, REX::EnumSet<Registry::FurnitureType::Value> a_furnitureTypes);
 
 	private:
