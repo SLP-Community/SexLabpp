@@ -55,7 +55,7 @@ namespace Thread::PrismaUI
 		json += "]}";
 
 		if (PrismaAPI->IsValid(view)) {
-			PrismaAPI->Invoke(view, ("populateScenes('" + json + "')").c_str());
+			PrismaAPI->InteropCall(view, "populateScenes", json.c_str());
 			// Reset
 			s_result[0].clear();
 			s_result[1].clear();

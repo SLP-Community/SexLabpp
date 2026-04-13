@@ -1,6 +1,5 @@
 #pragma once
 #include "PrismaUtil.h"
-#include "Util/Script.h"
 
 namespace Thread::PrismaUI
 {

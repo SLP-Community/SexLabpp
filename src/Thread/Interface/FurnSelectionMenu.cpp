@@ -1,5 +1,4 @@
 #include "FurnSelectionMenu.h"
-#include "Thread/Thread.h"
 
 namespace Thread::PrismaUI
 {
@@ -51,7 +50,7 @@ namespace Thread::PrismaUI
 		json += "]}";
 
 		if (PrismaAPI->IsValid(view)) {
-			PrismaAPI->Invoke(view, ("populateItems('" + json + "')").c_str());
+			PrismaAPI->InteropCall(view, "populateItems", json.c_str());
 			// Show
 			PrismaAPI->Show(view);
 			PrismaAPI->Focus(view, false); // second arg -> pauseGame
