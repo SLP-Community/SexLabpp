@@ -1,443 +1,539 @@
-/* ── Shared PrismaUI stylesheet for SexLab P+ ── */
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+/* ============================================================
+   SHARED PRISMAUI STYLESHEET — SexLab P+
+   ============================================================ */
 
 :root {
-  --bg-body       : transparent;
-  --bg-menu       : #1c1c1e;
-  --bg-header     : #252527;
-  --bg-item-hover : #2a2a2e;
-  --bg-item-active: #222226;
-  --bg-sub        : #161618;
-  --border        : #3a3a3a;
-  --border-sub    : #2a2a2a;
-  --text-primary  : #ddd8d0;
-  --text-secondary: #b0a898;
-  --text-muted    : #888078;
-  --shadow        : 0 4px 24px rgba(0,0,0,0.9);
-  --radius        : 4px;
-  --font          : 'Segoe UI', sans-serif;
-  --transition    : 120ms ease;
+
+  /* ── Scale
+     All px sizes: calc(N * var(--s))
+     Calibrated for 1920×1080: min(1vw,1vh) = 10.8px → --s = 1.0   */
+  --s     : calc(min(1vw, 1vh) / 10.8 * var(--s-adj));
+  --s-adj : 1.0;   /* 1.25 = 25% larger, 0.80 = 20% smaller         */
+
+  /* ── Enjoyment bar position (design-px, auto-scaled)
+     +X = right  −X = left  +Y = up  −Y = down                      */
+  --enj-adj-x : 0;
+  --enj-adj-y : 0;
+
+  /* ── Typography & motion */
+  --font       : 'Segoe UI', sans-serif;
+  --transition : 120ms ease;
+
+  /* ── Background */
+  --bg-body        : transparent;
+  --bg-menu        : #1c1c1e;
+  --bg-header      : #252527;
+  --bg-item-hover  : #2a2a2e;
+  --bg-item-active : #222226;
+  --bg-sub         : #161618;
+
+  /* ── Borders */
+  --border     : #3a3a3a;
+  --border-sub : #2a2a2a;
+
+  /* ── Text */
+  --text-primary   : #ddd8d0;
+  --text-secondary : #b0a898;
+  --text-muted     : #888078;
+
+  /* ── Elevation & shape */
+  --shadow : 0 calc(4 * var(--s)) calc(24 * var(--s)) rgba(0,0,0,0.9);
+  --radius : calc(4 * var(--s));
+
+  /* ── Enjoyment bar — track */
+  --enj-track  : #101012;
+  --enj-border : #282830;
+
+  /* ── Enjoyment bar — fill colours */
+  --enj-col-normal-lo : #7a2828;
+  --enj-col-normal-hi : #d06858;
+  --enj-col-over-lo   : #8a6010;
+  --enj-col-over-hi   : #e8b840;
+  --enj-col-neg-lo    : #1e3a58;
+  --enj-col-neg-hi    : #4880c0;
+  --enj-col-hit       : #60cc50;
+  --enj-col-miss      : #e06050;
+  --enj-col-penalty   : #ff3030;
+
+  /* ── Enjoyment bar — green zone */
+  --enj-zone-idle          : rgba( 50, 155,  60, 0.16);
+  --enj-zone-border        : rgba( 90, 200,  70, 0.50);
+  --enj-zone-active        : rgba( 60, 185,  65, 0.28);
+  --enj-zone-border-active : rgba(110, 250,  90, 0.95);
+
+  /* ── Enjoyment bar — needle */
+  --enj-needle-idle   : #c8d8b8;
+  --enj-needle-active : #90f878;
 }
 
+
+/* ============================================================
+   RESET
+   ============================================================ */
+*, *::before, *::after {
+  box-sizing : border-box;
+  margin     : 0;
+  padding    : 0;
+}
+
+
+/* ============================================================
+   BASE
+   ============================================================ */
 body {
-  font-family: var(--font);
-  background: var(--bg-body);
-  color: var(--text-primary);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100vh;
-  overflow: hidden;
-  -webkit-font-smoothing: antialiased;
+  font-family            : var(--font);
+  background             : var(--bg-body);
+  color                  : var(--text-primary);
+  display                : flex;
+  align-items            : center;
+  justify-content        : center;
+  height                 : 100vh;
+  overflow               : hidden;
+  -webkit-font-smoothing : antialiased;
 }
 
+
+/* ============================================================
+   MENU SHELL
+   ============================================================ */
 .sl-menu {
-  background: var(--bg-menu);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  width: 420px;
-  max-height: 75vh;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  box-shadow: var(--shadow);
+  position       : relative;
+  background     : var(--bg-menu);
+  border         : 1px solid var(--border);
+  border-radius  : var(--radius);
+  width          : calc(420 * var(--s));
+  max-height     : 75vh;
+  display        : flex;
+  flex-direction : column;
+  overflow       : hidden;
+  box-shadow     : var(--shadow);
 }
 
 .sl-menu-title {
-  padding: 12px 16px;
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--text-secondary);
-  background: var(--bg-header);
-  border-bottom: 1px solid var(--border);
-  letter-spacing: 0.8px;
-  text-transform: uppercase;
-  flex-shrink: 0;
+  padding        : calc(12 * var(--s)) calc(16 * var(--s));
+  font-size      : calc(13 * var(--s));
+  font-weight    : 600;
+  color          : var(--text-secondary);
+  background     : var(--bg-header);
+  border-bottom  : 1px solid var(--border);
+  letter-spacing : 0.8px;
+  text-transform : uppercase;
+  flex-shrink    : 0;
 }
 
-/* ── Scrollable list ── */
+
+/* ============================================================
+   SCROLLABLE LIST
+   ============================================================ */
 .sl-list {
-  overflow-y: auto;
-  flex: 1 1 auto;
-  padding: 4px 0;
-  scrollbar-width: thin;
-  scrollbar-color: #3a3a3a transparent;
+  overflow-y      : auto;
+  flex            : 1 1 auto;
+  padding         : calc(4 * var(--s)) 0;
+  scrollbar-width : thin;
+  scrollbar-color : #3a3a3a transparent;
 }
-.sl-list::-webkit-scrollbar       { width: 4px; }
-.sl-list::-webkit-scrollbar-thumb { background: #3a3a3a; border-radius: 2px; }
+.sl-list::-webkit-scrollbar       { width: calc(4 * var(--s)); }
+.sl-list::-webkit-scrollbar-thumb { background: #3a3a3a; border-radius: calc(2 * var(--s)); }
 
-/* ── Generic row ── */
+
+/* ============================================================
+   LIST ROWS
+   ============================================================ */
 .sl-row {
-  padding: 9px 16px;
-  cursor: pointer;
-  font-size: 12px;
-  color: var(--text-secondary);
-  border-bottom: 1px solid var(--border-sub);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  user-select: none;
-  transition: background var(--transition), color var(--transition);
+  padding         : calc(9 * var(--s)) calc(16 * var(--s));
+  font-size       : calc(12 * var(--s));
+  color           : var(--text-secondary);
+  border-bottom   : 1px solid var(--border-sub);
+  display         : flex;
+  justify-content : space-between;
+  align-items     : center;
+  cursor          : pointer;
+  user-select     : none;
+  transition      : background var(--transition), color var(--transition);
 }
 .sl-row:hover  { background: var(--bg-item-hover);  color: var(--text-primary); }
 .sl-row.active { background: var(--bg-item-active); color: var(--text-primary); }
 
 .sl-row-value {
-  font-size: 11px;
-  color: var(--text-muted);
-  flex-shrink: 0;
-  margin-left: 12px;
+  font-size   : calc(11 * var(--s));
+  color       : var(--text-muted);
+  flex-shrink : 0;
+  margin-left : calc(12 * var(--s));
 }
 
-/* ── Submenu ── */
-.arrow { font-size: 9px; opacity: 0.5; }
+.sl-row-index {
+  font-size    : calc(10 * var(--s));
+  color        : var(--text-muted);
+  width        : calc(18 * var(--s));
+  text-align   : right;
+  flex-shrink  : 0;
+  margin-right : calc(10 * var(--s));
+}
 
-.submenu { display: none; max-height: 200px; overflow-y: auto; }
+.sl-empty {
+  display        : none;
+  padding        : calc(32 * var(--s)) calc(16 * var(--s));
+  font-size      : calc(12 * var(--s));
+  color          : var(--text-muted);
+  text-align     : center;
+  letter-spacing : 0.08em;
+}
+
+
+/* ============================================================
+   SUBMENU
+   ============================================================ */
+.arrow {
+  font-size : calc(9 * var(--s));
+  opacity   : 0.5;
+}
+
+.submenu {
+  display    : none;
+  max-height : calc(200 * var(--s));
+  overflow-y : auto;
+}
 .submenu.open { display: block; }
 
 .submenu-item {
-  padding: 7px 16px 7px 28px;
-  cursor: pointer;
-  font-size: 12px;
-  color: var(--text-muted);
-  border-bottom: 1px solid #222;
-  background: var(--bg-sub);
-  transition: background var(--transition), color var(--transition);
+  padding       : calc(7 * var(--s)) calc(16 * var(--s)) calc(7 * var(--s)) calc(28 * var(--s));
+  font-size     : calc(12 * var(--s));
+  color         : var(--text-muted);
+  background    : var(--bg-sub);
+  border-bottom : 1px solid #222;
+  cursor        : pointer;
+  transition    : background var(--transition), color var(--transition);
 }
-.submenu-item:hover { background: var(--bg-item-active); color: var(--text-primary); }
+.submenu-item:hover        { background: var(--bg-item-active); color: var(--text-primary); }
 .submenu-item.active-scene { color: #70b870; }
 
-/* ── Text entry overlay ── */
-.sl-menu { position: relative; }
 
+/* ============================================================
+   TEXT-ENTRY OVERLAY
+   ============================================================ */
 #text-entry {
-  display: none;
-  position: absolute;
-  inset: 0;
-  background: rgba(0,0,0,0.75);
-  align-items: center;
-  justify-content: center;
-  border-radius: var(--radius);
+  display         : none;
+  position        : absolute;
+  inset           : 0;
+  background      : rgba(0,0,0,0.75);
+  align-items     : center;
+  justify-content : center;
+  border-radius   : var(--radius);
 }
 #text-entry.open { display: flex; }
 
 #text-entry-box {
-  background: var(--bg-menu);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 20px;
-  width: 320px;
+  background    : var(--bg-menu);
+  border        : 1px solid var(--border);
+  border-radius : var(--radius);
+  padding       : calc(20 * var(--s));
+  width         : calc(320 * var(--s));
 }
+
 #text-entry-box label {
-  display: block;
-  margin-bottom: 8px;
-  color: var(--text-secondary);
-  font-size: 12px;
+  display       : block;
+  margin-bottom : calc(8 * var(--s));
+  font-size     : calc(12 * var(--s));
+  color         : var(--text-secondary);
   letter-spacing: 0.3px;
 }
+
 #text-entry-box input {
-  width: 100%;
-  background: #111113;
-  border: 1px solid var(--border);
-  color: var(--text-primary);
-  padding: 7px 10px;
-  font-size: 12px;
-  border-radius: 3px;
-  outline: none;
-  margin-bottom: 12px;
-  font-family: var(--font);
+  width         : 100%;
+  background    : #111113;
+  border        : 1px solid var(--border);
+  border-radius : calc(3 * var(--s));
+  padding       : calc(7 * var(--s)) calc(10 * var(--s));
+  font-size     : calc(12 * var(--s));
+  font-family   : var(--font);
+  color         : var(--text-primary);
+  margin-bottom : calc(12 * var(--s));
+  outline       : none;
 }
 #text-entry-box input:focus { border-color: #607090; }
 
-.btn-row { display: flex; gap: 8px; justify-content: flex-end; }
-.btn {
-  padding: 6px 14px;
-  border: 1px solid var(--border);
-  background: var(--bg-header);
-  color: var(--text-secondary);
-  border-radius: 3px;
-  cursor: pointer;
-  font-size: 11px;
-  font-family: var(--font);
-  transition: background var(--transition), color var(--transition);
+
+/* ============================================================
+   BUTTONS
+   ============================================================ */
+.btn-row {
+  display         : flex;
+  gap             : calc(8 * var(--s));
+  justify-content : flex-end;
 }
-.btn:hover { background: #2e2e32; color: var(--text-primary); }
+
+.btn {
+  padding       : calc(6 * var(--s)) calc(14 * var(--s));
+  font-size     : calc(11 * var(--s));
+  font-family   : var(--font);
+  color         : var(--text-secondary);
+  background    : var(--bg-header);
+  border        : 1px solid var(--border);
+  border-radius : calc(3 * var(--s));
+  cursor        : pointer;
+  transition    : background var(--transition), color var(--transition);
+}
+.btn:hover   { background: #2e2e32; color: var(--text-primary); }
 .btn.primary { border-color: #506070; color: #90b0c8; }
 
-/* ── Index column ── */
-.sl-row-index {
-  font-size: 10px;
-  color: var(--text-muted);
-  width: 18px;
-  text-align: right;
-  flex-shrink: 0;
-  margin-right: 10px;
-}
 
-/* ── Empty state ── */
-.sl-empty {
-  padding: 32px 16px;
-  text-align: center;
-  color: var(--text-muted);
-  font-size: 12px;
-  letter-spacing: 0.08em;
-  display: none;
-}
-
-/* ════════════════════════════════════════════════════
-   Enjoyment Bars  (EnjoymentBars.html)
-   ════════════════════════════════════════════════════ */
-
-/* colour tokens */
-:root {
-  --enj-track        : #101012;
-  --enj-border       : #282830;
-  --enj-col-normal-lo: #7a2828;
-  --enj-col-normal-hi: #d06858;
-  --enj-col-over-lo  : #8a6010;
-  --enj-col-over-hi  : #e8b840;
-  --enj-col-neg-lo   : #1e3a58;
-  --enj-col-neg-hi   : #4880c0;
-  --enj-col-hit      : #60cc50;
-  --enj-col-miss     : #e06050;
-  --enj-col-penalty  : #ff3030;
-  --enj-zone-idle    : rgba(50,155,60,0.16);
-  --enj-zone-border  : rgba(90,200,70,0.50);
-  --enj-zone-active  : rgba(60,185,65,0.28);
-  --enj-zone-border-active: rgba(110,250,90,0.95);
-  --enj-needle-idle  : #c8d8b8;
-  --enj-needle-active: #90f878;
-}
-
-/* body override — bars anchor bottom-left, transparent bg, no centering */
+/* ============================================================
+   ENJOYMENT BARS — LAYOUT
+   ============================================================ */
 body:has(.enj-stack) {
-  display: block;
-  align-items: unset;
-  justify-content: unset;
-  padding: 0;
-  height: 100vh;
-  overflow: hidden;
+  display         : block;
+  align-items     : unset;
+  justify-content : unset;
+  padding         : 0;
+  height          : 100vh;
+  overflow        : hidden;
 }
 
 .enj-stack {
-  position: fixed;
-  bottom: 20px;
-  left: 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 7px;
-  width: 360px;
-  pointer-events: none;
+  position       : fixed;
+  bottom         : calc(clamp(calc(16 * var(--s)), 1.8vh, calc(32 * var(--s))) + var(--enj-adj-y) * var(--s));
+  left           : calc(clamp(calc(14 * var(--s)), 2.5vw, calc(48 * var(--s))) + var(--enj-adj-x) * var(--s));
+  display        : flex;
+  flex-direction : column;
+  gap            : calc(7 * var(--s));
+  width          : clamp(calc(320 * var(--s)), 18vw, calc(460 * var(--s)));
+  pointer-events : none;
 }
 
-/* ── single actor row ── */
 .enj-bar-wrap {
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
+  display        : flex;
+  flex-direction : column;
+  gap            : calc(3 * var(--s));
 }
 
 .enj-label-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  padding: 0 2px;
+  display         : flex;
+  justify-content : space-between;
+  align-items     : baseline;
+  padding         : calc(2 * var(--s)) calc(2 * var(--s));
 }
 
+/* ============================================================
+   ENJOYMENT BARS — LABEL TEXT
+   ============================================================ */
 .enj-name {
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--text-secondary);
-  letter-spacing: 0.07em;
-  text-transform: uppercase;
+  font-size      : calc(11 * var(--s));
+  font-weight    : 600;
+  letter-spacing : 0.07em;
+  text-transform : uppercase;
 }
 
 .enj-value {
-  font-size: 10px;
-  color: var(--text-muted);
-  letter-spacing: 0.04em;
-  font-variant-numeric: tabular-nums;
-  transition: color var(--transition);
+  font-size            : calc(10.5 * var(--s));
+  letter-spacing       : 0.04em;
+  font-variant-numeric : tabular-nums;
+  transition           : color var(--transition);
 }
 .enj-value--over { color: var(--enj-col-over-lo); }
 .enj-value--neg  { color: var(--enj-col-neg-hi);  }
 
-/* ── bar frame ── */
+.enj-intr {
+  font-size      : calc(10 * var(--s));
+  font-style     : italic;
+  letter-spacing : 0.03em;
+  opacity        : 1.0;
+  white-space    : nowrap;
+  overflow       : hidden;
+  text-overflow  : ellipsis;
+  max-width      : calc(180 * var(--s));
+  flex-shrink    : 1;
+  margin         : 0 calc(6 * var(--s));
+  align-self     : baseline;
+  transition     : opacity var(--transition);
+}
+.enj-intr:empty { display: none; }
+
+/* Visibility Tweaks */
+.enj-name,
+.enj-value,
+.enj-intr {
+  color: #e0d8cc;
+  text-shadow:
+    /* Outline */
+    -1px -1px 1px  rgba(0, 0, 0, 0.90),
+     1px -1px 1px  rgba(0, 0, 0, 0.90),
+    -1px  1px 1px  rgba(0, 0, 0, 0.90),
+     1px  1px 1px  rgba(0, 0, 0, 0.90),
+     0px -1px 1px  rgba(0, 0, 0, 0.75),
+     0px  1px 1px  rgba(0, 0, 0, 0.75),
+    -1px  0px 1px  rgba(0, 0, 0, 0.75),
+     1px  0px 1px  rgba(0, 0, 0, 0.75),
+    /* Outer glow */
+    0 0 calc(6  * var(--s)) rgba(0, 0, 0, 0.95),
+    0 0 calc(14 * var(--s)) rgba(0, 0, 0, 0.80),
+    0 0 calc(22 * var(--s)) rgba(0, 0, 0, 0.60);
+}
+
+
+/* ============================================================
+   ENJOYMENT BARS — BAR FRAME & FILL
+   ============================================================ */
 .enj-frame {
-  position: relative;
-  width: 100%;
-  height: 12px;
-  background: var(--enj-track);
-  border: 1px solid var(--enj-border);
-  overflow: visible;
+  position   : relative;
+  width      : 100%;
+  height     : calc(12 * var(--s));
+  background : var(--enj-track);
+  border     : 1px solid var(--enj-border);
+  overflow   : visible;
+  box-shadow : 0 0 0 1px rgba(255,255,255,0.08),
+               0 2px 8px rgba(0,0,0,0.85);
 }
-/* inner highlight line */
+
 .enj-frame::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-top: 1px solid rgba(255,255,255,0.04);
-  pointer-events: none;
-  z-index: 10;
+  content        : '';
+  position       : absolute;
+  inset          : 0;
+  border-top     : 1px solid rgba(255,255,255,0.04);
+  pointer-events : none;
+  z-index        : 10;
 }
 
-/* ── fill ── */
 .enj-fill {
-  position: absolute;
-  top: 0; bottom: 0; left: 0;
-  width: 0%;
-  transition: width 80ms linear;
+  position   : absolute;
+  top        : 0;
+  bottom     : 0;
+  left       : 0;
+  width      : 0%;
+  transition : width 80ms linear;
 }
-.enj-fill--rtl {
-  left: auto;
-  right: 0;
-}
+.enj-fill--rtl { left: auto; right: 0; }
 
-/* colour ramps via inline gradient so we avoid JS colour math */
-.enj-fill--normal {
-  background: linear-gradient(90deg, var(--enj-col-normal-lo), var(--enj-col-normal-hi));
-}
-.enj-fill--over {
-  background: linear-gradient(90deg, var(--enj-col-over-lo), var(--enj-col-over-hi));
-}
-.enj-fill--neg {
-  background: linear-gradient(90deg, var(--enj-col-neg-hi), var(--enj-col-neg-lo));
-}
+.enj-fill--normal { background: linear-gradient(90deg, var(--enj-col-normal-lo), var(--enj-col-normal-hi)); }
+.enj-fill--over   { background: linear-gradient(90deg, var(--enj-col-over-lo),   var(--enj-col-over-hi));   }
+.enj-fill--neg    { background: linear-gradient(90deg, var(--enj-col-neg-hi),    var(--enj-col-neg-lo));    }
 
-/* ── green zone ── */
-.enj-zone {
-  position: absolute;
-  top: 0; bottom: 0;
-  background: var(--enj-zone-idle);
-  border-left:  1px solid var(--enj-zone-border);
-  border-right: 1px solid var(--enj-zone-border);
-  pointer-events: none;
-  z-index: 3;
-  transition: background 100ms ease, border-color 100ms ease;
-}
-.enj-zone--active {
-  background:    var(--enj-zone-active);
-  border-color:  var(--enj-zone-border-active);
-}
-
-/* sweet-spot center line */
-.enj-zone-center {
-  position: absolute;
-  top: 0; bottom: 0;
-  left: 50%;
-  width: 1px;
-  background: rgba(80,180,60,0.20);
-  pointer-events: none;
-}
-/* CSS-only pulse via animation; JS sets animation-play-state */
-@keyframes enj-pulse {
-  0%, 100% { background: rgba(100,230,80,0.30); }
-  50%       { background: rgba(120,255,90,0.85); }
-}
-.enj-zone-center--active {
-  animation: enj-pulse 200ms ease-in-out infinite;
-}
-
-/* ── needle ── */
-.enj-needle {
-  position: absolute;
-  top: -2px; bottom: -2px;
-  width: 2px;
-  background: var(--enj-needle-idle);
-  pointer-events: none;
-  z-index: 8;
-}
-/* downward arrow tip */
-.enj-needle::before {
-  content: '';
-  position: absolute;
-  bottom: -4px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 0; height: 0;
-  border-left:  3px solid transparent;
-  border-right: 3px solid transparent;
-  border-top:   4px solid var(--enj-needle-idle);
-}
-.enj-needle--active {
-  background: var(--enj-needle-active);
-}
-.enj-needle--active::before {
-  border-top-color: var(--enj-needle-active);
-}
-
-/* ── flash overlay ── */
-.enj-flash {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  z-index: 9;
-  opacity: 0;
-}
-.enj-flash--active {
-  animation: enj-flash-fade 600ms ease forwards;
-}
-.enj-flash--hit  { background: rgba(60,200,80,0.35); }
-.enj-flash--miss { background: rgba(200,60,40,0.38); }
-
-@keyframes enj-flash-fade {
-  0%   { opacity: 1; }
-  100% { opacity: 0; }
-}
-
-/* ── feedback number ── */
-.enj-feedback {
-  position: absolute;
-  right: 5px;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.05em;
-  pointer-events: none;
-  z-index: 12;
-  opacity: 0;
-}
-.enj-feedback--visible {
-  animation: enj-fb-fade 600ms ease forwards;
-}
-@keyframes enj-fb-fade {
-  0%   { opacity: 1; transform: translateY(-50%); }
-  100% { opacity: 0; transform: translateY(calc(-50% - 5px)); }
-}
-
-/* ── target actor highlight ── */
-.enj-bar-wrap.enj-highlight--target .enj-frame {
-  border-color: #6a6055;
-  box-shadow: 0 0 0 1px #6a6055;
-}
-.enj-bar-wrap.enj-highlight--target .enj-name {
-  color: var(--text-primary);
-}
-
-/* ── high enj fx ── */
 @keyframes enj-bar-pulse {
-  0%, 100% { filter: brightness(1); box-shadow: none; }
+  0%, 100% { filter: brightness(1);    box-shadow: none; }
   50%      { filter: brightness(1.22); box-shadow: inset 0 0 0 1px rgba(240,160,80,0.45); }
 }
 .enj-fill--pulse {
   animation: enj-bar-pulse 700ms ease-in-out infinite;
 }
 
-/* ── interaction string ── */
-.enj-intr {
-  font-size: 9px;
-  color: var(--text-muted);
-  font-style: italic;
-  letter-spacing: 0.03em;
-  opacity: 0.7;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 180px;
-  flex-shrink: 1;
-  margin: 0 6px;
-  align-self: baseline;
-  transition: opacity var(--transition);
+
+/* ============================================================
+   ENJOYMENT BARS — GREEN ZONE
+   ============================================================ */
+.enj-zone {
+  position       : absolute;
+  top            : 0;
+  bottom         : 0;
+  background     : var(--enj-zone-idle);
+  border-left    : 1px solid var(--enj-zone-border);
+  border-right   : 1px solid var(--enj-zone-border);
+  pointer-events : none;
+  z-index        : 3;
+  transition     : background 100ms ease, border-color 100ms ease;
 }
-.enj-intr:empty { display: none; }
+.enj-zone--active {
+  background   : var(--enj-zone-active);
+  border-color : var(--enj-zone-border-active);
+}
+
+.enj-zone-center {
+  position       : absolute;
+  top            : 0;
+  bottom         : 0;
+  left           : 50%;
+  width          : 1px;
+  background     : rgba(80,180,60,0.20);
+  pointer-events : none;
+}
+
+@keyframes enj-pulse {
+  0%, 100% { background: rgba(100,230,80,0.30); }
+  50%      { background: rgba(120,255,90,0.85); }
+}
+.enj-zone-center--active {
+  animation: enj-pulse 200ms ease-in-out infinite;
+}
+
+
+/* ============================================================
+   ENJOYMENT BARS — NEEDLE
+   ============================================================ */
+.enj-needle {
+  position       : absolute;
+  top            : calc(-2 * var(--s));
+  bottom         : calc(-2 * var(--s));
+  width          : calc(2  * var(--s));
+  background     : var(--enj-needle-idle);
+  pointer-events : none;
+  z-index        : 8;
+}
+
+.enj-needle::before {
+  content      : '';
+  position     : absolute;
+  bottom       : calc(-4 * var(--s));
+  left         : 50%;
+  transform    : translateX(-50%);
+  width        : 0;
+  height       : 0;
+  border-left  : calc(3 * var(--s)) solid transparent;
+  border-right : calc(3 * var(--s)) solid transparent;
+  border-top   : calc(4 * var(--s)) solid var(--enj-needle-idle);
+}
+
+.enj-needle--active         { background: var(--enj-needle-active); }
+.enj-needle--active::before { border-top-color: var(--enj-needle-active); }
+
+
+/* ============================================================
+   ENJOYMENT BARS — FLASH OVERLAY
+   ============================================================ */
+.enj-flash {
+  position       : absolute;
+  inset          : 0;
+  pointer-events : none;
+  z-index        : 9;
+  opacity        : 0;
+}
+.enj-flash--hit  { background: rgba( 60,200, 80,0.35); }
+.enj-flash--miss { background: rgba(200, 60, 40,0.38); }
+
+@keyframes enj-flash-fade {
+  0%   { opacity: 1; }
+  100% { opacity: 0; }
+}
+.enj-flash--active { animation: enj-flash-fade 600ms ease forwards; }
+
+
+/* ============================================================
+   ENJOYMENT BARS — FEEDBACK TEXT
+   ============================================================ */
+.enj-feedback {
+  position       : absolute;
+  right          : calc(5  * var(--s));
+  top            : 50%;
+  transform      : translateY(-50%);
+  font-size      : calc(10 * var(--s));
+  font-weight    : 600;
+  letter-spacing : 0.05em;
+  pointer-events : none;
+  z-index        : 12;
+  opacity        : 0;
+}
+
+@keyframes enj-fb-fade {
+  0%   { opacity: 1; transform: translateY(-50%); }
+  100% { opacity: 0; transform: translateY(calc(-50% - calc(5 * var(--s)))); }
+}
+.enj-feedback--visible { animation: enj-fb-fade 600ms ease forwards; }
+
+
+/* ============================================================
+   ENJOYMENT BARS — TARGET HIGHLIGHT
+   ============================================================ */
+.enj-bar-wrap.enj-highlight--target .enj-frame {
+  border-color : #6a6055;
+  box-shadow   : 0 0 0 1px #6a6055;
+}
+.enj-bar-wrap.enj-highlight--target .enj-name {
+  color: var(--text-primary);
+}
