@@ -2,5 +2,5 @@
 
 namespace Papyrus
 {
-  bool Register();
-} // namespace Papyrus
+    bool Register();
+}  // namespace Papyrus

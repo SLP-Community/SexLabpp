@@ -9,20 +9,20 @@
 
 namespace Thread::NiNode
 {
-	// struct NiPosition
-	// {
-	// 	struct Snapshot
-	// 	{
-	// 		// This interacting with partner penis
-	// 		bool GetHeadPenisInteractions(const Snapshot& a_partner, std::shared_ptr<Node::NodeData::Schlong> a_schlong);
-	// 		bool GetFootPenisInteractions(const Snapshot& a_partner, std::shared_ptr<Node::NodeData::Schlong> a_schlong);
-	// 		// This interacting with partner vagina
-	// 		bool GetHeadVaginaInteractions(const Snapshot& a_partner);
-	// 		bool GetVaginaVaginaInteractions(const Snapshot& a_partner);
-	// 		bool GetVaginaLimbInteractions(const Snapshot& a_partner);
-	// 		// Misc/Non Sexual
-	// 		bool GetHeadFootInteractions(const Snapshot& a_partner);
-	// 		bool GetHeadAnimObjInteractions(const Snapshot& a_partner);
-	// 	};
+    // struct NiPosition
+    // {
+    // 	struct Snapshot
+    // 	{
+    // 		// This interacting with partner penis
+    // 		bool GetHeadPenisInteractions(const Snapshot& a_partner, std::shared_ptr<Node::NodeData::Schlong> a_schlong);
+    // 		bool GetFootPenisInteractions(const Snapshot& a_partner, std::shared_ptr<Node::NodeData::Schlong> a_schlong);
+    // 		// This interacting with partner vagina
+    // 		bool GetHeadVaginaInteractions(const Snapshot& a_partner);
+    // 		bool GetVaginaVaginaInteractions(const Snapshot& a_partner);
+    // 		bool GetVaginaLimbInteractions(const Snapshot& a_partner);
+    // 		// Misc/Non Sexual
+    // 		bool GetHeadFootInteractions(const Snapshot& a_partner);
+    // 		bool GetHeadAnimObjInteractions(const Snapshot& a_partner);
+    // 	};
 
-}	 // namespace Thread::NiNode
+}  // namespace Thread::NiNode

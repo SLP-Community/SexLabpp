@@ -5,57 +5,57 @@
 
 namespace Thread::Interface
 {
-	class SceneMenu :
-		public RE::IMenu,
-		public RE::BSTEventSink<RE::InputEvent*>
-	{
-		using GRefCountBaseStatImpl::operator new;
-		using GRefCountBaseStatImpl::operator delete;
+    class SceneMenu :
+      public RE::IMenu,
+      public RE::BSTEventSink<RE::InputEvent*>
+    {
+        using GRefCountBaseStatImpl::operator new;
+        using GRefCountBaseStatImpl::operator delete;
 
-	public:
-		static constexpr std::string_view MENU_NAME{ "SLSceneMenu" };
-		static constexpr std::string_view FILEPATH{ "SexLab\\SceneMenu" };
-		static constexpr int8_t DEPTH_PRIORITY{ 4 };
+      public:
+        static constexpr std::string_view MENU_NAME{ "SLSceneMenu" };
+        static constexpr std::string_view FILEPATH{ "SexLab\\SceneMenu" };
+        static constexpr int8_t DEPTH_PRIORITY{ 4 };
 
-		SceneMenu();
-		~SceneMenu() = default;
-		static void Register() { (RE::UI::GetSingleton()->Register(MENU_NAME, Create), logger::info("Registered Menu: {}", MENU_NAME)); }
-		static RE::IMenu* Create() { return new SceneMenu(); }
+        SceneMenu();
+        ~SceneMenu() = default;
+        static void Register() { (RE::UI::GetSingleton()->Register(MENU_NAME, Create), logger::info("Registered Menu: {}", MENU_NAME)); }
+        static RE::IMenu* Create() { return new SceneMenu(); }
 
-	public:
-		static void Show(Instance* instance) { (threadInstance = instance, RE::UIMessageQueue::GetSingleton()->AddMessage(MENU_NAME, RE::UI_MESSAGE_TYPE::kShow, nullptr)); }
-		static void Hide() { RE::UIMessageQueue::GetSingleton()->AddMessage(MENU_NAME, RE::UI_MESSAGE_TYPE::kHide, nullptr); }
-		static bool IsOpen() { return RE::UI::GetSingleton()->IsMenuOpen(MENU_NAME); }
+      public:
+        static void Show(Instance* instance) { (threadInstance = instance, RE::UIMessageQueue::GetSingleton()->AddMessage(MENU_NAME, RE::UI_MESSAGE_TYPE::kShow, nullptr)); }
+        static void Hide() { RE::UIMessageQueue::GetSingleton()->AddMessage(MENU_NAME, RE::UI_MESSAGE_TYPE::kHide, nullptr); }
+        static bool IsOpen() { return RE::UI::GetSingleton()->IsMenuOpen(MENU_NAME); }
 
-		static bool IsInstance(Instance* a_instance) { return threadInstance == a_instance; }
-		static void UpdateSlider(RE::FormID a_actorId, float a_enjoyment);
-		static void SetSliderTo(RE::FormID a_actorId, float a_enjoyment);
-		static void UpdatePositions();
-		static void UpdateStageInfo();
-		static void UpdateActiveScene();
-		static void UpdateTimer(float a_time);
-		static void DisableTimer();
+        static bool IsInstance(Instance* a_instance) { return threadInstance == a_instance; }
+        static void UpdateSlider(RE::FormID a_actorId, float a_enjoyment);
+        static void SetSliderTo(RE::FormID a_actorId, float a_enjoyment);
+        static void UpdatePositions();
+        static void UpdateStageInfo();
+        static void UpdateActiveScene();
+        static void UpdateTimer(float a_time);
+        static void DisableTimer();
 
-	protected:
-		// IMenu
-		RE::UI_MESSAGE_RESULTS ProcessMessage(RE::UIMessage& a_message) override;
+      protected:
+        // IMenu
+        RE::UI_MESSAGE_RESULTS ProcessMessage(RE::UIMessage& a_message) override;
 
-		// Events
-		RE::BSEventNotifyControl ProcessEvent(RE::InputEvent* const* a_event, RE::BSTEventSource<RE::InputEvent*>*) override;
+        // Events
+        RE::BSEventNotifyControl ProcessEvent(RE::InputEvent* const* a_event, RE::BSTEventSource<RE::InputEvent*>*) override;
 
-	private:
-		static inline Instance* threadInstance{ nullptr };
+      private:
+        static inline Instance* threadInstance{ nullptr };
 
-	private:
-		void AttachSexLabAPIFunctions(RE::GPtr<RE::GFxMovieView> a_view);
+      private:
+        void AttachSexLabAPIFunctions(RE::GPtr<RE::GFxMovieView> a_view);
 
-		struct GFxFunctionHandlerWrapper : public RE::GFxFunctionHandler
-		{
-		protected:
-			RE::Actor* GetActorByReferenceId(Params& a_args, size_t argIdx);
-		};
+        struct GFxFunctionHandlerWrapper : public RE::GFxFunctionHandler
+        {
+          protected:
+            RE::Actor* GetActorByReferenceId(Params& a_args, size_t argIdx);
+        };
 
-		// clang-format off
+        // clang-format off
 		struct SLAPI_GetHotkeyCombination : public RE::GFxFunctionHandler { void Call(Params& a_args) override; };
 		struct SLAPI_GetActiveFurnitureName : public GFxFunctionHandlerWrapper { void Call(Params& a_args) override; };
 		struct SLAPI_GetOffset : public GFxFunctionHandlerWrapper { void Call(Params& a_args) override; };
@@ -79,12 +79,12 @@ namespace Thread::Interface
 		struct SLAPI_GetVoiceName : public GFxFunctionHandlerWrapper { void Call(Params& a_args) override; };
 		struct SLAPI_SetVoice : public GFxFunctionHandlerWrapper { void Call(Params& a_args) override; };
 		struct SLAPI_GetVoices : public GFxFunctionHandlerWrapper { void Call(Params& a_args) override; };
-		// clang-format on
+        // clang-format on
 
-	private:
-		struct HUDMenu_ShowMessageEx : public RE::GFxFunctionHandler
-		{
-			void Call(Params& a_args) override;
-		};
-	};
+      private:
+        struct HUDMenu_ShowMessageEx : public RE::GFxFunctionHandler
+        {
+            void Call(Params& a_args) override;
+        };
+    };
 }

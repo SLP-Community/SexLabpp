@@ -3,21 +3,21 @@
 template <class T>
 class Singleton
 {
-protected:
-	Singleton() = default;
-	~Singleton() = default;
+  protected:
+    Singleton() = default;
+    ~Singleton() = default;
 
-public:
-	static T* GetSingleton()
-	{
-		static T singleton;
-		return &singleton;
-	}
+  public:
+    static T* GetSingleton()
+    {
+        static T singleton;
+        return &singleton;
+    }
 
-public:
-	Singleton(const Singleton&) = delete;
-	Singleton(Singleton&&) = delete;
+  public:
+    Singleton(const Singleton&) = delete;
+    Singleton(Singleton&&) = delete;
 
-	Singleton& operator=(const Singleton&) = delete;
-	Singleton& operator=(Singleton&&) = delete;
+    Singleton& operator=(const Singleton&) = delete;
+    Singleton& operator=(Singleton&&) = delete;
 };
