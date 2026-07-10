@@ -970,24 +970,24 @@ namespace Papyrus::ThreadModel
     }
 
     // ---------------------------------------------- //
-    //                   PRISMA UI                    //
+    //                   SCENE HUD                    //
     // ---------------------------------------------- //
 
-    void PrismaOverlayInitImpl(QUESTARGS, int32_t aiOverlayIndex)
+    void InitSceneHUDImpl(QUESTARGS)
     {
         GET_INSTANCE();
-        return instance->PrismaOverlayInitImpl(aiOverlayIndex);
+        return instance->InitSceneHUDImpl();
     }
-    void PrismaOverlayDestroyImpl(QUESTARGS, int32_t aiOverlayIndex)
+    void DestroySceneHUDImpl(QUESTARGS)
     {
         GET_INSTANCE();
-        return instance->PrismaOverlayDestroyImpl(aiOverlayIndex);
+        return instance->DestroySceneHUDImpl();
     }
 
-    void TogglePrismaFocusImpl(QUESTARGS)
+    void ToggleFocusSceneHUDImpl(QUESTARGS)
     {
         GET_INSTANCE();
-        return instance->TogglePrismaFocusImpl();
+        return instance->ToggleFocusSceneHUDImpl();
     }
 
     void UpdateMenuTimerDisplay(QUESTARGS, float a_duration, float a_time)

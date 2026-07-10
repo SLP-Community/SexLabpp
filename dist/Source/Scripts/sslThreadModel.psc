@@ -1095,7 +1095,7 @@ State Animating
 			Else
 				AutoAdvance = Config.AutoAdvance
 				Config.GetThreadControl(self as sslThreadController)
-				(self as sslThreadController).TogglePrismaMenu(1)
+				(self as sslThreadController).ToggleVisibilitySceneHUD(1)
 			EndIf
 		Else
 			AutoAdvance = true
@@ -1529,7 +1529,7 @@ State Ending
 			return
 		EndIf
 		Config.DisableThreadControl(self as sslThreadController)
-		(self as sslThreadController).TogglePrismaMenu(-1)
+		(self as sslThreadController).ToggleVisibilitySceneHUD(-1)
 		SendModEvent("SSL_CLEAR_Thread" + tid, "", 1.0)
 		MoveActorsAwayFromPlayer()
 		UnregisterCollision()
@@ -1589,7 +1589,7 @@ State Ending
 
 	bool Function ResetAnimationQuick(String asTagString = "")
 		UnregisterForUpdateGameTime()
-		(self as sslThreadController).TogglePrismaMenu(-1)
+		(self as sslThreadController).ToggleVisibilitySceneHUD(-1)
 		String[] validScenes = SexLabRegistry.LookupScenesA(_Positions, asTagString, GetSubmissives(), _furniStatus, CenterRef)
 		DestroyInstance()
 		GoToState(STATE_SETUP)
@@ -1604,7 +1604,7 @@ State Ending
 		_ThreadTags = SexLabRegistry.GetCommonTags(_PrimaryScenes)
 		string activeScene = GetActiveScene()
 		Log("Thread validated, playing animation: " + activeScene + ", " + SexLabRegistry.GetSceneName(activeScene), "StartThread()")
-		(self as sslThreadController).TogglePrismaMenu(1)
+		(self as sslThreadController).ToggleVisibilitySceneHUD(1)
 		StartStage(Utility.CreateStringArray(0), "")
 		_QuickResetScenes = false
 		return true
@@ -1834,97 +1834,60 @@ Function UpdateAllEncounters()
 EndFunction
 
 ; -------------------------------------------------- ;
-; --- PRISMA UI                                  --- ;
+; --- SCENE HUD                                  --- ;
 ; -------------------------------------------------- ;
 
-bool Property AdjustStage               Auto Hidden
-float Property MenuScaleMult			Auto Hidden
+bool Property ElementUI_GameHUD       Auto Hidden
+bool Property ElementUI_AnimSpeed     Auto Hidden
+bool Property ElementUI_EnjBars       Auto Hidden
+bool Property ElementUI_OffsetAdjust  Auto Hidden
+bool Property ElementUI_SceneSelect   Auto Hidden
+bool Property ElementUI_ThreadConfig  Auto Hidden
 
-bool Property GameHUD                   Auto Hidden
-bool Property OverlayAnimSpeed          Auto Hidden
-bool Property OverlayEnjBars            Auto Hidden
-bool Property OverlayOffsetAdjust       Auto Hidden
-bool Property OverlaySceneSelector      Auto Hidden
-bool Property OverlayThreadConfig       Auto Hidden
-bool Property OverlayVisibilityControl  Auto Hidden
+float Property VarUI_MenuScaleMult    Auto Hidden
+bool Property  VarUI_SeparateOrgasm   Auto Hidden
+bool Property  VarUI_AdjustStage      Auto Hidden
 
-int Property PRISMA_SCENE_MENU          = 0 AutoReadOnly
-int Property OVERLAY_ANIM_SPEED         = 1 AutoReadOnly
-int Property OVERLAY_ENJOYMENT_BARS     = 2 AutoReadOnly
-int Property OVERLAY_OFFSET_ADJUST      = 3 AutoReadOnly
-int Property OVERLAY_SCENE_SELECTOR     = 4 AutoReadOnly
-int Property OVERLAY_THREAD_CONFIG      = 5 AutoReadOnly
-int Property OVERLAY_VISIBILITY_CONTROL = 6 AutoReadOnly
-
-Function TryPrismaOverlaysStart()
+Function TryInitSceneHUD()
 	If (GetStatus() != STATUS_INSCENE)
-		Log("Cannot initialize Prisma overlays outside of playing state, TryPrismaOverlayInit()")
+		Log("Cannot initialize SceneHUD outside of playing state, TryInitSceneHUD()")
 		return
 	EndIf
-	RefreshPrismaPropertiesState("Get")
-	PrismaOverlayInitAndShow(PRISMA_SCENE_MENU)
-	PrismaOverlayInitAndShow(OVERLAY_ANIM_SPEED)
-	PrismaOverlayInitAndShow(OVERLAY_ENJOYMENT_BARS)
-	PrismaOverlayInitAndShow(OVERLAY_OFFSET_ADJUST)
-	PrismaOverlayInitAndShow(OVERLAY_SCENE_SELECTOR)
-	PrismaOverlayInitAndShow(OVERLAY_THREAD_CONFIG)
-	PrismaOverlayInitAndShow(OVERLAY_VISIBILITY_CONTROL)
+	RefreshPropertiesSceneHUD("Get")
+	InitSceneHUDImpl()
 EndFunction
 
-Function TryPrismaOverlaysClose()
-	PrismaOverlayDestroyImpl(PRISMA_SCENE_MENU)
-	RefreshPrismaPropertiesState("Set")
+Function TryCloseSceneHUD()
+	DestroySceneHUDImpl()
+	RefreshPropertiesSceneHUD("Set")
 EndFunction
 
-Function PrismaOverlayInitAndShow(int aiOverlayIndex)
-	bool abProceed = False
-	If (aiOverlayIndex == PRISMA_SCENE_MENU)
-		abProceed = True
-	ElseIf (aiOverlayIndex == OVERLAY_ANIM_SPEED)
-		abProceed = Config.OverlayAnimSpeed
-	ElseIf (aiOverlayIndex == OVERLAY_ENJOYMENT_BARS)
-		abProceed = (Config.OverlayEnjBars && (Config.ClimaxType == Config.CLIMAXTYPE_SLSO))
-	ElseIf (aiOverlayIndex == OVERLAY_OFFSET_ADJUST)
-		abProceed = Config.OverlayOffsetAdjust
-	ElseIf (aiOverlayIndex == OVERLAY_SCENE_SELECTOR)
-		abProceed = Config.OverlaySceneSelector
-	ElseIf (aiOverlayIndex == OVERLAY_THREAD_CONFIG)
-		abProceed = Config.OverlayThreadConfig
-	ElseIf (aiOverlayIndex == OVERLAY_VISIBILITY_CONTROL)
-		abProceed = Config.OverlayVisibilityControl		
-	EndIf
-	If (abProceed)
-		PrismaOverlayInitImpl(aiOverlayIndex)
-	EndIf
-EndFunction
-
-Function RefreshPrismaPropertiesState(string asMode)
+Function RefreshPropertiesSceneHUD(string asMode)
 	If (asMode == "Get")
-		AdjustStage = Config.AdjustStage
-		MenuScaleMult = Config.MenuScaleMult
-		GameHUD = !Config.HideHUD
-		OverlayAnimSpeed = Config.OverlayAnimSpeed
-		OverlayEnjBars = Config.OverlayEnjBars
-		OverlayOffsetAdjust = Config.OverlayOffsetAdjust
-		OverlaySceneSelector = Config.OverlaySceneSelector
-		OverlayThreadConfig = Config.OverlayThreadConfig
-		OverlayVisibilityControl = Config.OverlayVisibilityControl
+		VarUI_MenuScaleMult        = Config.MenuScaleMult
+		VarUI_SeparateOrgasm       = (Config.ClimaxType == Config.CLIMAXTYPE_SLSO)
+		VarUI_AdjustStage          = Config.AdjustStage
+		ElementUI_GameHUD          = !Config.HideHUD
+		ElementUI_AnimSpeed        = Config.ElementAnimSpeed
+		ElementUI_EnjBars          = Config.ElementEnjBars
+		ElementUI_OffsetAdjust     = Config.ElementOffsetAdjust
+		ElementUI_SceneSelect      = Config.ElementSceneSelect
+		ElementUI_ThreadConfig     = Config.ElementThreadConfig
 	ElseIf (asMode == "Set")
-		Config.AdjustStage = AdjustStage
-		Config.MenuScaleMult = MenuScaleMult
-		Config.HideHUD = !GameHUD
-		Config.OverlayAnimSpeed = OverlayAnimSpeed
-		Config.OverlayEnjBars = OverlayEnjBars
-		Config.OverlayOffsetAdjust = OverlayOffsetAdjust
-		Config.OverlaySceneSelector = OverlaySceneSelector
-		Config.OverlayThreadConfig = OverlayThreadConfig
-		Config.OverlayVisibilityControl = OverlayVisibilityControl
+		Config.MenuScaleMult       = VarUI_MenuScaleMult
+		Config.AdjustStage         = VarUI_AdjustStage
+		Config.HideHUD             = !ElementUI_GameHUD
+		Config.ElementAnimSpeed    = ElementUI_AnimSpeed
+		Config.ElementEnjBars      = ElementUI_EnjBars
+		Config.ElementOffsetAdjust = ElementUI_OffsetAdjust
+		Config.ElementSceneSelect  = ElementUI_SceneSelect
+		Config.ElementThreadConfig = ElementUI_ThreadConfig
 	EndIf
 EndFunction
 
-Function PrismaOverlayInitImpl(int aiOverlayIndex) native
-Function PrismaOverlayDestroyImpl(int aiOverlayIndex) native
-Function TogglePrismaFocusImpl() native
+Function InitSceneHUDImpl() native
+Function DestroySceneHUDImpl() native
+Function ToggleFocusSceneHUDImpl() native
 
 Function UpdateMenuTimerDisplay(float afDuration, float afTime) native
 Function UpdateOffsetSlidersDisplay() native ;call on stage change
@@ -2124,8 +2087,6 @@ Function Initialize()
 	_AnimationSpeedBase = 1.0
 	_TimerPaused = false
 	_QuickResetScenes = false
-	; Prisma state-awareness
-
 	; Enter thread selection pool
 	DestroyInstance()
 	GoToState(STATE_IDLE)
@@ -2427,7 +2388,7 @@ Function OnRaiseEnjAttemptResult(int aiSuccess)
 	sslActorAlias ref = ActorAlias(PlayerRef)
 	If (!ref)
 		return
-	EndIf ; Called by Thread::PrismaUI::EnjoymentBars
+	EndIf ; Called by Thread::SceneHUD::EnjBarsOverlay
 	return ref.OnRaiseEnjAttemptResult(aiSuccess as bool)
 EndFunction
 
@@ -2478,8 +2439,6 @@ Function UpdateAnimationSpeed()
 EndFunction
 
 Function SetAnimationPlaybackSpeed(float afAnimationSpeed) native
-Function AnimSpeedOverlayInit() native
-Function AnimSpeedOverlayClose() native
 
 ; *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-* ;
 ; ----------------------------------------------------------------------------- ;

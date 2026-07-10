@@ -22,12 +22,11 @@ MCM_SETTING(bLipsFixedValue, true)
 MCM_SETTING(bAdjustStage, true)
 
 MCM_SETTING(bHideHUD, false)
-MCM_SETTING(bOverlayAnimSpeed, true)
-MCM_SETTING(bOverlayEnjBars, true)
-MCM_SETTING(bOverlayOffsetAdjust, true)
-MCM_SETTING(bOverlaySceneSelector, true)
-MCM_SETTING(bOverlayThreadConfig, true)
-MCM_SETTING(bOverlayVisibilityControl, true)
+MCM_SETTING(bElementAnimSpeed, true)
+MCM_SETTING(bElementEnjBars, true)
+MCM_SETTING(bElementOffsetAdjust, true)
+MCM_SETTING(bElementSceneSelect, true)
+MCM_SETTING(bElementThreadConfig, true)
 
 MCM_SETTING(iAskBed, 1)
 MCM_SETTING(iNPCBed, 1)
@@ -67,8 +66,8 @@ MCM_SETTING(iTargetActor, 0x31)            // N
 MCM_SETTING(iToggleThreadControl, 0x15)    // Y
 
 // KeyBinds/Scene Control Related
-MCM_SETTING(iKeyPrismaMenu, 0xB8)          // Right Alt
-MCM_SETTING(iKeyPrismaFocus, 0x38)         // Left Alt
+MCM_SETTING(iToggleSceneHUD, 0x35)         // Slash
+MCM_SETTING(iFocusSceneHUD, 0xB8)          // Right Alt
 MCM_SETTING(iKeyAdvance, 0x39)             // Space
 MCM_SETTING(iKeyEnd, 0xCF)                 // End
 MCM_SETTING(iKeyMod, 0x2A)                 // Shift

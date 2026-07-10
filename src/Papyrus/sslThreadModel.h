@@ -88,10 +88,10 @@ namespace Papyrus::ThreadModel
     void AddExperience(QUESTARGS, std::vector<RE::Actor*> a_positions, RE::BSFixedString a_scene, std::vector<RE::BSFixedString> a_playedstages);
     void UpdateStatistics(QUESTARGS, RE::Actor* a_actor, std::vector<RE::Actor*> a_positions, RE::BSFixedString a_scene, std::vector<RE::BSFixedString> a_playedstages, float a_time);
 
-    // Prisma UI
-    void PrismaOverlayInitImpl(QUESTARGS, int32_t aiOverlayIndex);
-    void PrismaOverlayDestroyImpl(QUESTARGS, int32_t aiOverlayIndex);
-    void TogglePrismaFocusImpl(QUESTARGS);
+    // SCENE HUD
+    void InitSceneHUDImpl(QUESTARGS);
+    void DestroySceneHUDImpl(QUESTARGS);
+    void ToggleFocusSceneHUDImpl(QUESTARGS);
 
     void UpdateMenuTimerDisplay(QUESTARGS, float a_duration, float a_time);
     void UpdateOffsetSlidersDisplay(QUESTARGS);
@@ -132,9 +132,9 @@ namespace Papyrus::ThreadModel
         REGISTERFUNC(AddExperience, "sslThreadModel", true);
         REGISTERFUNC(UpdateStatistics, "sslThreadModel", true);
 
-        REGISTERFUNC(PrismaOverlayInitImpl, "sslThreadModel", true);
-        REGISTERFUNC(PrismaOverlayDestroyImpl, "sslThreadModel", true);
-        REGISTERFUNC(TogglePrismaFocusImpl, "sslThreadModel", true);
+        REGISTERFUNC(InitSceneHUDImpl, "sslThreadModel", true);
+        REGISTERFUNC(DestroySceneHUDImpl, "sslThreadModel", true);
+        REGISTERFUNC(ToggleFocusSceneHUDImpl, "sslThreadModel", true);
 
         REGISTERFUNC(UpdateMenuTimerDisplay, "sslThreadModel", true);
         REGISTERFUNC(UpdateOffsetSlidersDisplay, "sslThreadModel", true);

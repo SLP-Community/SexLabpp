@@ -429,21 +429,21 @@ int property ChangePositions hidden
   EndFunction
 EndProperty
 
-; Prisma Menu
-int property PrismaMenuKey hidden
+; Scene Menu
+int property ToggleSceneHUD hidden
   int Function Get()
-    return GetSettingInt("iKeyPrismaMenu")
+    return GetSettingInt("iToggleSceneHUD")
   EndFunction
   Function Set(int aiSet)
-    SetSettingInt("iKeyPrismaMenu", aiSet)
+    SetSettingInt("iToggleSceneHUD", aiSet)
   EndFunction
 EndProperty
-int property PrismaFocusKey hidden
+int property FocusSceneHUD hidden
   int Function Get()
-    return GetSettingInt("iKeyPrismaFocus")
+    return GetSettingInt("iFocusSceneHUD")
   EndFunction
   Function Set(int aiSet)
-    SetSettingInt("iKeyPrismaFocus", aiSet)
+    SetSettingInt("iFocusSceneHUD", aiSet)
   EndFunction
 EndProperty
 float property MenuScaleMult hidden
@@ -464,52 +464,44 @@ bool property HideHUD hidden
 	  SetSettingBool("bHideHUD", aSet)
 	EndFunction
 EndProperty
-bool property OverlayAnimSpeed hidden
+bool property ElementAnimSpeed hidden
 	bool Function Get()
-	  return GetSettingBool("bOverlayAnimSpeed")
+	  return GetSettingBool("bElementAnimSpeed")
 	EndFunction
 	Function Set(bool aSet)
-	  SetSettingBool("bOverlayAnimSpeed", aSet)
+	  SetSettingBool("bElementAnimSpeed", aSet)
 	EndFunction
 EndProperty
-bool property OverlayEnjBars hidden
+bool property ElementEnjBars hidden
 	bool Function Get()
-	  return GetSettingBool("bOverlayEnjBars")
+	  return GetSettingBool("bElementEnjBars")
 	EndFunction
 	Function Set(bool aSet)
-	  SetSettingBool("bOverlayEnjBars", aSet)
+	  SetSettingBool("bElementEnjBars", aSet)
 	EndFunction
 EndProperty
-bool property OverlayOffsetAdjust hidden
+bool property ElementOffsetAdjust hidden
 	bool Function Get()
-	  return GetSettingBool("bOverlayOffsetAdjust")
+	  return GetSettingBool("bElementOffsetAdjust")
 	EndFunction
 	Function Set(bool aSet)
-	  SetSettingBool("bOverlayOffsetAdjust", aSet)
+	  SetSettingBool("bElementOffsetAdjust", aSet)
 	EndFunction
 EndProperty
-bool property OverlaySceneSelector hidden
+bool property ElementSceneSelect hidden
 	bool Function Get()
-	  return GetSettingBool("bOverlaySceneSelector")
+	  return GetSettingBool("bElementSceneSelect")
 	EndFunction
 	Function Set(bool aSet)
-	  SetSettingBool("bOverlaySceneSelector", aSet)
+	  SetSettingBool("bElementSceneSelect", aSet)
 	EndFunction
 EndProperty
-bool property OverlayThreadConfig hidden
+bool property ElementThreadConfig hidden
 	bool Function Get()
-	  return GetSettingBool("bOverlayThreadConfig")
+	  return GetSettingBool("bElementThreadConfig")
 	EndFunction
 	Function Set(bool aSet)
-	  SetSettingBool("bOverlayThreadConfig", aSet)
-	EndFunction
-EndProperty
-bool property OverlayVisibilityControl hidden
-	bool Function Get()
-	  return GetSettingBool("bOverlayVisibilityControl")
-	EndFunction
-	Function Set(bool aSet)
-	  SetSettingBool("bOverlayVisibilityControl", aSet)
+	  SetSettingBool("bElementThreadConfig", aSet)
 	EndFunction
 EndProperty
 
@@ -712,8 +704,8 @@ EndFunction
 
 Function ToggleThreadControl()
   If (_ActiveControl)
+    _ActiveControl.ToggleVisibilitySceneHUD(-1)
     DisableThreadControl(_ActiveControl)
-    _ActiveControl.TryPrismaOverlaysClose()
     return
   EndIf
   Actor akTarget = None
@@ -731,7 +723,7 @@ Function ToggleThreadControl()
     Log("AttemptThreadControl(), Attempting thread control for actor: " + SexLabUtil.ActorName(akTarget))
     If (TargetThread.HasPlayer() || TakeThreadControl.Show())
       GetThreadControl(TargetThread as sslThreadController)
-      _ActiveControl.TryPrismaOverlaysStart()
+      _ActiveControl.ToggleVisibilitySceneHUD(1)
     EndIf
   EndIf
 EndFunction
@@ -978,8 +970,8 @@ bool function CheckSystemPart(string CheckSystem)
     return SKSE.GetPluginVersion("AccuratePenetration") > -1
   elseIf CheckSystem == "CrossHairRef"
     return SKSE.GetPluginVersion("CrosshairRefEventsFix") > -1
-  elseIf CheckSystem == "PrismaUI"
-    return SKSE.GetPluginVersion("PrismaUI") > -1
+  elseIf CheckSystem == "SKSEMenuFramework"
+    return SKSE.GetPluginVersion("SKSEMenuFramework") > -1
   elseif CheckSystem == "VRIK"
     return CheckForVRIK()
   endIf
@@ -1003,8 +995,8 @@ bool function CheckSystem()
   ElseIf (!CheckSystemPart("CrossHairRef"))
     Debug.MessageBox("[SexLab]\nMissing 'CrosshairRefEvents Hang Fix'.\nThis mod is mandatory to avoid soft-locks during scene startup.")
     ret = false
-  ElseIf (!CheckSystemPart("PrismaUI"))
-    Debug.MessageBox("[SexLab]\nMissing 'Prisma UI'.\nThis mod is mandatory for certain menus and overlays to work.")
+  ElseIf (!CheckSystemPart("SKSEMenuFramework"))
+    Debug.MessageBox("[SexLab]\nMissing 'SKSE Menu Framework'.\nThis mod is mandatory for the SceneHUD to work.")
     ret = false
   ElseIf (!CheckSystemPart("PPA"))
     Debug.MessageBox("[SexLab]\nMissing 'Procedural Penis Animations'.\nThis mod is highly recommended for schlong allignments to work properly.")

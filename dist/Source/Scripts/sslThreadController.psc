@@ -37,8 +37,8 @@ EndFunction
 ; ------------------------------------------------------- ;
 
 int[] Hotkeys
-int Property kPrismaMenu        = 0  AutoReadOnly
-int Property kPrismaFocus       = 1  AutoReadOnly
+int Property kToggleSceneHUD    = 0  AutoReadOnly
+int Property kFocusSceneHUD     = 1  AutoReadOnly
 int Property kAdvanceAnimation  = 2  AutoReadOnly
 int Property kEndAnimation      = 3  AutoReadOnly
 int Property kGameRaiseEnj      = 4  AutoReadOnly
@@ -50,8 +50,8 @@ int Property kChangePositions   = 9  AutoReadOnly
 
 Function InitHotkeys()
 	Hotkeys = new int[10]
-	Hotkeys[kPrismaMenu]        = Config.PrismaMenuKey
-	Hotkeys[kPrismaFocus]       = Config.PrismaFocusKey	
+	Hotkeys[kToggleSceneHUD]    = Config.ToggleSceneHUD
+	Hotkeys[kFocusSceneHUD]     = Config.FocusSceneHUD	
 	Hotkeys[kAdvanceAnimation]  = Config.AdvanceAnimation
 	Hotkeys[kEndAnimation]      = Config.EndAnimation
 	Hotkeys[kGameRaiseEnj]      = Config.GameRaiseEnjKey
@@ -68,8 +68,8 @@ Function RegisterHotkeys()
 	GetAdjustPos()
 	EnjBarsChangeHighlightedPartner(_AdjustActor)
 	; register for hotkeys
-	RegisterForKey(Hotkeys[kPrismaMenu])
-	RegisterForKey(Hotkeys[kPrismaFocus])
+	RegisterForKey(Hotkeys[kToggleSceneHUD])
+	RegisterForKey(Hotkeys[kFocusSceneHUD])
 	RegisterForKey(Hotkeys[kAdvanceAnimation])
 	RegisterForKey(Hotkeys[kEndAnimation])
 	If (Config.GameEnabled && HasPlayer)
@@ -101,16 +101,16 @@ Event OnKeyDown(int aiKey)
 	If (Utility.IsInMenuMode() || _SkipHotkeyEvents)
 		return
 	EndIf
-	; PrismaUI
-	If (aiKey == Hotkeys[kPrismaMenu])
-		TogglePrismaMenu()
+	; SceneHUD
+	If (aiKey == Hotkeys[kToggleSceneHUD])
+		ToggleVisibilitySceneHUD()
 		return
 	EndIf
-	If (aiKey == Hotkeys[kPrismaFocus])
-		TogglePrismaFocus()
+	If (aiKey == Hotkeys[kFocusSceneHUD])
+		ToggleFocusSceneHUD()
 		return
 	EndIf
-	If (_PrismaFocused)
+	If (_bFocusedSceneHUD)
 		return
 	EndIf
 	; Generic
@@ -141,35 +141,35 @@ Event OnKeyDown(int aiKey)
 EndEvent
 
 ; ------------------------------------------------------- ;
-; --- Prisma UI                                       --- ;
+; --- SCENE HUD                                       --- ;
 ; ------------------------------------------------------- ;
-bool _PrismaOpened = false
-bool _PrismaFocused = false
+bool _bOpenedSceneHUD = false
+bool _bFocusedSceneHUD = false
 
-Function TogglePrismaMenu(int aiForceState = 0)
+Function ToggleVisibilitySceneHUD(int aiForceState = 0)
 	;[-1:ForceClose, 0:Toggle, 1:ForceOpen]
-	If (aiForceState == -1 || (aiForceState == 0 && _PrismaOpened))
-		If (_PrismaFocused)
-			TogglePrismaFocus()
+	If (aiForceState == -1 || (aiForceState == 0 && _bOpenedSceneHUD))
+		If (_bFocusedSceneHUD)
+			ToggleFocusSceneHUD()
 		EndIf
-		TryPrismaOverlaysClose()
-		_PrismaOpened = false
-	ElseIf (aiForceState == 1 || (aiForceState == 0 && !_PrismaOpened))
-		TryPrismaOverlaysStart()
-		_PrismaOpened = true
+		TryCloseSceneHUD()
+		_bOpenedSceneHUD = false
+	ElseIf (aiForceState == 1 || (aiForceState == 0 && !_bOpenedSceneHUD))
+		TryInitSceneHUD()
+		_bOpenedSceneHUD = true
 	EndIf
 EndFunction
 
-Function TogglePrismaFocus()
-	If (!_PrismaOpened)
+Function ToggleFocusSceneHUD()
+	If (!_bOpenedSceneHUD)
 		return
 	EndIf
-	TogglePrismaFocusImpl()
-	If (_PrismaFocused)
-		_PrismaFocused = false
+	ToggleFocusSceneHUDImpl()
+	If (_bFocusedSceneHUD)
+		_bFocusedSceneHUD = false
 		PauseTimer(false)
 	Else
-		_PrismaFocused = true
+		_bFocusedSceneHUD = true
 		PauseTimer(true)
 	EndIf
 EndFunction
@@ -419,7 +419,7 @@ EndFunction
 ;#   L_Right   : TargetPartnerNext
 ;#   L_Back    : ToggleFreeCam
 ;#   L_Forward : CyclePOVModes
-;#   R_Tap     : TogglePrismaFocus
+;#   R_Tap     : ToggleFocusSceneHUD
 ;#   R_Up      : SceneChange
 ;#   R_Down    : SceneEnd
 ;#   R_Left    : StagePrev
@@ -487,12 +487,12 @@ Function VRHandleGesture(String asEventName, String Foobar, float Presses, Form 
 		return
 	EndIf
 	string asEvent = StringUtil.Substring(asEventName, 5)
-	; PrismaUI
+	; SceneHUD
 	If (asEvent == "R_Tap")
-		TogglePrismaFocus()
+		ToggleFocusSceneHUD()
 		return
 	EndIf
-	If (_PrismaFocused)
+	If (_bFocusedSceneHUD)
 		return
 	EndIf
 	; General

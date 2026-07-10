@@ -299,10 +299,10 @@ $SSL_iToggleThreadControl	Toggle Thread Control
 # ------ Scene Manipulation
 $SSL_SceneManipulation	Control de escena
 
-# TODO: $SSL_iKeyPrismaMenu
-$SSL_iKeyPrismaMenu	Prisma Menu Key
-# TODO: $SSL_iKeyPrismaFocus
-$SSL_iKeyPrismaFocus	Prisma Focus Key
+# TODO: $SSL_iToggleSceneHUD
+$SSL_iToggleSceneHUD	Toggle SceneHUD
+# TODO: $SSL_iFocusSceneHUD
+$SSL_iFocusSceneHUD	Focus SceneHUD
 $SSL_iKeyAdvance	Avanzar escena / Seleccionar
 $SSL_iKeyEnd	Finalizar escena / Atrás
 $SSL_iKeyMod	Modificador

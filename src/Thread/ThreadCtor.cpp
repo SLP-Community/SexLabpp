@@ -3,7 +3,7 @@
 #include "Registry/Util/RayCast.h"
 #include "Registry/Util/RayCast/ObjectBound.h"
 #include "Registry/Util/RayCast/Offsets.h"
-#include "Thread/Interface/FurnSelectionMenu.h"
+#include "Thread/Interface/FurnSelectMenu.h"
 #include "Util/World.h"
 #include <future>
 
@@ -325,9 +325,9 @@ namespace Thread
 
     void Instance::InitializeCenterRefMenu(const FurnitureMapping& a_furnitures, RE::Actor* a_tmpCenter)
     {
-        std::vector<PrismaUI::FurnSelectionMenu::Item> items;
+        std::vector<Interface::FurnSelectMenu::Item> items;
         const auto actName = std::format("{}, 0x{:X}", a_tmpCenter->GetDisplayFullName(), a_tmpCenter->GetFormID());
-        items.emplace_back(actName, "$SSL_None");
+        items.emplace_back(actName, "");
         for (const auto& [ref, offset] : a_furnitures) {
             const auto itemName = std::format("{}, 0x{:X}", ref->GetDisplayFullName(), ref->GetFormID());
             const auto itemValue = std::format("{}", offset.type.ToString());
@@ -336,12 +336,12 @@ namespace Thread
         Instance::pendingFurnitureMap = a_furnitures;
         Instance::pendingCenterAct = a_tmpCenter;
         Instance::pendingQst = linkedQst;
-        PrismaUI::FurnSelectionMenu::Open(linkedQst, items);
+        Interface::FurnSelectMenu::Open(linkedQst, items);
     }
 
     void Instance::SetCenterRefSelected(size_t a_index)
     {
-        // Called by PrismaUI::FurnSelectionMenu
+        // Called by Interface::FurnSelectMenu
         if (a_index == 0 || a_index > pendingFurnitureMap.size()) {
             logger::info("SetCenterRefSelected: using actor {:X} as center.", Instance::pendingCenterAct->GetFormID());
             center.SetReference(Instance::pendingCenterAct, {});

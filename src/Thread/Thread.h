@@ -111,10 +111,10 @@ namespace Thread
         template <typename T>
         void SetThreadProperty(const std::string& a_property, T a_val);
 
-        // Prisma UI
-        void PrismaOverlayInitImpl(int32_t aiOverlayIndex);
-        void PrismaOverlayDestroyImpl(int32_t aiOverlayIndex);
-        void TogglePrismaFocusImpl();
+        // SceneHUD
+        void InitSceneHUDImpl();
+        void DestroySceneHUDImpl();
+        void ToggleFocusSceneHUDImpl();
 
         void UpdateMenuTimerDisplay(float a_duration, float a_timer);
         void EnjBarsChangeHighlightedPartner(RE::Actor* a_target);

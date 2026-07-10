@@ -131,8 +131,8 @@ Settings::KeyType Settings::GetKeyType(uint32_t a_keyCode)
     const auto get = [](uint32_t key) {
         return key >= SKSE::InputMap::kMacro_GamepadOffset ? SKSE::InputMap::GamepadKeycodeToMask(key) : key;
     };
-    if (a_keyCode == get(Settings::iKeyPrismaMenu))       return KeyType::Menu;
-    if (a_keyCode == get(Settings::iKeyPrismaFocus))      return KeyType::Focus;
+    if (a_keyCode == get(Settings::iToggleSceneHUD))      return KeyType::Menu;
+    if (a_keyCode == get(Settings::iFocusSceneHUD))       return KeyType::Focus;
     if (a_keyCode == get(Settings::iKeyAdvance))          return KeyType::Advance;
     if (a_keyCode == get(Settings::iKeyEnd))              return KeyType::End;
     if (a_keyCode == get(Settings::iKeyMod))              return KeyType::Modifier;
@@ -153,8 +153,8 @@ uint32_t Settings::GetKeyCode(KeyType a_keyType)
         return key >= SKSE::InputMap::kMacro_GamepadOffset ? SKSE::InputMap::GamepadKeycodeToMask(key) : key;
     };
     switch (a_keyType) {
-    case KeyType::Menu:      return get(Settings::iKeyPrismaMenu);
-    case KeyType::Focus:     return get(Settings::iKeyPrismaFocus);
+    case KeyType::Menu:      return get(Settings::iToggleSceneHUD);
+    case KeyType::Focus:     return get(Settings::iFocusSceneHUD);
     case KeyType::Advance:   return get(Settings::iKeyAdvance);
     case KeyType::End:       return get(Settings::iKeyEnd);
     case KeyType::Modifier:  return get(Settings::iKeyMod);

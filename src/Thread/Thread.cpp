@@ -1,13 +1,13 @@
 #include "Thread.h"
 
+#include "Thread/Interface/Elements/AnimSpeedOverlay.h"
+#include "Thread/Interface/Elements/EnjBarsOverlay.h"
+#include "Thread/Interface/Elements/OffsetAdjustPanel.h"
+#include "Thread/Interface/Elements/SceneSelectPanel.h"
+#include "Thread/Interface/SceneHUD.h"
 #include "Registry/Library.h"
 #include "Registry/Util/RayCast/Offsets.h"
 #include "Registry/Util/Scale.h"
-#include "Thread/Interface/Overlays/AnimSpeedOverlay.h"
-#include "Thread/Interface/Overlays/EnjoymentBars.h"
-#include "Thread/Interface/Overlays/OffsetAdjustMenu.h"
-#include "Thread/Interface/Overlays/SceneSelectorMenu.h"
-#include "Thread/Interface/PrismaSceneMenu.h"
 #include "Util/Script.h"
 
 namespace Thread
@@ -140,7 +140,8 @@ namespace Thread
         activeScene->furnitureOffset.Apply(baseCoordinates);
         activeAssignment = assignments.begin();
 
-        PrismaUI::SceneSelectorMenu::PopulateScenes();
+        Interface::SceneSelectPanel::RebuildEntries();
+        Interface::SceneSelectPanel::RebuildFilter();
         return true;
     }
 
@@ -468,46 +469,46 @@ namespace Thread
     template void Instance::SetThreadProperty<float>(const std::string&, float);
     template void Instance::SetThreadProperty<int32_t>(const std::string&, int32_t);
 
-    // ── PRISMA UI
+    // ── SCENE HUD
 
-    void Instance::PrismaOverlayInitImpl(int32_t aiOverlayIndex)
+    void Instance::InitSceneHUDImpl()
     {
-        PrismaUI::OverlayInit(linkedQst, static_cast<PrismaUI::PrismaOverlayIndex>(aiOverlayIndex));
+        Interface::SceneHUD::Init(linkedQst);
     }
 
-    void Instance::PrismaOverlayDestroyImpl(int32_t aiOverlayIndex)
+    void Instance::DestroySceneHUDImpl()
     {
-        PrismaUI::OverlayDestroy(static_cast<PrismaUI::PrismaOverlayIndex>(aiOverlayIndex));
+         Interface::SceneHUD::Destroy();
     }
 
-    void Instance::TogglePrismaFocusImpl()
+    void Instance::ToggleFocusSceneHUDImpl()
     {
-        return PrismaUI::PrismaSceneMenu::ToggleFocus();
+        return  Interface::SceneHUD::ToggleFocus();
     }
 
     void Instance::UpdateMenuTimerDisplay(float a_duration, float a_left)
     {
-        PrismaUI::AnimSpeedOverlay::UpdateStageTimerDisplay(a_duration, a_left);
+        Interface::AnimSpeedOverlay::UpdateStageTimerDisplay(a_duration, a_left);
     }
 
     void Instance::EnjBarsChangeHighlightedPartner(RE::Actor* a_partner)
     {
-        PrismaUI::EnjoymentBars::UpdateHighlightedPartner(a_partner);
+        Interface::EnjBarsOverlay::UpdateHighlightedPartner(a_partner);
     }
 
     void Instance::EnjBarsUpdateSlider(RE::Actor* a_position, float a_enjoyment, RE::BSFixedString a_interactions)
     {
-        PrismaUI::EnjoymentBars::UpdateSlider(a_position, a_enjoyment, a_interactions);
+        Interface::EnjBarsOverlay::UpdateSlider(a_position, a_enjoyment, a_interactions);
     }
 
     void Instance::RegisterRaiseEnjAttempt(RE::Actor* a_position, float a_nextTimeCycle)
     {
-        PrismaUI::EnjoymentBars::RegisterRaiseEnjAttempt(a_position, a_nextTimeCycle);
+        Interface::EnjBarsOverlay::RegisterRaiseEnjAttempt(a_position, a_nextTimeCycle);
     }
 
     void Instance::UpdateOffsetSlidersDisplay()
     {
-        PrismaUI::OffsetAdjustMenu::OnStageChanged();
+        Interface::OffsetAdjustPanel::OnStageChanged();
     }
 
 }  // namespace Thread

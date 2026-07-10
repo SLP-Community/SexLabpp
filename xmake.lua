@@ -161,8 +161,9 @@ target(PROJECT_NAME)
         description = "Backend for skyrims adult animation framework 'SexLab'."
         })
 
-    -- PrismaUI
-    add_includedirs("lib/PrismaUI")
+    -- ImGUI
+    add_includedirs("lib/ImGui")
+    add_defines("_SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING")
 
     -- Source files
     set_pcxxheader("src/PCH.h")
@@ -188,6 +189,7 @@ target(PROJECT_NAME)
     -- flags (cl: disable warnings)
     add_cxxflags(
         "cl::/wd4068", -- unknown pragma 'clang'
+        "cl::/wd4099", -- type name first seen using 'struct' now seen using 'class'
         "cl::/wd4201", -- nonstandard extension used : nameless struct/union
         "cl::/wd4265" -- 'type': class has virtual functions, but its non-trivial destructor is not virtual; instances of this class may not be destructed correctly
         )
@@ -205,12 +207,6 @@ target(PROJECT_NAME)
             clib:set("package", nil)
             clib:set("build_after", nil)
         end
-    end)
-
-    -- Before Build
-    before_build(function(target)
-        import("prismaui")
-        prismaui.fetch_latest(target)
     end)
 
     -- Post Build 
@@ -290,7 +286,6 @@ target("assets")
     add_installfiles("dist/(SKSE/CustomConsole/*.yaml)")
     add_installfiles("dist/(SKSE/Plugins/*.ini)")
     add_installfiles("dist/(SKSE/SexLab/**)")
-    add_installfiles("dist/(PrismaUI/**)")
     add_installfiles("dist/(meshes/**)")
     add_installfiles("dist/(textures/**)")
     add_installfiles("dist/(Sound/**)")
