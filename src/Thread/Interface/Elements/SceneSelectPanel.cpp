@@ -158,7 +158,7 @@ namespace Thread::Interface
         const float dh = io->DisplaySize.y;
 
         const float panelW   = ScaleUI::pxScale(270.0f);
-        const float offset   = ScaleUI::pxScale(40.0f);
+        const float offset   = ScaleUI::pxScale(ScaleUI::PanelTabWidth + ScaleUI::PanelTabGap);
         const float maxH     = dh * 0.8f;
         const float listMaxH = ScaleUI::pxScale(200.0f);
         const float rowH     = ScaleUI::pxScale(10.0f) + ScaleUI::pxScale(6.0f) * 2.0f;
@@ -178,7 +178,7 @@ namespace Thread::Interface
         const ImGuiMCP::ImVec2 winPos = ImGuiMCP::GetWindowPos();
 
         // ── Section: Scenes List
-        ImGuiMCP::SetWindowFontScale(ScaleUI::pxScale(9.0f) / ImGuiMCP::GetFontSize());
+        SetWindowFontSize(ScaleUI::pxScale(9.0f));
         if (ImGuiMCP::Selectable(
                 s_sceneListOpen ? "  CHANGE ACTIVE SCENE  \xe2\x96\xbc" : "  CHANGE ACTIVE SCENE  \xe2\x96\xb2",
                 false, 0, ImGuiMCP::ImVec2{0.0f, ScaleUI::pxScale(20.0f)}))
@@ -188,7 +188,7 @@ namespace Thread::Interface
         s_hoveredIdx = -1;
 
         if (s_sceneListOpen) {
-            ImGuiMCP::SetWindowFontScale(ScaleUI::pxScale(10.0f) / ImGuiMCP::GetFontSize());
+            SetWindowFontSize(ScaleUI::pxScale(10.0f));
             ImGuiMCP::BeginChild("##slpp_smmSceneList", ImGuiMCP::ImVec2{panelW, listMaxH}, false);
 
             if (std::memcmp(s_searchBuf, s_lastSearch, sizeof(s_searchBuf)) != 0)
@@ -216,7 +216,7 @@ namespace Thread::Interface
         ImGuiMCP::Separator();
 
         // ── Section: Search Scenes
-        ImGuiMCP::SetWindowFontScale(ScaleUI::pxScale(9.0f) / ImGuiMCP::GetFontSize());
+        SetWindowFontSize(ScaleUI::pxScale(9.0f));
         if (ImGuiMCP::Selectable(
                 s_searchBoxOpen ? "  CHANGE SCENES BY TAG / NAME  \xe2\x96\xbc" : "  CHANGE SCENES BY TAG / NAME  \xe2\x96\xb2",
                 false, 0, ImGuiMCP::ImVec2{0.0f, ScaleUI::pxScale(20.0f)}))
@@ -224,7 +224,7 @@ namespace Thread::Interface
         ImGuiMCP::Separator();
 
         if (s_searchBoxOpen) {
-            ImGuiMCP::SetWindowFontScale(ScaleUI::pxScale(10.0f) / ImGuiMCP::GetFontSize());
+            SetWindowFontSize(ScaleUI::pxScale(10.0f));
             ImGuiMCP::SetNextItemWidth(panelW - ScaleUI::pxScale(20.0f));
             ImGuiMCP::InputTextWithHint("##slpp_smmSearch", "Tag or scene name...",
                 s_searchBuf, sizeof(s_searchBuf));
@@ -270,15 +270,15 @@ namespace Thread::Interface
                 ImGuiMCP::ImGuiWindowFlags_NoFocusOnAppearing | ImGuiMCP::ImGuiWindowFlags_NoNav;
 
             if (ImGuiMCP::Begin("##slpp_smmInfoCard", nullptr, cardFlags)) {
-                ImGuiMCP::SetWindowFontScale(keyFont / ImGuiMCP::GetFontSize());
+                SetWindowFontSize(keyFont);
 
                 auto infoRow = [&](const char* key, const std::string& val, float valFont){
                     ImGuiMCP::TextColored(ToVec4(ColorUI::TextMuted), "%s", key);
                     ImGuiMCP::SameLine(keyW);
-                    ImGuiMCP::SetWindowFontScale(valFont / ImGuiMCP::GetFontSize());
+                    SetWindowFontSize(valFont);
                     ImGuiMCP::TextColored(ToVec4(ColorUI::TextSecond), "%s",
                         val.empty() ? "\xE2\x80\x94" : val.c_str());
-                    ImGuiMCP::SetWindowFontScale(keyFont / ImGuiMCP::GetFontSize());
+                    SetWindowFontSize(keyFont);
                     ImGuiMCP::Dummy(ImGuiMCP::ImVec2{0.0f, rowGap});
                 };
 
@@ -287,16 +287,16 @@ namespace Thread::Interface
 
                 ImGuiMCP::TextColored(ToVec4(ColorUI::TextMuted), "TAGS");
                 ImGuiMCP::SameLine(keyW);
-                ImGuiMCP::SetWindowFontScale(tagFont / ImGuiMCP::GetFontSize());
+                SetWindowFontSize(tagFont);
                 ImGuiMCP::TextWrapped("%s", e.tags.empty() ? "\xE2\x80\x94" : e.tags.c_str());
-                ImGuiMCP::SetWindowFontScale(keyFont / ImGuiMCP::GetFontSize());
+                SetWindowFontSize(keyFont);
                 ImGuiMCP::Dummy(ImGuiMCP::ImVec2{0.0f, rowGap});
 
                 ImGuiMCP::Separator();
                 ImGuiMCP::Dummy(ImGuiMCP::ImVec2{0.0f, ScaleUI::pxScale(5.0f)});
 
                 ImGuiMCP::TextColored(ToVec4(ColorUI::TextMuted), "ANNOTATIONS");
-                ImGuiMCP::SetWindowFontScale(rowFont / ImGuiMCP::GetFontSize());
+                SetWindowFontSize(rowFont);
                 const float fieldW = cardW - ScaleUI::pxScale(24.0f);
                 const ImGuiMCP::ImVec2 annotSz{ fieldW,
                     std::clamp(ImGuiMCP::CalcTextSize(e.annotBuf, nullptr, false, fieldW).y + ScaleUI::pxScale(10.0f),

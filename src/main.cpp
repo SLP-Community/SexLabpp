@@ -37,6 +37,7 @@ static void SKSEMessageHandler(SKSE::MessagingInterface::Message* message)
 {
     switch (message->type) {
     case SKSE::MessagingInterface::kPostLoad:
+        Thread::Interface::SceneHUD::Register();
         break;
     case SKSE::MessagingInterface::kDataLoaded:
         Settings::Initialize();
@@ -120,8 +121,6 @@ extern "C" DLLEXPORT bool SKSEAPI SKSEPlugin_Load(const SKSE::LoadInterface* a_s
         logger::critical("Failed to register papyrus functions");
         return false;
     }
-
-    Thread::Interface::SceneHUD::Register();
 
     const auto serialization = SKSE::GetSerializationInterface();
     serialization->SetUniqueID('slpp');

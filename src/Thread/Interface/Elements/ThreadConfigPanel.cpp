@@ -104,7 +104,6 @@ namespace Thread::Interface
         const float rowPadH  = ScaleUI::pxScale(12.0f);
         const float hdrPadV  = ScaleUI::pxScale(5.0f);
         const float hdrPadH  = ScaleUI::pxScale(10.0f);
-        const float badgeGap = ScaleUI::pxScale(4.0f);
         const float lblW     = ScaleUI::pxScale(70.0f);
         const float dropW    = ScaleUI::pxScale(140.0f);
         const float alphaW   = ScaleUI::pxScale(100.0f);
@@ -133,7 +132,7 @@ namespace Thread::Interface
         }
 
         ImGuiMCP::SetCursorScreenPos(hdrMin);
-        ImGuiMCP::SetWindowFontScale(ScaleUI::pxScale(9.0f) / ImGuiMCP::GetFontSize());
+        SetWindowFontSize(ScaleUI::pxScale(9.0f));
 
         // Collapse arrow
         ImGuiMCP::SetCursorScreenPos(ImGuiMCP::ImVec2{hdrMin.x + hdrPadH, hdrMin.y + hdrPadV});
@@ -157,7 +156,7 @@ namespace Thread::Interface
         // ── Card body (collapsible) ─────────────────────────────────────────
         if (!state.cardOpen) { ImGuiMCP::PopID(); return; }
         auto* inst = Instance::GetInstance(SceneHUD::linkedThread);
-        ImGuiMCP::SetWindowFontScale(ScaleUI::pxScale(9.5f) / ImGuiMCP::GetFontSize());
+        SetWindowFontSize(ScaleUI::pxScale(9.5f));
 
         // ── Permutation row
         {
@@ -165,12 +164,12 @@ namespace Thread::Interface
             const uint32_t total = inst->GetUniquePermutations(actor);
 
             ImGuiMCP::SetCursorPosX(rowPadH);
-            ImGuiMCP::SetWindowFontScale(ScaleUI::pxScale(9.0f) / ImGuiMCP::GetFontSize());
+            SetWindowFontSize(ScaleUI::pxScale(9.0f));
             ImGuiMCP::TextColored(ToVec4(ColorUI::TextMuted), "Permutation");
             ImGuiMCP::SameLine(lblW);
 
             const float btnW = ScaleUI::pxScale(22.0f);
-            ImGuiMCP::SetWindowFontScale(ScaleUI::pxScale(9.0f) / ImGuiMCP::GetFontSize());
+            SetWindowFontSize(ScaleUI::pxScale(9.0f));
             char permBuf[24];
             std::snprintf(permBuf, sizeof(permBuf), "%u / %u", cur, total);
             const float permW = std::max(ImGuiMCP::CalcTextSize(permBuf).x, ScaleUI::pxScale(30.0f));
@@ -195,11 +194,11 @@ namespace Thread::Interface
             SKSE::Translation::Translate(curLabel, curLabel);
 
             ImGuiMCP::SetCursorPosX(rowPadH);
-            ImGuiMCP::SetWindowFontScale(ScaleUI::pxScale(9.0f) / ImGuiMCP::GetFontSize());
+            SetWindowFontSize(ScaleUI::pxScale(9.0f));
             ImGuiMCP::TextColored(ToVec4(ColorUI::TextMuted), "Expression");
             ImGuiMCP::SameLine(lblW);
 
-            ImGuiMCP::SetWindowFontScale(ScaleUI::pxScale(9.0f) / ImGuiMCP::GetFontSize());
+            SetWindowFontSize(ScaleUI::pxScale(9.0f));
             ImGuiMCP::SetNextItemWidth(dropW);
             if (ImGuiMCP::BeginCombo("##slpp_tcmExpr", curLabel.c_str())) {
                 lib->ForEachExpression([&](const auto& expr) {
@@ -227,11 +226,11 @@ namespace Thread::Interface
             const Registry::RaceKey raceKey{ actor };
 
             ImGuiMCP::SetCursorPosX(rowPadH);
-            ImGuiMCP::SetWindowFontScale(ScaleUI::pxScale(9.0f) / ImGuiMCP::GetFontSize());
+            SetWindowFontSize(ScaleUI::pxScale(9.0f));
             ImGuiMCP::TextColored(ToVec4(ColorUI::TextMuted), "Voice");
             ImGuiMCP::SameLine(lblW);
 
-            ImGuiMCP::SetWindowFontScale(ScaleUI::pxScale(9.0f) / ImGuiMCP::GetFontSize());
+            SetWindowFontSize(ScaleUI::pxScale(9.0f));
             ImGuiMCP::SetNextItemWidth(dropW);
             if (ImGuiMCP::BeginCombo("##slpp_tcmVoice", curLabel.c_str())) {
                 lib->ForEachVoice([&](const auto& v) {
@@ -256,7 +255,7 @@ namespace Thread::Interface
             int alphaInt = static_cast<int>(std::round(actor->GetAlpha() * 100.0f));
 
             ImGuiMCP::SetCursorPosX(rowPadH);
-            ImGuiMCP::SetWindowFontScale(ScaleUI::pxScale(9.0f) / ImGuiMCP::GetFontSize());
+            SetWindowFontSize(ScaleUI::pxScale(9.0f));
             ImGuiMCP::TextColored(ToVec4(ColorUI::TextMuted), "Alpha");
             ImGuiMCP::SameLine(lblW);
 
@@ -267,7 +266,7 @@ namespace Thread::Interface
             ImGuiMCP::PopStyleVar();
 
             ImGuiMCP::SameLine(0.0f, ScaleUI::pxScale(6.0f));
-            ImGuiMCP::SetWindowFontScale(ScaleUI::pxScale(9.0f) / ImGuiMCP::GetFontSize());
+            SetWindowFontSize(ScaleUI::pxScale(9.0f));
             ImGuiMCP::TextColored(ToVec4(ColorUI::TextMuted), "%d%%", alphaInt);
         }
 
@@ -288,7 +287,7 @@ namespace Thread::Interface
 
         auto* io = ImGuiMCP::GetIO();
         const float panelW   = ScaleUI::pxScale(280.0f);
-        const float offset   = ScaleUI::pxScale(40.0f);   // from right edge
+        const float offset   = ScaleUI::pxScale(ScaleUI::PanelTabWidth + ScaleUI::PanelTabGap);
         const float rowMinH  = ScaleUI::pxScale(28.0f);
         const float rowPadV  = ScaleUI::pxScale(6.0f);
         const float rowPadH  = ScaleUI::pxScale(12.0f);
@@ -310,7 +309,7 @@ namespace Thread::Interface
         if (!ImGuiMCP::Begin("##slpp_TCM", nullptr, kFlags)) { ImGuiMCP::End(); return; }
 
         // ── THREAD section
-        ImGuiMCP::SetWindowFontScale(ScaleUI::pxScale(9.0f) / ImGuiMCP::GetFontSize());
+        SetWindowFontSize(ScaleUI::pxScale(9.0f));
         if (ImGuiMCP::Selectable(
                 s_threadSectionOpen ? "  THREAD  \xe2\x96\xbc" : "  THREAD  \xe2\x96\xb2",
                 false, 0, ImGuiMCP::ImVec2{0.0f, ScaleUI::pxScale(20.0f)}))
@@ -318,7 +317,7 @@ namespace Thread::Interface
         ImGuiMCP::Separator();
 
         if (s_threadSectionOpen) {
-            ImGuiMCP::SetWindowFontScale(ScaleUI::pxScale(10.0f) / ImGuiMCP::GetFontSize());
+            SetWindowFontSize(ScaleUI::pxScale(10.0f));
             ImGuiMCP::SetCursorPosX(rowPadH);
             if (ImGuiMCP::Selectable("Random Scene", false, 0, ImGuiMCP::ImVec2{panelW - rowPadH * 2.0f, rowMinH}))
                 OnRandomScene();
@@ -340,7 +339,7 @@ namespace Thread::Interface
         ImGuiMCP::Separator();
 
         // ── ACTORS section
-        ImGuiMCP::SetWindowFontScale(ScaleUI::pxScale(9.0f) / ImGuiMCP::GetFontSize());
+        SetWindowFontSize(ScaleUI::pxScale(9.0f));
         if (ImGuiMCP::Selectable(
                 s_actorsSectionOpen ? "  ACTORS  \xe2\x96\xbc" : "  ACTORS  \xe2\x96\xb2",
                 false, 0, ImGuiMCP::ImVec2{0.0f, ScaleUI::pxScale(20.0f)}))

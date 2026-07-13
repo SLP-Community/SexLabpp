@@ -235,18 +235,25 @@ namespace Thread::Interface
 
         constexpr auto kFlags =
             ImGuiMCP::ImGuiWindowFlags_NoTitleBar | ImGuiMCP::ImGuiWindowFlags_NoResize | ImGuiMCP::ImGuiWindowFlags_NoMove |
-            ImGuiMCP::ImGuiWindowFlags_NoScrollbar | ImGuiMCP::ImGuiWindowFlags_AlwaysAutoResize |
+            ImGuiMCP::ImGuiWindowFlags_NoScrollbar |
             ImGuiMCP::ImGuiWindowFlags_NoFocusOnAppearing | ImGuiMCP::ImGuiWindowFlags_NoNav |
             ImGuiMCP::ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiMCP::ImGuiWindowFlags_NoBackground;
 
         ImGuiMCP::SetNextWindowPos(ImGuiMCP::ImVec2{edgeH, dh - winH - edgeV}, ImGuiMCP::ImGuiCond_Always);
         ImGuiMCP::SetNextWindowSize(ImGuiMCP::ImVec2{zoneW, winH}, ImGuiMCP::ImGuiCond_Always);
 
-        if (!ImGuiMCP::Begin("##slpp_EnjBars", nullptr, kFlags)) { ImGuiMCP::End(); return; }
+        ImGuiMCP::PushStyleVar(ImGuiMCP::ImGuiStyleVar_WindowPadding, ImGuiMCP::ImVec2{0.0f, 0.0f});
+        ImGuiMCP::PushStyleVar(ImGuiMCP::ImGuiStyleVar_ItemSpacing, ImGuiMCP::ImVec2{0.0f, 0.0f});
+        if (!ImGuiMCP::Begin("##slpp_EnjBars", nullptr, kFlags)) {
+            ImGuiMCP::End();
+            ImGuiMCP::PopStyleVar(2);
+            return;
+        }
 
         auto* dl = ImGuiMCP::GetWindowDrawList();
 
-        for (auto& b : snap) {
+        for (size_t barIndex = 0; barIndex < snap.size(); ++barIndex) {
+            auto& b = snap[barIndex];
             ImGuiMCP::PushID(static_cast<int>(b.formId));
             const ImGuiMCP::ImVec2 rowStart = ImGuiMCP::GetCursorScreenPos();
 
@@ -260,14 +267,14 @@ namespace Thread::Interface
             }
 
             // actor name (left)
-            ImGuiMCP::SetWindowFontScale(nameFt / ImGuiMCP::GetFontSize());
+            SetWindowFontSize(nameFt);
             DrawTextShadowed(dl,
                 ImGuiMCP::ImVec2{rowStart.x + lblPad, rowStart.y + lblPad},
                 b.isTarget ? ColorUI::TextPrimary : ColorUI::TextSecond,
                 b.name);
 
             // enjoyment value (right)
-            ImGuiMCP::SetWindowFontScale(valFt / ImGuiMCP::GetFontSize());
+            SetWindowFontSize(valFt);
             char valBuf[12];
             std::snprintf(valBuf, sizeof(valBuf), "%d",
                 static_cast<int>(std::round(b.enjoyment)));
@@ -279,7 +286,7 @@ namespace Thread::Interface
 
             // interaction string (centre)
             if (b.interactions[0] != '\0') {
-                ImGuiMCP::SetWindowFontScale(intrFt / ImGuiMCP::GetFontSize());
+                SetWindowFontSize(intrFt);
                 const float intrX = rowStart.x +
                     (zoneW - std::min(ImGuiMCP::CalcTextSize(b.interactions).x, zoneW * 0.39f)) * 0.5f;
                 DrawTextShadowed(dl, ImGuiMCP::ImVec2{intrX, rowStart.y + lblPad},
@@ -381,7 +388,7 @@ namespace Thread::Interface
                     ImGuiMCP::ImDrawListManager::AddRectFilled(dl, frameMin, frameMax,
                         fbHit ? IM_COL32(60, 200, 80, 89) : IM_COL32(200, 60, 40, 97),
                         0.0f, 0);
-                    ImGuiMCP::SetWindowFontScale(fbFt / ImGuiMCP::GetFontSize());
+                    SetWindowFontSize(fbFt);
                     const char* fbStr = fbHit ? "HIT" : "MISS";
                     const ImGuiMCP::ImU32 fbCol = fbHit ? ColorUI::EnjHitText : ColorUI::EnjMissText;
                     const ImGuiMCP::ImVec2 fbSz = ImGuiMCP::CalcTextSize(fbStr);
@@ -404,11 +411,13 @@ namespace Thread::Interface
                     tc, 0.0f, 0, 1.0f);
             }
 
-            ImGuiMCP::Dummy(ImGuiMCP::ImVec2{0.0f, barGap});
+            if (barIndex + 1 < snap.size())
+                ImGuiMCP::Dummy(ImGuiMCP::ImVec2{0.0f, barGap});
             ImGuiMCP::PopID();
         }
 
         ImGuiMCP::SetWindowFontScale(1.0f);
         ImGuiMCP::End();
+        ImGuiMCP::PopStyleVar(2);
     }
 }

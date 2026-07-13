@@ -48,6 +48,11 @@ namespace Thread::Interface
     void SceneHUD::Init(RE::TESQuest* a_qst)
     {
         if (!a_qst) return;
+        if (!winAnimSpeed || !winEnjBars || !winThreadConfig || !winSceneSelect ||
+            !winOffsetAdjust || !winElementCtrl || !winPanelStack) {
+            logger::warn("SceneHUD::Init >> UI windows are not registered");
+            return;
+        }
         linkedThread = a_qst;
         threadScript = Script::GetScriptObject(linkedThread, "sslThreadController");
         auto* inst = Instance::GetInstance(linkedThread);
@@ -76,6 +81,8 @@ namespace Thread::Interface
     void SceneHUD::Destroy()
     {
         if (!linkedThread) return;
+        focusMode = false;
+        if (winPanelStack) winPanelStack->BlockUserInput = false;
         AnimSpeedOverlay::Destroy();
         EnjBarsOverlay::Destroy();
         ThreadConfigPanel::Destroy();
@@ -93,8 +100,13 @@ namespace Thread::Interface
     {
         if (focusMode == state) return;
         focusMode = state;
-        winPanelStack->IsOpen = state;
-        if (!state) CloseAllPanels();
+        if (winPanelStack) winPanelStack->BlockUserInput = state;
+        if (state) {
+            PseudoPanelStack::Init();
+        } else {
+            CloseAllPanels();
+            PseudoPanelStack::Destroy();
+        }
     }
 
     void SceneHUD::CloseAllPanels()
@@ -108,8 +120,11 @@ namespace Thread::Interface
 
     void SceneHUD::OpenPanel(IdxTabPanel idxPanel)
     {
+        if (activePanel == idxPanel) {
+            CloseAllPanels();
+            return;
+        }
         CloseAllPanels();
-        if (activePanel == idxPanel) return;
         activePanel = idxPanel;
         switch (idxPanel) {
         case IdxTabPanel::kThreadConfig: ThreadConfigPanel::Init(); break;

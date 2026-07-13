@@ -59,6 +59,9 @@ namespace Thread::Interface
 
     namespace ScaleUI
     {
+        constexpr float PanelTabWidth = 78.0f;
+        constexpr float PanelTabGap   = 8.0f;
+
         inline float s_scaleFactor{ 0.0f };
         inline bool  s_scaleValid{ false };
         inline float s_lastDispW{ -1.0f };
@@ -131,6 +134,12 @@ namespace Thread::Interface
         constexpr ImGuiMCP::ImU32 BgTabHover    = IM_COL32(36, 36, 40, 245);
         constexpr ImGuiMCP::ImU32 BgPanel       = IM_COL32(20, 20, 22, 245);
     };
+
+    inline void SetWindowFontSize(float size)
+    {
+        const auto* font = ImGuiMCP::GetFont();
+        ImGuiMCP::SetWindowFontScale(font && font->FontSize > 0.0f ? size / font->FontSize : 1.0f);
+    }
 
     inline void DrawTextShadowed(ImGuiMCP::ImDrawList* dl, ImGuiMCP::ImVec2 pos, ImGuiMCP::ImU32 col,
                                  const char* text, bool withGlow = false)

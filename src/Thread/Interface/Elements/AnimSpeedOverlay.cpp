@@ -74,7 +74,7 @@ namespace Thread::Interface
 
         if (!ImGuiMCP::Begin("##slpp_AnimSpeed", nullptr, kFlags)) { ImGuiMCP::End(); return; }
 
-        ImGuiMCP::SetWindowFontScale(ScaleUI::pxScale(13.0f) / ImGuiMCP::GetFontSize());
+        SetWindowFontSize(ScaleUI::pxScale(13.0f));
 
         const float spd = speed.load();
         char buf[16];

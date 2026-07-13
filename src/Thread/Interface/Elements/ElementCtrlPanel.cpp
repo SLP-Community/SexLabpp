@@ -33,11 +33,11 @@ namespace Thread::Interface
         if (!inst) return;
 
         auto* io = ImGuiMCP::GetIO();
+        const float panelOffset = ScaleUI::pxScale(ScaleUI::PanelTabWidth + ScaleUI::PanelTabGap);
         ImGuiMCP::SetNextWindowPos(
-            ImGuiMCP::ImVec2{io->DisplaySize.x - ScaleUI::pxScale(40.0f), io->DisplaySize.y * 0.5f},
+            ImGuiMCP::ImVec2{io->DisplaySize.x - panelOffset, io->DisplaySize.y * 0.5f},
             ImGuiMCP::ImGuiCond_Always, ImGuiMCP::ImVec2{1.0f, 0.5f});
         ImGuiMCP::SetNextWindowSize(ImGuiMCP::ImVec2{ScaleUI::pxScale(220.0f), 0.0f}, ImGuiMCP::ImGuiCond_Always);
-        ImGuiMCP::SetWindowFontScale(ScaleUI::pxScale(10.0f) / ImGuiMCP::GetFontSize());
 
         constexpr auto kFlags =
             ImGuiMCP::ImGuiWindowFlags_NoTitleBar | ImGuiMCP::ImGuiWindowFlags_NoResize |
@@ -45,6 +45,7 @@ namespace Thread::Interface
             ImGuiMCP::ImGuiWindowFlags_AlwaysAutoResize;
 
         if (!ImGuiMCP::Begin("Elements##slpp_ECM", nullptr, kFlags)) { ImGuiMCP::End(); return; }
+        SetWindowFontSize(ScaleUI::pxScale(10.0f));
 
         // Scale slider only commits once the slider is released.
         float sAdj = inst->GetThreadProperty<float>("VarUI_MenuScaleMult");
@@ -56,7 +57,7 @@ namespace Thread::Interface
         ImGuiMCP::Separator();
 
         // "Elements" section
-        ImGuiMCP::SetWindowFontScale(ScaleUI::pxScale(9.0f) / ImGuiMCP::GetFontSize());
+        SetWindowFontSize(ScaleUI::pxScale(9.0f));
         const char* arrow = s_elementSectionOpen ? "\xe2\x96\xbc" : "\xe2\x96\xb2";  // ▼ / ▲
         char hdrBuf[32];
         std::snprintf(hdrBuf, sizeof(hdrBuf), "%s Toggle HUD Elements", arrow);
@@ -64,7 +65,7 @@ namespace Thread::Interface
             s_elementSectionOpen = !s_elementSectionOpen;
 
         if (s_elementSectionOpen) {
-            ImGuiMCP::SetWindowFontScale(ScaleUI::pxScale(10.0f) / ImGuiMCP::GetFontSize());
+            SetWindowFontSize(ScaleUI::pxScale(10.0f));
 
             bool state_gameHud = inst->GetThreadProperty<bool>("ElementUI_GameHUD");
             bool state_AnimSpeed = inst->GetThreadProperty<bool>("ElementUI_AnimSpeed");

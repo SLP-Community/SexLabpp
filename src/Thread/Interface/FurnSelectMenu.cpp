@@ -4,7 +4,7 @@ namespace Thread::Interface
 {
     bool FurnSelectMenu::Register()
     {
-        window = SKSEMenuFramework::AddWindow(FurnSelectMenu::Render, false);
+        window = SKSEMenuFramework::AddWindow(FurnSelectMenu::Render, true);
         if (!window) {
             logger::error("FurnSelectMenu::Register >> AddWindow failed");
             return false;
@@ -63,11 +63,11 @@ namespace Thread::Interface
         }
 
         // Panel title
-        ImGuiMCP::SetWindowFontScale(ScaleUI::pxScale(9.0f) / ImGuiMCP::GetFontSize());
+        SetWindowFontSize(ScaleUI::pxScale(9.0f));
         ImGuiMCP::TextColored(ToVec4(ColorUI::TextSecond), "CENTER SELECTION");
         ImGuiMCP::Separator();
 
-        ImGuiMCP::SetWindowFontScale(ScaleUI::pxScale(10.0f) / ImGuiMCP::GetFontSize());
+        SetWindowFontSize(ScaleUI::pxScale(10.0f));
         if (s_items.empty()) {
             ImGuiMCP::TextColored(ToVec4(ColorUI::TextMuted), "No suitable scene center nearby.");
         } else {
