@@ -391,6 +391,7 @@ namespace Thread::Interface
                         ImGuiMCP::PopStyleColor();
                     ImGuiMCP::PopID();
                 }
+                ImGuiMCP::SetWindowFontScale(1.0f);
             }
             ImGuiMCP::End();
         }
@@ -480,10 +481,9 @@ namespace Thread::Interface
                     }
                     ImGuiMCP::PopID();
                 }
+                ImGuiMCP::SetWindowFontScale(1.0f);
             }
             ImGuiMCP::End();
         }
-
-        ImGuiMCP::SetWindowFontScale(1.0f);
     }
 }
