@@ -98,6 +98,7 @@ namespace Thread::Interface
         }
 
         SetWindowFontSize(scale.Px(UI::Theme::FontSize::caption));
+        bool closeFocus = false;
 
         for (std::size_t visibleIndex = 0; visibleIndex < visibleCount; ++visibleIndex) {
             const auto index = visible[visibleIndex];
@@ -150,7 +151,7 @@ namespace Thread::Interface
 
             if (clicked) {
                 if (kTabs[index].panel == PanelId::kNone)
-                    hud.SetFocus(false);
+                    closeFocus = true;
                 else
                     hud.OpenPanel(kTabs[index].panel);
             }
@@ -164,7 +165,10 @@ namespace Thread::Interface
 
         // Close on release so the framework receives the matching key-up before input capture is disabled.
         if (hud.IsFocused() && ImGuiMCP::IsKeyReleased(ImGuiMCP::ImGuiKey_Escape))
-            hud.SetFocus(false);
+            closeFocus = true;
+        // (Hotkey bug workaround) Use the controller path so Papyrus hotkey gating and timer state stay synchronized with C++ focus
+        if (closeFocus)
+            Script::DispatchMethodCall(hud.GetThreadScript(), "ToggleFocusSceneHUD", hud.GetCallback());
     }
 
 }  // namespace Thread::Interface
