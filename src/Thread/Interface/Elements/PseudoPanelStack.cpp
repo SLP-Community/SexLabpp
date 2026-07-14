@@ -38,8 +38,9 @@ namespace Thread::Interface
         const float dh = io->DisplaySize.y;
 
         const float tabW   = ScaleUI::pxScale(ScaleUI::PanelTabWidth);
-        const float tabH   = ScaleUI::pxScale(26.0f);
-        const float tabGap = ScaleUI::pxScale(4.0f);
+        const float tabH   = ScaleUI::pxScale(30.0f);
+        const float tabGap = ScaleUI::pxScale(5.0f);
+        const float railPad = ScaleUI::pxScale(3.0f);
 
         constexpr int count = 5;
 
@@ -56,9 +57,10 @@ namespace Thread::Interface
 
         const float stride = tabH + tabGap;
         const float stackH = visibleCount * tabH + (visibleCount - 1) * tabGap;
+        const float railH = stackH + railPad * 2.0f;
 
-        ImGuiMCP::SetNextWindowPos(ImGuiMCP::ImVec2{ dw - tabW, dh * 0.5f - stackH * 0.5f }, ImGuiMCP::ImGuiCond_Always);
-        ImGuiMCP::SetNextWindowSize(ImGuiMCP::ImVec2{ tabW, stackH }, ImGuiMCP::ImGuiCond_Always);
+        ImGuiMCP::SetNextWindowPos(ImGuiMCP::ImVec2{ dw - tabW - railPad, dh * 0.5f - railH * 0.5f }, ImGuiMCP::ImGuiCond_Always);
+        ImGuiMCP::SetNextWindowSize(ImGuiMCP::ImVec2{ tabW + railPad, railH }, ImGuiMCP::ImGuiCond_Always);
         ImGuiMCP::SetNextWindowBgAlpha(0.0f);  // each tab paints its own background via style colours
 
         constexpr auto kFlags =
@@ -81,36 +83,53 @@ namespace Thread::Interface
             const bool isActiveTab = kTabs[i].IdxPanel != IdxTabPanel::kNone && SceneHUD::IsPanelOpen(kTabs[i].IdxPanel);
 
             ImGuiMCP::PushID(i);
-            ImGuiMCP::SetCursorPos(ImGuiMCP::ImVec2{ 0.0f, vi * stride });
+            ImGuiMCP::SetCursorPos(ImGuiMCP::ImVec2{ railPad, railPad + vi * stride });
 
-            // Idle background with plain dark tint drawn underneath -> keeps an inactive unhovered tab faintly visible.
             auto* dl = ImGuiMCP::GetWindowDrawList();
             const ImGuiMCP::ImVec2 tMin = ImGuiMCP::GetCursorScreenPos();
             const ImGuiMCP::ImVec2 tMax{ tMin.x + tabW, tMin.y + tabH };
-            if (!isActiveTab)
-                ImGuiMCP::ImDrawListManager::AddRectFilled(dl, tMin, tMax, ColorUI::BgTab, ScaleUI::pxScale(4.0f), 0);
 
-            // An invisible-label selectable provides the real user interactions like hovering and opening.
-            // The visible label is drawn separately on top so it can be centered and shadowed exactly as intended.
-            ImGuiMCP::PushStyleColor(ImGuiMCP::ImGuiCol_Header, ColorUI::BgTabHover);
-            ImGuiMCP::PushStyleColor(ImGuiMCP::ImGuiCol_HeaderHovered, ColorUI::BgTabHover);
-            ImGuiMCP::PushStyleColor(ImGuiMCP::ImGuiCol_HeaderActive, ColorUI::BgTabHover);
+            ImGuiMCP::PushStyleColor(ImGuiMCP::ImGuiCol_Header, IM_COL32(0, 0, 0, 0));
+            ImGuiMCP::PushStyleColor(ImGuiMCP::ImGuiCol_HeaderHovered, IM_COL32(0, 0, 0, 0));
+            ImGuiMCP::PushStyleColor(ImGuiMCP::ImGuiCol_HeaderActive, IM_COL32(0, 0, 0, 0));
+            const bool clicked = ImGuiMCP::Selectable("##slpp_ppsTab", isActiveTab, 0, ImGuiMCP::ImVec2{ tabW, tabH });
+            const bool highlighted = ImGuiMCP::IsItemHovered() || ImGuiMCP::IsItemFocused();
+            const bool pressed = ImGuiMCP::IsItemActive();
 
-            if (ImGuiMCP::Selectable("##slpp_ppsTab", isActiveTab, 0, ImGuiMCP::ImVec2{ tabW, tabH })) {
+            ImGuiMCP::PopStyleColor(3);
+
+            const float rounding = ScaleUI::pxScale(5.0f);
+            const auto roundLeft = ImGuiMCP::ImDrawFlags_RoundCornersLeft;
+            const ImGuiMCP::ImU32 background = isActiveTab ? IM_COL32(22, 25, 23, 245) :
+                pressed ? IM_COL32(34, 34, 36, 245) : highlighted ? IM_COL32(28, 28, 30, 245) : ColorUI::BgPanel;
+            const ImGuiMCP::ImU32 border = isActiveTab ? IM_COL32(112, 184, 112, 220) :
+                highlighted ? IM_COL32(145, 142, 136, 150) : IM_COL32(92, 90, 86, 105);
+            const ImGuiMCP::ImU32 text = isActiveTab ? ColorUI::TextPrimary :
+                highlighted ? ColorUI::TextPrimary : ColorUI::TextSecond;
+
+            ImGuiMCP::ImDrawListManager::AddRectFilled(dl,
+                ImGuiMCP::ImVec2{tMin.x - ScaleUI::pxScale(1.0f), tMin.y + ScaleUI::pxScale(1.0f)},
+                ImGuiMCP::ImVec2{tMax.x, tMax.y + ScaleUI::pxScale(1.0f)},
+                IM_COL32(0, 0, 0, 90), rounding, roundLeft);
+            ImGuiMCP::ImDrawListManager::AddRectFilled(dl, tMin, tMax, background, rounding, roundLeft);
+            ImGuiMCP::ImDrawListManager::AddRect(dl, tMin, tMax, border, rounding, roundLeft, ScaleUI::pxScale(1.0f));
+
+            const float accentW = ScaleUI::pxScale(isActiveTab ? 3.0f : 1.0f);
+            ImGuiMCP::ImDrawListManager::AddLine(dl,
+                ImGuiMCP::ImVec2{tMin.x + accentW * 0.5f, tMin.y + rounding},
+                ImGuiMCP::ImVec2{tMin.x + accentW * 0.5f, tMax.y - rounding},
+                isActiveTab ? ColorUI::BadgeGreen : border, accentW);
+
+            const ImGuiMCP::ImVec2 lblSz = ImGuiMCP::CalcTextSize(kTabs[i].label);
+            const ImGuiMCP::ImVec2 lblPos{ tMin.x + ScaleUI::pxScale(13.0f), tMin.y + (tabH - lblSz.y) * 0.5f };
+            DrawTextShadowed(dl, lblPos, text, kTabs[i].label);
+
+            if (clicked) {
                 if (kTabs[i].IdxPanel == IdxTabPanel::kNone)
                     SceneHUD::SetFocus(false);
                 else
                     SceneHUD::OpenPanel(kTabs[i].IdxPanel);
             }
-
-            ImGuiMCP::PopStyleColor(3);
-
-            ImGuiMCP::ImDrawListManager::AddRect(dl, tMin, tMax,
-                IM_COL32(80, 90, 110, isActiveTab ? 160 : 77), ScaleUI::pxScale(4.0f), 0, 1.0f);
-
-            const ImGuiMCP::ImVec2 lblSz = ImGuiMCP::CalcTextSize(kTabs[i].label);
-            const ImGuiMCP::ImVec2 lblPos{ tMin.x + (tabW - lblSz.x) * 0.5f, tMin.y + (tabH - lblSz.y) * 0.5f };
-            DrawTextShadowed(dl, lblPos, isActiveTab ? ColorUI::TextPrimary : ColorUI::TextSecond, kTabs[i].label);
 
             ImGuiMCP::PopID();
         }
