@@ -1,145 +1,207 @@
 #include "SceneHUD.h"
-#include "FurnSelectMenu.h"
 #include "Elements/AnimSpeedOverlay.h"
+#include "Elements/ElementCtrlPanel.h"
 #include "Elements/EnjBarsOverlay.h"
 #include "Elements/OffsetAdjustPanel.h"
+#include "Elements/PseudoPanelStack.h"
 #include "Elements/SceneSelectPanel.h"
 #include "Elements/ThreadConfigPanel.h"
-#include "Elements/ElementCtrlPanel.h"
-#include "Elements/PseudoPanelStack.h"
+#include "FurnSelectMenu.h"
 
 namespace Thread::Interface
 {
+    namespace
+    {
+        struct PanelEntry
+        {
+            PanelId id;
+            UI::Panel* panel;
+        };
+
+        const std::array<PanelEntry, 4>& GetPanels()
+        {
+            static const std::array panels{
+                PanelEntry{ PanelId::kThreadConfig, &ThreadConfigPanel::GetSingleton() },
+                PanelEntry{ PanelId::kSceneSelect, &SceneSelectPanel::GetSingleton() },
+                PanelEntry{ PanelId::kOffsetAdjust, &OffsetAdjustPanel::GetSingleton() },
+                PanelEntry{ PanelId::kElementControl, &ElementCtrlPanel::GetSingleton() },
+            };
+            return panels;
+        }
+
+        UI::Panel* FindPanel(PanelId a_id)
+        {
+            const auto& panels = GetPanels();
+            const auto entry = std::ranges::find(panels, a_id, &PanelEntry::id);
+            return entry == panels.end() ? nullptr : entry->panel;
+        }
+    }
+
+    SceneHUD& SceneHUD::GetSingleton()
+    {
+        static SceneHUD singleton;
+        return singleton;
+    }
+
     bool SceneHUD::Register()
     {
         if (!SKSEMenuFramework::IsInstalled()) {
-            logger::warn("SceneHUD::Register >> SKSE Panel Framework not installed");
+            logger::warn("SceneHUD::Register >> SKSE Menu Framework not installed");
             return false;
         }
 
-        winAnimSpeed = SKSEMenuFramework::AddWindow(AnimSpeedOverlay::Render, false);
-        winEnjBars = SKSEMenuFramework::AddWindow(EnjBarsOverlay::Render, false);
-        winThreadConfig = SKSEMenuFramework::AddWindow(ThreadConfigPanel::Render, false);
-        winSceneSelect = SKSEMenuFramework::AddWindow(SceneSelectPanel::Render, false);
-        winOffsetAdjust = SKSEMenuFramework::AddWindow(OffsetAdjustPanel::Render, false);
-        winElementCtrl = SKSEMenuFramework::AddWindow(ElementCtrlPanel::Render, false);
-        winPanelStack = SKSEMenuFramework::AddWindow(PseudoPanelStack::Render, false);
+        const std::array results{
+            AnimSpeedOverlay::GetSingleton().Register(),
+            EnjBarsOverlay::GetSingleton().Register(),
+            ThreadConfigPanel::GetSingleton().Register(),
+            SceneSelectPanel::GetSingleton().Register(),
+            OffsetAdjustPanel::GetSingleton().Register(),
+            ElementCtrlPanel::GetSingleton().Register(),
+            PseudoPanelStack::GetSingleton().Register(),
+            FurnSelectMenu::GetSingleton().Register(),
+        };
 
-        if (!winAnimSpeed || !winEnjBars || !winThreadConfig || !winSceneSelect ||
-            !winOffsetAdjust || !winElementCtrl || !winPanelStack) {
-            logger::error("SceneHUD::Register >> one or more AddWindow calls failed");
+        if (!std::ranges::all_of(results, std::identity{})) {
+            logger::error("SceneHUD::Register >> one or more UI windows failed to register");
             return false;
         }
 
-        winAnimSpeed->IsOpen = false;
-        winEnjBars->IsOpen = false;
-        winThreadConfig->IsOpen = false;
-        winSceneSelect->IsOpen = false;
-        winOffsetAdjust->IsOpen = false;
-        winElementCtrl->IsOpen = false;
-        winPanelStack->IsOpen = false;
-
-        if (!FurnSelectMenu::Register()) return false;
-
+        _registered = true;
         logger::info("SceneHUD::Register >> all UI windows registered");
         return true;
     }
 
-    void SceneHUD::Init(RE::TESQuest* a_qst)
+    void SceneHUD::Init(RE::TESQuest* a_quest)
     {
-        if (!a_qst) return;
-        if (!winAnimSpeed || !winEnjBars || !winThreadConfig || !winSceneSelect ||
-            !winOffsetAdjust || !winElementCtrl || !winPanelStack) {
+        if (!a_quest)
+            return;
+        if (!_registered) {
             logger::warn("SceneHUD::Init >> UI windows are not registered");
             return;
         }
-        linkedThread = a_qst;
-        threadScript = Script::GetScriptObject(linkedThread, "sslThreadController");
-        auto* inst = Instance::GetInstance(linkedThread);
-        if (!inst) {
+
+        _linkedThread = a_quest;
+        _threadScript = Script::GetScriptObject(_linkedThread, "sslThreadController");
+        auto* instance = GetThreadInstance();
+        if (!instance) {
             logger::warn("SceneHUD::Init >> thread instance is null");
-            linkedThread = nullptr;
-            threadScript = nullptr;
+            _linkedThread = nullptr;
+            _threadScript = nullptr;
             return;
         }
 
-        if (inst->GetThreadProperty<float>("VarUI_MenuScaleMult") <= 0.0f)
-            inst->SetThreadProperty<float>("VarUI_MenuScaleMult", 1.5f);
+        float scaleMultiplier = instance->GetThreadProperty<float>("VarUI_MenuScaleMult");
+        if (scaleMultiplier <= 0.0f) {
+            scaleMultiplier = 1.5f;
+            instance->SetThreadProperty<float>("VarUI_MenuScaleMult", scaleMultiplier);
+        }
+        _scale.SetMultiplier(scaleMultiplier);
 
-        ScaleUI::InvalidateScale();
-        ScaleUI::RecomputeScale();
-
-        activePanel = IdxTabPanel::kNone;
-        focusMode = false;
-
-        AnimSpeedOverlay::Init();
-        EnjBarsOverlay::Init();
-
+        _activePanel = PanelId::kNone;
+        _focused = false;
+        AnimSpeedOverlay::GetSingleton().Init();
+        EnjBarsOverlay::GetSingleton().Init();
         logger::info("SceneHUD::Init >> scene UI active");
     }
 
     void SceneHUD::Destroy()
     {
-        if (!linkedThread) return;
-        focusMode = false;
-        if (winPanelStack) winPanelStack->BlockUserInput = false;
-        AnimSpeedOverlay::Destroy();
-        EnjBarsOverlay::Destroy();
-        ThreadConfigPanel::Destroy();
-        SceneSelectPanel::Destroy();
-        OffsetAdjustPanel::Destroy();
-        ElementCtrlPanel::Destroy();
-        PseudoPanelStack::Destroy();
-        activePanel = IdxTabPanel::kNone;
-        linkedThread = nullptr;
-        threadScript = nullptr;
+        if (!IsActive())
+            return;
+
+        SetFocus(false);
+        AnimSpeedOverlay::GetSingleton().Destroy();
+        EnjBarsOverlay::GetSingleton().Destroy();
+        for (const auto& entry : GetPanels())
+            entry.panel->Close();
+        PseudoPanelStack::GetSingleton().Close();
+
+        _activePanel = PanelId::kNone;
+        _linkedThread = nullptr;
+        _threadScript = nullptr;
         logger::info("SceneHUD::Destroy >> scene UI deactivated");
     }
 
-    void SceneHUD::SetFocus(bool state)
+    void SceneHUD::SetFocus(bool a_focused)
     {
-        if (focusMode == state) return;
-        focusMode = state;
-        if (winPanelStack) winPanelStack->BlockUserInput = state;
-        if (state) {
-            PseudoPanelStack::Init();
+        if (_focused == a_focused)
+            return;
+
+        _focused = a_focused;
+        auto& panelStack = PseudoPanelStack::GetSingleton();
+        panelStack.SetInputBlocking(a_focused);
+        if (a_focused) {
+            panelStack.Open();
         } else {
             CloseAllPanels();
-            PseudoPanelStack::Destroy();
+            panelStack.Close();
         }
     }
 
     void SceneHUD::CloseAllPanels()
     {
-        if (activePanel == IdxTabPanel::kThreadConfig) ThreadConfigPanel::Destroy();
-        if (activePanel == IdxTabPanel::kSceneSelect) SceneSelectPanel::Destroy();
-        if (activePanel == IdxTabPanel::kOffsetAdjust) OffsetAdjustPanel::Destroy();
-        if (activePanel == IdxTabPanel::kElementCtrl) ElementCtrlPanel::Destroy();
-        activePanel = IdxTabPanel::kNone;
+        if (auto* panel = FindPanel(_activePanel))
+            panel->Close();
+        _activePanel = PanelId::kNone;
     }
 
-    void SceneHUD::OpenPanel(IdxTabPanel idxPanel)
+    void SceneHUD::OpenPanel(PanelId a_panel)
     {
-        if (activePanel == idxPanel) {
+        if (_activePanel == a_panel) {
             CloseAllPanels();
             return;
         }
+
         CloseAllPanels();
-        activePanel = idxPanel;
-        switch (idxPanel) {
-        case IdxTabPanel::kThreadConfig: ThreadConfigPanel::Init(); break;
-        case IdxTabPanel::kSceneSelect: SceneSelectPanel::Init(); break;
-        case IdxTabPanel::kOffsetAdjust: OffsetAdjustPanel::Init(); break;
-        case IdxTabPanel::kElementCtrl: ElementCtrlPanel::Init(); break;
-        default: break; }
+        if (auto* panel = FindPanel(a_panel)) {
+            _activePanel = a_panel;
+            panel->Open();
+        }
     }
 
-    void SceneHUD::OnOverlayToggle(IdxHudElement idxElement, bool state)
+    void SceneHUD::OnOverlayToggle(HudElement a_element, bool a_visible)
     {
-        switch (idxElement) {
-        case IdxHudElement::kAnimSpeedOverlay: state ? AnimSpeedOverlay::Init() : AnimSpeedOverlay::Destroy(); break;
-        case IdxHudElement::kEnjBarsOverlay: state ? EnjBarsOverlay::Init() : EnjBarsOverlay::Destroy(); break;
-        default: break; }
+        switch (a_element) {
+        case HudElement::kAnimationSpeed:
+            a_visible ? AnimSpeedOverlay::GetSingleton().Init() : AnimSpeedOverlay::GetSingleton().Destroy();
+            break;
+        case HudElement::kEnjoymentBars:
+            a_visible ? EnjBarsOverlay::GetSingleton().Init() : EnjBarsOverlay::GetSingleton().Destroy();
+            break;
+        default:
+            break;
+        }
     }
 
-}  // namespace Thread::SceneHUD
+    void SceneHUD::UpdateStageTimer(float a_duration, float a_timer)
+    {
+        AnimSpeedOverlay::GetSingleton().UpdateStageTimer(a_duration, a_timer);
+    }
+
+    void SceneHUD::UpdateHighlightedPartner(RE::Actor* a_partner)
+    {
+        EnjBarsOverlay::GetSingleton().UpdateHighlightedPartner(a_partner);
+    }
+
+    void SceneHUD::UpdateEnjoyment(RE::Actor* a_actor, float a_enjoyment, RE::BSFixedString a_interactions)
+    {
+        EnjBarsOverlay::GetSingleton().UpdateSlider(a_actor, a_enjoyment, a_interactions);
+    }
+
+    void SceneHUD::RegisterRaiseEnjoymentAttempt(RE::Actor* a_actor, float a_nextTimeCycle)
+    {
+        EnjBarsOverlay::GetSingleton().RegisterRaiseEnjAttempt(a_actor, a_nextTimeCycle);
+    }
+
+    void SceneHUD::OnStageChanged()
+    {
+        OffsetAdjustPanel::GetSingleton().OnStageChanged();
+    }
+
+    void SceneHUD::RebuildSceneList()
+    {
+        auto& panel = SceneSelectPanel::GetSingleton();
+        panel.RebuildEntries();
+        panel.RebuildFilter();
+    }
+}

@@ -1,9 +1,5 @@
 #include "Thread.h"
 
-#include "Thread/Interface/Elements/AnimSpeedOverlay.h"
-#include "Thread/Interface/Elements/EnjBarsOverlay.h"
-#include "Thread/Interface/Elements/OffsetAdjustPanel.h"
-#include "Thread/Interface/Elements/SceneSelectPanel.h"
 #include "Thread/Interface/SceneHUD.h"
 #include "Registry/Library.h"
 #include "Registry/Util/RayCast/Offsets.h"
@@ -140,8 +136,7 @@ namespace Thread
         activeScene->furnitureOffset.Apply(baseCoordinates);
         activeAssignment = assignments.begin();
 
-        Interface::SceneSelectPanel::RebuildEntries();
-        Interface::SceneSelectPanel::RebuildFilter();
+        Interface::SceneHUD::GetSingleton().RebuildSceneList();
         return true;
     }
 
@@ -473,42 +468,42 @@ namespace Thread
 
     void Instance::InitSceneHUDImpl()
     {
-        Interface::SceneHUD::Init(linkedQst);
+        Interface::SceneHUD::GetSingleton().Init(linkedQst);
     }
 
     void Instance::DestroySceneHUDImpl()
     {
-         Interface::SceneHUD::Destroy();
+        Interface::SceneHUD::GetSingleton().Destroy();
     }
 
     void Instance::ToggleFocusSceneHUDImpl()
     {
-        return  Interface::SceneHUD::ToggleFocus();
+        Interface::SceneHUD::GetSingleton().ToggleFocus();
     }
 
     void Instance::UpdateMenuTimerDisplay(float a_duration, float a_left)
     {
-        Interface::AnimSpeedOverlay::UpdateStageTimerDisplay(a_duration, a_left);
+        Interface::SceneHUD::GetSingleton().UpdateStageTimer(a_duration, a_left);
     }
 
     void Instance::EnjBarsChangeHighlightedPartner(RE::Actor* a_partner)
     {
-        Interface::EnjBarsOverlay::UpdateHighlightedPartner(a_partner);
+        Interface::SceneHUD::GetSingleton().UpdateHighlightedPartner(a_partner);
     }
 
     void Instance::EnjBarsUpdateSlider(RE::Actor* a_position, float a_enjoyment, RE::BSFixedString a_interactions)
     {
-        Interface::EnjBarsOverlay::UpdateSlider(a_position, a_enjoyment, a_interactions);
+        Interface::SceneHUD::GetSingleton().UpdateEnjoyment(a_position, a_enjoyment, a_interactions);
     }
 
     void Instance::RegisterRaiseEnjAttempt(RE::Actor* a_position, float a_nextTimeCycle)
     {
-        Interface::EnjBarsOverlay::RegisterRaiseEnjAttempt(a_position, a_nextTimeCycle);
+        Interface::SceneHUD::GetSingleton().RegisterRaiseEnjoymentAttempt(a_position, a_nextTimeCycle);
     }
 
     void Instance::UpdateOffsetSlidersDisplay()
     {
-        Interface::OffsetAdjustPanel::OnStageChanged();
+        Interface::SceneHUD::GetSingleton().OnStageChanged();
     }
 
 }  // namespace Thread

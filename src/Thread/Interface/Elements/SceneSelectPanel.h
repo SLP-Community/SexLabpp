@@ -1,19 +1,22 @@
 #pragma once
-#include "Thread/Interface/SceneHUD.h"
+#include "Thread/Interface/UI/Window.h"
 
 namespace Thread::Interface
 {
-    class SceneSelectPanel
+    class SceneSelectPanel final : public UI::WindowComponent, public UI::Panel
     {
       public:
-        static void Init();
-        static void Destroy();
-        static void __stdcall Render();
+        static SceneSelectPanel& GetSingleton();
 
-        static void RebuildEntries();
-        static void RebuildFilter();
+        bool Register();
+        void Open() override;
+        void Close() override;
+        void RebuildEntries();
+        void RebuildFilter();
 
       private:
+        SceneSelectPanel() = default;
+
         struct SceneEntry
         {
             std::string id;
@@ -26,21 +29,22 @@ namespace Thread::Interface
             char annotBuf[256]{};
         };
 
-        static void OnSceneSelected(const std::string& sceneId);
-        static void OnConfirmSearch();
-        static void OnAnnotationSave(SceneEntry& e);
+        static void __stdcall RenderCallback();
+        void Render();
+        void OnSceneSelected(const std::string& a_sceneId);
+        void OnConfirmSearch();
+        void OnAnnotationSave(SceneEntry& a_entry);
 
-        static bool MatchesFilter(const SceneEntry& e, const std::string& filter);
-        
-        inline static bool isVisible{ false };
-        inline static std::vector<SceneEntry> s_entries;
-        inline static char s_searchBuf[128]{};
-        inline static int s_hoveredIdx{ -1 };
+        static bool MatchesFilter(const SceneEntry& a_entry, std::string_view a_filter);
 
-        inline static char s_lastSearch[128]{};
-        inline static std::vector<int> s_filteredIdx;
+        std::vector<SceneEntry> _entries;
+        char _searchBuffer[128]{};
+        int _hoveredIndex{ -1 };
 
-        inline static bool s_sceneListOpen{ true };
-        inline static bool s_searchBoxOpen{ true };
+        char _lastSearch[128]{};
+        std::vector<int> _filteredIndices;
+
+        bool _sceneListOpen{ true };
+        bool _searchBoxOpen{ true };
     };
 }

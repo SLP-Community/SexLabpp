@@ -37,7 +37,7 @@ static void SKSEMessageHandler(SKSE::MessagingInterface::Message* message)
 {
     switch (message->type) {
     case SKSE::MessagingInterface::kPostLoad:
-        Thread::Interface::SceneHUD::Register();
+        Thread::Interface::SceneHUD::GetSingleton().Register();
         break;
     case SKSE::MessagingInterface::kDataLoaded:
         Settings::Initialize();

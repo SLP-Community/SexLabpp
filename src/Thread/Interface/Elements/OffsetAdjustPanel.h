@@ -1,17 +1,22 @@
 #pragma once
 #include "Thread/Interface/SceneHUD.h"
+#include "Thread/Interface/UI/Window.h"
 
 namespace Thread::Interface
 {
-    class OffsetAdjustPanel
+    class OffsetAdjustPanel final : public UI::WindowComponent, public UI::Panel
     {
       public:
-        static void Init();
-        static void Destroy();
-        static void __stdcall Render();
-        static void OnStageChanged();
+        static OffsetAdjustPanel& GetSingleton();
+
+        bool Register();
+        void Open() override;
+        void Close() override;
+        void OnStageChanged();
 
       private:
+        OffsetAdjustPanel() = default;
+
         struct ActorItem
         {
             RE::Actor* actor{};
@@ -24,42 +29,42 @@ namespace Thread::Interface
         struct AxisState
         {
             float value{ 0.0f };
-            float baseline{ 0.0f }; // default value
+            float baseline{ 0.0f };  // default value
             bool hasBaseline{ false };
             float dragStartValue{ 0.0f };
         };
 
-        static void OnActorSelected(const ActorItem& item);
-        static void OnSetOffset(Registry::CoordinateType axis, uint32_t actorId, float value);
-        static void OnResetOffsets();
-        static void OnSetAdjustStageOnly(bool state);
+        static void __stdcall RenderCallback();
+        void Render();
+        void OnActorSelected(const ActorItem& a_item);
+        void OnSetOffset(Registry::CoordinateType a_axis, std::uint32_t a_actorId, float a_value);
+        void OnResetOffsets();
+        void OnSetAdjustStageOnly(bool a_state);
 
-        static void RefreshSlots();
-        static void RefreshValues(uint32_t actorId);
+        void RefreshSlots();
+        void RefreshValues(std::uint32_t a_actorId);
 
         // The centered drag slider used for each axis; Returns true if value changed this frame and C++ should be notified.
-        static bool OffsetTrack(const char* id, AxisState& state, float range, bool /*isDragging*/, bool& draggingOut);
+        bool OffsetTrack(const char* a_id, AxisState& a_state, float a_range, bool& a_draggingOut);
 
-        inline static bool isVisible{ false };
-        inline static std::vector<ActorItem> s_items;
+        std::vector<ActorItem> _items;
 
-        inline static bool s_centerIsPlayer{ false };
-        inline static bool s_hasFurniture{ false };
-        inline static bool s_adjustStageOnly{ false };
-        inline static bool s_pickerOpen{ false };
-        inline static bool s_panelOpen{ false };
+        bool _hasFurniture{ false };
+        bool _adjustStageOnly{ false };
+        bool _pickerOpen{ false };
+        bool _panelOpen{ false };
 
-        inline static std::unordered_map<uint32_t, std::array<AxisState, 4>> s_axes; // Per furn/actor XYZR states map
-        inline static std::optional<uint32_t> s_selectedId{ std::nullopt }; // nullptr=none; 0=furniture, else formId
+        std::unordered_map<std::uint32_t, std::array<AxisState, 4>> _axes;
+        std::optional<std::uint32_t> _selectedId;
 
         // Which axis is currently being dragged, and by whom;
         // Used so a background refresh doesn't fight the player's own drag in progress.
-        inline static int s_draggingAxis{ -1 };
-        inline static uint32_t s_draggingId{ 0 };
+        int _draggingAxis{ -1 };
+        std::uint32_t _draggingId{};
 
         static constexpr float kRangeXYZ = 200.0f;
-        static constexpr float kRangeR   = 180.0f;
-        static constexpr float kDragScale= 300.0f;
+        static constexpr float kRangeR = 180.0f;
+        static constexpr float kDragScale = 300.0f;
         static constexpr float kRadToDeg = 180.0f / 3.14159265358979f;
     };
 }

@@ -1,24 +1,27 @@
 #pragma once
-#include "Thread/Interface/SceneHUD.h"
+#include "Thread/Interface/UI/Window.h"
 
 namespace Thread::Interface
 {
-    class AnimSpeedOverlay
+    class AnimSpeedOverlay final : public UI::WindowComponent
     {
       public:
-        static void Init();
-        static void Destroy();
-        static void __stdcall Render();
+        static AnimSpeedOverlay& GetSingleton();
 
-        static void SetAnimSpeedDisplay(float value);
-        static void UpdateStageTimerDisplay(float duration, float timer);
+        bool Register();
+        void Init();
+        void Destroy();
+        void UpdateStageTimer(float a_duration, float a_timer);
 
       private:
-        static void OnSpeedChange(float delta);
+        AnimSpeedOverlay() = default;
 
-        inline static bool isVisible{ false };
-        inline static std::atomic<float> speed{ 1.0f };
-        inline static std::atomic<float> stageDuration{ 0.0f };
-        inline static std::atomic<float> stageTimer{ 0.0f };
+        static void __stdcall RenderCallback();
+        void Render();
+        void OnSpeedChange(float a_delta);
+
+        float _speed{ 1.0f };
+        float _stageDuration{ 0.0f };
+        float _stageTimer{ 0.0f };
     };
 }

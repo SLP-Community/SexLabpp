@@ -336,7 +336,7 @@ namespace Thread
         Instance::pendingFurnitureMap = a_furnitures;
         Instance::pendingCenterAct = a_tmpCenter;
         Instance::pendingQst = linkedQst;
-        Interface::FurnSelectMenu::Open(linkedQst, items);
+        Interface::FurnSelectMenu::GetSingleton().Open(linkedQst, items);
     }
 
     void Instance::SetCenterRefSelected(size_t a_index)

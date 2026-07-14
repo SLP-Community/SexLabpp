@@ -1,19 +1,24 @@
 #pragma once
-#include "Thread/Interface/SceneHUD.h"
+#include "Thread/Interface/UI/Window.h"
 
 namespace Thread::Interface
 {
-    class ElementCtrlPanel
+    class ElementCtrlPanel final : public UI::WindowComponent, public UI::Panel
     {
       public:
-        static void Init();
-        static void Destroy();
-        static void __stdcall Render();
+        static ElementCtrlPanel& GetSingleton();
+
+        bool Register();
+        void Open() override;
+        void Close() override;
 
       private:
-        static void OnScaleChange(float val);
+        ElementCtrlPanel() = default;
 
-        inline static bool isVisible{ false };
-        inline static bool s_elementSectionOpen{ true };
+        static void __stdcall RenderCallback();
+        void Render();
+        void OnScaleChange(float a_value);
+
+        bool _elementSectionOpen{ true };
     };
 }

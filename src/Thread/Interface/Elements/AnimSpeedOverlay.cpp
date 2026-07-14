@@ -1,62 +1,83 @@
 #include "AnimSpeedOverlay.h"
+#include "Thread/Interface/SceneHUD.h"
 
 namespace Thread::Interface
 {
+    using UI::DrawTextShadowed;
+    using UI::SetWindowFontSize;
+
+    AnimSpeedOverlay& AnimSpeedOverlay::GetSingleton()
+    {
+        static AnimSpeedOverlay singleton;
+        return singleton;
+    }
+
+    bool AnimSpeedOverlay::Register()
+    {
+        return RegisterWindow(RenderCallback);
+    }
+
+    void __stdcall AnimSpeedOverlay::RenderCallback()
+    {
+        GetSingleton().Render();
+    }
+
     void AnimSpeedOverlay::Init()
     {
-        auto* inst = Instance::GetInstance(SceneHUD::linkedThread);
-        if (!inst) return;
-        if (!inst->GetThreadProperty<bool>("ElementUI_AnimSpeed")) return;
-        isVisible = true;
-        SceneHUD::winAnimSpeed->IsOpen = true;
+        auto& hud = SceneHUD::GetSingleton();
+        auto* inst = hud.GetThreadInstance();
+        if (!inst)
+            return;
+        if (!inst->GetThreadProperty<bool>("ElementUI_AnimSpeed"))
+            return;
+        Show();
     }
 
     void AnimSpeedOverlay::Destroy()
     {
-        isVisible = false;
-        if (SceneHUD::winAnimSpeed) SceneHUD::winAnimSpeed->IsOpen = false;
-        speed = 1.0f;
-        stageDuration = 0.0f;
-        stageTimer = 0.0f;
+        Hide();
+        _speed = 1.0f;
+        _stageDuration = 0.0f;
+        _stageTimer = 0.0f;
     }
 
-    void AnimSpeedOverlay::SetAnimSpeedDisplay(float value)
+    void AnimSpeedOverlay::UpdateStageTimer(float a_duration, float a_timer)
     {
-        speed = value;
+        _stageDuration = a_duration;
+        _stageTimer = a_timer;
     }
 
-    void AnimSpeedOverlay::UpdateStageTimerDisplay(float duration, float timer)
+    void AnimSpeedOverlay::OnSpeedChange(float a_delta)
     {
-        stageDuration = duration;
-        stageTimer = timer;
-    }
-
-    void AnimSpeedOverlay::OnSpeedChange(float delta)
-    {
-        auto* inst = Instance::GetInstance(SceneHUD::linkedThread);
-        if (!inst) return;
-        const float next = std::clamp(speed.load() + delta, 0.25f, 3.0f);
-        speed = next;
+        auto& hud = SceneHUD::GetSingleton();
+        auto* inst = hud.GetThreadInstance();
+        if (!inst)
+            return;
+        const float next = std::clamp(_speed + a_delta, 0.25f, 3.0f);
+        _speed = next;
         inst->SetAnimationPlaybackSpeed(next);
         Script::DispatchMethodCall(
-            Script::GetScriptObject(SceneHUD::linkedThread, "sslThreadModel"),
-            "UpdateBaseSpeed", SceneHUD::callbackPtr, static_cast<float>(speed));
+            Script::GetScriptObject(hud.GetLinkedThread(), "sslThreadModel"),
+            "UpdateBaseSpeed", hud.GetCallback(), static_cast<float>(_speed));
     }
 
-    void __stdcall AnimSpeedOverlay::Render()
+    void AnimSpeedOverlay::Render()
     {
-        if (!isVisible || !SceneHUD::IsActive()) return;
+        auto& hud = SceneHUD::GetSingleton();
+        if (!IsVisible() || !hud.IsActive())
+            return;
+        auto& scale = hud.GetScale();
 
         auto* io = ImGuiMCP::GetIO();
         const float dw = io->DisplaySize.x;
         const float dh = io->DisplaySize.y;
 
-        const float edgeH  = ScaleUI::pxScaleClamp(14.0f, 2.5f, 48.0f, dw);
-        const float edgeV  = ScaleUI::pxScaleClamp(16.0f, 1.8f, 32.0f, dh);
-        const float zoneW  = ScaleUI::pxScale(100.0f);
-        const float zoneH  = ScaleUI::pxScale(60.0f);
-        const float timerH = ScaleUI::pxScale(4.0f);
-        const float gap    = ScaleUI::pxScale(6.0f);
+        const float edgeH = scale.Clamp(14.0f, 2.5f, 48.0f, dw);
+        const float edgeV = scale.Clamp(16.0f, 1.8f, 32.0f, dh);
+        const float zoneW = scale.Px(100.0f);
+        const float zoneH = scale.Px(60.0f);
+        const float timerH = scale.Px(UI::Theme::Spacing::xs);
+        const float gap = scale.Px(UI::Theme::Spacing::sm);
 
         // Pinned to the bottom-right corner.
         const float winX = dw - zoneW - edgeH;
@@ -69,27 +90,31 @@ namespace Thread::Interface
             ImGuiMCP::ImGuiWindowFlags_NoNav | ImGuiMCP::ImGuiWindowFlags_NoBringToFrontOnFocus |
             ImGuiMCP::ImGuiWindowFlags_NoBackground;
 
-        ImGuiMCP::SetNextWindowPos(ImGuiMCP::ImVec2{winX, winY}, ImGuiMCP::ImGuiCond_Always);
-        ImGuiMCP::SetNextWindowSize(ImGuiMCP::ImVec2{zoneW, zoneH}, ImGuiMCP::ImGuiCond_Always);
+        ImGuiMCP::SetNextWindowPos(ImGuiMCP::ImVec2{ winX, winY }, ImGuiMCP::ImGuiCond_Always);
+        ImGuiMCP::SetNextWindowSize(ImGuiMCP::ImVec2{ zoneW, zoneH }, ImGuiMCP::ImGuiCond_Always);
 
-        if (!ImGuiMCP::Begin("##slpp_AnimSpeed", nullptr, kFlags)) { ImGuiMCP::End(); return; }
+        if (!ImGuiMCP::Begin("##slpp_AnimSpeed", nullptr, kFlags)) {
+            ImGuiMCP::End();
+            return;
+        }
 
-        SetWindowFontSize(ScaleUI::pxScale(13.0f));
+        SetWindowFontSize(scale.Px(UI::Theme::FontSize::overlay));
 
-        const float spd = speed.load();
+        const float spd = _speed;
         char buf[16];
         std::snprintf(buf, sizeof(buf), "%.2fx", spd);
 
         // [-]  value  [+]
-        const float btnW = ScaleUI::pxScale(20.0f);
-        const float rowH = ScaleUI::pxScale(16.0f);
+        const float btnW = scale.Px(20.0f);
+        const float rowH = scale.Px(UI::Theme::Spacing::xl);
         const ImGuiMCP::ImVec2 valSz = ImGuiMCP::CalcTextSize(buf);
         const float rowStartX = ImGuiMCP::GetCursorPosX();
         auto* dl = ImGuiMCP::GetWindowDrawList();
 
-        if (SceneHUD::focusMode) {
+        if (hud.IsFocused()) {
             ImGuiMCP::SetCursorPosX(rowStartX);
-            if (ImGuiMCP::Button("-##slpp_dec", ImGuiMCP::ImVec2{ btnW, rowH })) OnSpeedChange(-0.25f);
+            if (ImGuiMCP::Button("-##slpp_dec", ImGuiMCP::ImVec2{ btnW, rowH }))
+                OnSpeedChange(-0.25f);
 
             ImGuiMCP::SameLine();
             ImGuiMCP::SetCursorPosX(rowStartX + (zoneW - valSz.x) * 0.5f);
@@ -97,42 +122,43 @@ namespace Thread::Interface
 
             ImGuiMCP::SameLine();
             ImGuiMCP::SetCursorPosX(rowStartX + zoneW - btnW);
-            if (ImGuiMCP::Button("+##slpp_inc", ImGuiMCP::ImVec2{ btnW, rowH })) OnSpeedChange(+0.25f);
+            if (ImGuiMCP::Button("+##slpp_inc", ImGuiMCP::ImVec2{ btnW, rowH }))
+                OnSpeedChange(+0.25f);
         } else {
             const ImGuiMCP::ImVec2 rowScreenPos = ImGuiMCP::GetCursorScreenPos();
-            DrawTextShadowed(dl, rowScreenPos, ColorUI::TextSecond, "-");
+            DrawTextShadowed(dl, rowScreenPos, UI::Theme::Color::textSecondary, "-");
             DrawTextShadowed(dl,
                 ImGuiMCP::ImVec2{ rowScreenPos.x + (zoneW - valSz.x) * 0.5f, rowScreenPos.y },
-                ColorUI::TextPrimary, buf);
+                UI::Theme::Color::textPrimary, buf);
             DrawTextShadowed(dl,
                 ImGuiMCP::ImVec2{ rowScreenPos.x + zoneW - btnW, rowScreenPos.y },
-                ColorUI::TextSecond, "+");
+                UI::Theme::Color::textSecondary, "+");
             ImGuiMCP::Dummy(ImGuiMCP::ImVec2{ zoneW, rowH });
         }
 
-        ImGuiMCP::Dummy(ImGuiMCP::ImVec2{0.0f, gap});
+        ImGuiMCP::Dummy(ImGuiMCP::ImVec2{ 0.0f, gap });
 
         // Stage timer: fills from right toward left as time runs out, hidden when there's no active timer.
-        const float dur = stageDuration.load();
-        const float tmr = stageTimer.load();
+        const float dur = _stageDuration;
+        const float tmr = _stageTimer;
         if (dur > 0.0f && tmr > 0.0f) {
             const float frac = std::clamp(tmr / dur, 0.0f, 1.0f);
             const float fillW = zoneW * frac;
             const ImGuiMCP::ImVec2 barPos = ImGuiMCP::GetCursorScreenPos();
 
             ImGuiMCP::ImDrawListManager::AddRectFilled(dl,
-                barPos, ImGuiMCP::ImVec2{barPos.x + zoneW, barPos.y + timerH},
-                IM_COL32(10, 10, 12, 178), timerH * 0.5f, 0);
+                barPos, ImGuiMCP::ImVec2{ barPos.x + zoneW, barPos.y + timerH },
+                UI::Theme::Animation::timerTrack, timerH * 0.5f, 0);
             if (fillW > 0.0f) {
                 const float fx = barPos.x + zoneW - fillW;
                 ImGuiMCP::ImDrawListManager::AddRectFilledMultiColor(dl,
-                    ImGuiMCP::ImVec2{fx, barPos.y}, ImGuiMCP::ImVec2{barPos.x + zoneW, barPos.y + timerH},
-                    IM_COL32(255,255,255, 38),
-                    IM_COL32(255,255,255,217),
-                    IM_COL32(255,255,255,217),
-                    IM_COL32(255,255,255, 38));
+                    ImGuiMCP::ImVec2{ fx, barPos.y }, ImGuiMCP::ImVec2{ barPos.x + zoneW, barPos.y + timerH },
+                    UI::Theme::Animation::timerEdge,
+                    UI::Theme::Animation::timerCenter,
+                    UI::Theme::Animation::timerCenter,
+                    UI::Theme::Animation::timerEdge);
             }
-            ImGuiMCP::Dummy(ImGuiMCP::ImVec2{zoneW, timerH});
+            ImGuiMCP::Dummy(ImGuiMCP::ImVec2{ zoneW, timerH });
         }
 
         ImGuiMCP::SetWindowFontScale(1.0f);

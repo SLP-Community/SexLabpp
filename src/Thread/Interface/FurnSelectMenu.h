@@ -1,25 +1,30 @@
 #pragma once
-#include "Thread/Interface/SceneHUD.h"
+#include "Thread/Interface/UI/Window.h"
 
 namespace Thread::Interface
 {
-    class FurnSelectMenu
+    class FurnSelectMenu final : public UI::WindowComponent
     {
       public:
-        struct Item {
+        struct Item
+        {
             std::string name;
             std::string value;
         };
 
-        static bool Register();
-        static void Open(RE::TESQuest* a_qst, const std::vector<Item>& a_items);
+        static FurnSelectMenu& GetSingleton();
+
+        bool Register();
+        void Open(RE::TESQuest* a_quest, const std::vector<Item>& a_items);
 
       private:
-        static void __stdcall Render();
-        static void HandleSelection(size_t index);
+        FurnSelectMenu() = default;
 
-        inline static MENU_WINDOW window{ nullptr };
-        inline static RE::TESQuest* s_linkedThread{ nullptr };
-        inline static std::vector<Item> s_items{};
+        static void __stdcall RenderCallback();
+        void Render();
+        void HandleSelection(std::size_t a_index);
+
+        RE::TESQuest* _linkedThread{};
+        std::vector<Item> _items;
     };
 }
