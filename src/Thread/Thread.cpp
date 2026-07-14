@@ -309,7 +309,7 @@ namespace Thread
             const auto posIdx = static_cast<size_t>(std::distance(activeAssignment->begin(), it));
 
             Registry::Library::GetSingleton()->EditScene(activeScene, [&](Registry::Scene* scene) {
-                if (Instance::GetThreadProperty<bool>("AdjustStage")) {
+                if (Instance::GetThreadProperty<bool>("VarUI_AdjustStage")) {
                     auto* stage = const_cast<Registry::Stage*>(scene->GetStageByID(activeStage->id));
                     if (stage && posIdx < stage->positions.size())
                         stage->positions[posIdx].offset.SetOffset(value, axis);
