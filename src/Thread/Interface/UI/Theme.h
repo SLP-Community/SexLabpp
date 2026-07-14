@@ -40,6 +40,15 @@ namespace Thread::Interface::UI::Theme
         static constexpr float overlay = 13.0f;
     };
 
+    struct Icon final
+    {
+        static constexpr const char* solidFont = "fa-solid-900";
+        static constexpr const char* chevronRight = "\xEF\x81\x94";  // U+F054
+        static constexpr const char* chevronUp = "\xEF\x81\xB7";     // U+F077
+        static constexpr const char* chevronDown = "\xEF\x81\xB8";   // U+F078
+        static constexpr const char* rotateLeft = "\xEF\x8B\xAA";    // U+F2EA
+    };
+
     struct Spacing final
     {
         static constexpr float xxs = 2.0f;
@@ -122,6 +131,32 @@ namespace Thread::Interface::UI
     {
         const auto* font = ImGuiMCP::GetFont();
         ImGuiMCP::SetWindowFontScale(font && font->FontSize > 0.0f ? a_size / font->FontSize : 1.0f);
+    }
+
+    inline bool CollapsibleSectionHeader(const char* a_label, const char* a_id, bool a_open, ImGuiMCP::ImVec2 a_size)
+    {
+        const ImGuiMCP::ImVec2 headerMin = ImGuiMCP::GetCursorScreenPos();
+        const bool clicked = ImGuiMCP::Selectable(a_id, false, 0, a_size);
+        const bool hovered = ImGuiMCP::IsItemHovered();
+        const ImGuiMCP::ImVec2 cursorAfter = ImGuiMCP::GetCursorPos();
+        const ImGuiMCP::ImVec2 labelSize = ImGuiMCP::CalcTextSize(a_label);
+        const ImGuiMCP::ImVec4 color = Theme::ToVec4(hovered ? Theme::Color::textPrimary : Theme::Color::textSecondary);
+        const float horizontalPadding = a_size.y * 0.5f;
+        const float iconGap = a_size.y * 0.25f;
+
+        ImGuiMCP::SetCursorScreenPos({ headerMin.x + horizontalPadding, headerMin.y + (a_size.y - labelSize.y) * 0.5f });
+        ImGuiMCP::TextColored(color, "%s", a_label);
+
+        const char* icon = a_open ? Theme::Icon::chevronDown : Theme::Icon::chevronUp;
+        SKSEMenuFramework::PushFont(Theme::Icon::solidFont);
+        const ImGuiMCP::ImVec2 iconSize = ImGuiMCP::CalcTextSize(icon);
+        ImGuiMCP::SetCursorScreenPos({ headerMin.x + horizontalPadding + labelSize.x + iconGap,
+            headerMin.y + (a_size.y - iconSize.y) * 0.5f });
+        ImGuiMCP::TextColored(color, "%s", icon);
+        FontAwesome::Pop();
+
+        ImGuiMCP::SetCursorPos(cursorAfter);
+        return clicked;
     }
 
     inline void DrawTextShadowed(ImGuiMCP::ImDrawList* a_drawList, ImGuiMCP::ImVec2 a_position,

@@ -76,10 +76,8 @@ namespace Thread::Interface
 
         // "Elements" section
         SetWindowFontSize(scale.Px(UI::Theme::FontSize::caption));
-        const char* arrow = _elementSectionOpen ? "\xe2\x96\xbc" : "\xe2\x96\xb2";  // ▼ / ▲
-        char hdrBuf[32];
-        std::snprintf(hdrBuf, sizeof(hdrBuf), "%s Toggle HUD Elements", arrow);
-        if (ImGuiMCP::Selectable(hdrBuf, false, 0, { 0, scale.Px(22.0f) }))
+        if (UI::CollapsibleSectionHeader(
+                "Toggle HUD Elements", "##slpp_ecmElementsSection", _elementSectionOpen, { 0.0f, scale.Px(22.0f) }))
             _elementSectionOpen = !_elementSectionOpen;
 
         if (_elementSectionOpen) {

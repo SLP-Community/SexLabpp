@@ -212,9 +212,8 @@ namespace Thread::Interface
 
         // ── Section: Scenes List
         SetWindowFontSize(ScaleUI::pxScale(UI::Theme::FontSize::caption));
-        if (ImGuiMCP::Selectable(
-                _sceneListOpen ? "  CHANGE ACTIVE SCENE  \xe2\x96\xbc" : "  CHANGE ACTIVE SCENE  \xe2\x96\xb2",
-                false, 0, ImGuiMCP::ImVec2{ 0.0f, ScaleUI::pxScale(20.0f) }))
+        if (UI::CollapsibleSectionHeader("CHANGE ACTIVE SCENE", "##slpp_ssmSceneListSection", _sceneListOpen,
+                { 0.0f, ScaleUI::pxScale(20.0f) }))
             _sceneListOpen = !_sceneListOpen;
         ImGuiMCP::Separator();
 
@@ -255,9 +254,8 @@ namespace Thread::Interface
 
         // ── Section: Search Scenes
         SetWindowFontSize(ScaleUI::pxScale(UI::Theme::FontSize::caption));
-        if (ImGuiMCP::Selectable(
-                _searchBoxOpen ? "  CHANGE SCENES BY TAG / NAME  \xe2\x96\xbc" : "  CHANGE SCENES BY TAG / NAME  \xe2\x96\xb2",
-                false, 0, ImGuiMCP::ImVec2{ 0.0f, ScaleUI::pxScale(20.0f) }))
+        if (UI::CollapsibleSectionHeader("CHANGE SCENES BY TAG / NAME", "##slpp_ssmSearchSection", _searchBoxOpen,
+                { 0.0f, ScaleUI::pxScale(20.0f) }))
             _searchBoxOpen = !_searchBoxOpen;
         ImGuiMCP::Separator();
 

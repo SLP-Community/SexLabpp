@@ -27,7 +27,7 @@ namespace Thread::Interface
         void OnRandomScene();
         void OnMoveScene();
         void OnAutoPlaySet(bool a_state);
-        void OnNextPermutation(RE::Actor* a_actor);
+        void OnNextPosition(RE::Actor* a_actor);
         void OnSetExpression(RE::Actor* a_actor, const Registry::Expression* a_expression);
         void OnSetVoice(RE::Actor* a_actor, const Registry::Voice* a_voice);
         void OnSetActorAlpha(RE::Actor* a_actor, int a_alpha);

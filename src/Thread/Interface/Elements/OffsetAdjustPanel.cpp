@@ -441,8 +441,18 @@ namespace Thread::Interface
 
                 // Reset row
                 ImGuiMCP::SetCursorPosX(ScaleUI::pxScale(12.0f));
-                if (ImGuiMCP::Selectable("Reset Offsets ↺", false, 0,
-                        ImGuiMCP::ImVec2{ panelW - ScaleUI::pxScale(24.0f), ScaleUI::pxScale(28.0f) }))
+                const ImGuiMCP::ImVec2 resetMin = ImGuiMCP::GetCursorScreenPos();
+                const ImGuiMCP::ImVec2 resetSize{ panelW - ScaleUI::pxScale(24.0f), ScaleUI::pxScale(28.0f) };
+                const bool resetOffsets = ImGuiMCP::Selectable("Reset Offsets", false, 0, resetSize);
+                const ImGuiMCP::ImVec2 cursorAfterReset = ImGuiMCP::GetCursorPos();
+                SKSEMenuFramework::PushFont(UI::Theme::Icon::solidFont);
+                const ImGuiMCP::ImVec2 resetIconSize = ImGuiMCP::CalcTextSize(UI::Theme::Icon::rotateLeft);
+                ImGuiMCP::SetCursorScreenPos({ resetMin.x + resetSize.x - resetIconSize.x - ScaleUI::pxScale(8.0f),
+                    resetMin.y + (resetSize.y - resetIconSize.y) * 0.5f });
+                ImGuiMCP::TextUnformatted(UI::Theme::Icon::rotateLeft);
+                FontAwesome::Pop();
+                ImGuiMCP::SetCursorPos(cursorAfterReset);
+                if (resetOffsets)
                     OnResetOffsets();
                 ImGuiMCP::Separator();
 

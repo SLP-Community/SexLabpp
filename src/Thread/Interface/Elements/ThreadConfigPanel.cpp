@@ -91,7 +91,7 @@ namespace Thread::Interface
             inst->SetThreadProperty<bool>("AutoAdvance", state);
     }
 
-    void ThreadConfigPanel::OnNextPermutation(RE::Actor* actor)
+    void ThreadConfigPanel::OnNextPosition(RE::Actor* actor)
     {
         auto* inst = SceneHUD::GetSingleton().GetThreadInstance();
         if (inst && actor)
@@ -127,12 +127,11 @@ namespace Thread::Interface
         auto* lib = Registry::Library::GetSingleton();
 
         const float panelW = ScaleUI::pxScale(280.0f);
-        const float rowMinH = ScaleUI::pxScale(28.0f);
         const float rowPadV = ScaleUI::pxScale(6.0f);
         const float rowPadH = ScaleUI::pxScale(12.0f);
         const float hdrPadV = ScaleUI::pxScale(5.0f);
         const float hdrPadH = ScaleUI::pxScale(10.0f);
-        const float lblW = ScaleUI::pxScale(70.0f);
+        const float lblW = ScaleUI::pxScale(90.0f);
         const float dropW = ScaleUI::pxScale(140.0f);
         const float alphaW = ScaleUI::pxScale(100.0f);
 
@@ -164,8 +163,10 @@ namespace Thread::Interface
 
         // Collapse arrow
         ImGuiMCP::SetCursorScreenPos(ImGuiMCP::ImVec2{ hdrMin.x + hdrPadH, hdrMin.y + hdrPadV });
+        SKSEMenuFramework::PushFont(UI::Theme::Icon::solidFont);
         ImGuiMCP::TextColored(UI::Theme::ToVec4(UI::Theme::Color::textMuted),
-            state.cardOpen ? "\xe2\x96\xbc" : "\xe2\x96\xb2");  // UTF-8 ▼ (open) / ▲ (closed)
+            "%s", state.cardOpen ? UI::Theme::Icon::chevronDown : UI::Theme::Icon::chevronUp);
+        FontAwesome::Pop();
 
         // Name, truncated
         ImGuiMCP::SameLine(0.0f, ScaleUI::pxScale(6.0f));
@@ -189,27 +190,32 @@ namespace Thread::Interface
         auto* inst = SceneHUD::GetSingleton().GetThreadInstance();
         SetWindowFontSize(ScaleUI::pxScale(UI::Theme::FontSize::compact));
 
-        // ── Permutation row
+        // ── Scene position row
         {
-            const uint32_t cur = inst->GetCurrentPermutation(actor);
-            const uint32_t total = inst->GetUniquePermutations(actor);
+            const int32_t current = inst->GetCurrentPermutation(actor);
+            const int32_t total = inst->GetUniquePermutations(actor);
+            const bool canCycle = total > 1;
 
             ImGuiMCP::SetCursorPosX(rowPadH);
             SetWindowFontSize(ScaleUI::pxScale(UI::Theme::FontSize::caption));
-            ImGuiMCP::TextColored(UI::Theme::ToVec4(UI::Theme::Color::textMuted), "Permutation");
+            ImGuiMCP::TextColored(UI::Theme::ToVec4(UI::Theme::Color::textMuted), "Scene Position");
             ImGuiMCP::SameLine(lblW);
 
-            const float btnW = ScaleUI::pxScale(22.0f);
+            const float btnSize = ScaleUI::pxScale(18.0f);
             SetWindowFontSize(ScaleUI::pxScale(UI::Theme::FontSize::caption));
             char permBuf[24];
-            std::snprintf(permBuf, sizeof(permBuf), "%u / %u", cur, total);
-            const float permW = std::max(ImGuiMCP::CalcTextSize(permBuf).x, ScaleUI::pxScale(30.0f));
-            ImGuiMCP::SetNextItemWidth(permW);
+            std::snprintf(permBuf, sizeof(permBuf), "%d of %d", current, total);
             ImGuiMCP::TextColored(UI::Theme::ToVec4(UI::Theme::Color::textSecondary), "%s", permBuf);
 
-            ImGuiMCP::SameLine(0.0f, ScaleUI::pxScale(6.0f));
-            if (ImGuiMCP::Button("▶##slpp_tcmNext", ImGuiMCP::ImVec2{ btnW, rowMinH })) {
-                OnNextPermutation(actor);
+            if (canCycle) {
+                ImGuiMCP::SameLine(0.0f, ScaleUI::pxScale(6.0f));
+                SKSEMenuFramework::PushFont(UI::Theme::Icon::solidFont);
+                const bool nextPosition = ImGuiMCP::Button(UI::Theme::Icon::chevronRight, ImGuiMCP::ImVec2{ btnSize, btnSize });
+                FontAwesome::Pop();
+                if (ImGuiMCP::IsItemHovered())
+                    ImGuiMCP::SetTooltip("Move actor to the next compatible scene position");
+                if (nextPosition)
+                    OnNextPosition(actor);
             }
             ImGuiMCP::SetCursorPosY(ImGuiMCP::GetCursorPosY() + rowPadV);
             ImGuiMCP::ImDrawListManager::AddLine(dl,
@@ -351,9 +357,8 @@ namespace Thread::Interface
 
         // ── THREAD section
         SetWindowFontSize(ScaleUI::pxScale(UI::Theme::FontSize::caption));
-        if (ImGuiMCP::Selectable(
-                _threadSectionOpen ? "  THREAD  \xe2\x96\xbc" : "  THREAD  \xe2\x96\xb2",
-                false, 0, ImGuiMCP::ImVec2{ 0.0f, ScaleUI::pxScale(20.0f) }))
+        if (UI::CollapsibleSectionHeader(
+                "THREAD", "##slpp_tcmThreadSection", _threadSectionOpen, { 0.0f, ScaleUI::pxScale(20.0f) }))
             _threadSectionOpen = !_threadSectionOpen;
         ImGuiMCP::Separator();
 
@@ -381,9 +386,8 @@ namespace Thread::Interface
 
         // ── ACTORS section
         SetWindowFontSize(ScaleUI::pxScale(UI::Theme::FontSize::caption));
-        if (ImGuiMCP::Selectable(
-                _actorsSectionOpen ? "  ACTORS  \xe2\x96\xbc" : "  ACTORS  \xe2\x96\xb2",
-                false, 0, ImGuiMCP::ImVec2{ 0.0f, ScaleUI::pxScale(20.0f) }))
+        if (UI::CollapsibleSectionHeader(
+                "ACTORS", "##slpp_tcmActorsSection", _actorsSectionOpen, { 0.0f, ScaleUI::pxScale(20.0f) }))
             _actorsSectionOpen = !_actorsSectionOpen;
         ImGuiMCP::Separator();
 
