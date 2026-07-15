@@ -187,15 +187,15 @@ namespace Thread::Interface
         L.zoneW = std::clamp(ScaleUI::pxScale(260.0f), dw * 0.15f, ScaleUI::pxScale(360.0f));
         L.barGap = ScaleUI::pxScale(4.5f);
         L.innerGp = ScaleUI::pxScale(2.0f);
-        L.frameH = ScaleUI::pxTextScale(UI::Theme::FontSize::body);
+        L.frameH = ScaleUI::pxScale(UI::Theme::FontSize::body);
         L.lblPad = ScaleUI::pxScale(1.5f);
         L.nameFt = ScaleUI::pxTextScale(UI::Theme::FontSize::metadata);
         L.valFt = ScaleUI::pxTextScale(UI::Theme::FontSize::smallText);
         L.intrFt = ScaleUI::pxTextScale(UI::Theme::FontSize::detail);
-        L.fbFt = ScaleUI::pxTextScale(UI::Theme::FontSize::body);
+        L.fbFt = std::min(ScaleUI::pxTextScale(UI::Theme::FontSize::body), L.frameH);
         L.edgeH = ScaleUI::pxScaleClamp(14.0f, 2.5f, 48.0f, dw);
         L.edgeV = ScaleUI::pxScaleClamp(16.0f, 1.8f, 32.0f, dh);
-        L.lblRowH = L.nameFt + L.lblPad * 2.0f;
+        L.lblRowH = std::max(ScaleUI::pxScale(UI::Theme::FontSize::metadata), L.nameFt) + L.lblPad * 2.0f;
         L.unitH = L.lblRowH + L.innerGp + L.frameH + L.barGap;
         L.winH = L.unitH * static_cast<float>(actorCount) - L.barGap;
 
@@ -286,12 +286,19 @@ namespace Thread::Interface
                 ImGuiMCP::SetCursorScreenPos(rowStart);
             }
 
+            const float nameMaxX = rowStart.x + zoneW * 0.4f;
+            const float valueMinX = rowStart.x + zoneW * 0.8f;
+            const float rowMaxY = rowStart.y + lblRowH;
+
             // actor name (left)
             SetWindowFontSize(nameFt);
+            ImGuiMCP::ImDrawListManager::PushClipRect(dl, rowStart,
+                ImGuiMCP::ImVec2{ nameMaxX, rowMaxY }, true);
             DrawTextShadowed(dl,
                 ImGuiMCP::ImVec2{ rowStart.x + lblPad, rowStart.y + lblPad },
                 b.isTarget ? UI::Theme::Color::textPrimary : UI::Theme::Color::textSecondary,
                 b.name);
+            ImGuiMCP::ImDrawListManager::PopClipRect(dl);
 
             // enjoyment value (right)
             SetWindowFontSize(valFt);
@@ -301,15 +308,21 @@ namespace Thread::Interface
             const ImGuiMCP::ImU32 valCol = b.enjoyment > 100.0f ? UI::Theme::Enjoyment::overflowLow : b.enjoyment < 0.0f ? UI::Theme::Enjoyment::negativeHigh :
                                                                                                                            UI::Theme::Color::textSecondary;
             const float valX = rowStart.x + zoneW - ImGuiMCP::CalcTextSize(valBuf).x - lblPad;
+            ImGuiMCP::ImDrawListManager::PushClipRect(dl,
+                ImGuiMCP::ImVec2{ valueMinX, rowStart.y }, ImGuiMCP::ImVec2{ rowStart.x + zoneW, rowMaxY }, true);
             DrawTextShadowed(dl, ImGuiMCP::ImVec2{ valX, rowStart.y + lblPad }, valCol, valBuf);
+            ImGuiMCP::ImDrawListManager::PopClipRect(dl);
 
             // interaction string (centre)
             if (b.interactions[0] != '\0') {
                 SetWindowFontSize(intrFt);
-                const float intrX = rowStart.x +
-                                    (zoneW - std::min(ImGuiMCP::CalcTextSize(b.interactions).x, zoneW * 0.39f)) * 0.5f;
+                const float intrX = nameMaxX +
+                                    (valueMinX - nameMaxX - ImGuiMCP::CalcTextSize(b.interactions).x) * 0.5f;
+                ImGuiMCP::ImDrawListManager::PushClipRect(dl,
+                    ImGuiMCP::ImVec2{ nameMaxX, rowStart.y }, ImGuiMCP::ImVec2{ valueMinX, rowMaxY }, true);
                 DrawTextShadowed(dl, ImGuiMCP::ImVec2{ intrX, rowStart.y + lblPad },
                     UI::Theme::Color::textMuted, b.interactions);
+                ImGuiMCP::ImDrawListManager::PopClipRect(dl);
             }
 
             ImGuiMCP::Dummy(ImGuiMCP::ImVec2{ zoneW, lblRowH });
