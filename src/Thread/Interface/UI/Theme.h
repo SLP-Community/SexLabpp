@@ -39,7 +39,7 @@ namespace Thread::Interface::UI::Theme
         static constexpr float subsectionHeader = 10.0f; // collapsible subsection headers
         static constexpr float sectionHeader = 11.0f; // collapsible section headers
         static constexpr float body = 10.5f; // normal buttons, lists, checkboxes, sliders, and primary text
-        static constexpr float overlay = 13.0f; // large animation-speed overlay text
+        static constexpr float overlay = 9.0f; // large animation-speed overlay text
     };
 
     struct Icon final

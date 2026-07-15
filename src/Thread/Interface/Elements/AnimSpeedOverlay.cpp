@@ -99,17 +99,24 @@ namespace Thread::Interface
         }
 
         SetWindowFontSize(scale.TextPx(UI::Theme::FontSize::overlay));
+        const float contentW = ImGuiMCP::GetContentRegionAvail().x;
 
         const float spd = _speed;
         char buf[16];
         std::snprintf(buf, sizeof(buf), "%.2fx", spd);
 
         // [slower]  value  [faster]
-        const float btnW = scale.Px(20.0f);
-        const float rowH = std::max(scale.Px(UI::Theme::Spacing::xl),
-            scale.TextPx(UI::Theme::FontSize::overlay) + scale.Px(UI::Theme::Spacing::xxs));
         const ImGuiMCP::ImVec2 valSz = ImGuiMCP::CalcTextSize(buf);
-        auto* dl = ImGuiMCP::GetForegroundDrawList();
+        SKSEMenuFramework::PushFont(UI::Theme::Icon::solidFont);
+        const ImGuiMCP::ImVec2 leftIconSize = ImGuiMCP::CalcTextSize(UI::Theme::Icon::anglesLeft);
+        const ImGuiMCP::ImVec2 rightIconSize = ImGuiMCP::CalcTextSize(UI::Theme::Icon::anglesRight);
+        FontAwesome::Pop();
+        const float iconPadding = scale.Px(UI::Theme::Spacing::xxs);
+        const float btnW = std::max(scale.Px(20.0f), std::max(leftIconSize.x, rightIconSize.x) + iconPadding * 2.0f);
+        const float rowH = std::max(
+            std::max(scale.Px(UI::Theme::Spacing::xl), scale.TextPx(UI::Theme::FontSize::overlay) + iconPadding),
+            std::max(leftIconSize.y, rightIconSize.y) + iconPadding * 2.0f);
+        auto* dl = ImGuiMCP::GetWindowDrawList();
         const ImGuiMCP::ImVec2 rowScreenPos = ImGuiMCP::GetCursorScreenPos();
 
         if (hud.IsFocused()) {
@@ -117,28 +124,26 @@ namespace Thread::Interface
             if (ImGuiMCP::InvisibleButton("##slpp_dec", ImGuiMCP::ImVec2{ btnW, rowH }))
                 OnSpeedChange(-0.25f);
 
-            ImGuiMCP::SetCursorScreenPos(ImGuiMCP::ImVec2{ rowScreenPos.x + zoneW - btnW, rowScreenPos.y });
+            ImGuiMCP::SetCursorScreenPos(ImGuiMCP::ImVec2{ rowScreenPos.x + contentW - btnW, rowScreenPos.y });
             if (ImGuiMCP::InvisibleButton("##slpp_inc", ImGuiMCP::ImVec2{ btnW, rowH }))
                 OnSpeedChange(+0.25f);
         }
 
         SKSEMenuFramework::PushFont(UI::Theme::Icon::solidFont);
-        const ImGuiMCP::ImVec2 leftIconSize = ImGuiMCP::CalcTextSize(UI::Theme::Icon::anglesLeft);
-        const ImGuiMCP::ImVec2 rightIconSize = ImGuiMCP::CalcTextSize(UI::Theme::Icon::anglesRight);
         DrawTextShadowed(dl,
             ImGuiMCP::ImVec2{ rowScreenPos.x + (btnW - leftIconSize.x) * 0.5f, rowScreenPos.y + (rowH - leftIconSize.y) * 0.5f },
             UI::Theme::Color::textSecondary, UI::Theme::Icon::anglesLeft);
         DrawTextShadowed(dl,
-            ImGuiMCP::ImVec2{ rowScreenPos.x + zoneW - btnW + (btnW - rightIconSize.x) * 0.5f,
+            ImGuiMCP::ImVec2{ rowScreenPos.x + contentW - btnW + (btnW - rightIconSize.x) * 0.5f,
                 rowScreenPos.y + (rowH - rightIconSize.y) * 0.5f },
             UI::Theme::Color::textSecondary, UI::Theme::Icon::anglesRight);
         FontAwesome::Pop();
         DrawTextShadowed(dl,
-            ImGuiMCP::ImVec2{ rowScreenPos.x + (zoneW - valSz.x) * 0.5f,
+            ImGuiMCP::ImVec2{ rowScreenPos.x + (contentW - valSz.x) * 0.5f,
                 rowScreenPos.y + (rowH - valSz.y) * 0.5f },
             UI::Theme::Color::textPrimary, buf);
         ImGuiMCP::SetCursorScreenPos(rowScreenPos);
-        ImGuiMCP::Dummy(ImGuiMCP::ImVec2{ zoneW, rowH });
+        ImGuiMCP::Dummy(ImGuiMCP::ImVec2{ contentW, rowH });
 
         ImGuiMCP::Dummy(ImGuiMCP::ImVec2{ 0.0f, gap });
 
@@ -147,22 +152,22 @@ namespace Thread::Interface
         const float tmr = _stageTimer;
         if (dur > 0.0f && tmr > 0.0f) {
             const float frac = std::clamp(tmr / dur, 0.0f, 1.0f);
-            const float fillW = zoneW * frac;
+            const float fillW = contentW * frac;
             const ImGuiMCP::ImVec2 barPos = ImGuiMCP::GetCursorScreenPos();
 
             ImGuiMCP::ImDrawListManager::AddRectFilled(dl,
-                barPos, ImGuiMCP::ImVec2{ barPos.x + zoneW, barPos.y + timerH },
+                barPos, ImGuiMCP::ImVec2{ barPos.x + contentW, barPos.y + timerH },
                 UI::Theme::Animation::timerTrack, timerH * 0.5f, 0);
             if (fillW > 0.0f) {
-                const float fx = barPos.x + zoneW - fillW;
+                const float fx = barPos.x + contentW - fillW;
                 ImGuiMCP::ImDrawListManager::AddRectFilledMultiColor(dl,
-                    ImGuiMCP::ImVec2{ fx, barPos.y }, ImGuiMCP::ImVec2{ barPos.x + zoneW, barPos.y + timerH },
+                    ImGuiMCP::ImVec2{ fx, barPos.y }, ImGuiMCP::ImVec2{ barPos.x + contentW, barPos.y + timerH },
                     UI::Theme::Animation::timerEdge,
                     UI::Theme::Animation::timerCenter,
                     UI::Theme::Animation::timerCenter,
                     UI::Theme::Animation::timerEdge);
             }
-            ImGuiMCP::Dummy(ImGuiMCP::ImVec2{ zoneW, timerH });
+            ImGuiMCP::Dummy(ImGuiMCP::ImVec2{ contentW, timerH });
         }
 
         ImGuiMCP::SetWindowFontScale(1.0f);

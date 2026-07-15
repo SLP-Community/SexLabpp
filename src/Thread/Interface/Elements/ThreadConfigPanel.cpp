@@ -219,10 +219,6 @@ namespace Thread::Interface
                     OnNextPosition(actor);
             }
             ImGuiMCP::SetCursorPosY(ImGuiMCP::GetCursorPosY() + rowPadV);
-            ImGuiMCP::ImDrawListManager::AddLine(dl,
-                ImGuiMCP::ImVec2{ ImGuiMCP::GetWindowPos().x, ImGuiMCP::GetCursorScreenPos().y },
-                ImGuiMCP::ImVec2{ ImGuiMCP::GetWindowPos().x + panelW, ImGuiMCP::GetCursorScreenPos().y },
-                UI::Theme::Color::separator, 1.0f);
         }
 
         // ── Expression combo

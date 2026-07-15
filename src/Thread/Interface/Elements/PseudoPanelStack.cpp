@@ -79,10 +79,13 @@ namespace Thread::Interface
 
         const float stride = tabH + tabGap;
         const float stackH = static_cast<float>(visibleCount) * tabH + static_cast<float>(visibleCount - 1) * tabGap;
+        const float screenRight = std::floor(dw);
+        const float railW = std::ceil(tabW + railPad);
         const float railH = stackH + railPad * 2.0f;
+        const float tabOffsetX = railW - tabW;
 
-        ImGuiMCP::SetNextWindowPos(ImGuiMCP::ImVec2{ dw - tabW - railPad, dh * 0.5f - railH * 0.5f }, ImGuiMCP::ImGuiCond_Always);
-        ImGuiMCP::SetNextWindowSize(ImGuiMCP::ImVec2{ tabW + railPad, railH }, ImGuiMCP::ImGuiCond_Always);
+        ImGuiMCP::SetNextWindowPos(ImGuiMCP::ImVec2{ screenRight - railW, dh * 0.5f - railH * 0.5f }, ImGuiMCP::ImGuiCond_Always);
+        ImGuiMCP::SetNextWindowSize(ImGuiMCP::ImVec2{ railW, railH }, ImGuiMCP::ImGuiCond_Always);
         ImGuiMCP::SetNextWindowBgAlpha(0.0f);  // each tab paints its own background via style colours
 
         constexpr auto kFlags =
@@ -92,9 +95,11 @@ namespace Thread::Interface
 
         ImGuiMCP::PushStyleVar(ImGuiMCP::ImGuiStyleVar_WindowPadding, ImGuiMCP::ImVec2{ 0.0f, 0.0f });
         ImGuiMCP::PushStyleVar(ImGuiMCP::ImGuiStyleVar_ItemSpacing, ImGuiMCP::ImVec2{ 0.0f, 0.0f });
+        // A host border insets the clip rect and leaves a visible seam at the screen edge.
+        ImGuiMCP::PushStyleVar(ImGuiMCP::ImGuiStyleVar_WindowBorderSize, 0.0f);
         if (!ImGuiMCP::Begin("##slpp_PanelStack", nullptr, kFlags)) {
             ImGuiMCP::End();
-            ImGuiMCP::PopStyleVar(2);
+            ImGuiMCP::PopStyleVar(3);
             return;
         }
 
@@ -106,7 +111,7 @@ namespace Thread::Interface
             const bool isActiveTab = kTabs[index].panel != PanelId::kNone && hud.IsPanelOpen(kTabs[index].panel);
 
             ImGuiMCP::PushID(static_cast<int>(index));
-            ImGuiMCP::SetCursorPos({ railPad, railPad + static_cast<float>(visibleIndex) * stride });
+            ImGuiMCP::SetCursorPos({ tabOffsetX, railPad + static_cast<float>(visibleIndex) * stride });
 
             auto* dl = ImGuiMCP::GetWindowDrawList();
             const ImGuiMCP::ImVec2 tMin = ImGuiMCP::GetCursorScreenPos();
@@ -162,7 +167,7 @@ namespace Thread::Interface
 
         ImGuiMCP::SetWindowFontScale(1.0f);
         ImGuiMCP::End();
-        ImGuiMCP::PopStyleVar(2);
+        ImGuiMCP::PopStyleVar(3);
 
         // Close on release so the framework receives the matching key-up before input capture is disabled.
         if (hud.IsFocused() && ImGuiMCP::IsKeyReleased(ImGuiMCP::ImGuiKey_Escape))
