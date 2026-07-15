@@ -32,7 +32,8 @@ namespace Thread::Interface::UI
 
         [[nodiscard]] float TextPx(float a_units)
         {
-            return Px(a_units) * _textMultiplier;
+            Refresh();
+            return a_units * _factor * _textResolutionScale * _textMultiplier;
         }
 
         [[nodiscard]] float Clamp(float a_minUnits, float a_percent, float a_maxUnits, float a_axisSize)
@@ -41,6 +42,36 @@ namespace Thread::Interface::UI
         }
 
       private:
+        // Calibrated so multiplier=1.0 matches former manual tweaks:
+        //   900p: UI 0.8 / Text 1.7 under the old algo
+        //   4K:   UI 1.5 / Text 1.0 under the old algo
+        static constexpr float kAnchorLow = 900.0f;
+        static constexpr float kAnchorHigh = 2160.0f;
+        static constexpr float kUiScaleLow = 4.0f / 3.0f;
+        static constexpr float kUiScaleHigh = 3.0f;
+        static constexpr float kTextScaleLow = 1.7f;
+        static constexpr float kTextScaleHigh = 1.0f;
+
+        [[nodiscard]] static float UiResolutionScale(float a_shortest)
+        {
+            if (a_shortest <= kAnchorLow)
+                return kUiScaleLow * (a_shortest / kAnchorLow);
+            if (a_shortest >= kAnchorHigh)
+                return kUiScaleHigh * (a_shortest / kAnchorHigh);
+            const float t = (a_shortest - kAnchorLow) / (kAnchorHigh - kAnchorLow);
+            return kUiScaleLow + t * (kUiScaleHigh - kUiScaleLow);
+        }
+
+        [[nodiscard]] static float TextResolutionScale(float a_shortest)
+        {
+            if (a_shortest <= kAnchorLow)
+                return kTextScaleLow;
+            if (a_shortest >= kAnchorHigh)
+                return kTextScaleHigh;
+            const float t = (a_shortest - kAnchorLow) / (kAnchorHigh - kAnchorLow);
+            return kTextScaleLow + t * (kTextScaleHigh - kTextScaleLow);
+        }
+
         void Refresh()
         {
             const auto* io = ImGuiMCP::GetIO();
@@ -50,21 +81,15 @@ namespace Thread::Interface::UI
             _displayWidth = io->DisplaySize.x;
             _displayHeight = io->DisplaySize.y;
             const float shortestSide = std::min(_displayWidth, _displayHeight);
-            float resolutionScale;
-            if (shortestSide <= 1080.0f) {
-                resolutionScale = 5.0f / 3.0f;
-            } else if (shortestSide <= 2160.0f) {
-                resolutionScale = (5.0f / 3.0f) + ((shortestSide - 1080.0f) / 1080.0f) * (1.0f / 3.0f);
-            } else {
-                resolutionScale = shortestSide / 1080.0f;
-            }
-            _factor = resolutionScale * _multiplier;
+            _factor = UiResolutionScale(shortestSide) * _multiplier;
+            _textResolutionScale = TextResolutionScale(shortestSide);
             _valid = true;
         }
 
-        float _multiplier{ 1.5f };
+        float _multiplier{ 1.0f };
         float _textMultiplier{ 1.0f };
         float _factor{ 0.0f };
+        float _textResolutionScale{ 1.0f };
         float _displayWidth{ -1.0f };
         float _displayHeight{ -1.0f };
         bool _valid{ false };

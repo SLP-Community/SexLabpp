@@ -92,7 +92,7 @@ namespace Thread::Interface
 
         float scaleMultiplier = instance->GetThreadProperty<float>("VarUI_MenuScaleMult");
         if (scaleMultiplier <= 0.0f) {
-            scaleMultiplier = 1.5f;
+            scaleMultiplier = 1.0f;
             instance->SetThreadProperty<float>("VarUI_MenuScaleMult", scaleMultiplier);
         }
         _scale.SetMultiplier(scaleMultiplier);
