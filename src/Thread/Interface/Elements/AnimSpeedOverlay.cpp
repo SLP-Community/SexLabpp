@@ -64,7 +64,7 @@ namespace Thread::Interface
     void AnimSpeedOverlay::Render()
     {
         auto& hud = SceneHUD::GetSingleton();
-        if (!IsVisible() || !hud.IsActive())
+        if (!IsVisible() || !hud.ShouldRender())
             return;
         auto& scale = hud.GetScale();
 

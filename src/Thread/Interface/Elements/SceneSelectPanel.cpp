@@ -180,7 +180,7 @@ namespace Thread::Interface
     void SceneSelectPanel::Render()
     {
         auto& hud = SceneHUD::GetSingleton();
-        if (!IsVisible() || !hud.IsActive() || !hud.IsPanelOpen(PanelId::kSceneSelect) || !hud.IsFocused())
+        if (!IsVisible() || !hud.ShouldRender() || !hud.IsPanelOpen(PanelId::kSceneSelect) || !hud.IsFocused())
             return;
 
         auto* io = ImGuiMCP::GetIO();

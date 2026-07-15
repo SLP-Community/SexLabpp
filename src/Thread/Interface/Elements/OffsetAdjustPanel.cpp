@@ -346,7 +346,7 @@ namespace Thread::Interface
     void OffsetAdjustPanel::Render()
     {
         auto& hud = SceneHUD::GetSingleton();
-        if (!IsVisible() || !hud.IsActive() || !hud.IsPanelOpen(PanelId::kOffsetAdjust) || !hud.IsFocused())
+        if (!IsVisible() || !hud.ShouldRender() || !hud.IsPanelOpen(PanelId::kOffsetAdjust) || !hud.IsFocused())
             return;
 
         auto* io = ImGuiMCP::GetIO();

@@ -60,7 +60,7 @@ namespace Thread::Interface
     void ElementCtrlPanel::Render()
     {
         auto& hud = SceneHUD::GetSingleton();
-        if (!IsVisible() || !hud.IsActive() || !hud.IsPanelOpen(PanelId::kElementControl) || !hud.IsFocused())
+        if (!IsVisible() || !hud.ShouldRender() || !hud.IsPanelOpen(PanelId::kElementControl) || !hud.IsFocused())
             return;
 
         auto* inst = hud.GetThreadInstance();

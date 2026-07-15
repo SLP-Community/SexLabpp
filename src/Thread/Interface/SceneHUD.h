@@ -48,6 +48,7 @@ namespace Thread::Interface
         void RebuildSceneList();
 
         [[nodiscard]] bool IsActive() const { return _linkedThread != nullptr; }
+        [[nodiscard]] bool ShouldRender() const { return IsActive() && !RE::UI::GetSingleton()->GameIsPaused(); }
         [[nodiscard]] bool IsFocused() const { return _focused; }
         [[nodiscard]] bool IsPanelOpen(PanelId a_panel) const { return _activePanel == a_panel; }
         [[nodiscard]] RE::TESQuest* GetLinkedThread() const { return _linkedThread; }

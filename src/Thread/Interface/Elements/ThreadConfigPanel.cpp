@@ -319,7 +319,7 @@ namespace Thread::Interface
     void ThreadConfigPanel::Render()
     {
         auto& hud = SceneHUD::GetSingleton();
-        if (!IsVisible() || !hud.IsActive() || !hud.IsPanelOpen(PanelId::kThreadConfig) || !hud.IsFocused())
+        if (!IsVisible() || !hud.ShouldRender() || !hud.IsPanelOpen(PanelId::kThreadConfig) || !hud.IsFocused())
             return;
 
         auto* inst = hud.GetThreadInstance();

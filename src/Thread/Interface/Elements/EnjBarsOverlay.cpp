@@ -210,7 +210,7 @@ namespace Thread::Interface
     void EnjBarsOverlay::Render()
     {
         auto& hud = SceneHUD::GetSingleton();
-        if (!IsVisible() || !hud.IsActive() || _bars.empty())
+        if (!IsVisible() || !hud.ShouldRender() || _bars.empty())
             return;
 
         const float deltaTime = ImGuiMCP::GetIO()->DeltaTime;

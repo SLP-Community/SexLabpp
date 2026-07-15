@@ -48,7 +48,7 @@ namespace Thread::Interface
     {
         // Selectable tabs provide mouse, keyboard, and gamepad access to the focus UI.
         auto& hud = SceneHUD::GetSingleton();
-        if (!IsVisible() || !hud.IsActive() || !hud.IsFocused())
+        if (!IsVisible() || !hud.ShouldRender() || !hud.IsFocused())
             return;
         auto& scale = hud.GetScale();
 
