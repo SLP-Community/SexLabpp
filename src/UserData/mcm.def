@@ -38,7 +38,7 @@ MCM_SETTING(iLovenseStrength, 10)
 MCM_SETTING(iLovenseStrengthOrgasm, 20)
 MCM_SETTING(fLovenseDurationOrgasm, 8.0f)
 
-MCM_SETTING(fMenuScaleMult, 1.5f)
+MCM_SETTING(fMenuScaleMult, 1.0f)
 MCM_SETTING(fMenuTextScaleMult, 1.0f)
 MCM_SETTING(fAdjustStepSize, 0.5f)
 MCM_SETTING(fShakeStrength, 0.7f)

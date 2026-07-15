@@ -45,6 +45,8 @@ namespace Thread::Interface::UI::Theme
     struct Icon final
     {
         static constexpr const char* solidFont = "fa-solid-900";
+        static constexpr const char* anglesLeft = "\xEF\x84\x80";     // U+F100
+        static constexpr const char* anglesRight = "\xEF\x84\x81";    // U+F101
         static constexpr const char* chevronRight = "\xEF\x81\x94";  // U+F054
         static constexpr const char* chevronUp = "\xEF\x81\xB7";     // U+F077
         static constexpr const char* chevronDown = "\xEF\x81\xB8";   // U+F078

@@ -104,38 +104,41 @@ namespace Thread::Interface
         char buf[16];
         std::snprintf(buf, sizeof(buf), "%.2fx", spd);
 
-        // [-]  value  [+]
+        // [slower]  value  [faster]
         const float btnW = scale.Px(20.0f);
         const float rowH = std::max(scale.Px(UI::Theme::Spacing::xl),
             scale.TextPx(UI::Theme::FontSize::overlay) + scale.Px(UI::Theme::Spacing::xxs));
         const ImGuiMCP::ImVec2 valSz = ImGuiMCP::CalcTextSize(buf);
-        const float rowStartX = ImGuiMCP::GetCursorPosX();
-        auto* dl = ImGuiMCP::GetWindowDrawList();
+        auto* dl = ImGuiMCP::GetForegroundDrawList();
+        const ImGuiMCP::ImVec2 rowScreenPos = ImGuiMCP::GetCursorScreenPos();
 
         if (hud.IsFocused()) {
-            ImGuiMCP::SetCursorPosX(rowStartX);
-            if (ImGuiMCP::Button("-##slpp_dec", ImGuiMCP::ImVec2{ btnW, rowH }))
+            ImGuiMCP::SetCursorScreenPos(rowScreenPos);
+            if (ImGuiMCP::InvisibleButton("##slpp_dec", ImGuiMCP::ImVec2{ btnW, rowH }))
                 OnSpeedChange(-0.25f);
 
-            ImGuiMCP::SameLine();
-            ImGuiMCP::SetCursorPosX(rowStartX + (zoneW - valSz.x) * 0.5f);
-            ImGuiMCP::TextUnformatted(buf);
-
-            ImGuiMCP::SameLine();
-            ImGuiMCP::SetCursorPosX(rowStartX + zoneW - btnW);
-            if (ImGuiMCP::Button("+##slpp_inc", ImGuiMCP::ImVec2{ btnW, rowH }))
+            ImGuiMCP::SetCursorScreenPos(ImGuiMCP::ImVec2{ rowScreenPos.x + zoneW - btnW, rowScreenPos.y });
+            if (ImGuiMCP::InvisibleButton("##slpp_inc", ImGuiMCP::ImVec2{ btnW, rowH }))
                 OnSpeedChange(+0.25f);
-        } else {
-            const ImGuiMCP::ImVec2 rowScreenPos = ImGuiMCP::GetCursorScreenPos();
-            DrawTextShadowed(dl, rowScreenPos, UI::Theme::Color::textSecondary, "-");
-            DrawTextShadowed(dl,
-                ImGuiMCP::ImVec2{ rowScreenPos.x + (zoneW - valSz.x) * 0.5f, rowScreenPos.y },
-                UI::Theme::Color::textPrimary, buf);
-            DrawTextShadowed(dl,
-                ImGuiMCP::ImVec2{ rowScreenPos.x + zoneW - btnW, rowScreenPos.y },
-                UI::Theme::Color::textSecondary, "+");
-            ImGuiMCP::Dummy(ImGuiMCP::ImVec2{ zoneW, rowH });
         }
+
+        SKSEMenuFramework::PushFont(UI::Theme::Icon::solidFont);
+        const ImGuiMCP::ImVec2 leftIconSize = ImGuiMCP::CalcTextSize(UI::Theme::Icon::anglesLeft);
+        const ImGuiMCP::ImVec2 rightIconSize = ImGuiMCP::CalcTextSize(UI::Theme::Icon::anglesRight);
+        DrawTextShadowed(dl,
+            ImGuiMCP::ImVec2{ rowScreenPos.x + (btnW - leftIconSize.x) * 0.5f, rowScreenPos.y + (rowH - leftIconSize.y) * 0.5f },
+            UI::Theme::Color::textSecondary, UI::Theme::Icon::anglesLeft);
+        DrawTextShadowed(dl,
+            ImGuiMCP::ImVec2{ rowScreenPos.x + zoneW - btnW + (btnW - rightIconSize.x) * 0.5f,
+                rowScreenPos.y + (rowH - rightIconSize.y) * 0.5f },
+            UI::Theme::Color::textSecondary, UI::Theme::Icon::anglesRight);
+        FontAwesome::Pop();
+        DrawTextShadowed(dl,
+            ImGuiMCP::ImVec2{ rowScreenPos.x + (zoneW - valSz.x) * 0.5f,
+                rowScreenPos.y + (rowH - valSz.y) * 0.5f },
+            UI::Theme::Color::textPrimary, buf);
+        ImGuiMCP::SetCursorScreenPos(rowScreenPos);
+        ImGuiMCP::Dummy(ImGuiMCP::ImVec2{ zoneW, rowH });
 
         ImGuiMCP::Dummy(ImGuiMCP::ImVec2{ 0.0f, gap });
 
