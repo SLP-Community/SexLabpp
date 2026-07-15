@@ -40,6 +40,7 @@ namespace Thread::Interface
         std::vector<SceneEntry> _entries;
         char _searchBuffer[128]{};
         int _hoveredIndex{ -1 };
+        float _infoCardY{ 0.0f };
 
         char _lastSearch[128]{};
         std::vector<int> _filteredIndices;

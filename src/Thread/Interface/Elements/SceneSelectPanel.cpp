@@ -219,7 +219,7 @@ namespace Thread::Interface
             _sceneListOpen = !_sceneListOpen;
         ImGuiMCP::Separator();
 
-        _hoveredIndex = -1;
+        int hoveredRowIndex = -1;
 
         if (_sceneListOpen) {
             SetWindowFontSize(ScaleUI::pxTextScale(UI::Theme::FontSize::body));
@@ -241,7 +241,7 @@ namespace Thread::Interface
                     ImGuiMCP::PopStyleColor();
 
                 if (ImGuiMCP::IsItemHovered())
-                    _hoveredIndex = i;
+                    hoveredRowIndex = i;
                 if (clicked && !e.isActive)
                     selectedScene = e.id;
                 ImGuiMCP::PopID();
@@ -282,7 +282,12 @@ namespace Thread::Interface
         ImGuiMCP::SetWindowFontScale(1.0f);
         ImGuiMCP::End();
 
-        // ── Info card, anchored left of the panel while hovering a row
+        // ── Info card, retained while hovering it or editing annotations
+        if (hoveredRowIndex >= 0) {
+            _hoveredIndex = hoveredRowIndex;
+            _infoCardY = ImGuiMCP::GetMousePos().y - ScaleUI::pxScale(40.0f);
+        }
+        bool keepInfoCardOpen = hoveredRowIndex >= 0;
         if (_hoveredIndex >= 0 && _hoveredIndex < static_cast<int>(_entries.size())) {
             auto& e = _entries[_hoveredIndex];
 
@@ -294,9 +299,8 @@ namespace Thread::Interface
             const float tagFont = ScaleUI::pxTextScale(UI::Theme::FontSize::metadata);
 
             const float cardX = winPos.x - cardW - 6.0f;
-            const float cardY = ImGuiMCP::GetMousePos().y - ScaleUI::pxScale(40.0f);
 
-            ImGuiMCP::SetNextWindowPos(ImGuiMCP::ImVec2{ cardX, cardY }, ImGuiMCP::ImGuiCond_Always, ImGuiMCP::ImVec2{ 0.0f, 0.0f });
+            ImGuiMCP::SetNextWindowPos(ImGuiMCP::ImVec2{ cardX, _infoCardY }, ImGuiMCP::ImGuiCond_Always, ImGuiMCP::ImVec2{ 0.0f, 0.0f });
             ImGuiMCP::SetNextWindowSize(ImGuiMCP::ImVec2{ cardW, 0.0f }, ImGuiMCP::ImGuiCond_Always);
             ImGuiMCP::SetNextWindowBgAlpha(0.97f);
 
@@ -307,6 +311,17 @@ namespace Thread::Interface
                 ImGuiMCP::ImGuiWindowFlags_NoFocusOnAppearing | ImGuiMCP::ImGuiWindowFlags_NoNav;
 
             if (ImGuiMCP::Begin("##slpp_smmInfoCard", nullptr, cardFlags)) {
+                constexpr auto cardHoverFlags =
+                    ImGuiMCP::ImGuiHoveredFlags_ChildWindows |
+                    ImGuiMCP::ImGuiHoveredFlags_AllowWhenBlockedByActiveItem;
+                const auto cardPos = ImGuiMCP::GetWindowPos();
+                const auto cardSize = ImGuiMCP::GetWindowSize();
+                const auto mousePos = ImGuiMCP::GetMousePos();
+                const bool isHoveringBridge =
+                    mousePos.x >= cardPos.x + cardSize.x &&
+                    mousePos.x <= winPos.x + ImGuiMCP::GetStyle()->WindowPadding.x &&
+                    mousePos.y >= cardPos.y && mousePos.y <= cardPos.y + cardSize.y;
+                keepInfoCardOpen |= ImGuiMCP::IsWindowHovered(cardHoverFlags) || isHoveringBridge;
                 SetWindowFontSize(keyFont);
 
                 auto infoRow = [&](const char* key, const std::string& val, float valFont) {
@@ -344,8 +359,11 @@ namespace Thread::Interface
                 } else if (ImGuiMCP::IsItemDeactivatedAfterEdit()) {
                     OnAnnotationSave(e);  // Save on focus loss
                 }
+                keepInfoCardOpen |= ImGuiMCP::IsItemActive();
             }
             ImGuiMCP::End();
         }
+        if (!keepInfoCardOpen)
+            _hoveredIndex = -1;
     }
 }
