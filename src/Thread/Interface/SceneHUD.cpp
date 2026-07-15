@@ -97,6 +97,13 @@ namespace Thread::Interface
         }
         _scale.SetMultiplier(scaleMultiplier);
 
+        float textScaleMultiplier = instance->GetThreadProperty<float>("VarUI_TextScaleMult");
+        if (textScaleMultiplier <= 0.0f) {
+            textScaleMultiplier = 1.0f;
+            instance->SetThreadProperty<float>("VarUI_TextScaleMult", textScaleMultiplier);
+        }
+        _scale.SetTextMultiplier(textScaleMultiplier);
+
         _activePanel = PanelId::kNone;
         _focused = false;
         AnimSpeedOverlay::GetSingleton().Init();

@@ -19,8 +19,11 @@ namespace Thread::Interface
 
     void ElementCtrlPanel::Open()
     {
-        if (auto* inst = SceneHUD::GetSingleton().GetThreadInstance())
+        if (auto* inst = SceneHUD::GetSingleton().GetThreadInstance()) {
             _scaleAdjustment = std::clamp(inst->GetThreadProperty<float>("VarUI_MenuScaleMult"), 0.5f, 2.5f);
+            const float textScale = inst->GetThreadProperty<float>("VarUI_TextScaleMult");
+            _textScaleAdjustment = textScale > 0.0f ? std::clamp(textScale, 0.75f, 2.0f) : 1.0f;
+        }
         Show();
     }
     void ElementCtrlPanel::Close() { Hide(); }
@@ -40,6 +43,18 @@ namespace Thread::Interface
         _scaleAdjustment = value;
         inst->SetThreadProperty<float>("VarUI_MenuScaleMult", value);
         hud.GetScale().SetMultiplier(value);
+    }
+
+    void ElementCtrlPanel::OnTextScaleChange(float a_value)
+    {
+        auto& hud = SceneHUD::GetSingleton();
+        auto* inst = hud.GetThreadInstance();
+        if (!inst)
+            return;
+        const float value = std::clamp(a_value, 0.75f, 2.0f);
+        _textScaleAdjustment = value;
+        inst->SetThreadProperty<float>("VarUI_TextScaleMult", value);
+        hud.GetScale().SetTextMultiplier(value);
     }
 
     void ElementCtrlPanel::Render()
@@ -69,24 +84,30 @@ namespace Thread::Interface
             ImGuiMCP::End();
             return;
         }
-        SetWindowFontSize(scale.Px(UI::Theme::FontSize::body));
+        SetWindowFontSize(scale.TextPx(UI::Theme::FontSize::body));
 
-        // Scale slider only commits once the slider is released.
         ImGuiMCP::SetNextItemWidth(-1.0f);
-        ImGuiMCP::SliderFloat("##slpp_ecmScale", &_scaleAdjustment, 0.5f, 2.5f, "Scale %.2fx");
+        ImGuiMCP::SliderFloat("##slpp_ecmScale", &_scaleAdjustment, 0.5f, 2.5f, "UI Scale %.2fx");
         if (ImGuiMCP::IsItemDeactivatedAfterEdit())
             OnScaleChange(_scaleAdjustment);
+
+        ImGuiMCP::SetNextItemWidth(-1.0f);
+        ImGuiMCP::SliderFloat("##slpp_ecmTextScale", &_textScaleAdjustment, 0.75f, 2.0f, "Text Scale %.2fx");
+        if (ImGuiMCP::IsItemDeactivatedAfterEdit())
+            OnTextScaleChange(_textScaleAdjustment);
 
         ImGuiMCP::Separator();
 
         // "Elements" section
-        SetWindowFontSize(scale.Px(UI::Theme::FontSize::sectionHeader));
+        SetWindowFontSize(scale.TextPx(UI::Theme::FontSize::sectionHeader));
+        const float sectionH = std::max(scale.Px(22.0f),
+            scale.TextPx(UI::Theme::FontSize::sectionHeader) + scale.Px(UI::Theme::Spacing::xs));
         if (UI::CollapsibleSectionHeader(
-                "TOGGLE HUD ELEMENTS", "##slpp_ecmElementsSection", _elementSectionOpen, { 0.0f, scale.Px(22.0f) }))
+                "TOGGLE HUD ELEMENTS", "##slpp_ecmElementsSection", _elementSectionOpen, { 0.0f, sectionH }))
             _elementSectionOpen = !_elementSectionOpen;
 
         if (_elementSectionOpen) {
-            SetWindowFontSize(scale.Px(UI::Theme::FontSize::body));
+            SetWindowFontSize(scale.TextPx(UI::Theme::FontSize::body));
             UI::PushCheckboxStyle(scale.Factor());
 
             bool state_gameHud = inst->GetThreadProperty<bool>("ElementUI_GameHUD");

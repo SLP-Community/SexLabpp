@@ -1845,6 +1845,7 @@ bool Property ElementUI_SceneSelect   Auto Hidden
 bool Property ElementUI_ThreadConfig  Auto Hidden
 
 float Property VarUI_MenuScaleMult    Auto Hidden
+float Property VarUI_TextScaleMult    Auto Hidden
 bool Property  VarUI_SeparateOrgasm   Auto Hidden
 bool Property  VarUI_AdjustStage      Auto Hidden
 
@@ -1865,6 +1866,7 @@ EndFunction
 Function RefreshPropertiesSceneHUD(string asMode)
 	If (asMode == "Get")
 		VarUI_MenuScaleMult        = Config.MenuScaleMult
+		VarUI_TextScaleMult        = Config.MenuTextScaleMult
 		VarUI_SeparateOrgasm       = (Config.ClimaxType == Config.CLIMAXTYPE_SLSO)
 		VarUI_AdjustStage          = Config.AdjustStage
 		ElementUI_GameHUD          = !Config.HideHUD
@@ -1875,6 +1877,7 @@ Function RefreshPropertiesSceneHUD(string asMode)
 		ElementUI_ThreadConfig     = Config.ElementThreadConfig
 	ElseIf (asMode == "Set")
 		Config.MenuScaleMult       = VarUI_MenuScaleMult
+		Config.MenuTextScaleMult   = VarUI_TextScaleMult
 		Config.AdjustStage         = VarUI_AdjustStage
 		Config.HideHUD             = !ElementUI_GameHUD
 		Config.ElementAnimSpeed    = ElementUI_AnimSpeed

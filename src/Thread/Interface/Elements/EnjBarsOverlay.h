@@ -61,6 +61,7 @@ namespace Thread::Interface
         };
         LayoutCache _layout{};
         float _layoutForFactor{ -1.0f };
+        float _layoutForTextFactor{ -1.0f };
         float _layoutForWidth{ -1.0f };
         float _layoutForHeight{ -1.0f };
         std::size_t _layoutForCount{ SIZE_MAX };

@@ -141,7 +141,7 @@ namespace Thread::Interface
         // An invisible-label Selectable provides the real user interaction here.
         // The header's actual content (arrow, name, badge) is drawn on top of it afterward.
         const ImGuiMCP::ImVec2 hdrMin = ImGuiMCP::GetCursorScreenPos();
-        const float hdrH = ScaleUI::pxScale(UI::Theme::FontSize::subsectionHeader) + hdrPadV * 2.0f;
+        const float hdrH = ScaleUI::pxTextScale(UI::Theme::FontSize::subsectionHeader) + hdrPadV * 2.0f;
 
         ImGuiMCP::PushStyleColor(ImGuiMCP::ImGuiCol_Header, UI::Theme::Color::cardHeader);
         ImGuiMCP::PushStyleColor(ImGuiMCP::ImGuiCol_HeaderHovered, UI::Theme::Color::cardHeader);
@@ -159,7 +159,7 @@ namespace Thread::Interface
         }
 
         ImGuiMCP::SetCursorScreenPos(hdrMin);
-        SetWindowFontSize(ScaleUI::pxScale(UI::Theme::FontSize::subsectionHeader));
+        SetWindowFontSize(ScaleUI::pxTextScale(UI::Theme::FontSize::subsectionHeader));
 
         // Collapse arrow
         ImGuiMCP::SetCursorScreenPos(ImGuiMCP::ImVec2{ hdrMin.x + hdrPadH, hdrMin.y + hdrPadV });
@@ -188,7 +188,7 @@ namespace Thread::Interface
             return;
         }
         auto* inst = SceneHUD::GetSingleton().GetThreadInstance();
-        SetWindowFontSize(ScaleUI::pxScale(UI::Theme::FontSize::compact));
+        SetWindowFontSize(ScaleUI::pxTextScale(UI::Theme::FontSize::compact));
 
         // ── Scene position row
         {
@@ -197,12 +197,13 @@ namespace Thread::Interface
             const bool canCycle = total > 1;
 
             ImGuiMCP::SetCursorPosX(rowPadH);
-            SetWindowFontSize(ScaleUI::pxScale(UI::Theme::FontSize::caption));
+            SetWindowFontSize(ScaleUI::pxTextScale(UI::Theme::FontSize::caption));
             ImGuiMCP::TextColored(UI::Theme::ToVec4(UI::Theme::Color::textMuted), "Scene Position");
             ImGuiMCP::SameLine(lblW);
 
-            const float btnSize = ScaleUI::pxScale(18.0f);
-            SetWindowFontSize(ScaleUI::pxScale(UI::Theme::FontSize::caption));
+            const float btnSize = std::max(ScaleUI::pxScale(18.0f),
+                ScaleUI::pxTextScale(UI::Theme::FontSize::caption) + ScaleUI::pxScale(UI::Theme::Spacing::xxs));
+            SetWindowFontSize(ScaleUI::pxTextScale(UI::Theme::FontSize::caption));
             char permBuf[24];
             std::snprintf(permBuf, sizeof(permBuf), "%d of %d", current, total);
             ImGuiMCP::TextColored(UI::Theme::ToVec4(UI::Theme::Color::textSecondary), "%s", permBuf);
@@ -231,11 +232,11 @@ namespace Thread::Interface
             SKSE::Translation::Translate(curLabel, curLabel);
 
             ImGuiMCP::SetCursorPosX(rowPadH);
-            SetWindowFontSize(ScaleUI::pxScale(UI::Theme::FontSize::caption));
+            SetWindowFontSize(ScaleUI::pxTextScale(UI::Theme::FontSize::caption));
             ImGuiMCP::TextColored(UI::Theme::ToVec4(UI::Theme::Color::textMuted), "Expression");
             ImGuiMCP::SameLine(lblW);
 
-            SetWindowFontSize(ScaleUI::pxScale(UI::Theme::FontSize::caption));
+            SetWindowFontSize(ScaleUI::pxTextScale(UI::Theme::FontSize::caption));
             ImGuiMCP::SetNextItemWidth(dropW);
             if (ImGuiMCP::BeginCombo("##slpp_tcmExpr", curLabel.c_str())) {
                 lib->ForEachExpression([&](const auto& expr) {
@@ -266,11 +267,11 @@ namespace Thread::Interface
             const Registry::RaceKey raceKey{ actor };
 
             ImGuiMCP::SetCursorPosX(rowPadH);
-            SetWindowFontSize(ScaleUI::pxScale(UI::Theme::FontSize::caption));
+            SetWindowFontSize(ScaleUI::pxTextScale(UI::Theme::FontSize::caption));
             ImGuiMCP::TextColored(UI::Theme::ToVec4(UI::Theme::Color::textMuted), "Voice");
             ImGuiMCP::SameLine(lblW);
 
-            SetWindowFontSize(ScaleUI::pxScale(UI::Theme::FontSize::caption));
+            SetWindowFontSize(ScaleUI::pxTextScale(UI::Theme::FontSize::caption));
             ImGuiMCP::SetNextItemWidth(dropW);
             if (ImGuiMCP::BeginCombo("##slpp_tcmVoice", curLabel.c_str())) {
                 lib->ForEachVoice([&](const auto& v) {
@@ -298,7 +299,7 @@ namespace Thread::Interface
             int alphaInt = static_cast<int>(std::round(actor->GetAlpha() * 100.0f));
 
             ImGuiMCP::SetCursorPosX(rowPadH);
-            SetWindowFontSize(ScaleUI::pxScale(UI::Theme::FontSize::caption));
+            SetWindowFontSize(ScaleUI::pxTextScale(UI::Theme::FontSize::caption));
             ImGuiMCP::TextColored(UI::Theme::ToVec4(UI::Theme::Color::textMuted), "Alpha");
             ImGuiMCP::SameLine(lblW);
 
@@ -309,7 +310,7 @@ namespace Thread::Interface
             ImGuiMCP::PopStyleVar();
 
             ImGuiMCP::SameLine(0.0f, ScaleUI::pxScale(6.0f));
-            SetWindowFontSize(ScaleUI::pxScale(UI::Theme::FontSize::caption));
+            SetWindowFontSize(ScaleUI::pxTextScale(UI::Theme::FontSize::caption));
             ImGuiMCP::TextColored(UI::Theme::ToVec4(UI::Theme::Color::textMuted), "%d%%", alphaInt);
         }
 
@@ -336,6 +337,8 @@ namespace Thread::Interface
         const float rowPadV = ScaleUI::pxScale(6.0f);
         const float rowPadH = ScaleUI::pxScale(12.0f);
         const float maxBodyH = ScaleUI::pxScale(340.0f);  // before scrolling
+        const float sectionH = std::max(ScaleUI::pxScale(20.0f),
+            ScaleUI::pxTextScale(UI::Theme::FontSize::sectionHeader) + ScaleUI::pxScale(UI::Theme::Spacing::xs));
 
         ImGuiMCP::SetNextWindowPos(
             ImGuiMCP::ImVec2{ io->DisplaySize.x - offset, io->DisplaySize.y * 0.5f },
@@ -356,14 +359,14 @@ namespace Thread::Interface
         }
 
         // ── THREAD section
-        SetWindowFontSize(ScaleUI::pxScale(UI::Theme::FontSize::sectionHeader));
+        SetWindowFontSize(ScaleUI::pxTextScale(UI::Theme::FontSize::sectionHeader));
         if (UI::CollapsibleSectionHeader(
-                "THREAD", "##slpp_tcmThreadSection", _threadSectionOpen, { 0.0f, ScaleUI::pxScale(20.0f) }))
+                "THREAD", "##slpp_tcmThreadSection", _threadSectionOpen, { 0.0f, sectionH }))
             _threadSectionOpen = !_threadSectionOpen;
         ImGuiMCP::Separator();
 
         if (_threadSectionOpen) {
-            SetWindowFontSize(ScaleUI::pxScale(UI::Theme::FontSize::body));
+            SetWindowFontSize(ScaleUI::pxTextScale(UI::Theme::FontSize::body));
             const float actionGap = ScaleUI::pxScale(UI::Theme::Spacing::sm);
             const float actionW = (panelW - rowPadH * 2.0f - actionGap) * 0.5f;
             ImGuiMCP::SetCursorPosX(rowPadH);
@@ -390,9 +393,9 @@ namespace Thread::Interface
         ImGuiMCP::Separator();
 
         // ── ACTORS section
-        SetWindowFontSize(ScaleUI::pxScale(UI::Theme::FontSize::sectionHeader));
+        SetWindowFontSize(ScaleUI::pxTextScale(UI::Theme::FontSize::sectionHeader));
         if (UI::CollapsibleSectionHeader(
-                "ACTORS", "##slpp_tcmActorsSection", _actorsSectionOpen, { 0.0f, ScaleUI::pxScale(20.0f) }))
+                "ACTORS", "##slpp_tcmActorsSection", _actorsSectionOpen, { 0.0f, sectionH }))
             _actorsSectionOpen = !_actorsSectionOpen;
         ImGuiMCP::Separator();
 

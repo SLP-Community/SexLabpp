@@ -98,7 +98,7 @@ namespace Thread::Interface
             return;
         }
 
-        SetWindowFontSize(scale.Px(UI::Theme::FontSize::overlay));
+        SetWindowFontSize(scale.TextPx(UI::Theme::FontSize::overlay));
 
         const float spd = _speed;
         char buf[16];
@@ -106,7 +106,8 @@ namespace Thread::Interface
 
         // [-]  value  [+]
         const float btnW = scale.Px(20.0f);
-        const float rowH = scale.Px(UI::Theme::Spacing::xl);
+        const float rowH = std::max(scale.Px(UI::Theme::Spacing::xl),
+            scale.TextPx(UI::Theme::FontSize::overlay) + scale.Px(UI::Theme::Spacing::xxs));
         const ImGuiMCP::ImVec2 valSz = ImGuiMCP::CalcTextSize(buf);
         const float rowStartX = ImGuiMCP::GetCursorPosX();
         auto* dl = ImGuiMCP::GetWindowDrawList();

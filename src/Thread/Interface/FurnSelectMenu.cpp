@@ -78,11 +78,11 @@ namespace Thread::Interface
         }
 
         // Panel title
-        SetWindowFontSize(scale.Px(UI::Theme::FontSize::caption));
+        SetWindowFontSize(scale.TextPx(UI::Theme::FontSize::caption));
         ImGuiMCP::TextColored(UI::Theme::ToVec4(UI::Theme::Color::textSecondary), "CENTER SELECTION");
         ImGuiMCP::Separator();
 
-        SetWindowFontSize(scale.Px(UI::Theme::FontSize::body));
+        SetWindowFontSize(scale.TextPx(UI::Theme::FontSize::body));
         std::optional<std::size_t> selectedIndex;
         if (_items.empty()) {
             ImGuiMCP::TextColored(UI::Theme::ToVec4(UI::Theme::Color::textMuted), "No suitable scene center nearby.");

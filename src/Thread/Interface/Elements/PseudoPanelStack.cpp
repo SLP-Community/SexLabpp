@@ -57,7 +57,8 @@ namespace Thread::Interface
         const float dh = io->DisplaySize.y;
 
         const float tabW = scale.Px(UI::Theme::Geometry::panelTabWidth);
-        const float tabH = scale.Px(30.0f);
+        const float tabH = std::max(scale.Px(30.0f),
+            scale.TextPx(UI::Theme::FontSize::caption) + scale.Px(UI::Theme::Spacing::xs));
         const float tabGap = scale.Px(5.0f);
         const float railPad = scale.Px(3.0f);
 
@@ -97,7 +98,7 @@ namespace Thread::Interface
             return;
         }
 
-        SetWindowFontSize(scale.Px(UI::Theme::FontSize::caption));
+        SetWindowFontSize(scale.TextPx(UI::Theme::FontSize::caption));
         bool closeFocus = false;
 
         for (std::size_t visibleIndex = 0; visibleIndex < visibleCount; ++visibleIndex) {

@@ -191,7 +191,9 @@ namespace Thread::Interface
         const float offset = ScaleUI::pxScale(UI::Theme::Geometry::panelTabWidth + UI::Theme::Geometry::panelTabGap);
         const float maxH = dh * 0.8f;
         const float listMaxH = ScaleUI::pxScale(200.0f);
-        const float rowH = ScaleUI::pxScale(UI::Theme::FontSize::body) + ScaleUI::pxScale(UI::Theme::Spacing::sm) * 2.0f;
+        const float rowH = ScaleUI::pxTextScale(UI::Theme::FontSize::body) + ScaleUI::pxScale(UI::Theme::Spacing::sm) * 2.0f;
+        const float sectionH = std::max(ScaleUI::pxScale(20.0f),
+            ScaleUI::pxTextScale(UI::Theme::FontSize::sectionHeader) + ScaleUI::pxScale(UI::Theme::Spacing::xs));
 
         ImGuiMCP::SetNextWindowPos(
             ImGuiMCP::ImVec2{ dw - offset, dh * 0.5f }, ImGuiMCP::ImGuiCond_Always, ImGuiMCP::ImVec2{ 1.0f, 0.5f });
@@ -211,16 +213,16 @@ namespace Thread::Interface
         const ImGuiMCP::ImVec2 winPos = ImGuiMCP::GetWindowPos();
 
         // ── Section: Scenes List
-        SetWindowFontSize(ScaleUI::pxScale(UI::Theme::FontSize::sectionHeader));
+        SetWindowFontSize(ScaleUI::pxTextScale(UI::Theme::FontSize::sectionHeader));
         if (UI::CollapsibleSectionHeader("CHANGE ACTIVE SCENE", "##slpp_ssmSceneListSection", _sceneListOpen,
-                { 0.0f, ScaleUI::pxScale(20.0f) }))
+                { 0.0f, sectionH }))
             _sceneListOpen = !_sceneListOpen;
         ImGuiMCP::Separator();
 
         _hoveredIndex = -1;
 
         if (_sceneListOpen) {
-            SetWindowFontSize(ScaleUI::pxScale(UI::Theme::FontSize::body));
+            SetWindowFontSize(ScaleUI::pxTextScale(UI::Theme::FontSize::body));
             ImGuiMCP::BeginChild("##slpp_smmSceneList", ImGuiMCP::ImVec2{ panelW, listMaxH }, false);
 
             if (std::memcmp(_searchBuffer, _lastSearch, sizeof(_searchBuffer)) != 0)
@@ -253,14 +255,14 @@ namespace Thread::Interface
         ImGuiMCP::Separator();
 
         // ── Section: Search Scenes
-        SetWindowFontSize(ScaleUI::pxScale(UI::Theme::FontSize::sectionHeader));
+        SetWindowFontSize(ScaleUI::pxTextScale(UI::Theme::FontSize::sectionHeader));
         if (UI::CollapsibleSectionHeader("CHANGE SCENES BY TAG / NAME", "##slpp_ssmSearchSection", _searchBoxOpen,
-                { 0.0f, ScaleUI::pxScale(20.0f) }))
+                { 0.0f, sectionH }))
             _searchBoxOpen = !_searchBoxOpen;
         ImGuiMCP::Separator();
 
         if (_searchBoxOpen) {
-            SetWindowFontSize(ScaleUI::pxScale(UI::Theme::FontSize::body));
+            SetWindowFontSize(ScaleUI::pxTextScale(UI::Theme::FontSize::body));
             ImGuiMCP::SetNextItemWidth(panelW - ScaleUI::pxScale(20.0f));
             ImGuiMCP::InputTextWithHint("##slpp_smmSearch", "Tag or scene name...",
                 _searchBuffer, sizeof(_searchBuffer));
@@ -287,9 +289,9 @@ namespace Thread::Interface
             const float cardW = ScaleUI::pxScale(190.0f);
             const float keyW = ScaleUI::pxScale(46.0f);
             const float rowGap = ScaleUI::pxScale(4.0f);
-            const float keyFont = ScaleUI::pxScale(UI::Theme::FontSize::smallText);
-            const float rowFont = ScaleUI::pxScale(UI::Theme::FontSize::compact);
-            const float tagFont = ScaleUI::pxScale(UI::Theme::FontSize::metadata);
+            const float keyFont = ScaleUI::pxTextScale(UI::Theme::FontSize::smallText);
+            const float rowFont = ScaleUI::pxTextScale(UI::Theme::FontSize::compact);
+            const float tagFont = ScaleUI::pxTextScale(UI::Theme::FontSize::metadata);
 
             const float cardX = winPos.x - cardW - 6.0f;
             const float cardY = ImGuiMCP::GetMousePos().y - ScaleUI::pxScale(40.0f);

@@ -177,8 +177,9 @@ namespace Thread::Interface
         const float dw = io->DisplaySize.x;
         const float dh = io->DisplaySize.y;
         const float factor = ScaleUI::pxScale(1.0f);
-        if (_layoutForFactor == factor && _layoutForWidth == dw &&
-            _layoutForHeight == dh && _layoutForCount == actorCount) {
+        const float textFactor = ScaleUI::pxTextScale(1.0f);
+        if (_layoutForFactor == factor && _layoutForTextFactor == textFactor &&
+            _layoutForWidth == dw && _layoutForHeight == dh && _layoutForCount == actorCount) {
             return _layout;
         }
 
@@ -186,12 +187,12 @@ namespace Thread::Interface
         L.zoneW = std::clamp(ScaleUI::pxScale(260.0f), dw * 0.15f, ScaleUI::pxScale(360.0f));
         L.barGap = ScaleUI::pxScale(4.5f);
         L.innerGp = ScaleUI::pxScale(2.0f);
-        L.frameH = ScaleUI::pxScale(UI::Theme::FontSize::body);
+        L.frameH = ScaleUI::pxTextScale(UI::Theme::FontSize::body);
         L.lblPad = ScaleUI::pxScale(1.5f);
-        L.nameFt = ScaleUI::pxScale(UI::Theme::FontSize::metadata);
-        L.valFt = ScaleUI::pxScale(UI::Theme::FontSize::smallText);
-        L.intrFt = ScaleUI::pxScale(UI::Theme::FontSize::detail);
-        L.fbFt = ScaleUI::pxScale(UI::Theme::FontSize::body);
+        L.nameFt = ScaleUI::pxTextScale(UI::Theme::FontSize::metadata);
+        L.valFt = ScaleUI::pxTextScale(UI::Theme::FontSize::smallText);
+        L.intrFt = ScaleUI::pxTextScale(UI::Theme::FontSize::detail);
+        L.fbFt = ScaleUI::pxTextScale(UI::Theme::FontSize::body);
         L.edgeH = ScaleUI::pxScaleClamp(14.0f, 2.5f, 48.0f, dw);
         L.edgeV = ScaleUI::pxScaleClamp(16.0f, 1.8f, 32.0f, dh);
         L.lblRowH = L.nameFt + L.lblPad * 2.0f;
@@ -199,6 +200,7 @@ namespace Thread::Interface
         L.winH = L.unitH * static_cast<float>(actorCount) - L.barGap;
 
         _layoutForFactor = factor;
+        _layoutForTextFactor = textFactor;
         _layoutForWidth = dw;
         _layoutForHeight = dh;
         _layoutForCount = actorCount;

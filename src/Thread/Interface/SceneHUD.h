@@ -71,6 +71,7 @@ namespace Thread::Interface
     namespace ScaleUI
     {
         inline float pxScale(float a_units) { return SceneHUD::GetSingleton().GetScale().Px(a_units); }
+        inline float pxTextScale(float a_units) { return SceneHUD::GetSingleton().GetScale().TextPx(a_units); }
         inline float pxScaleClamp(float a_minUnits, float a_percent, float a_maxUnits, float a_axisSize)
         {
             return SceneHUD::GetSingleton().GetScale().Clamp(a_minUnits, a_percent, a_maxUnits, a_axisSize);

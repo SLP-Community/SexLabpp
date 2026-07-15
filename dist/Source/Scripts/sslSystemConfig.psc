@@ -454,6 +454,14 @@ float property MenuScaleMult hidden
     SetSettingFlt("fMenuScaleMult", afSet)
   EndFunction
 EndProperty
+float property MenuTextScaleMult hidden
+  float Function Get()
+    return GetSettingFlt("fMenuTextScaleMult")
+  EndFunction
+  Function Set(float afSet)
+    SetSettingFlt("fMenuTextScaleMult", afSet)
+  EndFunction
+EndProperty
 
 ; UI Visibility
 bool property HideHUD hidden

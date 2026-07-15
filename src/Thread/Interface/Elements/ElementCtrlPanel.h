@@ -18,8 +18,10 @@ namespace Thread::Interface
         static void __stdcall RenderCallback();
         void Render();
         void OnScaleChange(float a_value);
+        void OnTextScaleChange(float a_value);
 
         float _scaleAdjustment{ 1.5f };
+        float _textScaleAdjustment{ 1.0f };
         bool _elementSectionOpen{ true };
     };
 }

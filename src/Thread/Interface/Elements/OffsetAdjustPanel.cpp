@@ -194,8 +194,8 @@ namespace Thread::Interface
         const float needleW = ScaleUI::pxScale(3.0f);  // needle thickness
         const float hitExt = ScaleUI::pxScale(10.0f);  // extends clickable/draggable area above and below visible track
         const float valW = ScaleUI::pxScale(52.0f);    // width of the numeric value field
-        const float labelFt = ScaleUI::pxScale(UI::Theme::FontSize::body);
-        const float valFt = ScaleUI::pxScale(UI::Theme::FontSize::body);
+        const float labelFt = ScaleUI::pxTextScale(UI::Theme::FontSize::body);
+        const float valFt = ScaleUI::pxTextScale(UI::Theme::FontSize::body);
         const float trackW = ImGuiMCP::GetContentRegionAvail().x - rowPadH * 2.0f;
 
         ImGuiMCP::SetCursorPosX(rowPadH);
@@ -356,6 +356,8 @@ namespace Thread::Interface
         const float offset = ScaleUI::pxScale(UI::Theme::Geometry::panelTabWidth + UI::Theme::Geometry::panelTabGap);
         const float pickerW = ScaleUI::pxScale(200.0f);
         const float panelW = ScaleUI::pxScale(300.0f);
+        const float sectionH = std::max(ScaleUI::pxScale(20.0f),
+            ScaleUI::pxTextScale(UI::Theme::FontSize::sectionHeader) + ScaleUI::pxScale(UI::Theme::Spacing::xs));
 
         // ── Target picker
         if (!_panelOpen && !_items.empty()) {
@@ -368,14 +370,14 @@ namespace Thread::Interface
                 ImGuiMCP::ImGuiWindowFlags_NoCollapse | ImGuiMCP::ImGuiWindowFlags_AlwaysAutoResize;
 
             if (ImGuiMCP::Begin("##slpp_OAMPicker", nullptr, pFlags)) {
-                SetWindowFontSize(ScaleUI::pxScale(UI::Theme::FontSize::sectionHeader));
+                SetWindowFontSize(ScaleUI::pxTextScale(UI::Theme::FontSize::sectionHeader));
                 if (UI::CollapsibleSectionHeader(
-                        "PICK TARGET", "##slpp_oamTargetSection", _pickerOpen, { 0.0f, ScaleUI::pxScale(20.0f) }))
+                        "PICK TARGET", "##slpp_oamTargetSection", _pickerOpen, { 0.0f, sectionH }))
                     _pickerOpen = !_pickerOpen;
                 ImGuiMCP::Separator();
 
                 if (_pickerOpen) {
-                    SetWindowFontSize(ScaleUI::pxScale(UI::Theme::FontSize::body));
+                    SetWindowFontSize(ScaleUI::pxTextScale(UI::Theme::FontSize::body));
                     for (const auto& item : _items) {
                         ImGuiMCP::PushID(static_cast<int>(item.formId));
                         const bool isSel = _selectedId && *_selectedId == item.formId;
@@ -425,14 +427,14 @@ namespace Thread::Interface
 
             if (ImGuiMCP::Begin("##slpp_OAMPanel", nullptr, panelFlags)) {
                 // Panel title: centered and uppercase
-                SetWindowFontSize(ScaleUI::pxScale(UI::Theme::FontSize::caption));
+                SetWindowFontSize(ScaleUI::pxTextScale(UI::Theme::FontSize::caption));
                 const float titleW = ImGuiMCP::CalcTextSize(panelTitle.c_str()).x;
                 ImGuiMCP::SetCursorPosX((panelW - titleW) * 0.5f);
                 ImGuiMCP::TextColored(UI::Theme::ToVec4(UI::Theme::Color::textMuted), "%s", panelTitle.c_str());
                 ImGuiMCP::Separator();
 
                 // Stage-only toggle row
-                SetWindowFontSize(ScaleUI::pxScale(UI::Theme::FontSize::body));
+                SetWindowFontSize(ScaleUI::pxTextScale(UI::Theme::FontSize::body));
                 ImGuiMCP::SetCursorPosX(ScaleUI::pxScale(12.0f));
                 ImGuiMCP::TextColored(UI::Theme::ToVec4(UI::Theme::Color::textSecondary), "Adjust Stage Only");
                 ImGuiMCP::SameLine(panelW - ScaleUI::pxScale(12.0f) - ScaleUI::pxScale(16.0f));
