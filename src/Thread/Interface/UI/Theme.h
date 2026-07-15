@@ -134,8 +134,9 @@ namespace Thread::Interface::UI
 {
     inline void SetWindowFontSize(float a_size)
     {
-        const auto* font = ImGuiMCP::GetFont();
-        ImGuiMCP::SetWindowFontScale(font && font->FontSize > 0.0f ? a_size / font->FontSize : 1.0f);
+        ImGuiMCP::SetWindowFontScale(1.0f);
+        const float baseSize = ImGuiMCP::GetFontSize();
+        ImGuiMCP::SetWindowFontScale(baseSize > 0.0f ? a_size / baseSize : 1.0f);
     }
 
     inline bool ActionButton(const char* a_label, float a_width)
