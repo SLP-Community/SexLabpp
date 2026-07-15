@@ -141,7 +141,7 @@ namespace Thread::Interface
         // An invisible-label Selectable provides the real user interaction here.
         // The header's actual content (arrow, name, badge) is drawn on top of it afterward.
         const ImGuiMCP::ImVec2 hdrMin = ImGuiMCP::GetCursorScreenPos();
-        const float hdrH = ScaleUI::pxScale(9.0f) + hdrPadV * 2.0f;
+        const float hdrH = ScaleUI::pxScale(UI::Theme::FontSize::subsectionHeader) + hdrPadV * 2.0f;
 
         ImGuiMCP::PushStyleColor(ImGuiMCP::ImGuiCol_Header, UI::Theme::Color::cardHeader);
         ImGuiMCP::PushStyleColor(ImGuiMCP::ImGuiCol_HeaderHovered, UI::Theme::Color::cardHeader);
@@ -159,7 +159,7 @@ namespace Thread::Interface
         }
 
         ImGuiMCP::SetCursorScreenPos(hdrMin);
-        SetWindowFontSize(ScaleUI::pxScale(UI::Theme::FontSize::caption));
+        SetWindowFontSize(ScaleUI::pxScale(UI::Theme::FontSize::subsectionHeader));
 
         // Collapse arrow
         ImGuiMCP::SetCursorScreenPos(ImGuiMCP::ImVec2{ hdrMin.x + hdrPadH, hdrMin.y + hdrPadV });
@@ -356,7 +356,7 @@ namespace Thread::Interface
         }
 
         // ── THREAD section
-        SetWindowFontSize(ScaleUI::pxScale(UI::Theme::FontSize::caption));
+        SetWindowFontSize(ScaleUI::pxScale(UI::Theme::FontSize::sectionHeader));
         if (UI::CollapsibleSectionHeader(
                 "THREAD", "##slpp_tcmThreadSection", _threadSectionOpen, { 0.0f, ScaleUI::pxScale(20.0f) }))
             _threadSectionOpen = !_threadSectionOpen;
@@ -364,20 +364,25 @@ namespace Thread::Interface
 
         if (_threadSectionOpen) {
             SetWindowFontSize(ScaleUI::pxScale(UI::Theme::FontSize::body));
+            const float actionGap = ScaleUI::pxScale(UI::Theme::Spacing::sm);
+            const float actionW = (panelW - rowPadH * 2.0f - actionGap) * 0.5f;
             ImGuiMCP::SetCursorPosX(rowPadH);
-            if (ImGuiMCP::Selectable("Random Scene", false, 0, ImGuiMCP::ImVec2{ panelW - rowPadH * 2.0f, rowMinH }))
+            if (UI::ActionButton("Random Scene", actionW))
                 OnRandomScene();
-            ImGuiMCP::SetCursorPosX(rowPadH);
-            if (ImGuiMCP::Selectable("Move Scene", false, 0, ImGuiMCP::ImVec2{ panelW - rowPadH * 2.0f, rowMinH }))
+            ImGuiMCP::SameLine(0.0f, actionGap);
+            if (UI::ActionButton("Move Scene", actionW))
                 OnMoveScene();
+            ImGuiMCP::Dummy(ImGuiMCP::ImVec2{ 0.0f, ScaleUI::pxScale(UI::Theme::Spacing::sm) });
 
             ImGuiMCP::SetCursorPosX(rowPadH);
             ImGuiMCP::TextColored(UI::Theme::ToVec4(UI::Theme::Color::textMuted), "Auto Advance");
             ImGuiMCP::SameLine(panelW - rowPadH - ScaleUI::pxScale(20.0f));
             bool autoPlay = inst->GetThreadProperty<bool>("AutoAdvance");
+            UI::PushCheckboxStyle(hud.GetScale().Factor());
             if (ImGuiMCP::Checkbox("##slpp_tcmAutoplay", &autoPlay)) {
                 OnAutoPlaySet(autoPlay);
             }
+            UI::PopCheckboxStyle();
 
             ImGuiMCP::Dummy(ImGuiMCP::ImVec2{ 0.0f, rowPadV });
         }
@@ -385,7 +390,7 @@ namespace Thread::Interface
         ImGuiMCP::Separator();
 
         // ── ACTORS section
-        SetWindowFontSize(ScaleUI::pxScale(UI::Theme::FontSize::caption));
+        SetWindowFontSize(ScaleUI::pxScale(UI::Theme::FontSize::sectionHeader));
         if (UI::CollapsibleSectionHeader(
                 "ACTORS", "##slpp_tcmActorsSection", _actorsSectionOpen, { 0.0f, ScaleUI::pxScale(20.0f) }))
             _actorsSectionOpen = !_actorsSectionOpen;

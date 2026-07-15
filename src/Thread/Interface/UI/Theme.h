@@ -31,13 +31,15 @@ namespace Thread::Interface::UI::Theme
 
     struct FontSize final
     {
-        static constexpr float detail = 7.5f;
-        static constexpr float smallText = 8.0f;
-        static constexpr float metadata = 8.5f;
-        static constexpr float caption = 9.0f;
-        static constexpr float compact = 9.5f;
-        static constexpr float body = 10.0f;
-        static constexpr float overlay = 13.0f;
+        static constexpr float detail = 7.5f; // tiny enjoyment-bar interaction text.
+        static constexpr float smallText = 8.0f; // enjoyment values and Scene hover-card keys
+        static constexpr float metadata = 8.5f; // enjoyment actor names and Scene tags.
+        static constexpr float caption = 9.5f; // panel titles, tabs, and many General field labels
+        static constexpr float compact = 10.0f; // General actor-card content and Scene hover-card rows
+        static constexpr float subsectionHeader = 10.0f; // collapsible subsection headers
+        static constexpr float sectionHeader = 11.0f; // collapsible section headers
+        static constexpr float body = 10.5f; // normal buttons, lists, checkboxes, sliders, and primary text
+        static constexpr float overlay = 13.0f; // large animation-speed overlay text
     };
 
     struct Icon final
@@ -64,6 +66,7 @@ namespace Thread::Interface::UI::Theme
         static constexpr float roundingSmall = 2.0f;
         static constexpr float roundingPanel = 5.0f;
         static constexpr float borderThin = 1.0f;
+        static constexpr float checkboxPaddingY = 0.5f;
         static constexpr float panelTabWidth = 78.0f;
         static constexpr float panelTabGap = 8.0f;
     };
@@ -131,6 +134,30 @@ namespace Thread::Interface::UI
     {
         const auto* font = ImGuiMCP::GetFont();
         ImGuiMCP::SetWindowFontScale(font && font->FontSize > 0.0f ? a_size / font->FontSize : 1.0f);
+    }
+
+    inline bool ActionButton(const char* a_label, float a_width)
+    {
+        return ImGuiMCP::Button(a_label, ImGuiMCP::ImVec2{ a_width, 0.0f });
+    }
+
+    inline bool SelectableButton(const char* a_label, bool a_selected, ImGuiMCP::ImGuiSelectableFlags a_flags, ImGuiMCP::ImVec2 a_size)
+    {
+        ImGuiMCP::PushStyleVar(ImGuiMCP::ImGuiStyleVar_SelectableTextAlign, ImGuiMCP::ImVec2{ 0.0f, 0.5f });
+        const bool clicked = ImGuiMCP::Selectable(a_label, a_selected, a_flags, a_size);
+        ImGuiMCP::PopStyleVar();
+        return clicked;
+    }
+
+    inline void PushCheckboxStyle(float a_scale)
+    {
+        ImGuiMCP::PushStyleVar(ImGuiMCP::ImGuiStyleVar_FramePadding,
+            ImGuiMCP::ImVec2{ ImGuiMCP::GetStyle()->FramePadding.x, Theme::Geometry::checkboxPaddingY * a_scale });
+    }
+
+    inline void PopCheckboxStyle()
+    {
+        ImGuiMCP::PopStyleVar();
     }
 
     inline bool CollapsibleSectionHeader(const char* a_label, const char* a_id, bool a_open, ImGuiMCP::ImVec2 a_size)

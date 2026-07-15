@@ -19,6 +19,7 @@ namespace Thread::Interface
         void Render();
         void OnScaleChange(float a_value);
 
+        float _scaleAdjustment{ 1.5f };
         bool _elementSectionOpen{ true };
     };
 }

@@ -17,7 +17,12 @@ namespace Thread::Interface
         return RegisterWindow(RenderCallback);
     }
 
-    void ElementCtrlPanel::Open() { Show(); }
+    void ElementCtrlPanel::Open()
+    {
+        if (auto* inst = SceneHUD::GetSingleton().GetThreadInstance())
+            _scaleAdjustment = std::clamp(inst->GetThreadProperty<float>("VarUI_MenuScaleMult"), 0.5f, 2.5f);
+        Show();
+    }
     void ElementCtrlPanel::Close() { Hide(); }
 
     void __stdcall ElementCtrlPanel::RenderCallback()
@@ -32,6 +37,7 @@ namespace Thread::Interface
         if (!inst)
             return;
         const float value = std::clamp(a_value, 0.5f, 2.5f);
+        _scaleAdjustment = value;
         inst->SetThreadProperty<float>("VarUI_MenuScaleMult", value);
         hud.GetScale().SetMultiplier(value);
     }
@@ -66,22 +72,22 @@ namespace Thread::Interface
         SetWindowFontSize(scale.Px(UI::Theme::FontSize::body));
 
         // Scale slider only commits once the slider is released.
-        float sAdj = inst->GetThreadProperty<float>("VarUI_MenuScaleMult");
         ImGuiMCP::SetNextItemWidth(-1.0f);
-        ImGuiMCP::SliderFloat("##slpp_ecmScale", &sAdj, 0.5f, 2.5f, "Scale %.2fx");
+        ImGuiMCP::SliderFloat("##slpp_ecmScale", &_scaleAdjustment, 0.5f, 2.5f, "Scale %.2fx");
         if (ImGuiMCP::IsItemDeactivatedAfterEdit())
-            OnScaleChange(sAdj);
+            OnScaleChange(_scaleAdjustment);
 
         ImGuiMCP::Separator();
 
         // "Elements" section
-        SetWindowFontSize(scale.Px(UI::Theme::FontSize::caption));
+        SetWindowFontSize(scale.Px(UI::Theme::FontSize::sectionHeader));
         if (UI::CollapsibleSectionHeader(
-                "Toggle HUD Elements", "##slpp_ecmElementsSection", _elementSectionOpen, { 0.0f, scale.Px(22.0f) }))
+                "TOGGLE HUD ELEMENTS", "##slpp_ecmElementsSection", _elementSectionOpen, { 0.0f, scale.Px(22.0f) }))
             _elementSectionOpen = !_elementSectionOpen;
 
         if (_elementSectionOpen) {
             SetWindowFontSize(scale.Px(UI::Theme::FontSize::body));
+            UI::PushCheckboxStyle(scale.Factor());
 
             bool state_gameHud = inst->GetThreadProperty<bool>("ElementUI_GameHUD");
             bool state_AnimSpeed = inst->GetThreadProperty<bool>("ElementUI_AnimSpeed");
@@ -121,6 +127,7 @@ namespace Thread::Interface
                         hud.CloseAllPanels();
                 }
             }
+            UI::PopCheckboxStyle();
         }
 
         ImGuiMCP::SetWindowFontScale(1.0f);

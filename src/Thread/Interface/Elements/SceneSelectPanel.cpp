@@ -211,7 +211,7 @@ namespace Thread::Interface
         const ImGuiMCP::ImVec2 winPos = ImGuiMCP::GetWindowPos();
 
         // ── Section: Scenes List
-        SetWindowFontSize(ScaleUI::pxScale(UI::Theme::FontSize::caption));
+        SetWindowFontSize(ScaleUI::pxScale(UI::Theme::FontSize::sectionHeader));
         if (UI::CollapsibleSectionHeader("CHANGE ACTIVE SCENE", "##slpp_ssmSceneListSection", _sceneListOpen,
                 { 0.0f, ScaleUI::pxScale(20.0f) }))
             _sceneListOpen = !_sceneListOpen;
@@ -233,7 +233,7 @@ namespace Thread::Interface
 
                 if (e.isActive)
                     ImGuiMCP::PushStyleColor(ImGuiMCP::ImGuiCol_Text, UI::Theme::Color::accent);
-                const bool clicked = ImGuiMCP::Selectable(e.name.c_str(), e.isActive,
+                const bool clicked = UI::SelectableButton(e.name.c_str(), e.isActive,
                     ImGuiMCP::ImGuiSelectableFlags_AllowOverlap, ImGuiMCP::ImVec2{ 0.0f, rowH });
                 if (e.isActive)
                     ImGuiMCP::PopStyleColor();
@@ -253,7 +253,7 @@ namespace Thread::Interface
         ImGuiMCP::Separator();
 
         // ── Section: Search Scenes
-        SetWindowFontSize(ScaleUI::pxScale(UI::Theme::FontSize::caption));
+        SetWindowFontSize(ScaleUI::pxScale(UI::Theme::FontSize::sectionHeader));
         if (UI::CollapsibleSectionHeader("CHANGE SCENES BY TAG / NAME", "##slpp_ssmSearchSection", _searchBoxOpen,
                 { 0.0f, ScaleUI::pxScale(20.0f) }))
             _searchBoxOpen = !_searchBoxOpen;
@@ -268,12 +268,12 @@ namespace Thread::Interface
             ImGuiMCP::Dummy(ImGuiMCP::ImVec2{ 0.0f, ScaleUI::pxScale(4.0f) });
             const float btnW = (panelW - ScaleUI::pxScale(20.0f) - ScaleUI::pxScale(6.0f)) * 0.5f;
             // Cancel closes the whole panel rather than just clearing the text box.
-            if (ImGuiMCP::Button("Cancel##slpp_smmCancel", ImGuiMCP::ImVec2{ btnW, 0.0f })) {
+            if (UI::ActionButton("Cancel##slpp_smmCancel", btnW)) {
                 _searchBuffer[0] = '\0';
                 hud.CloseAllPanels();
             }
             ImGuiMCP::SameLine(0.0f, ScaleUI::pxScale(6.0f));
-            if (ImGuiMCP::Button("Search##slpp_smmConfirm", ImGuiMCP::ImVec2{ btnW, 0.0f }))
+            if (UI::ActionButton("Search##slpp_smmConfirm", btnW))
                 OnConfirmSearch();
         }
 

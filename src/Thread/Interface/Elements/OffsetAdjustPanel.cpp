@@ -358,38 +358,40 @@ namespace Thread::Interface
         const float panelW = ScaleUI::pxScale(300.0f);
 
         // ── Target picker
-        if (_pickerOpen) {
+        if (!_panelOpen && !_items.empty()) {
             ImGuiMCP::SetNextWindowPos(
                 ImGuiMCP::ImVec2{ dw - offset, dh * 0.5f }, ImGuiMCP::ImGuiCond_Always, ImGuiMCP::ImVec2{ 1.0f, 0.5f });
             ImGuiMCP::SetNextWindowSize(ImGuiMCP::ImVec2{ pickerW, 0.0f }, ImGuiMCP::ImGuiCond_Always);
-            ImGuiMCP::SetNextWindowBgAlpha(0.98f);
-
             constexpr auto pFlags =
                 ImGuiMCP::ImGuiWindowFlags_NoTitleBar | ImGuiMCP::ImGuiWindowFlags_NoResize |
                 ImGuiMCP::ImGuiWindowFlags_NoMove | ImGuiMCP::ImGuiWindowFlags_NoScrollbar |
                 ImGuiMCP::ImGuiWindowFlags_NoCollapse | ImGuiMCP::ImGuiWindowFlags_AlwaysAutoResize;
 
             if (ImGuiMCP::Begin("##slpp_OAMPicker", nullptr, pFlags)) {
-                SetWindowFontSize(ScaleUI::pxScale(UI::Theme::FontSize::caption));
-                ImGuiMCP::TextColored(UI::Theme::ToVec4(UI::Theme::Color::textSecondary), "  PICK TARGET");
+                SetWindowFontSize(ScaleUI::pxScale(UI::Theme::FontSize::sectionHeader));
+                if (UI::CollapsibleSectionHeader(
+                        "PICK TARGET", "##slpp_oamTargetSection", _pickerOpen, { 0.0f, ScaleUI::pxScale(20.0f) }))
+                    _pickerOpen = !_pickerOpen;
                 ImGuiMCP::Separator();
 
-                SetWindowFontSize(ScaleUI::pxScale(UI::Theme::FontSize::body));
-                for (const auto& item : _items) {
-                    ImGuiMCP::PushID(static_cast<int>(item.formId));
-                    const bool isSel = _selectedId && *_selectedId == item.formId;
+                if (_pickerOpen) {
+                    SetWindowFontSize(ScaleUI::pxScale(UI::Theme::FontSize::body));
+                    for (const auto& item : _items) {
+                        ImGuiMCP::PushID(static_cast<int>(item.formId));
+                        const bool isSel = _selectedId && *_selectedId == item.formId;
 
-                    std::string lbl = item.label;
-                    if (item.isScene)
-                        lbl += " [SCENE]";
+                        std::string lbl = item.label;
+                        if (item.isScene)
+                            lbl += " [SCENE]";
 
-                    if (isSel)
-                        ImGuiMCP::PushStyleColor(ImGuiMCP::ImGuiCol_Header, UI::Theme::Color::selectionFill);
-                    if (ImGuiMCP::Selectable(lbl.c_str(), isSel, 0, ImGuiMCP::ImVec2{ 0, ScaleUI::pxScale(28.0f) }))
-                        OnActorSelected(item);
-                    if (isSel)
-                        ImGuiMCP::PopStyleColor();
-                    ImGuiMCP::PopID();
+                        if (isSel)
+                            ImGuiMCP::PushStyleColor(ImGuiMCP::ImGuiCol_Header, UI::Theme::Color::selectionFill);
+                        if (UI::SelectableButton(lbl.c_str(), isSel, 0, ImGuiMCP::ImVec2{ 0, ScaleUI::pxScale(28.0f) }))
+                            OnActorSelected(item);
+                        if (isSel)
+                            ImGuiMCP::PopStyleColor();
+                        ImGuiMCP::PopID();
+                    }
                 }
                 ImGuiMCP::SetWindowFontScale(1.0f);
             }
@@ -416,8 +418,6 @@ namespace Thread::Interface
             ImGuiMCP::SetNextWindowPos(
                 ImGuiMCP::ImVec2{ dw - offset, dh * 0.5f }, ImGuiMCP::ImGuiCond_Always, ImGuiMCP::ImVec2{ 1.0f, 0.5f });
             ImGuiMCP::SetNextWindowSize(ImGuiMCP::ImVec2{ panelW, 0.0f }, ImGuiMCP::ImGuiCond_Always);
-            ImGuiMCP::SetNextWindowBgAlpha(0.98f);
-
             constexpr auto panelFlags =
                 ImGuiMCP::ImGuiWindowFlags_NoTitleBar | ImGuiMCP::ImGuiWindowFlags_NoResize |
                 ImGuiMCP::ImGuiWindowFlags_NoMove | ImGuiMCP::ImGuiWindowFlags_NoScrollbar |
@@ -437,14 +437,16 @@ namespace Thread::Interface
                 ImGuiMCP::TextColored(UI::Theme::ToVec4(UI::Theme::Color::textSecondary), "Adjust Stage Only");
                 ImGuiMCP::SameLine(panelW - ScaleUI::pxScale(12.0f) - ScaleUI::pxScale(16.0f));
                 bool stageOnly = _adjustStageOnly;
+                UI::PushCheckboxStyle(hud.GetScale().Factor());
                 if (ImGuiMCP::Checkbox("##slpp_oamStageOnly", &stageOnly))
                     OnSetAdjustStageOnly(stageOnly);
+                UI::PopCheckboxStyle();
 
                 // Reset row
                 ImGuiMCP::SetCursorPosX(ScaleUI::pxScale(12.0f));
                 const ImGuiMCP::ImVec2 resetMin = ImGuiMCP::GetCursorScreenPos();
                 const ImGuiMCP::ImVec2 resetSize{ panelW - ScaleUI::pxScale(24.0f), ScaleUI::pxScale(28.0f) };
-                const bool resetOffsets = ImGuiMCP::Selectable("Reset Offsets", false, 0, resetSize);
+                const bool resetOffsets = UI::SelectableButton("Reset Offsets", false, 0, resetSize);
                 const ImGuiMCP::ImVec2 cursorAfterReset = ImGuiMCP::GetCursorPos();
                 SKSEMenuFramework::PushFont(UI::Theme::Icon::solidFont);
                 const ImGuiMCP::ImVec2 resetIconSize = ImGuiMCP::CalcTextSize(UI::Theme::Icon::rotateLeft);
