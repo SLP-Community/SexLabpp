@@ -2008,48 +2008,47 @@ Function ApplyCumFX(Actor SourceRef)
 	int i = 0
 	While (i < _Positions.Length)
 		Actor TargetRef = _Positions[i]
-		If (TargetRef == SourceRef)
-			return
-		EndIf
-		If (!TargetRef.Is3DLoaded() || !TargetRef.GetParentCell() || !TargetRef.GetParentCell().IsAttached())
-			return
-		EndIf
-		bool[] interFlags = ListDetectedInteractionsInternal(SourceRef, TargetRef)
-		;variable names are from SourceRef's (male/futa) perspective
-		;bool pHandJob_ = interFlags[pHandJob]
-		;bool pFootJob_ = interFlags[pFootJob]
-		;bool pBoobJob_ = interFlags[pBoobJob]
-		;bool aFacial_ = interFlags[pBoobJob]
-		;bool aSkullfuck_ = interFlags[pBoobJob]
-		bool pOral_ = interFlags[pOral]
-		bool pDeepthroat_ = interFlags[pDeepthroat]
-		bool pLickingShaft_ = interFlags[pLickingShaft]
-		bool aVaginal_ = interFlags[aVaginal]
-		bool aGrinding_ = interFlags[aGrinding]
-		bool aAnal_ = interFlags[aAnal]
-		bool any_oral = pOral_ || pDeepthroat_ || pLickingShaft_
-		; Comeback: reasses need for fallback
-		If (!any_oral && !aVaginal_ && !aGrinding_ && !aAnal_)
-			any_oral = IsOral()
-			aVaginal_ = IsVaginal()
-			aAnal_ = IsAnal()
-		EndIf
-		Log("ApplyCumFX(): Source [" + SexLabUtil.ActorName(SourceRef) + "] Target [" + SexLabUtil.ActorName(TargetRef) + "] CumFX_Types [O: " + any_oral + ", V: " + (aVaginal_ || aGrinding_) + ", A: " + aAnal_ + "]")
-		int aiType = -2
-		If (aVaginal_ || aGrinding_)
-			aiType = ActorLib.FX_VAGINAL
-		ElseIf (aAnal_)
-			aiType = ActorLib.FX_ANAL
-		ElseIf (any_oral)
-			aiType = ActorLib.FX_ORAL
-		EndIf
-		If (aiType != -2)
-			ActorLib.AddCumFx(TargetRef, aiType)
-			Int handle = ModEvent.Create("SexLabApplyCumFX")
-			ModEvent.PushForm(handle, TargetRef)
-			ModEvent.PushForm(handle, SourceRef)
-			ModEvent.PushInt(handle, aiType)
-			ModEvent.Send(handle)
+		; Skip the source's own slot and any not-yet-loaded target, but keep scanning the
+		; rest of the positions - a bare "return" here would abort the whole loop and deny
+		; cum FX (and the SexLabApplyCumFX event) to every position after this one.
+		If (TargetRef != SourceRef && TargetRef.Is3DLoaded() && TargetRef.GetParentCell() && TargetRef.GetParentCell().IsAttached())
+			bool[] interFlags = ListDetectedInteractionsInternal(SourceRef, TargetRef)
+			;variable names are from SourceRef's (male/futa) perspective
+			;bool pHandJob_ = interFlags[pHandJob]
+			;bool pFootJob_ = interFlags[pFootJob]
+			;bool pBoobJob_ = interFlags[pBoobJob]
+			;bool aFacial_ = interFlags[pBoobJob]
+			;bool aSkullfuck_ = interFlags[pBoobJob]
+			bool pOral_ = interFlags[pOral]
+			bool pDeepthroat_ = interFlags[pDeepthroat]
+			bool pLickingShaft_ = interFlags[pLickingShaft]
+			bool aVaginal_ = interFlags[aVaginal]
+			bool aGrinding_ = interFlags[aGrinding]
+			bool aAnal_ = interFlags[aAnal]
+			bool any_oral = pOral_ || pDeepthroat_ || pLickingShaft_
+			; Comeback: reasses need for fallback
+			If (!any_oral && !aVaginal_ && !aGrinding_ && !aAnal_)
+				any_oral = IsOral()
+				aVaginal_ = IsVaginal()
+				aAnal_ = IsAnal()
+			EndIf
+			Log("ApplyCumFX(): Source [" + SexLabUtil.ActorName(SourceRef) + "] Target [" + SexLabUtil.ActorName(TargetRef) + "] CumFX_Types [O: " + any_oral + ", V: " + (aVaginal_ || aGrinding_) + ", A: " + aAnal_ + "]")
+			int aiType = -2
+			If (aVaginal_ || aGrinding_)
+				aiType = ActorLib.FX_VAGINAL
+			ElseIf (aAnal_)
+				aiType = ActorLib.FX_ANAL
+			ElseIf (any_oral)
+				aiType = ActorLib.FX_ORAL
+			EndIf
+			If (aiType != -2)
+				ActorLib.AddCumFx(TargetRef, aiType)
+				Int handle = ModEvent.Create("SexLabApplyCumFX")
+				ModEvent.PushForm(handle, TargetRef)
+				ModEvent.PushForm(handle, SourceRef)
+				ModEvent.PushInt(handle, aiType)
+				ModEvent.Send(handle)
+			EndIf
 		EndIf
 		i += 1
 	EndWhile
