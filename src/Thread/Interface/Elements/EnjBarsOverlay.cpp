@@ -299,12 +299,6 @@ namespace Thread::Interface
             const ImGuiMCP::ImVec2 frameMin = ImGuiMCP::GetCursorScreenPos();
             const ImGuiMCP::ImVec2 frameMax{ frameMin.x + zoneW, frameMin.y + frameH };
 
-            // drop shadow
-            ImGuiMCP::ImDrawListManager::AddRectFilled(dl,
-                ImGuiMCP::ImVec2{ frameMin.x - 2, frameMin.y + 2 },
-                ImGuiMCP::ImVec2{ frameMax.x + 2, frameMax.y + 6 },
-                UI::Theme::Enjoyment::frameShadow, 2.0f, 0);
-
             // track
             ImGuiMCP::ImDrawListManager::AddRectFilled(dl, frameMin, frameMax, UI::Theme::Enjoyment::frameSurface, 0.0f, 0);
             ImGuiMCP::ImDrawListManager::AddRect(dl, frameMin, frameMax, UI::Theme::Enjoyment::frameBorder, 0.0f, 0, 1.0f);

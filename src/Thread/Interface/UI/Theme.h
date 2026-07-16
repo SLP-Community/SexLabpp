@@ -31,22 +31,22 @@ namespace Thread::Interface::UI::Theme
 
     struct FontSize final
     {
-        static constexpr float detail = 7.5f; // tiny enjoyment-bar interaction text.
-        static constexpr float smallText = 8.0f; // enjoyment values and Scene hover-card keys
-        static constexpr float metadata = 8.5f; // enjoyment actor names and Scene tags.
-        static constexpr float caption = 9.5f; // panel titles, tabs, and many General field labels
-        static constexpr float compact = 10.0f; // General actor-card content and Scene hover-card rows
-        static constexpr float subsectionHeader = 10.0f; // collapsible subsection headers
-        static constexpr float sectionHeader = 11.0f; // collapsible section headers
-        static constexpr float body = 10.5f; // normal buttons, lists, checkboxes, sliders, and primary text
-        static constexpr float overlay = 9.0f; // large animation-speed overlay text
+        static constexpr float detail = 7.5f;             // tiny enjoyment-bar interaction text.
+        static constexpr float smallText = 8.0f;          // enjoyment values and Scene hover-card keys
+        static constexpr float metadata = 8.5f;           // enjoyment actor names and Scene tags.
+        static constexpr float caption = 9.5f;            // panel titles, tabs, and many General field labels
+        static constexpr float compact = 10.0f;           // General actor-card content and Scene hover-card rows
+        static constexpr float subsectionHeader = 10.0f;  // collapsible subsection headers
+        static constexpr float sectionHeader = 11.0f;     // collapsible section headers
+        static constexpr float body = 10.5f;              // normal buttons, lists, checkboxes, sliders, and primary text
+        static constexpr float overlay = 9.0f;            // large animation-speed overlay text
     };
 
     struct Icon final
     {
         static constexpr const char* solidFont = "fa-solid-900";
-        static constexpr const char* anglesLeft = "\xEF\x84\x80";     // U+F100
-        static constexpr const char* anglesRight = "\xEF\x84\x81";    // U+F101
+        static constexpr const char* anglesLeft = "\xEF\x84\x80";    // U+F100
+        static constexpr const char* anglesRight = "\xEF\x84\x81";   // U+F101
         static constexpr const char* chevronRight = "\xEF\x81\x94";  // U+F054
         static constexpr const char* chevronUp = "\xEF\x81\xB7";     // U+F077
         static constexpr const char* chevronDown = "\xEF\x81\xB8";   // U+F078
@@ -89,7 +89,6 @@ namespace Thread::Interface::UI::Theme
         static constexpr ImGuiMCP::ImU32 needleActive = IM_COL32(144, 248, 120, 255);
         static constexpr ImGuiMCP::ImU32 hit = IM_COL32(96, 204, 80, 255);
         static constexpr ImGuiMCP::ImU32 miss = IM_COL32(224, 96, 80, 255);
-        static constexpr ImGuiMCP::ImU32 frameShadow = IM_COL32(0, 0, 0, 150);
         static constexpr ImGuiMCP::ImU32 frameSurface = IM_COL32(16, 16, 18, 255);
         static constexpr ImGuiMCP::ImU32 frameBorder = IM_COL32(40, 40, 48, 255);
         static constexpr ImGuiMCP::ImU32 frameRim = IM_COL32(255, 255, 255, 20);
