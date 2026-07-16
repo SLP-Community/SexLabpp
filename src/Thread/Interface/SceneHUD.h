@@ -47,6 +47,7 @@ namespace Thread::Interface
         [[nodiscard]] bool IsFocused() const { return _focused; }
         [[nodiscard]] bool IsPanelOpen(PanelId a_panel) const { return _activePanel == a_panel; }
         [[nodiscard]] RE::TESQuest* GetLinkedThread() const { return _linkedThread; }
+        [[nodiscard]] SceneHUD* GetForThread(RE::TESQuest* a_quest) { return a_quest && _linkedThread == a_quest ? this : nullptr; }
         [[nodiscard]] Instance* GetThreadInstance() const { return _linkedThread ? Instance::GetInstance(_linkedThread) : nullptr; }
         [[nodiscard]] const Script::ObjectPtr& GetThreadScript() const { return _threadScript; }
         [[nodiscard]] const Script::CallbackPtr& GetCallback() const { return _callback; }

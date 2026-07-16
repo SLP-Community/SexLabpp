@@ -136,7 +136,8 @@ namespace Thread
         activeScene->furnitureOffset.Apply(baseCoordinates);
         activeAssignment = assignments.begin();
 
-        Interface::SceneHUD::GetSingleton().RebuildSceneList();
+        if (auto* sceneHUD = Interface::SceneHUD::GetSingleton().GetForThread(linkedQst))
+            sceneHUD->RebuildSceneList();
         return true;
     }
 
@@ -488,42 +489,51 @@ namespace Thread
 
     void Instance::InitSceneHUDImpl()
     {
-        Interface::SceneHUD::GetSingleton().Init(linkedQst);
+        auto& sceneHUD = Interface::SceneHUD::GetSingleton();
+        if (!sceneHUD.IsActive() || sceneHUD.GetForThread(linkedQst))
+            sceneHUD.Init(linkedQst);
     }
 
     void Instance::DestroySceneHUDImpl()
     {
-        Interface::SceneHUD::GetSingleton().Destroy();
+        if (auto* sceneHUD = Interface::SceneHUD::GetSingleton().GetForThread(linkedQst))
+            sceneHUD->Destroy();
     }
 
     void Instance::ToggleFocusSceneHUDImpl()
     {
-        Interface::SceneHUD::GetSingleton().ToggleFocus();
+        if (auto* sceneHUD = Interface::SceneHUD::GetSingleton().GetForThread(linkedQst))
+            sceneHUD->ToggleFocus();
     }
 
     void Instance::UpdateMenuTimerDisplay(float a_duration, float a_left)
     {
-        Interface::SceneHUD::GetSingleton().UpdateStageTimer(a_duration, a_left);
+        if (auto* sceneHUD = Interface::SceneHUD::GetSingleton().GetForThread(linkedQst))
+            sceneHUD->UpdateStageTimer(a_duration, a_left);
     }
 
     void Instance::EnjBarsChangeHighlightedPartner(RE::Actor* a_partner)
     {
-        Interface::SceneHUD::GetSingleton().UpdateHighlightedPartner(a_partner);
+        if (auto* sceneHUD = Interface::SceneHUD::GetSingleton().GetForThread(linkedQst))
+            sceneHUD->UpdateHighlightedPartner(a_partner);
     }
 
     void Instance::EnjBarsUpdateSlider(RE::Actor* a_position, float a_enjoyment, RE::BSFixedString a_interactions)
     {
-        Interface::SceneHUD::GetSingleton().UpdateEnjoyment(a_position, a_enjoyment, a_interactions);
+        if (auto* sceneHUD = Interface::SceneHUD::GetSingleton().GetForThread(linkedQst))
+            sceneHUD->UpdateEnjoyment(a_position, a_enjoyment, a_interactions);
     }
 
     void Instance::RegisterRaiseEnjAttempt(RE::Actor* a_position, float a_nextTimeCycle)
     {
-        Interface::SceneHUD::GetSingleton().RegisterRaiseEnjoymentAttempt(a_position, a_nextTimeCycle);
+        if (auto* sceneHUD = Interface::SceneHUD::GetSingleton().GetForThread(linkedQst))
+            sceneHUD->RegisterRaiseEnjoymentAttempt(a_position, a_nextTimeCycle);
     }
 
     void Instance::UpdateOffsetSlidersDisplay()
     {
-        Interface::SceneHUD::GetSingleton().OnStageChanged();
+        if (auto* sceneHUD = Interface::SceneHUD::GetSingleton().GetForThread(linkedQst))
+            sceneHUD->OnStageChanged();
     }
 
 }  // namespace Thread
