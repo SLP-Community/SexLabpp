@@ -6,67 +6,45 @@ namespace Thread::Interface
 {
     using UI::SetWindowFontSize;
 
-    ElementCtrlPanel& ElementCtrlPanel::GetSingleton()
+    void ElementCtrlPanel::Open(SceneHUD& a_hud)
     {
-        static ElementCtrlPanel singleton;
-        return singleton;
-    }
-
-    bool ElementCtrlPanel::Register()
-    {
-        return RegisterWindow(RenderCallback);
-    }
-
-    void ElementCtrlPanel::Open()
-    {
-        if (auto* inst = SceneHUD::GetSingleton().GetThreadInstance()) {
+        if (auto* inst = a_hud.GetThreadInstance()) {
             _scaleAdjustment = std::clamp(inst->GetThreadProperty<float>("VarUI_MenuScaleMult"), 0.5f, 2.5f);
             const float textScale = inst->GetThreadProperty<float>("VarUI_TextScaleMult");
             _textScaleAdjustment = textScale > 0.0f ? std::clamp(textScale, 0.75f, 2.0f) : 1.0f;
         }
-        Show();
+        _elementSectionOpen = true;
     }
-    void ElementCtrlPanel::Close() { Hide(); }
+    void ElementCtrlPanel::Close() {}
 
-    void __stdcall ElementCtrlPanel::RenderCallback()
+    void ElementCtrlPanel::OnScaleChange(SceneHUD& a_hud, float a_value)
     {
-        GetSingleton().Render();
-    }
-
-    void ElementCtrlPanel::OnScaleChange(float a_value)
-    {
-        auto& hud = SceneHUD::GetSingleton();
-        auto* inst = hud.GetThreadInstance();
+        auto* inst = a_hud.GetThreadInstance();
         if (!inst)
             return;
         const float value = std::clamp(a_value, 0.5f, 2.5f);
         _scaleAdjustment = value;
         inst->SetThreadProperty<float>("VarUI_MenuScaleMult", value);
-        hud.GetScale().SetMultiplier(value);
+        a_hud.GetScale().SetMultiplier(value);
     }
 
-    void ElementCtrlPanel::OnTextScaleChange(float a_value)
+    void ElementCtrlPanel::OnTextScaleChange(SceneHUD& a_hud, float a_value)
     {
-        auto& hud = SceneHUD::GetSingleton();
-        auto* inst = hud.GetThreadInstance();
+        auto* inst = a_hud.GetThreadInstance();
         if (!inst)
             return;
         const float value = std::clamp(a_value, 0.75f, 2.0f);
         _textScaleAdjustment = value;
         inst->SetThreadProperty<float>("VarUI_TextScaleMult", value);
-        hud.GetScale().SetTextMultiplier(value);
+        a_hud.GetScale().SetTextMultiplier(value);
     }
 
-    void ElementCtrlPanel::Render()
+    void ElementCtrlPanel::Render(SceneHUD& a_hud)
     {
-        auto& hud = SceneHUD::GetSingleton();
-        if (!IsVisible() || !hud.ShouldRender() || !hud.IsPanelOpen(PanelId::kElementControl) || !hud.IsFocused())
-            return;
-
-        auto* inst = hud.GetThreadInstance();
+        auto* inst = a_hud.GetThreadInstance();
         if (!inst)
             return;
-        auto& scale = hud.GetScale();
+        auto& scale = a_hud.GetScale();
 
         auto* io = ImGuiMCP::GetIO();
         const float panelOffset = scale.Px(UI::Theme::Geometry::panelTabWidth + UI::Theme::Geometry::panelTabGap);
@@ -89,12 +67,12 @@ namespace Thread::Interface
         ImGuiMCP::SetNextItemWidth(-1.0f);
         ImGuiMCP::SliderFloat("##slpp_ecmScale", &_scaleAdjustment, 0.5f, 2.5f, "UI Scale %.2fx");
         if (ImGuiMCP::IsItemDeactivatedAfterEdit())
-            OnScaleChange(_scaleAdjustment);
+            OnScaleChange(a_hud, _scaleAdjustment);
 
         ImGuiMCP::SetNextItemWidth(-1.0f);
         ImGuiMCP::SliderFloat("##slpp_ecmTextScale", &_textScaleAdjustment, 0.75f, 2.0f, "Text Scale %.2fx");
         if (ImGuiMCP::IsItemDeactivatedAfterEdit())
-            OnTextScaleChange(_textScaleAdjustment);
+            OnTextScaleChange(a_hud, _textScaleAdjustment);
 
         ImGuiMCP::Separator();
 
@@ -120,11 +98,9 @@ namespace Thread::Interface
 
             } else if (ImGuiMCP::Checkbox("Anim Speed Overlay", &state_AnimSpeed)) {
                 inst->SetThreadProperty<bool>("ElementUI_AnimSpeed", state_AnimSpeed);
-                hud.OnOverlayToggle(HudElement::kAnimationSpeed, state_AnimSpeed);
 
             } else if (ImGuiMCP::Checkbox("Enj Bars Overlay", &state_EnjBars)) {
                 inst->SetThreadProperty<bool>("ElementUI_EnjBars", state_EnjBars);
-                hud.OnOverlayToggle(HudElement::kEnjoymentBars, state_EnjBars);
             }
 
             ImGuiMCP::Dummy({ 0.0f, scale.Px(UI::Theme::Spacing::xs) });
@@ -144,8 +120,8 @@ namespace Thread::Interface
                 bool state = inst->GetThreadProperty<bool>(row.property);
                 if (ImGuiMCP::Checkbox(row.label, &state)) {
                     inst->SetThreadProperty<bool>(row.property, state);
-                    if (!state && hud.IsPanelOpen(row.panel))
-                        hud.CloseAllPanels();
+                    if (!state && a_hud.IsPanelOpen(row.panel))
+                        a_hud.CloseAllPanels();
                 }
             }
             UI::PopCheckboxStyle();

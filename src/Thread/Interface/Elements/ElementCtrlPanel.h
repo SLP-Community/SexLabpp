@@ -1,24 +1,18 @@
 #pragma once
-#include "Thread/Interface/UI/Window.h"
-
 namespace Thread::Interface
 {
-    class ElementCtrlPanel final : public UI::WindowComponent, public UI::Panel
+    class SceneHUD;
+
+    class ElementCtrlPanel final
     {
       public:
-        static ElementCtrlPanel& GetSingleton();
-
-        bool Register();
-        void Open() override;
-        void Close() override;
+        void Open(SceneHUD& a_hud);
+        void Close();
+        void Render(SceneHUD& a_hud);
 
       private:
-        ElementCtrlPanel() = default;
-
-        static void __stdcall RenderCallback();
-        void Render();
-        void OnScaleChange(float a_value);
-        void OnTextScaleChange(float a_value);
+        void OnScaleChange(SceneHUD& a_hud, float a_value);
+        void OnTextScaleChange(SceneHUD& a_hud, float a_value);
 
         float _scaleAdjustment{ 1.5f };
         float _textScaleAdjustment{ 1.0f };

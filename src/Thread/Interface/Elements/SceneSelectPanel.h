@@ -1,22 +1,18 @@
 #pragma once
-#include "Thread/Interface/UI/Window.h"
-
 namespace Thread::Interface
 {
-    class SceneSelectPanel final : public UI::WindowComponent, public UI::Panel
+    class SceneHUD;
+
+    class SceneSelectPanel final
     {
       public:
-        static SceneSelectPanel& GetSingleton();
-
-        bool Register();
-        void Open() override;
-        void Close() override;
-        void RebuildEntries();
+        void Open(SceneHUD& a_hud);
+        void Close();
+        void Render(SceneHUD& a_hud);
+        void RebuildEntries(SceneHUD& a_hud);
         void RebuildFilter();
 
       private:
-        SceneSelectPanel() = default;
-
         struct SceneEntry
         {
             std::string id;
@@ -29,10 +25,8 @@ namespace Thread::Interface
             char annotBuf[256]{};
         };
 
-        static void __stdcall RenderCallback();
-        void Render();
-        void OnSceneSelected(const std::string& a_sceneId);
-        void OnConfirmSearch();
+        void OnSceneSelected(SceneHUD& a_hud, const std::string& a_sceneId);
+        void OnConfirmSearch(SceneHUD& a_hud);
         void OnAnnotationSave(SceneEntry& a_entry);
 
         static bool MatchesFilter(const SceneEntry& a_entry, std::string_view a_filter);

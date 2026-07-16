@@ -1,19 +1,15 @@
 #pragma once
 
-#include "SKSEMenuFramework.h"
 #include "Thread/Interface/UI/Scale.h"
 #include "Thread/Interface/UI/Theme.h"
+#include "Thread/Interface/UI/Window.h"
 #include "Thread/Thread.h"
 #include "Util/Script.h"
 
+#include <memory>
+
 namespace Thread::Interface
 {
-    enum class HudElement : std::uint8_t
-    {
-        kAnimationSpeed,
-        kEnjoymentBars,
-    };
-
     enum class PanelId : std::uint8_t
     {
         kNone,
@@ -38,7 +34,6 @@ namespace Thread::Interface
         void ToggleFocus() { SetFocus(!_focused); }
         void OpenPanel(PanelId a_panel);
         void CloseAllPanels();
-        void OnOverlayToggle(HudElement a_element, bool a_visible);
 
         void UpdateStageTimer(float a_duration, float a_timer);
         void UpdateHighlightedPartner(RE::Actor* a_partner);
@@ -58,25 +53,22 @@ namespace Thread::Interface
         [[nodiscard]] UI::Scale& GetScale() { return _scale; }
 
       private:
+        struct Elements;
+
         SceneHUD() = default;
+        ~SceneHUD();
+
+        static void __stdcall RenderCallback();
+        void Render();
 
         RE::TESQuest* _linkedThread{};
         Script::ObjectPtr _threadScript{};
         Script::CallbackPtr _callback{};
         UI::Scale _scale;
+        UI::FrameworkWindow _window;
+        std::unique_ptr<Elements> _elements;
         PanelId _activePanel{ PanelId::kNone };
         bool _registered{ false };
         bool _focused{ false };
     };
-
-    namespace ScaleUI
-    {
-        inline float pxScale(float a_units) { return SceneHUD::GetSingleton().GetScale().Px(a_units); }
-        inline float pxTextScale(float a_units) { return SceneHUD::GetSingleton().GetScale().TextPx(a_units); }
-        inline float pxScaleClamp(float a_minUnits, float a_percent, float a_maxUnits, float a_axisSize)
-        {
-            return SceneHUD::GetSingleton().GetScale().Clamp(a_minUnits, a_percent, a_maxUnits, a_axisSize);
-        }
-    }
-
 }

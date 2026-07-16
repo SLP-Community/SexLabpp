@@ -4,25 +4,9 @@ namespace Thread::Interface
 {
     using UI::SetWindowFontSize;
 
-    OffsetAdjustPanel& OffsetAdjustPanel::GetSingleton()
+    void OffsetAdjustPanel::Open(SceneHUD& a_hud)
     {
-        static OffsetAdjustPanel singleton;
-        return singleton;
-    }
-
-    bool OffsetAdjustPanel::Register()
-    {
-        return RegisterWindow(RenderCallback);
-    }
-
-    void __stdcall OffsetAdjustPanel::RenderCallback()
-    {
-        GetSingleton().Render();
-    }
-
-    void OffsetAdjustPanel::Open()
-    {
-        auto* inst = SceneHUD::GetSingleton().GetThreadInstance();
+        auto* inst = a_hud.GetThreadInstance();
         if (!inst)
             return;
         _axes.clear();
@@ -36,11 +20,10 @@ namespace Thread::Interface
         _draggingAxis = -1;
         _draggingId = 0;
 
-        RefreshSlots();
-        Show();
+        RefreshSlots(a_hud);
 
         if (_items.size() == 1) {
-            OnActorSelected(_items.front());
+            OnActorSelected(a_hud, _items.front());
         } else if (!_items.empty()) {
             _pickerOpen = true;
         }
@@ -48,7 +31,6 @@ namespace Thread::Interface
 
     void OffsetAdjustPanel::Close()
     {
-        Hide();
         _axes.clear();
         _items.clear();
         _selectedId.reset();
@@ -58,10 +40,10 @@ namespace Thread::Interface
         _draggingId = 0;
     }
 
-    void OffsetAdjustPanel::RefreshSlots()
+    void OffsetAdjustPanel::RefreshSlots(SceneHUD& a_hud)
     {
         _items.clear();
-        auto* inst = SceneHUD::GetSingleton().GetThreadInstance();
+        auto* inst = a_hud.GetThreadInstance();
         if (!inst)
             return;
 
@@ -101,9 +83,9 @@ namespace Thread::Interface
 
     // ── RefreshValues ────────────────────────────────────────────────────────
 
-    void OffsetAdjustPanel::RefreshValues(uint32_t actorId)
+    void OffsetAdjustPanel::RefreshValues(SceneHUD& a_hud, uint32_t actorId)
     {
-        auto* inst = SceneHUD::GetSingleton().GetThreadInstance();
+        auto* inst = a_hud.GetThreadInstance();
         if (!inst)
             return;
         auto* sc = inst->GetActiveScene();
@@ -139,63 +121,63 @@ namespace Thread::Interface
         }
     }
 
-    void OffsetAdjustPanel::OnStageChanged()
+    void OffsetAdjustPanel::OnStageChanged(SceneHUD& a_hud)
     {
-        if (!IsVisible() || !_selectedId)
+        if (!_selectedId)
             return;
-        RefreshValues(*_selectedId);
+        RefreshValues(a_hud, *_selectedId);
     }
 
     // ── Handlers ──────────────────────────────────────────────────────────────
 
-    void OffsetAdjustPanel::OnActorSelected(const ActorItem& item)
+    void OffsetAdjustPanel::OnActorSelected(SceneHUD& a_hud, const ActorItem& item)
     {
         _selectedId = item.formId;
         _pickerOpen = false;
         _panelOpen = true;
         if (!_axes.contains(item.formId) || !_axes[item.formId][0].hasBaseline)
-            RefreshValues(item.formId);
+            RefreshValues(a_hud, item.formId);
     }
 
-    void OffsetAdjustPanel::OnSetOffset(Registry::CoordinateType axis, uint32_t actorId, float value)
+    void OffsetAdjustPanel::OnSetOffset(SceneHUD& a_hud, Registry::CoordinateType axis, uint32_t actorId, float value)
     {
-        auto* inst = SceneHUD::GetSingleton().GetThreadInstance();
+        auto* inst = a_hud.GetThreadInstance();
         if (inst)
             inst->OffsetAdjustSet(actorId, axis, value);
     }
 
-    void OffsetAdjustPanel::OnResetOffsets()
+    void OffsetAdjustPanel::OnResetOffsets(SceneHUD& a_hud)
     {
-        auto* inst = SceneHUD::GetSingleton().GetThreadInstance();
+        auto* inst = a_hud.GetThreadInstance();
         if (!inst || !_selectedId)
             return;
         inst->OffsetAdjustReset();
         _axes.erase(*_selectedId);
-        RefreshValues(*_selectedId);
+        RefreshValues(a_hud, *_selectedId);
     }
 
-    void OffsetAdjustPanel::OnSetAdjustStageOnly(bool state)
+    void OffsetAdjustPanel::OnSetAdjustStageOnly(SceneHUD& a_hud, bool state)
     {
         _adjustStageOnly = state;
-        auto* inst = SceneHUD::GetSingleton().GetThreadInstance();
+        auto* inst = a_hud.GetThreadInstance();
         if (inst)
             inst->SetThreadProperty<bool>("VarUI_AdjustStage", state);
     }
 
     // ── The offset track widget ───────────────────────────────────────────────
-    bool OffsetAdjustPanel::OffsetTrack(const char* axisLabel, AxisState& state, float range, bool& draggingOut)
+    bool OffsetAdjustPanel::OffsetTrack(UI::Scale& a_scale, const char* axisLabel, AxisState& state, float range, bool& draggingOut)
     {
         bool changed = false;
         draggingOut = false;
 
-        const float rowPadV = ScaleUI::pxScale(4.0f);
-        const float rowPadH = ScaleUI::pxScale(12.0f);
-        const float trackH = ScaleUI::pxScale(4.0f);   // track thickness
-        const float needleW = ScaleUI::pxScale(3.0f);  // needle thickness
-        const float hitExt = ScaleUI::pxScale(10.0f);  // extends clickable/draggable area above and below visible track
-        const float valW = ScaleUI::pxScale(52.0f);    // width of the numeric value field
-        const float labelFt = ScaleUI::pxTextScale(UI::Theme::FontSize::body);
-        const float valFt = ScaleUI::pxTextScale(UI::Theme::FontSize::body);
+        const float rowPadV = a_scale.Px(4.0f);
+        const float rowPadH = a_scale.Px(12.0f);
+        const float trackH = a_scale.Px(4.0f);   // track thickness
+        const float needleW = a_scale.Px(3.0f);  // needle thickness
+        const float hitExt = a_scale.Px(10.0f);  // extends clickable/draggable area above and below visible track
+        const float valW = a_scale.Px(52.0f);    // width of the numeric value field
+        const float labelFt = a_scale.TextPx(UI::Theme::FontSize::body);
+        const float valFt = a_scale.TextPx(UI::Theme::FontSize::body);
         const float trackW = ImGuiMCP::GetContentRegionAvail().x - rowPadH * 2.0f;
 
         ImGuiMCP::SetCursorPosX(rowPadH);
@@ -300,13 +282,13 @@ namespace Thread::Interface
         auto* dl = ImGuiMCP::GetWindowDrawList();
 
         // Track background
-        ImGuiMCP::ImDrawListManager::AddRectFilled(dl, trackMin, trackMax, UI::Theme::Offset::track, ScaleUI::pxScale(2.0f), 0);
-        ImGuiMCP::ImDrawListManager::AddRect(dl, trackMin, trackMax, UI::Theme::Offset::trackBorder, ScaleUI::pxScale(2.0f), 0, 1.0f);
+        ImGuiMCP::ImDrawListManager::AddRectFilled(dl, trackMin, trackMax, UI::Theme::Offset::track, a_scale.Px(2.0f), 0);
+        ImGuiMCP::ImDrawListManager::AddRect(dl, trackMin, trackMax, UI::Theme::Offset::trackBorder, a_scale.Px(2.0f), 0, 1.0f);
 
         // Center tick
         const float cx = trackMin.x + trackW * 0.5f;
         ImGuiMCP::ImDrawListManager::AddLine(dl,
-            ImGuiMCP::ImVec2{ cx, trackMin.y - ScaleUI::pxScale(2.0f) }, ImGuiMCP::ImVec2{ cx, trackMax.y + ScaleUI::pxScale(2.0f) },
+            ImGuiMCP::ImVec2{ cx, trackMin.y - a_scale.Px(2.0f) }, ImGuiMCP::ImVec2{ cx, trackMax.y + a_scale.Px(2.0f) },
             UI::Theme::Offset::centerTick, 1.0f);
 
         // Fill grows from the center out toward the needle, in either direction.
@@ -321,15 +303,15 @@ namespace Thread::Interface
         }
 
         // Needle extends slightly above and below the track so it stays visible
-        const float nTop = trackMin.y - ScaleUI::pxScale(5.0f);
-        const float nBot = trackMax.y + ScaleUI::pxScale(5.0f);
+        const float nTop = trackMin.y - a_scale.Px(5.0f);
+        const float nBot = trackMax.y + a_scale.Px(5.0f);
         const ImGuiMCP::ImU32 nCol = active ? UI::Theme::Offset::needleActive : UI::Theme::Offset::needle;
         ImGuiMCP::ImDrawListManager::AddRectFilled(dl,
             ImGuiMCP::ImVec2{ needleX - needleW * 0.5f, nTop },
             ImGuiMCP::ImVec2{ needleX + needleW * 0.5f, nBot },
-            nCol, ScaleUI::pxScale(1.5f), 0);
+            nCol, a_scale.Px(1.5f), 0);
 
-        ImGuiMCP::SetCursorScreenPos(ImGuiMCP::ImVec2{ trackMin.x, trackMax.y + ScaleUI::pxScale(4.0f) });
+        ImGuiMCP::SetCursorScreenPos(ImGuiMCP::ImVec2{ trackMin.x, trackMax.y + a_scale.Px(4.0f) });
 
         // Separator
         ImGuiMCP::Dummy(ImGuiMCP::ImVec2{ trackW, rowPadV });
@@ -343,21 +325,19 @@ namespace Thread::Interface
 
     // ── Render ────────────────────────────────────────────────────────────────
 
-    void OffsetAdjustPanel::Render()
+    void OffsetAdjustPanel::Render(SceneHUD& a_hud)
     {
-        auto& hud = SceneHUD::GetSingleton();
-        if (!IsVisible() || !hud.ShouldRender() || !hud.IsPanelOpen(PanelId::kOffsetAdjust) || !hud.IsFocused())
-            return;
+        auto& scale = a_hud.GetScale();
 
         auto* io = ImGuiMCP::GetIO();
         const float dw = io->DisplaySize.x;
         const float dh = io->DisplaySize.y;
 
-        const float offset = ScaleUI::pxScale(UI::Theme::Geometry::panelTabWidth + UI::Theme::Geometry::panelTabGap);
-        const float pickerW = ScaleUI::pxScale(200.0f);
-        const float panelW = ScaleUI::pxScale(300.0f);
-        const float sectionH = std::max(ScaleUI::pxScale(20.0f),
-            ScaleUI::pxTextScale(UI::Theme::FontSize::sectionHeader) + ScaleUI::pxScale(UI::Theme::Spacing::xs));
+        const float offset = scale.Px(UI::Theme::Geometry::panelTabWidth + UI::Theme::Geometry::panelTabGap);
+        const float pickerW = scale.Px(200.0f);
+        const float panelW = scale.Px(300.0f);
+        const float sectionH = std::max(scale.Px(20.0f),
+            scale.TextPx(UI::Theme::FontSize::sectionHeader) + scale.Px(UI::Theme::Spacing::xs));
 
         // ── Target picker
         if (!_panelOpen && !_items.empty()) {
@@ -370,14 +350,14 @@ namespace Thread::Interface
                 ImGuiMCP::ImGuiWindowFlags_NoCollapse | ImGuiMCP::ImGuiWindowFlags_AlwaysAutoResize;
 
             if (ImGuiMCP::Begin("##slpp_OAMPicker", nullptr, pFlags)) {
-                SetWindowFontSize(ScaleUI::pxTextScale(UI::Theme::FontSize::sectionHeader));
+                SetWindowFontSize(scale.TextPx(UI::Theme::FontSize::sectionHeader));
                 if (UI::CollapsibleSectionHeader(
                         "PICK TARGET", "##slpp_oamTargetSection", _pickerOpen, { 0.0f, sectionH }))
                     _pickerOpen = !_pickerOpen;
                 ImGuiMCP::Separator();
 
                 if (_pickerOpen) {
-                    SetWindowFontSize(ScaleUI::pxTextScale(UI::Theme::FontSize::body));
+                    SetWindowFontSize(scale.TextPx(UI::Theme::FontSize::body));
                     for (const auto& item : _items) {
                         ImGuiMCP::PushID(static_cast<int>(item.formId));
                         const bool isSel = _selectedId && *_selectedId == item.formId;
@@ -388,8 +368,8 @@ namespace Thread::Interface
 
                         if (isSel)
                             ImGuiMCP::PushStyleColor(ImGuiMCP::ImGuiCol_Header, UI::Theme::Color::selectionFill);
-                        if (UI::SelectableButton(lbl.c_str(), isSel, 0, ImGuiMCP::ImVec2{ 0, ScaleUI::pxScale(28.0f) }))
-                            OnActorSelected(item);
+                        if (UI::SelectableButton(lbl.c_str(), isSel, 0, ImGuiMCP::ImVec2{ 0, scale.Px(28.0f) }))
+                            OnActorSelected(a_hud, item);
                         if (isSel)
                             ImGuiMCP::PopStyleColor();
                         ImGuiMCP::PopID();
@@ -405,7 +385,7 @@ namespace Thread::Interface
             const uint32_t actorId = *_selectedId;
             auto& axes = _axes[actorId];
             if (!axes[0].hasBaseline)
-                RefreshValues(actorId);
+                RefreshValues(a_hud, actorId);
 
             std::string panelTitle;
             for (const auto& item : _items) {
@@ -427,38 +407,38 @@ namespace Thread::Interface
 
             if (ImGuiMCP::Begin("##slpp_OAMPanel", nullptr, panelFlags)) {
                 // Panel title: centered and uppercase
-                SetWindowFontSize(ScaleUI::pxTextScale(UI::Theme::FontSize::caption));
+                SetWindowFontSize(scale.TextPx(UI::Theme::FontSize::caption));
                 const float titleW = ImGuiMCP::CalcTextSize(panelTitle.c_str()).x;
                 ImGuiMCP::SetCursorPosX((panelW - titleW) * 0.5f);
                 ImGuiMCP::TextColored(UI::Theme::ToVec4(UI::Theme::Color::textMuted), "%s", panelTitle.c_str());
                 ImGuiMCP::Separator();
 
                 // Stage-only toggle row
-                SetWindowFontSize(ScaleUI::pxTextScale(UI::Theme::FontSize::body));
-                ImGuiMCP::SetCursorPosX(ScaleUI::pxScale(12.0f));
+                SetWindowFontSize(scale.TextPx(UI::Theme::FontSize::body));
+                ImGuiMCP::SetCursorPosX(scale.Px(12.0f));
                 ImGuiMCP::TextColored(UI::Theme::ToVec4(UI::Theme::Color::textSecondary), "Adjust Stage Only");
-                ImGuiMCP::SameLine(panelW - ScaleUI::pxScale(12.0f) - ScaleUI::pxScale(16.0f));
+                ImGuiMCP::SameLine(panelW - scale.Px(12.0f) - scale.Px(16.0f));
                 bool stageOnly = _adjustStageOnly;
-                UI::PushCheckboxStyle(hud.GetScale().Factor());
+                UI::PushCheckboxStyle(scale.Factor());
                 if (ImGuiMCP::Checkbox("##slpp_oamStageOnly", &stageOnly))
-                    OnSetAdjustStageOnly(stageOnly);
+                    OnSetAdjustStageOnly(a_hud, stageOnly);
                 UI::PopCheckboxStyle();
 
                 // Reset row
-                ImGuiMCP::SetCursorPosX(ScaleUI::pxScale(12.0f));
+                ImGuiMCP::SetCursorPosX(scale.Px(12.0f));
                 const ImGuiMCP::ImVec2 resetMin = ImGuiMCP::GetCursorScreenPos();
-                const ImGuiMCP::ImVec2 resetSize{ panelW - ScaleUI::pxScale(24.0f), ScaleUI::pxScale(28.0f) };
+                const ImGuiMCP::ImVec2 resetSize{ panelW - scale.Px(24.0f), scale.Px(28.0f) };
                 const bool resetOffsets = UI::SelectableButton("Reset Offsets", false, 0, resetSize);
                 const ImGuiMCP::ImVec2 cursorAfterReset = ImGuiMCP::GetCursorPos();
                 SKSEMenuFramework::PushFont(UI::Theme::Icon::solidFont);
                 const ImGuiMCP::ImVec2 resetIconSize = ImGuiMCP::CalcTextSize(UI::Theme::Icon::rotateLeft);
-                ImGuiMCP::SetCursorScreenPos({ resetMin.x + resetSize.x - resetIconSize.x - ScaleUI::pxScale(8.0f),
+                ImGuiMCP::SetCursorScreenPos({ resetMin.x + resetSize.x - resetIconSize.x - scale.Px(8.0f),
                     resetMin.y + (resetSize.y - resetIconSize.y) * 0.5f });
                 ImGuiMCP::TextUnformatted(UI::Theme::Icon::rotateLeft);
                 FontAwesome::Pop();
                 ImGuiMCP::SetCursorPos(cursorAfterReset);
                 if (resetOffsets)
-                    OnResetOffsets();
+                    OnResetOffsets(a_hud);
                 ImGuiMCP::Separator();
 
                 // ── Axis Sliders
@@ -473,8 +453,8 @@ namespace Thread::Interface
                     const float range = (i == 3) ? kRangeR : kRangeXYZ;
                     bool drag = false;
 
-                    if (OffsetTrack(kLabels[i], axes[i], range, drag)) {
-                        OnSetOffset(kAxisEnums[i], actorId, axes[i].value);
+                    if (OffsetTrack(scale, kLabels[i], axes[i], range, drag)) {
+                        OnSetOffset(a_hud, kAxisEnums[i], actorId, axes[i].value);
                     }
 
                     if (drag) {

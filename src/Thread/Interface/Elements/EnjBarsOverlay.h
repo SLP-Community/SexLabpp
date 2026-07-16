@@ -1,23 +1,29 @@
 #pragma once
-#include "Thread/Interface/UI/Window.h"
+#include "SKSEMenuFramework.h"
+
+namespace Thread
+{
+    class Instance;
+}
 
 namespace Thread::Interface
 {
-    class EnjBarsOverlay final : public UI::WindowComponent
+    class SceneHUD;
+    namespace UI
+    {
+        class Scale;
+    }
+
+    class EnjBarsOverlay final
     {
       public:
-        static EnjBarsOverlay& GetSingleton();
-
-        bool Register();
-        void Init();
-        void Destroy();
+        void Init(Instance& a_instance);
+        void Render(SceneHUD& a_hud);
         void UpdateSlider(RE::Actor* a_actor, float a_enjoyment, RE::BSFixedString a_interactions);
         void UpdateHighlightedPartner(RE::Actor* a_partner);
-        void RegisterRaiseEnjAttempt(RE::Actor* a_actor, float a_nextTimeCycle);
+        void RegisterRaiseEnjAttempt(SceneHUD& a_hud, RE::Actor* a_actor, float a_nextTimeCycle);
 
       private:
-        EnjBarsOverlay() = default;
-
         struct ActorEnjBar
         {
             uint32_t formId{};
@@ -28,9 +34,7 @@ namespace Thread::Interface
             bool isGameDpt{ false };
         };
 
-        static void __stdcall RenderCallback();
-        void Render();
-        void OnSelectPartner(std::uint32_t a_formId);
+        void OnSelectPartner(SceneHUD& a_hud, std::uint32_t a_formId);
 
         static float FillFraction(float a_enjoyment);
         static void FillGradient(float a_enjoyment, ImGuiMCP::ImU32& a_low, ImGuiMCP::ImU32& a_high);
@@ -66,6 +70,6 @@ namespace Thread::Interface
         float _layoutForHeight{ -1.0f };
         std::size_t _layoutForCount{ SIZE_MAX };
 
-        const LayoutCache& GetLayout(std::size_t a_actorCount);
+        const LayoutCache& GetLayout(UI::Scale& a_scale, std::size_t a_actorCount);
     };
 }

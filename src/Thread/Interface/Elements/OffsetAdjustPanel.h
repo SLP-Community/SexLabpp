@@ -1,22 +1,17 @@
 #pragma once
 #include "Thread/Interface/SceneHUD.h"
-#include "Thread/Interface/UI/Window.h"
 
 namespace Thread::Interface
 {
-    class OffsetAdjustPanel final : public UI::WindowComponent, public UI::Panel
+    class OffsetAdjustPanel final
     {
       public:
-        static OffsetAdjustPanel& GetSingleton();
-
-        bool Register();
-        void Open() override;
-        void Close() override;
-        void OnStageChanged();
+        void Open(SceneHUD& a_hud);
+        void Close();
+        void Render(SceneHUD& a_hud);
+        void OnStageChanged(SceneHUD& a_hud);
 
       private:
-        OffsetAdjustPanel() = default;
-
         struct ActorItem
         {
             RE::Actor* actor{};
@@ -34,18 +29,16 @@ namespace Thread::Interface
             float dragStartValue{ 0.0f };
         };
 
-        static void __stdcall RenderCallback();
-        void Render();
-        void OnActorSelected(const ActorItem& a_item);
-        void OnSetOffset(Registry::CoordinateType a_axis, std::uint32_t a_actorId, float a_value);
-        void OnResetOffsets();
-        void OnSetAdjustStageOnly(bool a_state);
+        void OnActorSelected(SceneHUD& a_hud, const ActorItem& a_item);
+        void OnSetOffset(SceneHUD& a_hud, Registry::CoordinateType a_axis, std::uint32_t a_actorId, float a_value);
+        void OnResetOffsets(SceneHUD& a_hud);
+        void OnSetAdjustStageOnly(SceneHUD& a_hud, bool a_state);
 
-        void RefreshSlots();
-        void RefreshValues(std::uint32_t a_actorId);
+        void RefreshSlots(SceneHUD& a_hud);
+        void RefreshValues(SceneHUD& a_hud, std::uint32_t a_actorId);
 
         // The centered drag slider used for each axis; Returns true if value changed this frame and C++ should be notified.
-        bool OffsetTrack(const char* a_id, AxisState& a_state, float a_range, bool& a_draggingOut);
+        bool OffsetTrack(UI::Scale& a_scale, const char* a_id, AxisState& a_state, float a_range, bool& a_draggingOut);
 
         std::vector<ActorItem> _items;
 

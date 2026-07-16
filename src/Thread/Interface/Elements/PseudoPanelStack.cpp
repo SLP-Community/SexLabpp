@@ -6,30 +6,6 @@ namespace Thread::Interface
     using UI::DrawTextShadowed;
     using UI::SetWindowFontSize;
 
-    PseudoPanelStack& PseudoPanelStack::GetSingleton()
-    {
-        static PseudoPanelStack singleton;
-        return singleton;
-    }
-
-    bool PseudoPanelStack::Register()
-    {
-        return RegisterWindow(RenderCallback);
-    }
-
-    void PseudoPanelStack::Open() { Show(); }
-
-    void PseudoPanelStack::Close()
-    {
-        SetBlocksInput(false);
-        Hide();
-    }
-
-    void __stdcall PseudoPanelStack::RenderCallback()
-    {
-        GetSingleton().Render();
-    }
-
     struct TabDef
     {
         PanelId panel;
@@ -44,13 +20,10 @@ namespace Thread::Interface
         TabDef{ PanelId::kNone, "Return", nullptr },
     };
 
-    void PseudoPanelStack::Render()
+    void PseudoPanelStack::Render(SceneHUD& a_hud)
     {
         // Selectable tabs provide mouse, keyboard, and gamepad access to the focus UI.
-        auto& hud = SceneHUD::GetSingleton();
-        if (!IsVisible() || !hud.ShouldRender() || !hud.IsFocused())
-            return;
-        auto& scale = hud.GetScale();
+        auto& scale = a_hud.GetScale();
 
         auto* io = ImGuiMCP::GetIO();
         const float dw = io->DisplaySize.x;
@@ -66,7 +39,7 @@ namespace Thread::Interface
 
         // Skip any tab whose overlay has been disabled from the Elements panel;
         // Re-center the remaining ones as a group so there's no gap left behind.
-        auto* inst = hud.GetThreadInstance();
+        auto* inst = a_hud.GetThreadInstance();
         std::array<std::size_t, count> visible{};
         std::size_t visibleCount = 0;
         for (std::size_t i = 0; i < count; ++i) {
@@ -108,7 +81,7 @@ namespace Thread::Interface
 
         for (std::size_t visibleIndex = 0; visibleIndex < visibleCount; ++visibleIndex) {
             const auto index = visible[visibleIndex];
-            const bool isActiveTab = kTabs[index].panel != PanelId::kNone && hud.IsPanelOpen(kTabs[index].panel);
+            const bool isActiveTab = kTabs[index].panel != PanelId::kNone && a_hud.IsPanelOpen(kTabs[index].panel);
 
             ImGuiMCP::PushID(static_cast<int>(index));
             ImGuiMCP::SetCursorPos({ tabOffsetX, railPad + static_cast<float>(visibleIndex) * stride });
@@ -159,7 +132,7 @@ namespace Thread::Interface
                 if (kTabs[index].panel == PanelId::kNone)
                     closeFocus = true;
                 else
-                    hud.OpenPanel(kTabs[index].panel);
+                    a_hud.OpenPanel(kTabs[index].panel);
             }
 
             ImGuiMCP::PopID();
@@ -170,11 +143,11 @@ namespace Thread::Interface
         ImGuiMCP::PopStyleVar(3);
 
         // Close on release so the framework receives the matching key-up before input capture is disabled.
-        if (hud.IsFocused() && ImGuiMCP::IsKeyReleased(ImGuiMCP::ImGuiKey_Escape))
+        if (a_hud.IsFocused() && ImGuiMCP::IsKeyReleased(ImGuiMCP::ImGuiKey_Escape))
             closeFocus = true;
         // (Hotkey bug workaround) Use the controller path so Papyrus hotkey gating and timer state stay synchronized with C++ focus
         if (closeFocus)
-            Script::DispatchMethodCall(hud.GetThreadScript(), "ToggleFocusSceneHUD", hud.GetCallback());
+            Script::DispatchMethodCall(a_hud.GetThreadScript(), "ToggleFocusSceneHUD", a_hud.GetCallback());
     }
 
 }  // namespace Thread::Interface

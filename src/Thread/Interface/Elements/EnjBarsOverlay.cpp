@@ -6,33 +6,10 @@ namespace Thread::Interface
     using UI::DrawTextShadowed;
     using UI::SetWindowFontSize;
 
-    EnjBarsOverlay& EnjBarsOverlay::GetSingleton()
+    void EnjBarsOverlay::Init(Instance& a_instance)
     {
-        static EnjBarsOverlay singleton;
-        return singleton;
-    }
-
-    bool EnjBarsOverlay::Register()
-    {
-        return RegisterWindow(RenderCallback);
-    }
-
-    void __stdcall EnjBarsOverlay::RenderCallback()
-    {
-        GetSingleton().Render();
-    }
-
-    void EnjBarsOverlay::Init()
-    {
-        auto* inst = SceneHUD::GetSingleton().GetThreadInstance();
-        if (!inst)
-            return;
-        if (!inst->GetThreadProperty<bool>("ElementUI_EnjBars"))
-            return;
-        if (!inst->GetThreadProperty<bool>("VarUI_SeparateOrgasm"))
-            return;
         _bars.clear();
-        for (auto* actor : inst->GetActors()) {
+        for (auto* actor : a_instance.GetActors()) {
             if (!actor)
                 continue;
             ActorEnjBar bar;
@@ -47,21 +24,13 @@ namespace Thread::Interface
         _feedbackActorId = 0;
         _feedbackHit = false;
         _feedbackUntil = 0.0;
-        Show();
-    }
-
-    void EnjBarsOverlay::Destroy()
-    {
-        Hide();
-        _needleRunning = false;
-        _bars.clear();
     }
 
     // ── Pushers (game thread) ───────────────────────────────────────────────
 
     void EnjBarsOverlay::UpdateSlider(RE::Actor* a_actor, float a_enjoyment, RE::BSFixedString a_interactions)
     {
-        if (!IsVisible() || !a_actor)
+        if (!a_actor)
             return;
         const uint32_t actorID = a_actor->GetFormID();
 
@@ -92,15 +61,15 @@ namespace Thread::Interface
 
     void EnjBarsOverlay::UpdateHighlightedPartner(RE::Actor* a_partner)
     {
-        if (!IsVisible() || !a_partner)
+        if (!a_partner)
             return;
         const uint32_t actorID = a_partner->GetFormID();
         for (auto& b : _bars) b.isTarget = (b.formId == actorID);
     }
 
-    void EnjBarsOverlay::RegisterRaiseEnjAttempt(RE::Actor* a_actor, float a_nextTimeCycle)
+    void EnjBarsOverlay::RegisterRaiseEnjAttempt(SceneHUD& a_hud, RE::Actor* a_actor, float a_nextTimeCycle)
     {
-        if (!IsVisible() || !a_actor)
+        if (!a_actor)
             return;
         const uint32_t actorID = a_actor->GetFormID();
 
@@ -118,27 +87,25 @@ namespace Thread::Interface
             _feedbackUntil = ImGuiMCP::GetTime() + kFeedbackSec;
             _timeCycle = a_nextTimeCycle;
 
-            auto& hud = SceneHUD::GetSingleton();
-            if (!hud.GetThreadScript())
+            if (!a_hud.GetThreadScript())
                 return;
-            Script::DispatchMethodCall(hud.GetThreadScript(), "OnRaiseEnjAttemptResult",
-                hud.GetCallback(), hit ? 1 : 0);
+            Script::DispatchMethodCall(a_hud.GetThreadScript(), "OnRaiseEnjAttemptResult",
+                a_hud.GetCallback(), hit ? 1 : 0);
             return;
         }
     }
 
     // ── Callbacks ───────────────────────────────────────────────────────────
 
-    void EnjBarsOverlay::OnSelectPartner(uint32_t formId)
+    void EnjBarsOverlay::OnSelectPartner(SceneHUD& a_hud, uint32_t formId)
     {
         auto* actor = RE::TESForm::LookupByID<RE::Actor>(formId);
         if (!actor || actor->IsPlayerRef())
             return;
-        auto& hud = SceneHUD::GetSingleton();
-        if (!hud.GetThreadScript())
+        if (!a_hud.GetThreadScript())
             return;
-        Script::DispatchMethodCall(hud.GetThreadScript(), "SelectTargetPartner",
-            hud.GetCallback(), std::move(actor));
+        Script::DispatchMethodCall(a_hud.GetThreadScript(), "SelectTargetPartner",
+            a_hud.GetCallback(), std::move(actor));
     }
 
     float EnjBarsOverlay::FillFraction(float enj)
@@ -171,31 +138,31 @@ namespace Thread::Interface
     }
 
     // ── Layout Cache ────────────────────────────────────────────────────────
-    const EnjBarsOverlay::LayoutCache& EnjBarsOverlay::GetLayout(size_t actorCount)
+    const EnjBarsOverlay::LayoutCache& EnjBarsOverlay::GetLayout(UI::Scale& a_scale, size_t actorCount)
     {
         auto* io = ImGuiMCP::GetIO();
         const float dw = io->DisplaySize.x;
         const float dh = io->DisplaySize.y;
-        const float factor = ScaleUI::pxScale(1.0f);
-        const float textFactor = ScaleUI::pxTextScale(1.0f);
+        const float factor = a_scale.Px(1.0f);
+        const float textFactor = a_scale.TextPx(1.0f);
         if (_layoutForFactor == factor && _layoutForTextFactor == textFactor &&
             _layoutForWidth == dw && _layoutForHeight == dh && _layoutForCount == actorCount) {
             return _layout;
         }
 
         auto& L = _layout;
-        L.zoneW = std::clamp(ScaleUI::pxScale(260.0f), dw * 0.15f, ScaleUI::pxScale(360.0f));
-        L.barGap = ScaleUI::pxScale(4.5f);
-        L.innerGp = ScaleUI::pxScale(2.0f);
-        L.frameH = ScaleUI::pxScale(UI::Theme::FontSize::body);
-        L.lblPad = ScaleUI::pxScale(1.5f);
-        L.nameFt = ScaleUI::pxTextScale(UI::Theme::FontSize::metadata);
-        L.valFt = ScaleUI::pxTextScale(UI::Theme::FontSize::smallText);
-        L.intrFt = ScaleUI::pxTextScale(UI::Theme::FontSize::detail);
-        L.fbFt = std::min(ScaleUI::pxTextScale(UI::Theme::FontSize::body), L.frameH);
-        L.edgeH = ScaleUI::pxScaleClamp(14.0f, 2.5f, 48.0f, dw);
-        L.edgeV = ScaleUI::pxScaleClamp(16.0f, 1.8f, 32.0f, dh);
-        L.lblRowH = std::max(ScaleUI::pxScale(UI::Theme::FontSize::metadata), L.nameFt) + L.lblPad * 2.0f;
+        L.zoneW = std::clamp(a_scale.Px(260.0f), dw * 0.15f, a_scale.Px(360.0f));
+        L.barGap = a_scale.Px(4.5f);
+        L.innerGp = a_scale.Px(2.0f);
+        L.frameH = a_scale.Px(UI::Theme::FontSize::body);
+        L.lblPad = a_scale.Px(1.5f);
+        L.nameFt = a_scale.TextPx(UI::Theme::FontSize::metadata);
+        L.valFt = a_scale.TextPx(UI::Theme::FontSize::smallText);
+        L.intrFt = a_scale.TextPx(UI::Theme::FontSize::detail);
+        L.fbFt = std::min(a_scale.TextPx(UI::Theme::FontSize::body), L.frameH);
+        L.edgeH = a_scale.Clamp(14.0f, 2.5f, 48.0f, dw);
+        L.edgeV = a_scale.Clamp(16.0f, 1.8f, 32.0f, dh);
+        L.lblRowH = std::max(a_scale.Px(UI::Theme::FontSize::metadata), L.nameFt) + L.lblPad * 2.0f;
         L.unitH = L.lblRowH + L.innerGp + L.frameH + L.barGap;
         L.winH = L.unitH * static_cast<float>(actorCount) - L.barGap;
 
@@ -207,11 +174,11 @@ namespace Thread::Interface
         return L;
     }
 
-    void EnjBarsOverlay::Render()
+    void EnjBarsOverlay::Render(SceneHUD& a_hud)
     {
-        auto& hud = SceneHUD::GetSingleton();
-        if (!IsVisible() || !hud.ShouldRender() || _bars.empty())
+        if (_bars.empty())
             return;
+        auto& scale = a_hud.GetScale();
 
         const float deltaTime = ImGuiMCP::GetIO()->DeltaTime;
 
@@ -238,7 +205,7 @@ namespace Thread::Interface
         // Read cached layout
         auto* io = ImGuiMCP::GetIO();
         const float dh = io->DisplaySize.y;
-        const auto& L = GetLayout(_bars.size());
+        const auto& L = GetLayout(scale, _bars.size());
         const float zoneW = L.zoneW;
         const float barGap = L.barGap;
         const float innerGp = L.innerGp;
@@ -280,9 +247,9 @@ namespace Thread::Interface
             // ── Label row ───────────────────────────────────────────────────
             // An invisible-label selectable placed underneath accepts user interaction.
             // This makes label row selectable (to pick actor as target partner) when focused.
-            if (hud.IsFocused() && !b.isTarget) {
+            if (a_hud.IsFocused() && !b.isTarget) {
                 if (ImGuiMCP::Selectable("##slpp_eboPartner", false, 0, ImGuiMCP::ImVec2{ zoneW, lblRowH }))
-                    OnSelectPartner(b.formId);
+                    OnSelectPartner(a_hud, b.formId);
                 ImGuiMCP::SetCursorScreenPos(rowStart);
             }
 

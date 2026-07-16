@@ -75,11 +75,4 @@ namespace Thread::Interface::UI
         FrameworkWindow _window;
     };
 
-    class Panel
-    {
-      public:
-        virtual ~Panel() = default;
-        virtual void Open() = 0;
-        virtual void Close() = 0;
-    };
 }

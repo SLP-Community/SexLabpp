@@ -6,25 +6,9 @@ namespace Thread::Interface
 {
     using UI::SetWindowFontSize;
 
-    SceneSelectPanel& SceneSelectPanel::GetSingleton()
+    void SceneSelectPanel::Open(SceneHUD& a_hud)
     {
-        static SceneSelectPanel singleton;
-        return singleton;
-    }
-
-    bool SceneSelectPanel::Register()
-    {
-        return RegisterWindow(RenderCallback);
-    }
-
-    void __stdcall SceneSelectPanel::RenderCallback()
-    {
-        GetSingleton().Render();
-    }
-
-    void SceneSelectPanel::Open()
-    {
-        RebuildEntries();
+        RebuildEntries(a_hud);
         _searchBuffer[0] = '\0';
         _lastSearch[0] = '\0';
         _filteredIndices.clear();
@@ -32,12 +16,10 @@ namespace Thread::Interface
         _sceneListOpen = true;
         _searchBoxOpen = true;
         RebuildFilter();
-        Show();
     }
 
     void SceneSelectPanel::Close()
     {
-        Hide();
         _entries.clear();
         _filteredIndices.clear();
         _hoveredIndex = -1;
@@ -45,17 +27,16 @@ namespace Thread::Interface
 
     // ── Handlers ────────────────────────────────────────────────────────────
 
-    void SceneSelectPanel::OnSceneSelected(const std::string& a_sceneId)
+    void SceneSelectPanel::OnSceneSelected(SceneHUD& a_hud, const std::string& a_sceneId)
     {
-        auto& hud = SceneHUD::GetSingleton();
-        Script::DispatchMethodCall(hud.GetThreadScript(), "ResetScene",
-            hud.GetCallback(), RE::BSFixedString{ a_sceneId.c_str() });
-        RebuildEntries();
+        Script::DispatchMethodCall(a_hud.GetThreadScript(), "ResetScene",
+            a_hud.GetCallback(), RE::BSFixedString{ a_sceneId.c_str() });
+        RebuildEntries(a_hud);
         RebuildFilter();
         _hoveredIndex = -1;
     }
 
-    void SceneSelectPanel::OnConfirmSearch()
+    void SceneSelectPanel::OnConfirmSearch(SceneHUD& a_hud)
     {
         // Trims the search text, clears the field, and if anything was
         // actually typed, runs the search and closes the panel.
@@ -70,10 +51,9 @@ namespace Thread::Interface
         if (query.empty())
             return;
 
-        auto& hud = SceneHUD::GetSingleton();
-        Script::DispatchMethodCall(hud.GetThreadScript(), "OnSceneResetBySearch",
-            hud.GetCallback(), RE::BSFixedString{ query.c_str() });
-        hud.CloseAllPanels();
+        Script::DispatchMethodCall(a_hud.GetThreadScript(), "OnSceneResetBySearch",
+            a_hud.GetCallback(), RE::BSFixedString{ query.c_str() });
+        a_hud.CloseAllPanels();
     }
 
     void SceneSelectPanel::OnAnnotationSave(SceneEntry& e)
@@ -112,10 +92,10 @@ namespace Thread::Interface
         }
     }
 
-    void SceneSelectPanel::RebuildEntries()
+    void SceneSelectPanel::RebuildEntries(SceneHUD& a_hud)
     {
         _entries.clear();
-        auto* inst = SceneHUD::GetSingleton().GetThreadInstance();
+        auto* inst = a_hud.GetThreadInstance();
         if (!inst)
             return;
         const auto* active = inst->GetActiveScene();
@@ -177,23 +157,21 @@ namespace Thread::Interface
 
     // ── Render ────────────────────────────────────────────────────────────────
 
-    void SceneSelectPanel::Render()
+    void SceneSelectPanel::Render(SceneHUD& a_hud)
     {
-        auto& hud = SceneHUD::GetSingleton();
-        if (!IsVisible() || !hud.ShouldRender() || !hud.IsPanelOpen(PanelId::kSceneSelect) || !hud.IsFocused())
-            return;
+        auto& scale = a_hud.GetScale();
 
         auto* io = ImGuiMCP::GetIO();
         const float dw = io->DisplaySize.x;
         const float dh = io->DisplaySize.y;
 
-        const float panelW = ScaleUI::pxScale(270.0f);
-        const float offset = ScaleUI::pxScale(UI::Theme::Geometry::panelTabWidth + UI::Theme::Geometry::panelTabGap);
+        const float panelW = scale.Px(270.0f);
+        const float offset = scale.Px(UI::Theme::Geometry::panelTabWidth + UI::Theme::Geometry::panelTabGap);
         const float maxH = dh * 0.8f;
-        const float listMaxH = ScaleUI::pxScale(200.0f);
-        const float rowH = ScaleUI::pxTextScale(UI::Theme::FontSize::body) + ScaleUI::pxScale(UI::Theme::Spacing::sm) * 2.0f;
-        const float sectionH = std::max(ScaleUI::pxScale(20.0f),
-            ScaleUI::pxTextScale(UI::Theme::FontSize::sectionHeader) + ScaleUI::pxScale(UI::Theme::Spacing::xs));
+        const float listMaxH = scale.Px(200.0f);
+        const float rowH = scale.TextPx(UI::Theme::FontSize::body) + scale.Px(UI::Theme::Spacing::sm) * 2.0f;
+        const float sectionH = std::max(scale.Px(20.0f),
+            scale.TextPx(UI::Theme::FontSize::sectionHeader) + scale.Px(UI::Theme::Spacing::xs));
 
         ImGuiMCP::SetNextWindowPos(
             ImGuiMCP::ImVec2{ dw - offset, dh * 0.5f }, ImGuiMCP::ImGuiCond_Always, ImGuiMCP::ImVec2{ 1.0f, 0.5f });
@@ -213,7 +191,7 @@ namespace Thread::Interface
         const ImGuiMCP::ImVec2 winPos = ImGuiMCP::GetWindowPos();
 
         // ── Section: Scenes List
-        SetWindowFontSize(ScaleUI::pxTextScale(UI::Theme::FontSize::sectionHeader));
+        SetWindowFontSize(scale.TextPx(UI::Theme::FontSize::sectionHeader));
         if (UI::CollapsibleSectionHeader("CHANGE ACTIVE SCENE", "##slpp_ssmSceneListSection", _sceneListOpen,
                 { 0.0f, sectionH }))
             _sceneListOpen = !_sceneListOpen;
@@ -222,7 +200,7 @@ namespace Thread::Interface
         int hoveredRowIndex = -1;
 
         if (_sceneListOpen) {
-            SetWindowFontSize(ScaleUI::pxTextScale(UI::Theme::FontSize::body));
+            SetWindowFontSize(scale.TextPx(UI::Theme::FontSize::body));
             ImGuiMCP::BeginChild("##slpp_smmSceneList", ImGuiMCP::ImVec2{ panelW, listMaxH }, false);
 
             if (std::memcmp(_searchBuffer, _lastSearch, sizeof(_searchBuffer)) != 0)
@@ -249,34 +227,34 @@ namespace Thread::Interface
 
             ImGuiMCP::EndChild();
             if (selectedScene)
-                OnSceneSelected(*selectedScene);
+                OnSceneSelected(a_hud, *selectedScene);
         }
 
         ImGuiMCP::Separator();
 
         // ── Section: Search Scenes
-        SetWindowFontSize(ScaleUI::pxTextScale(UI::Theme::FontSize::sectionHeader));
+        SetWindowFontSize(scale.TextPx(UI::Theme::FontSize::sectionHeader));
         if (UI::CollapsibleSectionHeader("CHANGE SCENES BY TAG / NAME", "##slpp_ssmSearchSection", _searchBoxOpen,
                 { 0.0f, sectionH }))
             _searchBoxOpen = !_searchBoxOpen;
         ImGuiMCP::Separator();
 
         if (_searchBoxOpen) {
-            SetWindowFontSize(ScaleUI::pxTextScale(UI::Theme::FontSize::body));
-            ImGuiMCP::SetNextItemWidth(panelW - ScaleUI::pxScale(20.0f));
+            SetWindowFontSize(scale.TextPx(UI::Theme::FontSize::body));
+            ImGuiMCP::SetNextItemWidth(panelW - scale.Px(20.0f));
             ImGuiMCP::InputTextWithHint("##slpp_smmSearch", "Tag or scene name...",
                 _searchBuffer, sizeof(_searchBuffer));
 
-            ImGuiMCP::Dummy(ImGuiMCP::ImVec2{ 0.0f, ScaleUI::pxScale(4.0f) });
-            const float btnW = (panelW - ScaleUI::pxScale(20.0f) - ScaleUI::pxScale(6.0f)) * 0.5f;
+            ImGuiMCP::Dummy(ImGuiMCP::ImVec2{ 0.0f, scale.Px(4.0f) });
+            const float btnW = (panelW - scale.Px(20.0f) - scale.Px(6.0f)) * 0.5f;
             // Cancel closes the whole panel rather than just clearing the text box.
             if (UI::ActionButton("Cancel##slpp_smmCancel", btnW)) {
                 _searchBuffer[0] = '\0';
-                hud.CloseAllPanels();
+                a_hud.CloseAllPanels();
             }
-            ImGuiMCP::SameLine(0.0f, ScaleUI::pxScale(6.0f));
+            ImGuiMCP::SameLine(0.0f, scale.Px(6.0f));
             if (UI::ActionButton("Search##slpp_smmConfirm", btnW))
-                OnConfirmSearch();
+                OnConfirmSearch(a_hud);
         }
 
         ImGuiMCP::SetWindowFontScale(1.0f);
@@ -285,18 +263,18 @@ namespace Thread::Interface
         // ── Info card, retained while hovering it or editing annotations
         if (hoveredRowIndex >= 0) {
             _hoveredIndex = hoveredRowIndex;
-            _infoCardY = ImGuiMCP::GetMousePos().y - ScaleUI::pxScale(40.0f);
+            _infoCardY = ImGuiMCP::GetMousePos().y - scale.Px(40.0f);
         }
         bool keepInfoCardOpen = hoveredRowIndex >= 0;
         if (_hoveredIndex >= 0 && _hoveredIndex < static_cast<int>(_entries.size())) {
             auto& e = _entries[_hoveredIndex];
 
-            const float cardW = ScaleUI::pxScale(190.0f);
-            const float keyW = ScaleUI::pxScale(46.0f);
-            const float rowGap = ScaleUI::pxScale(4.0f);
-            const float keyFont = ScaleUI::pxTextScale(UI::Theme::FontSize::smallText);
-            const float rowFont = ScaleUI::pxTextScale(UI::Theme::FontSize::compact);
-            const float tagFont = ScaleUI::pxTextScale(UI::Theme::FontSize::metadata);
+            const float cardW = scale.Px(190.0f);
+            const float keyW = scale.Px(46.0f);
+            const float rowGap = scale.Px(4.0f);
+            const float keyFont = scale.TextPx(UI::Theme::FontSize::smallText);
+            const float rowFont = scale.TextPx(UI::Theme::FontSize::compact);
+            const float tagFont = scale.TextPx(UI::Theme::FontSize::metadata);
 
             const float cardX = winPos.x - cardW - 6.0f;
 
@@ -345,14 +323,14 @@ namespace Thread::Interface
                 ImGuiMCP::Dummy(ImGuiMCP::ImVec2{ 0.0f, rowGap });
 
                 ImGuiMCP::Separator();
-                ImGuiMCP::Dummy(ImGuiMCP::ImVec2{ 0.0f, ScaleUI::pxScale(5.0f) });
+                ImGuiMCP::Dummy(ImGuiMCP::ImVec2{ 0.0f, scale.Px(5.0f) });
 
                 ImGuiMCP::TextColored(UI::Theme::ToVec4(UI::Theme::Color::textMuted), "ANNOTATIONS");
                 SetWindowFontSize(rowFont);
-                const float fieldW = cardW - ScaleUI::pxScale(24.0f);
+                const float fieldW = cardW - scale.Px(24.0f);
                 const ImGuiMCP::ImVec2 annotSz{ fieldW,
-                    std::clamp(ImGuiMCP::CalcTextSize(e.annotBuf, nullptr, false, fieldW).y + ScaleUI::pxScale(10.0f),
-                        ScaleUI::pxScale(26.0f), ScaleUI::pxScale(60.0f)) };
+                    std::clamp(ImGuiMCP::CalcTextSize(e.annotBuf, nullptr, false, fieldW).y + scale.Px(10.0f),
+                        scale.Px(26.0f), scale.Px(60.0f)) };
                 if (ImGuiMCP::InputTextMultiline("##slpp_annot", e.annotBuf, sizeof(e.annotBuf), annotSz,
                         ImGuiMCP::ImGuiInputTextFlags_EnterReturnsTrue)) {
                     OnAnnotationSave(e);  // Save on Enter

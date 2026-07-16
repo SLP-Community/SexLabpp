@@ -6,67 +6,28 @@ namespace Thread::Interface
     using UI::DrawTextShadowed;
     using UI::SetWindowFontSize;
 
-    AnimSpeedOverlay& AnimSpeedOverlay::GetSingleton()
-    {
-        static AnimSpeedOverlay singleton;
-        return singleton;
-    }
-
-    bool AnimSpeedOverlay::Register()
-    {
-        return RegisterWindow(RenderCallback);
-    }
-
-    void __stdcall AnimSpeedOverlay::RenderCallback()
-    {
-        GetSingleton().Render();
-    }
-
-    void AnimSpeedOverlay::Init()
-    {
-        auto& hud = SceneHUD::GetSingleton();
-        auto* inst = hud.GetThreadInstance();
-        if (!inst)
-            return;
-        if (!inst->GetThreadProperty<bool>("ElementUI_AnimSpeed"))
-            return;
-        Show();
-    }
-
-    void AnimSpeedOverlay::Destroy()
-    {
-        Hide();
-        _speed = 1.0f;
-        _stageDuration = 0.0f;
-        _stageTimer = 0.0f;
-    }
-
     void AnimSpeedOverlay::UpdateStageTimer(float a_duration, float a_timer)
     {
         _stageDuration = a_duration;
         _stageTimer = a_timer;
     }
 
-    void AnimSpeedOverlay::OnSpeedChange(float a_delta)
+    void AnimSpeedOverlay::OnSpeedChange(SceneHUD& a_hud, float a_delta)
     {
-        auto& hud = SceneHUD::GetSingleton();
-        auto* inst = hud.GetThreadInstance();
+        auto* inst = a_hud.GetThreadInstance();
         if (!inst)
             return;
         const float next = std::clamp(_speed + a_delta, 0.25f, 3.0f);
         _speed = next;
         inst->SetAnimationPlaybackSpeed(next);
         Script::DispatchMethodCall(
-            Script::GetScriptObject(hud.GetLinkedThread(), "sslThreadModel"),
-            "UpdateBaseSpeed", hud.GetCallback(), static_cast<float>(_speed));
+            Script::GetScriptObject(a_hud.GetLinkedThread(), "sslThreadModel"),
+            "UpdateBaseSpeed", a_hud.GetCallback(), static_cast<float>(_speed));
     }
 
-    void AnimSpeedOverlay::Render()
+    void AnimSpeedOverlay::Render(SceneHUD& a_hud)
     {
-        auto& hud = SceneHUD::GetSingleton();
-        if (!IsVisible() || !hud.ShouldRender())
-            return;
-        auto& scale = hud.GetScale();
+        auto& scale = a_hud.GetScale();
 
         auto* io = ImGuiMCP::GetIO();
         const float dw = io->DisplaySize.x;
@@ -119,14 +80,14 @@ namespace Thread::Interface
         auto* dl = ImGuiMCP::GetWindowDrawList();
         const ImGuiMCP::ImVec2 rowScreenPos = ImGuiMCP::GetCursorScreenPos();
 
-        if (hud.IsFocused()) {
+        if (a_hud.IsFocused()) {
             ImGuiMCP::SetCursorScreenPos(rowScreenPos);
             if (ImGuiMCP::InvisibleButton("##slpp_dec", ImGuiMCP::ImVec2{ btnW, rowH }))
-                OnSpeedChange(-0.25f);
+                OnSpeedChange(a_hud, -0.25f);
 
             ImGuiMCP::SetCursorScreenPos(ImGuiMCP::ImVec2{ rowScreenPos.x + contentW - btnW, rowScreenPos.y });
             if (ImGuiMCP::InvisibleButton("##slpp_inc", ImGuiMCP::ImVec2{ btnW, rowH }))
-                OnSpeedChange(+0.25f);
+                OnSpeedChange(a_hud, +0.25f);
         }
 
         SKSEMenuFramework::PushFont(UI::Theme::Icon::solidFont);

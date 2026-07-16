@@ -6,26 +6,10 @@ namespace Thread::Interface
 {
     using UI::SetWindowFontSize;
 
-    ThreadConfigPanel& ThreadConfigPanel::GetSingleton()
-    {
-        static ThreadConfigPanel singleton;
-        return singleton;
-    }
-
-    bool ThreadConfigPanel::Register()
-    {
-        return RegisterWindow(RenderCallback);
-    }
-
-    void __stdcall ThreadConfigPanel::RenderCallback()
-    {
-        GetSingleton().Render();
-    }
-
-    void ThreadConfigPanel::Open()
+    void ThreadConfigPanel::Open(SceneHUD& a_hud)
     {
         _actorStates.clear();
-        auto* inst = SceneHUD::GetSingleton().GetThreadInstance();
+        auto* inst = a_hud.GetThreadInstance();
         if (!inst)
             return;
         for (auto* actor : inst->GetActors()) {
@@ -43,22 +27,19 @@ namespace Thread::Interface
                 return a->IsPlayerRef();
             return std::string_view{ a->GetDisplayFullName() } < std::string_view{ b->GetDisplayFullName() };
         });
-        Show();
     }
 
     void ThreadConfigPanel::Close()
     {
-        Hide();
         _actorStates.clear();
         _sortedActors.clear();
     }
 
     // ── Handlers ────────────────────────────────────────────────────────────
 
-    void ThreadConfigPanel::OnRandomScene()
+    void ThreadConfigPanel::OnRandomScene(SceneHUD& a_hud)
     {
-        auto& hud = SceneHUD::GetSingleton();
-        auto* inst = hud.GetThreadInstance();
+        auto* inst = a_hud.GetThreadInstance();
         if (!inst)
             return;
         const auto* cur = inst->GetActiveScene();
@@ -71,43 +52,42 @@ namespace Thread::Interface
         if (pool.empty())
             return;
         const std::string id{ Random::draw(pool)->id };
-        Script::DispatchMethodCall(hud.GetThreadScript(), "ResetScene",
-            hud.GetCallback(), RE::BSFixedString{ id.c_str() });
+        Script::DispatchMethodCall(a_hud.GetThreadScript(), "ResetScene",
+            a_hud.GetCallback(), RE::BSFixedString{ id.c_str() });
     }
 
-    void ThreadConfigPanel::OnMoveScene()
+    void ThreadConfigPanel::OnMoveScene(SceneHUD& a_hud)
     {
-        auto& hud = SceneHUD::GetSingleton();
-        if (!hud.GetThreadScript())
+        if (!a_hud.GetThreadScript())
             return;
-        Script::DispatchMethodCall(hud.GetThreadScript(), "ToggleFocusSceneHUD", hud.GetCallback());
-        Script::DispatchMethodCall(hud.GetThreadScript(), "MoveScene", hud.GetCallback());
+        Script::DispatchMethodCall(a_hud.GetThreadScript(), "ToggleFocusSceneHUD", a_hud.GetCallback());
+        Script::DispatchMethodCall(a_hud.GetThreadScript(), "MoveScene", a_hud.GetCallback());
     }
 
-    void ThreadConfigPanel::OnAutoPlaySet(bool state)
+    void ThreadConfigPanel::OnAutoPlaySet(SceneHUD& a_hud, bool state)
     {
-        auto* inst = SceneHUD::GetSingleton().GetThreadInstance();
+        auto* inst = a_hud.GetThreadInstance();
         if (inst)
             inst->SetThreadProperty<bool>("AutoAdvance", state);
     }
 
-    void ThreadConfigPanel::OnNextPosition(RE::Actor* actor)
+    void ThreadConfigPanel::OnNextPosition(SceneHUD& a_hud, RE::Actor* actor)
     {
-        auto* inst = SceneHUD::GetSingleton().GetThreadInstance();
+        auto* inst = a_hud.GetThreadInstance();
         if (inst && actor)
             inst->SetNextPermutation(actor);
     }
 
-    void ThreadConfigPanel::OnSetExpression(RE::Actor* actor, const Registry::Expression* expr)
+    void ThreadConfigPanel::OnSetExpression(SceneHUD& a_hud, RE::Actor* actor, const Registry::Expression* expr)
     {
-        auto* inst = SceneHUD::GetSingleton().GetThreadInstance();
+        auto* inst = a_hud.GetThreadInstance();
         if (inst && actor && expr)
             inst->SetExpression(actor, expr);
     }
 
-    void ThreadConfigPanel::OnSetVoice(RE::Actor* actor, const Registry::Voice* voice)
+    void ThreadConfigPanel::OnSetVoice(SceneHUD& a_hud, RE::Actor* actor, const Registry::Voice* voice)
     {
-        auto* inst = SceneHUD::GetSingleton().GetThreadInstance();
+        auto* inst = a_hud.GetThreadInstance();
         if (inst && actor && voice)
             inst->SetVoice(actor, voice);
     }
@@ -120,20 +100,21 @@ namespace Thread::Interface
 
     // ── Actor card ──────────────────────────────────────────────────────────
 
-    void ThreadConfigPanel::RenderActorCard(RE::Actor* actor, ActorState& state)
+    void ThreadConfigPanel::RenderActorCard(SceneHUD& a_hud, RE::Actor* actor, ActorState& state)
     {
         if (!actor)
             return;
         auto* lib = Registry::Library::GetSingleton();
+        auto& scale = a_hud.GetScale();
 
-        const float panelW = ScaleUI::pxScale(280.0f);
-        const float rowPadV = ScaleUI::pxScale(6.0f);
-        const float rowPadH = ScaleUI::pxScale(12.0f);
-        const float hdrPadV = ScaleUI::pxScale(5.0f);
-        const float hdrPadH = ScaleUI::pxScale(10.0f);
-        const float lblW = ScaleUI::pxScale(90.0f);
-        const float dropW = ScaleUI::pxScale(140.0f);
-        const float alphaW = ScaleUI::pxScale(100.0f);
+        const float panelW = scale.Px(280.0f);
+        const float rowPadV = scale.Px(6.0f);
+        const float rowPadH = scale.Px(12.0f);
+        const float hdrPadV = scale.Px(5.0f);
+        const float hdrPadH = scale.Px(10.0f);
+        const float lblW = scale.Px(90.0f);
+        const float dropW = scale.Px(140.0f);
+        const float alphaW = scale.Px(100.0f);
 
         ImGuiMCP::PushID(static_cast<int>(actor->GetFormID()));
 
@@ -141,7 +122,7 @@ namespace Thread::Interface
         // An invisible-label Selectable provides the real user interaction here.
         // The header's actual content (arrow, name, badge) is drawn on top of it afterward.
         const ImGuiMCP::ImVec2 hdrMin = ImGuiMCP::GetCursorScreenPos();
-        const float hdrH = ScaleUI::pxTextScale(UI::Theme::FontSize::subsectionHeader) + hdrPadV * 2.0f;
+        const float hdrH = scale.TextPx(UI::Theme::FontSize::subsectionHeader) + hdrPadV * 2.0f;
 
         ImGuiMCP::PushStyleColor(ImGuiMCP::ImGuiCol_Header, UI::Theme::Color::cardHeader);
         ImGuiMCP::PushStyleColor(ImGuiMCP::ImGuiCol_HeaderHovered, UI::Theme::Color::cardHeader);
@@ -159,7 +140,7 @@ namespace Thread::Interface
         }
 
         ImGuiMCP::SetCursorScreenPos(hdrMin);
-        SetWindowFontSize(ScaleUI::pxTextScale(UI::Theme::FontSize::subsectionHeader));
+        SetWindowFontSize(scale.TextPx(UI::Theme::FontSize::subsectionHeader));
 
         // Collapse arrow
         ImGuiMCP::SetCursorScreenPos(ImGuiMCP::ImVec2{ hdrMin.x + hdrPadH, hdrMin.y + hdrPadV });
@@ -169,12 +150,12 @@ namespace Thread::Interface
         FontAwesome::Pop();
 
         // Name, truncated
-        ImGuiMCP::SameLine(0.0f, ScaleUI::pxScale(6.0f));
+        ImGuiMCP::SameLine(0.0f, scale.Px(6.0f));
         ImGuiMCP::TextColored(UI::Theme::ToVec4(hdrHov ? UI::Theme::Color::textSecondary : UI::Theme::Color::textMuted),
             "%s", actor->GetDisplayFullName());
 
         // Badges flush-right: player / position
-        const float badgeX = hdrMin.x + panelW - hdrPadH - (actor->IsPlayerRef() ? ScaleUI::pxScale(40.0f) : 0.0f);
+        const float badgeX = hdrMin.x + panelW - hdrPadH - (actor->IsPlayerRef() ? scale.Px(40.0f) : 0.0f);
         if (actor->IsPlayerRef()) {
             ImGuiMCP::SetCursorScreenPos(ImGuiMCP::ImVec2{ badgeX, hdrMin.y + hdrPadV });
             ImGuiMCP::TextColored(UI::Theme::ToVec4(UI::Theme::Color::accent), "PLAYER");
@@ -187,8 +168,8 @@ namespace Thread::Interface
             ImGuiMCP::PopID();
             return;
         }
-        auto* inst = SceneHUD::GetSingleton().GetThreadInstance();
-        SetWindowFontSize(ScaleUI::pxTextScale(UI::Theme::FontSize::compact));
+        auto* inst = a_hud.GetThreadInstance();
+        SetWindowFontSize(scale.TextPx(UI::Theme::FontSize::compact));
 
         // ── Scene position row
         {
@@ -197,26 +178,26 @@ namespace Thread::Interface
             const bool canCycle = total > 1;
 
             ImGuiMCP::SetCursorPosX(rowPadH);
-            SetWindowFontSize(ScaleUI::pxTextScale(UI::Theme::FontSize::caption));
+            SetWindowFontSize(scale.TextPx(UI::Theme::FontSize::caption));
             ImGuiMCP::TextColored(UI::Theme::ToVec4(UI::Theme::Color::textMuted), "Scene Position");
             ImGuiMCP::SameLine(lblW);
 
-            const float btnSize = std::max(ScaleUI::pxScale(18.0f),
-                ScaleUI::pxTextScale(UI::Theme::FontSize::caption) + ScaleUI::pxScale(UI::Theme::Spacing::xxs));
-            SetWindowFontSize(ScaleUI::pxTextScale(UI::Theme::FontSize::caption));
+            const float btnSize = std::max(scale.Px(18.0f),
+                scale.TextPx(UI::Theme::FontSize::caption) + scale.Px(UI::Theme::Spacing::xxs));
+            SetWindowFontSize(scale.TextPx(UI::Theme::FontSize::caption));
             char permBuf[24];
             std::snprintf(permBuf, sizeof(permBuf), "%d of %d", current, total);
             ImGuiMCP::TextColored(UI::Theme::ToVec4(UI::Theme::Color::textSecondary), "%s", permBuf);
 
             if (canCycle) {
-                ImGuiMCP::SameLine(0.0f, ScaleUI::pxScale(6.0f));
+                ImGuiMCP::SameLine(0.0f, scale.Px(6.0f));
                 SKSEMenuFramework::PushFont(UI::Theme::Icon::solidFont);
                 const bool nextPosition = ImGuiMCP::Button(UI::Theme::Icon::chevronRight, ImGuiMCP::ImVec2{ btnSize, btnSize });
                 FontAwesome::Pop();
                 if (ImGuiMCP::IsItemHovered())
                     ImGuiMCP::SetTooltip("Move actor to the next compatible scene position");
                 if (nextPosition)
-                    OnNextPosition(actor);
+                    OnNextPosition(a_hud, actor);
             }
             ImGuiMCP::SetCursorPosY(ImGuiMCP::GetCursorPosY() + rowPadV);
         }
@@ -228,11 +209,11 @@ namespace Thread::Interface
             SKSE::Translation::Translate(curLabel, curLabel);
 
             ImGuiMCP::SetCursorPosX(rowPadH);
-            SetWindowFontSize(ScaleUI::pxTextScale(UI::Theme::FontSize::caption));
+            SetWindowFontSize(scale.TextPx(UI::Theme::FontSize::caption));
             ImGuiMCP::TextColored(UI::Theme::ToVec4(UI::Theme::Color::textMuted), "Expression");
             ImGuiMCP::SameLine(lblW);
 
-            SetWindowFontSize(ScaleUI::pxTextScale(UI::Theme::FontSize::caption));
+            SetWindowFontSize(scale.TextPx(UI::Theme::FontSize::caption));
             ImGuiMCP::SetNextItemWidth(dropW);
             if (ImGuiMCP::BeginCombo("##slpp_tcmExpr", curLabel.c_str())) {
                 lib->ForEachExpression([&](const auto& expr) {
@@ -244,7 +225,7 @@ namespace Thread::Interface
                     if (sel)
                         ImGuiMCP::PushStyleColor(ImGuiMCP::ImGuiCol_Text, UI::Theme::Color::selectionText);
                     if (ImGuiMCP::Selectable(label.c_str(), sel)) {
-                        OnSetExpression(actor, &expr);
+                        OnSetExpression(a_hud, actor, &expr);
                     }
                     if (sel)
                         ImGuiMCP::PopStyleColor();
@@ -263,11 +244,11 @@ namespace Thread::Interface
             const Registry::RaceKey raceKey{ actor };
 
             ImGuiMCP::SetCursorPosX(rowPadH);
-            SetWindowFontSize(ScaleUI::pxTextScale(UI::Theme::FontSize::caption));
+            SetWindowFontSize(scale.TextPx(UI::Theme::FontSize::caption));
             ImGuiMCP::TextColored(UI::Theme::ToVec4(UI::Theme::Color::textMuted), "Voice");
             ImGuiMCP::SameLine(lblW);
 
-            SetWindowFontSize(ScaleUI::pxTextScale(UI::Theme::FontSize::caption));
+            SetWindowFontSize(scale.TextPx(UI::Theme::FontSize::caption));
             ImGuiMCP::SetNextItemWidth(dropW);
             if (ImGuiMCP::BeginCombo("##slpp_tcmVoice", curLabel.c_str())) {
                 lib->ForEachVoice([&](const auto& v) {
@@ -279,7 +260,7 @@ namespace Thread::Interface
                     if (sel)
                         ImGuiMCP::PushStyleColor(ImGuiMCP::ImGuiCol_Text, UI::Theme::Color::selectionText);
                     if (ImGuiMCP::Selectable(label.c_str(), sel)) {
-                        OnSetVoice(actor, &v);
+                        OnSetVoice(a_hud, actor, &v);
                     }
                     if (sel)
                         ImGuiMCP::PopStyleColor();
@@ -295,18 +276,18 @@ namespace Thread::Interface
             int alphaInt = static_cast<int>(std::round(actor->GetAlpha() * 100.0f));
 
             ImGuiMCP::SetCursorPosX(rowPadH);
-            SetWindowFontSize(ScaleUI::pxTextScale(UI::Theme::FontSize::caption));
+            SetWindowFontSize(scale.TextPx(UI::Theme::FontSize::caption));
             ImGuiMCP::TextColored(UI::Theme::ToVec4(UI::Theme::Color::textMuted), "Alpha");
             ImGuiMCP::SameLine(lblW);
 
             ImGuiMCP::SetNextItemWidth(alphaW);
-            ImGuiMCP::PushStyleVar(ImGuiMCP::ImGuiStyleVar_FramePadding, ImGuiMCP::ImVec2{ 0.0f, ScaleUI::pxScale(1.5f) });
+            ImGuiMCP::PushStyleVar(ImGuiMCP::ImGuiStyleVar_FramePadding, ImGuiMCP::ImVec2{ 0.0f, scale.Px(1.5f) });
             if (ImGuiMCP::SliderInt("##slpp_tcmAlpha", &alphaInt, 0, 100, ""))
                 OnSetActorAlpha(actor, alphaInt);  // actor's opacity updates live while dragging
             ImGuiMCP::PopStyleVar();
 
-            ImGuiMCP::SameLine(0.0f, ScaleUI::pxScale(6.0f));
-            SetWindowFontSize(ScaleUI::pxTextScale(UI::Theme::FontSize::caption));
+            ImGuiMCP::SameLine(0.0f, scale.Px(6.0f));
+            SetWindowFontSize(scale.TextPx(UI::Theme::FontSize::caption));
             ImGuiMCP::TextColored(UI::Theme::ToVec4(UI::Theme::Color::textMuted), "%d%%", alphaInt);
         }
 
@@ -316,25 +297,22 @@ namespace Thread::Interface
 
     // ── Render ──────────────────────────────────────────────────────────────
 
-    void ThreadConfigPanel::Render()
+    void ThreadConfigPanel::Render(SceneHUD& a_hud)
     {
-        auto& hud = SceneHUD::GetSingleton();
-        if (!IsVisible() || !hud.ShouldRender() || !hud.IsPanelOpen(PanelId::kThreadConfig) || !hud.IsFocused())
-            return;
-
-        auto* inst = hud.GetThreadInstance();
+        auto* inst = a_hud.GetThreadInstance();
         if (!inst)
             return;
 
+        auto& scale = a_hud.GetScale();
         auto* io = ImGuiMCP::GetIO();
-        const float panelW = ScaleUI::pxScale(280.0f);
-        const float offset = ScaleUI::pxScale(UI::Theme::Geometry::panelTabWidth + UI::Theme::Geometry::panelTabGap);
-        const float rowMinH = ScaleUI::pxScale(28.0f);
-        const float rowPadV = ScaleUI::pxScale(6.0f);
-        const float rowPadH = ScaleUI::pxScale(12.0f);
-        const float maxBodyH = ScaleUI::pxScale(340.0f);  // before scrolling
-        const float sectionH = std::max(ScaleUI::pxScale(20.0f),
-            ScaleUI::pxTextScale(UI::Theme::FontSize::sectionHeader) + ScaleUI::pxScale(UI::Theme::Spacing::xs));
+        const float panelW = scale.Px(280.0f);
+        const float offset = scale.Px(UI::Theme::Geometry::panelTabWidth + UI::Theme::Geometry::panelTabGap);
+        const float rowMinH = scale.Px(28.0f);
+        const float rowPadV = scale.Px(6.0f);
+        const float rowPadH = scale.Px(12.0f);
+        const float maxBodyH = scale.Px(340.0f);  // before scrolling
+        const float sectionH = std::max(scale.Px(20.0f),
+            scale.TextPx(UI::Theme::FontSize::sectionHeader) + scale.Px(UI::Theme::Spacing::xs));
 
         ImGuiMCP::SetNextWindowPos(
             ImGuiMCP::ImVec2{ io->DisplaySize.x - offset, io->DisplaySize.y * 0.5f },
@@ -355,31 +333,31 @@ namespace Thread::Interface
         }
 
         // ── THREAD section
-        SetWindowFontSize(ScaleUI::pxTextScale(UI::Theme::FontSize::sectionHeader));
+        SetWindowFontSize(scale.TextPx(UI::Theme::FontSize::sectionHeader));
         if (UI::CollapsibleSectionHeader(
                 "THREAD", "##slpp_tcmThreadSection", _threadSectionOpen, { 0.0f, sectionH }))
             _threadSectionOpen = !_threadSectionOpen;
         ImGuiMCP::Separator();
 
         if (_threadSectionOpen) {
-            SetWindowFontSize(ScaleUI::pxTextScale(UI::Theme::FontSize::body));
-            const float actionGap = ScaleUI::pxScale(UI::Theme::Spacing::sm);
+            SetWindowFontSize(scale.TextPx(UI::Theme::FontSize::body));
+            const float actionGap = scale.Px(UI::Theme::Spacing::sm);
             const float actionW = (panelW - rowPadH * 2.0f - actionGap) * 0.5f;
             ImGuiMCP::SetCursorPosX(rowPadH);
             if (UI::ActionButton("Random Scene", actionW))
-                OnRandomScene();
+                OnRandomScene(a_hud);
             ImGuiMCP::SameLine(0.0f, actionGap);
             if (UI::ActionButton("Move Scene", actionW))
-                OnMoveScene();
-            ImGuiMCP::Dummy(ImGuiMCP::ImVec2{ 0.0f, ScaleUI::pxScale(UI::Theme::Spacing::sm) });
+                OnMoveScene(a_hud);
+            ImGuiMCP::Dummy(ImGuiMCP::ImVec2{ 0.0f, scale.Px(UI::Theme::Spacing::sm) });
 
             ImGuiMCP::SetCursorPosX(rowPadH);
             ImGuiMCP::TextColored(UI::Theme::ToVec4(UI::Theme::Color::textMuted), "Auto Advance");
-            ImGuiMCP::SameLine(panelW - rowPadH - ScaleUI::pxScale(20.0f));
+            ImGuiMCP::SameLine(panelW - rowPadH - scale.Px(20.0f));
             bool autoPlay = inst->GetThreadProperty<bool>("AutoAdvance");
-            UI::PushCheckboxStyle(hud.GetScale().Factor());
+            UI::PushCheckboxStyle(scale.Factor());
             if (ImGuiMCP::Checkbox("##slpp_tcmAutoplay", &autoPlay)) {
-                OnAutoPlaySet(autoPlay);
+                OnAutoPlaySet(a_hud, autoPlay);
             }
             UI::PopCheckboxStyle();
 
@@ -389,7 +367,7 @@ namespace Thread::Interface
         ImGuiMCP::Separator();
 
         // ── ACTORS section
-        SetWindowFontSize(ScaleUI::pxTextScale(UI::Theme::FontSize::sectionHeader));
+        SetWindowFontSize(scale.TextPx(UI::Theme::FontSize::sectionHeader));
         if (UI::CollapsibleSectionHeader(
                 "ACTORS", "##slpp_tcmActorsSection", _actorsSectionOpen, { 0.0f, sectionH }))
             _actorsSectionOpen = !_actorsSectionOpen;
@@ -411,7 +389,7 @@ namespace Thread::Interface
                     _actorStates.push_back({ fid, false });
                     st = &_actorStates.back();
                 }
-                RenderActorCard(actor, *st);
+                RenderActorCard(a_hud, actor, *st);
             }
 
             ImGuiMCP::EndChild();

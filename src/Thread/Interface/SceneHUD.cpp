@@ -6,36 +6,19 @@
 #include "Elements/PseudoPanelStack.h"
 #include "Elements/SceneSelectPanel.h"
 #include "Elements/ThreadConfigPanel.h"
-#include "FurnSelectMenu.h"
 
 namespace Thread::Interface
 {
-    namespace
+    struct SceneHUD::Elements
     {
-        struct PanelEntry
-        {
-            PanelId id;
-            UI::Panel* panel;
-        };
-
-        const std::array<PanelEntry, 4>& GetPanels()
-        {
-            static const std::array panels{
-                PanelEntry{ PanelId::kThreadConfig, &ThreadConfigPanel::GetSingleton() },
-                PanelEntry{ PanelId::kSceneSelect, &SceneSelectPanel::GetSingleton() },
-                PanelEntry{ PanelId::kOffsetAdjust, &OffsetAdjustPanel::GetSingleton() },
-                PanelEntry{ PanelId::kElementControl, &ElementCtrlPanel::GetSingleton() },
-            };
-            return panels;
-        }
-
-        UI::Panel* FindPanel(PanelId a_id)
-        {
-            const auto& panels = GetPanels();
-            const auto entry = std::ranges::find(panels, a_id, &PanelEntry::id);
-            return entry == panels.end() ? nullptr : entry->panel;
-        }
-    }
+        AnimSpeedOverlay animSpeedOverlay;
+        EnjBarsOverlay enjoymentBarsOverlay;
+        ThreadConfigPanel threadConfigPanel;
+        SceneSelectPanel sceneSelectPanel;
+        OffsetAdjustPanel offsetAdjustPanel;
+        ElementCtrlPanel elementCtrlPanel;
+        PseudoPanelStack pseudoPanelStack;
+    };
 
     SceneHUD& SceneHUD::GetSingleton()
     {
@@ -43,31 +26,23 @@ namespace Thread::Interface
         return singleton;
     }
 
+    SceneHUD::~SceneHUD() = default;
+
     bool SceneHUD::Register()
     {
+        if (_registered)
+            return true;
         if (!SKSEMenuFramework::IsInstalled()) {
             logger::warn("SceneHUD::Register >> SKSE Menu Framework not installed");
             return false;
         }
-
-        const std::array results{
-            AnimSpeedOverlay::GetSingleton().Register(),
-            EnjBarsOverlay::GetSingleton().Register(),
-            ThreadConfigPanel::GetSingleton().Register(),
-            SceneSelectPanel::GetSingleton().Register(),
-            OffsetAdjustPanel::GetSingleton().Register(),
-            ElementCtrlPanel::GetSingleton().Register(),
-            PseudoPanelStack::GetSingleton().Register(),
-            FurnSelectMenu::GetSingleton().Register(),
-        };
-
-        if (!std::ranges::all_of(results, std::identity{})) {
-            logger::error("SceneHUD::Register >> one or more UI windows failed to register");
+        if (!_window.Register(RenderCallback, false)) {
+            logger::error("SceneHUD::Register >> AddWindow failed");
             return false;
         }
 
         _registered = true;
-        logger::info("SceneHUD::Register >> all UI windows registered");
+        logger::info("SceneHUD::Register >> UI window registered");
         return true;
     }
 
@@ -76,9 +51,11 @@ namespace Thread::Interface
         if (!a_quest)
             return;
         if (!_registered) {
-            logger::warn("SceneHUD::Init >> UI windows are not registered");
+            logger::warn("SceneHUD::Init >> UI window is not registered");
             return;
         }
+        if (IsActive())
+            Destroy();
 
         _linkedThread = a_quest;
         _threadScript = Script::GetScriptObject(_linkedThread, "sslThreadController");
@@ -106,109 +83,175 @@ namespace Thread::Interface
 
         _activePanel = PanelId::kNone;
         _focused = false;
-        AnimSpeedOverlay::GetSingleton().Init();
-        EnjBarsOverlay::GetSingleton().Init();
+        _elements = std::make_unique<Elements>();
+        _elements->enjoymentBarsOverlay.Init(*instance);
+        _window.SetBlocksInput(false);
+        _window.Open();
         logger::info("SceneHUD::Init >> scene UI active");
     }
 
     void SceneHUD::Destroy()
     {
-        if (!IsActive())
+        if (!IsActive() && !_elements)
             return;
 
         SetFocus(false);
-        AnimSpeedOverlay::GetSingleton().Destroy();
-        EnjBarsOverlay::GetSingleton().Destroy();
-        for (const auto& entry : GetPanels())
-            entry.panel->Close();
-        PseudoPanelStack::GetSingleton().Close();
-
+        _window.SetBlocksInput(false);
+        _window.Close();
+        _elements.reset();
         _activePanel = PanelId::kNone;
         _linkedThread = nullptr;
         _threadScript = nullptr;
         logger::info("SceneHUD::Destroy >> scene UI deactivated");
     }
 
-    void SceneHUD::SetFocus(bool a_focused)
+    void __stdcall SceneHUD::RenderCallback()
     {
-        if (_focused == a_focused)
+        GetSingleton().Render();
+    }
+
+    void SceneHUD::Render()
+    {
+        if (!_elements || !ShouldRender())
+            return;
+        auto* instance = GetThreadInstance();
+        if (!instance)
             return;
 
-        _focused = a_focused;
-        auto& panelStack = PseudoPanelStack::GetSingleton();
-        panelStack.SetInputBlocking(a_focused);
-        if (a_focused) {
-            panelStack.Open();
-        } else {
-            CloseAllPanels();
-            panelStack.Close();
+        if (instance->GetThreadProperty<bool>("ElementUI_AnimSpeed"))
+            _elements->animSpeedOverlay.Render(*this);
+        if (instance->GetThreadProperty<bool>("ElementUI_EnjBars") &&
+            instance->GetThreadProperty<bool>("VarUI_SeparateOrgasm")) {
+            _elements->enjoymentBarsOverlay.Render(*this);
         }
-    }
 
-    void SceneHUD::CloseAllPanels()
-    {
-        if (auto* panel = FindPanel(_activePanel))
-            panel->Close();
-        _activePanel = PanelId::kNone;
-    }
-
-    void SceneHUD::OpenPanel(PanelId a_panel)
-    {
-        if (_activePanel == a_panel) {
-            CloseAllPanels();
+        if (!_focused)
             return;
-        }
 
-        CloseAllPanels();
-        if (auto* panel = FindPanel(a_panel)) {
-            _activePanel = a_panel;
-            panel->Open();
-        }
-    }
-
-    void SceneHUD::OnOverlayToggle(HudElement a_element, bool a_visible)
-    {
-        switch (a_element) {
-        case HudElement::kAnimationSpeed:
-            a_visible ? AnimSpeedOverlay::GetSingleton().Init() : AnimSpeedOverlay::GetSingleton().Destroy();
+        _elements->pseudoPanelStack.Render(*this);
+        switch (_activePanel) {
+        case PanelId::kThreadConfig:
+            _elements->threadConfigPanel.Render(*this);
             break;
-        case HudElement::kEnjoymentBars:
-            a_visible ? EnjBarsOverlay::GetSingleton().Init() : EnjBarsOverlay::GetSingleton().Destroy();
+        case PanelId::kSceneSelect:
+            _elements->sceneSelectPanel.Render(*this);
+            break;
+        case PanelId::kOffsetAdjust:
+            _elements->offsetAdjustPanel.Render(*this);
+            break;
+        case PanelId::kElementControl:
+            _elements->elementCtrlPanel.Render(*this);
             break;
         default:
             break;
         }
     }
 
+    void SceneHUD::SetFocus(bool a_focused)
+    {
+        if (a_focused && (!_elements || !IsActive()))
+            return;
+        if (_focused == a_focused)
+            return;
+
+        _focused = a_focused;
+        _window.SetBlocksInput(a_focused);
+        if (!a_focused)
+            CloseAllPanels();
+    }
+
+    void SceneHUD::CloseAllPanels()
+    {
+        if (_elements) {
+            switch (_activePanel) {
+            case PanelId::kThreadConfig:
+                _elements->threadConfigPanel.Close();
+                break;
+            case PanelId::kSceneSelect:
+                _elements->sceneSelectPanel.Close();
+                break;
+            case PanelId::kOffsetAdjust:
+                _elements->offsetAdjustPanel.Close();
+                break;
+            case PanelId::kElementControl:
+                _elements->elementCtrlPanel.Close();
+                break;
+            default:
+                break;
+            }
+        }
+        _activePanel = PanelId::kNone;
+    }
+
+    void SceneHUD::OpenPanel(PanelId a_panel)
+    {
+        if (!_elements || !_focused)
+            return;
+        if (_activePanel == a_panel) {
+            CloseAllPanels();
+            return;
+        }
+
+        CloseAllPanels();
+        switch (a_panel) {
+        case PanelId::kThreadConfig:
+            _elements->threadConfigPanel.Open(*this);
+            break;
+        case PanelId::kSceneSelect:
+            _elements->sceneSelectPanel.Open(*this);
+            break;
+        case PanelId::kOffsetAdjust:
+            _elements->offsetAdjustPanel.Open(*this);
+            break;
+        case PanelId::kElementControl:
+            _elements->elementCtrlPanel.Open(*this);
+            break;
+        default:
+            return;
+        }
+        _activePanel = a_panel;
+    }
+
     void SceneHUD::UpdateStageTimer(float a_duration, float a_timer)
     {
-        AnimSpeedOverlay::GetSingleton().UpdateStageTimer(a_duration, a_timer);
+        if (_elements)
+            _elements->animSpeedOverlay.UpdateStageTimer(a_duration, a_timer);
     }
 
     void SceneHUD::UpdateHighlightedPartner(RE::Actor* a_partner)
     {
-        EnjBarsOverlay::GetSingleton().UpdateHighlightedPartner(a_partner);
+        if (_elements)
+            _elements->enjoymentBarsOverlay.UpdateHighlightedPartner(a_partner);
     }
 
     void SceneHUD::UpdateEnjoyment(RE::Actor* a_actor, float a_enjoyment, RE::BSFixedString a_interactions)
     {
-        EnjBarsOverlay::GetSingleton().UpdateSlider(a_actor, a_enjoyment, a_interactions);
+        if (_elements)
+            _elements->enjoymentBarsOverlay.UpdateSlider(a_actor, a_enjoyment, a_interactions);
     }
 
     void SceneHUD::RegisterRaiseEnjoymentAttempt(RE::Actor* a_actor, float a_nextTimeCycle)
     {
-        EnjBarsOverlay::GetSingleton().RegisterRaiseEnjAttempt(a_actor, a_nextTimeCycle);
+        if (!_elements)
+            return;
+        auto* instance = GetThreadInstance();
+        if (instance && instance->GetThreadProperty<bool>("ElementUI_EnjBars") &&
+            instance->GetThreadProperty<bool>("VarUI_SeparateOrgasm")) {
+            _elements->enjoymentBarsOverlay.RegisterRaiseEnjAttempt(*this, a_actor, a_nextTimeCycle);
+        }
     }
 
     void SceneHUD::OnStageChanged()
     {
-        OffsetAdjustPanel::GetSingleton().OnStageChanged();
+        if (_elements && _activePanel == PanelId::kOffsetAdjust)
+            _elements->offsetAdjustPanel.OnStageChanged(*this);
     }
 
     void SceneHUD::RebuildSceneList()
     {
-        auto& panel = SceneSelectPanel::GetSingleton();
-        panel.RebuildEntries();
-        panel.RebuildFilter();
+        if (!_elements)
+            return;
+        _elements->sceneSelectPanel.RebuildEntries(*this);
+        _elements->sceneSelectPanel.RebuildFilter();
     }
 }

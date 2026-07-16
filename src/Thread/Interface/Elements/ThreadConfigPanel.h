@@ -1,38 +1,31 @@
 #pragma once
 #include "Thread/Interface/SceneHUD.h"
-#include "Thread/Interface/UI/Window.h"
 
 namespace Thread::Interface
 {
-    class ThreadConfigPanel final : public UI::WindowComponent, public UI::Panel
+    class ThreadConfigPanel final
     {
       public:
-        static ThreadConfigPanel& GetSingleton();
-
-        bool Register();
-        void Open() override;
-        void Close() override;
+        void Open(SceneHUD& a_hud);
+        void Close();
+        void Render(SceneHUD& a_hud);
 
       private:
-        ThreadConfigPanel() = default;
-
         struct ActorState
         {
             uint32_t formId{};
             bool cardOpen{ true };
         };
 
-        static void __stdcall RenderCallback();
-        void Render();
-        void OnRandomScene();
-        void OnMoveScene();
-        void OnAutoPlaySet(bool a_state);
-        void OnNextPosition(RE::Actor* a_actor);
-        void OnSetExpression(RE::Actor* a_actor, const Registry::Expression* a_expression);
-        void OnSetVoice(RE::Actor* a_actor, const Registry::Voice* a_voice);
+        void OnRandomScene(SceneHUD& a_hud);
+        void OnMoveScene(SceneHUD& a_hud);
+        void OnAutoPlaySet(SceneHUD& a_hud, bool a_state);
+        void OnNextPosition(SceneHUD& a_hud, RE::Actor* a_actor);
+        void OnSetExpression(SceneHUD& a_hud, RE::Actor* a_actor, const Registry::Expression* a_expression);
+        void OnSetVoice(SceneHUD& a_hud, RE::Actor* a_actor, const Registry::Voice* a_voice);
         void OnSetActorAlpha(RE::Actor* a_actor, int a_alpha);
 
-        void RenderActorCard(RE::Actor* a_actor, ActorState& a_state);
+        void RenderActorCard(SceneHUD& a_hud, RE::Actor* a_actor, ActorState& a_state);
 
         std::vector<ActorState> _actorStates;
         std::vector<RE::Actor*> _sortedActors;

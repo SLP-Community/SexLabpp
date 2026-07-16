@@ -3,6 +3,7 @@
 #include "Registry/Stats.h"
 #include "Serialization.h"
 #include "Thread/Collision/CollisionHandler.h"
+#include "Thread/Interface/FurnSelectMenu.h"
 #include "Thread/Interface/SceneHUD.h"
 #include "Thread/NiNode/Legacy/LegacyNiUpdate.h"
 #include "Thread/NiNode/NiUpdate.h"
@@ -37,7 +38,8 @@ static void SKSEMessageHandler(SKSE::MessagingInterface::Message* message)
 {
     switch (message->type) {
     case SKSE::MessagingInterface::kPostLoad:
-        Thread::Interface::SceneHUD::GetSingleton().Register();
+        if (Thread::Interface::SceneHUD::GetSingleton().Register())
+            Thread::Interface::FurnSelectMenu::GetSingleton().Register();
         break;
     case SKSE::MessagingInterface::kDataLoaded:
         Settings::Initialize();
