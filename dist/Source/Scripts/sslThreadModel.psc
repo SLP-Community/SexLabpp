@@ -1873,37 +1873,7 @@ Function UpdateAnimatingActorMovement(Actor akActor)
 	SexLabUtil.SetActorMovement(akActor, aiMovement)
 EndFunction
 
-Function MoveActorsAwayFromPlayer(bool MovePlayer = false)
-	float adjOffset = 35.0
-	int moveDir = -1
-	int i = 0
-	while (i < _Positions.Length)
-		Actor curActor = _Positions[i]
-		If (curActor != PlayerRef)
-			If (curActor.GetDistance(PlayerRef) < 50.0)
-				If (MovePlayer)
-					PlayerRef.SetPosition(PlayerRef.X + 70, PlayerRef.Y, PlayerRef.Z)
-					return
-				Else
-					moveDir += 1
-				EndIf
-				float newX = curActor.X
-				float newY = curActor.Y
-				If (moveDir == 0)
-					newY += adjOffset
-				ElseIf (moveDir == 1)
-					newX += adjOffset
-				ElseIf (moveDir == 2)
-					newY -= adjOffset
-				ElseIf (moveDir == 3)
-					newX -= adjOffset
-				EndIf
-				curActor.SetPosition(newX, newY, curActor.Z)
-			EndIf
-		EndIf
-		i += 1
-	EndWhile
-EndFunction
+Function MoveActorsAwayFromPlayer(bool MovePlayer = false) native
 
 ; ------------------------------------------------------- ;
 ; --- Statistics	                                    --- ;

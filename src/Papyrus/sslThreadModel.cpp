@@ -10,6 +10,7 @@
 #include "UserData/StripData.h"
 #include "Util/Script.h"
 #include "Util/StringUtil.h"
+#include "Util/World.h"
 
 using Offset = Registry::CoordinateType;
 
@@ -411,6 +412,12 @@ namespace Papyrus::ThreadModel
     {
         GET_INSTANCE();
         instance->UpdatePlacement(a_position);
+    }
+
+    void MoveActorsAwayFromPlayer(QUESTARGS, bool a_movePlayer)
+    {
+        GET_INSTANCE();
+        Util::World::MoveActorsAwayFromPlayer(instance->GetActors(), a_movePlayer);
     }
 
     bool GetIsCompatiblecenter(QUESTARGS, RE::BSFixedString a_sceneid, RE::TESObjectREFR* a_center)

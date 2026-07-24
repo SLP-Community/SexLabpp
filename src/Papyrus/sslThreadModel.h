@@ -65,6 +65,7 @@ namespace Papyrus::ThreadModel
     bool ReassignCenter(QUESTARGS, RE::TESObjectREFR* a_centeron);
     bool SetNextPermutation(QUESTARGS, RE::Actor* a_position);
     void UpdatePlacement(QUESTARGS, RE::Actor* a_position);
+    void MoveActorsAwayFromPlayer(QUESTARGS, bool a_movePlayer);
 
     bool IsCollisionRegistered(QUESTARGS);
     void UnregisterCollision(QUESTARGS);
@@ -112,6 +113,7 @@ namespace Papyrus::ThreadModel
         REGISTERFUNC(ReassignCenter, "sslThreadModel", false);
         REGISTERFUNC(UpdatePlacement, "sslThreadModel", false);
         REGISTERFUNC(SetNextPermutation, "sslThreadModel", false);
+        REGISTERFUNC(MoveActorsAwayFromPlayer, "sslThreadModel", false);
 
         REGISTERFUNC(IsCollisionRegistered, "sslThreadModel", true);
         REGISTERFUNC(UnregisterCollision, "sslThreadModel", true);
