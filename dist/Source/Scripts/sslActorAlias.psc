@@ -600,7 +600,7 @@ State Paused
 			ResolveStrapon()
 			_ActorRef.QueueNiNodeUpdate()
 		EndIf
-		Debug.SendAnimationEvent(_ActorRef, "SOSBend0")
+		Debug.SendAnimationEvent(_ActorRef, GetSosBendEvent())
 		RegisterForModEvent("SSL_READY_Thread" + _Thread.tid, "OnStartPlaying")
 	EndFunction
 
@@ -613,7 +613,7 @@ State Paused
 		_Thread.AnimationStart()
 		If (_sex != 1 && _sex != 4)
 			Utility.Wait(0.5)	; extra async call to ensure erection
-			Debug.SendAnimationEvent(_ActorRef, "SOSBend0")
+			ApplySosBend()
 		EndIf
 		_HomoTypes = _Thread.CheckActiveHomoTypes()
 		UpdateBaseEnjoymentCalculations()
@@ -1063,6 +1063,27 @@ Function ResolveStraponImpl()
 	ElseIf(equipped && !_useStrapon)
 		_ActorRef.UnequipItem(_Strapon, true, true)
 	EndIf
+EndFunction
+
+String Function GetSosBendEvent()
+	int bend = 0
+	int idx = _Thread.GetPositionIdx(_ActorRef)
+	If (idx >= 0)
+		bend = SexLabRegistry.GetSchlong(_Thread.GetActiveScene(), _Thread.GetActiveStage(), idx)
+	EndIf
+	If (bend < -9)
+		bend = -9
+	ElseIf (bend > 9)
+		bend = 9
+	EndIf
+	return "SOSBend" + bend
+EndFunction
+
+Function ApplySosBend()
+	If (!_ActorRef || _sex == 1 || _sex == 4)
+		return
+	EndIf
+	Debug.SendAnimationEvent(_ActorRef, GetSosBendEvent())
 EndFunction
 
 int[] Function GetStripSettings()

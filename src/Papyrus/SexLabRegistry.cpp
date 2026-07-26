@@ -601,8 +601,24 @@ namespace Papyrus::SexLabRegistry
     {
         SCENE("");
         STAGE("");
-        const auto ret = scene->GetNthAdjacentStage(stage, n);
-        return ret ? ret->id : "";
+        const auto* edge = scene->GetNthAdjacentEdge(stage, static_cast<size_t>(n));
+        if (!edge)
+            return "";
+        if (!edge->stage_id.empty())
+            return RE::BSFixedString{ edge->stage_id };
+        return edge->destination ? edge->destination->id : "";
+    }
+
+    RE::BSFixedString GetBranchScene(STATICARGS, RE::BSFixedString a_id, RE::BSFixedString a_stage, int n)
+    {
+        SCENE("");
+        STAGE("");
+        const auto* edge = scene->GetNthAdjacentEdge(stage, static_cast<size_t>(n));
+        if (!edge)
+            return "";
+        if (!edge->scene_id.empty())
+            return RE::BSFixedString{ edge->scene_id };
+        return edge->destination_scene ? edge->destination_scene->id : a_id;
     }
 
     int32_t GetNumBranches(STATICARGS, RE::BSFixedString a_id, RE::BSFixedString a_stage)
@@ -610,6 +626,50 @@ namespace Papyrus::SexLabRegistry
         SCENE(0);
         STAGE(0);
         return static_cast<int32_t>(scene->GetNumAdjacentStages(stage));
+    }
+
+    int32_t GetBranchPriority(STATICARGS, RE::BSFixedString a_id, RE::BSFixedString a_stage, int n)
+    {
+        SCENE(0);
+        STAGE(0);
+        const auto* edge = scene->GetNthAdjacentEdge(stage, static_cast<size_t>(n));
+        return edge ? edge->priority : 0;
+    }
+
+    int32_t GetBranchFlags(STATICARGS, RE::BSFixedString a_id, RE::BSFixedString a_stage, int n)
+    {
+        SCENE(0);
+        STAGE(0);
+        const auto* edge = scene->GetNthAdjacentEdge(stage, static_cast<size_t>(n));
+        return edge ? static_cast<int32_t>(edge->flags) : 0;
+    }
+
+    RE::BSFixedString GetBranchLabel(STATICARGS, RE::BSFixedString a_id, RE::BSFixedString a_stage, int n)
+    {
+        SCENE("");
+        STAGE("");
+        const auto* edge = scene->GetNthAdjacentEdge(stage, static_cast<size_t>(n));
+        return edge ? RE::BSFixedString{ edge->label } : "";
+    }
+
+    int32_t GetSchlong(STATICARGS, RE::BSFixedString a_id, RE::BSFixedString a_stage, int n)
+    {
+        SCENE(0);
+        STAGE(0);
+        POSITION(0);
+        return stage->positions[n].sosBend;
+    }
+
+    std::vector<int32_t> GetSchlongA(STATICARGS, RE::BSFixedString a_id, RE::BSFixedString a_stage)
+    {
+        SCENE({});
+        STAGE({});
+        std::vector<int32_t> ret{};
+        ret.reserve(stage->positions.size());
+        for (auto&& position : stage->positions) {
+            ret.push_back(position.sosBend);
+        }
+        return ret;
     }
 
     int32_t GetNodeType(STATICARGS, RE::BSFixedString a_id, RE::BSFixedString a_stage)
