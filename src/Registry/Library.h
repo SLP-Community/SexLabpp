@@ -50,6 +50,7 @@ namespace Registry
         void EditScene(const Registry::Scene* a_scene, const std::function<void(Scene*)>& a_func);
         bool ForEachPackage(std::function<bool(const AnimPackage*)> a_visitor) const;
         bool ForEachScene(std::function<bool(const Scene*)> a_visitor) const;
+        void BindGraphEdges() noexcept;
 
       public:
         std::vector<RE::BSFixedString> GetAllVoiceIds(RaceKey a_race) const;

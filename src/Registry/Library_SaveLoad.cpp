@@ -110,7 +110,21 @@ namespace Registry
             thread.join();
 #endif
         }
+        BindGraphEdges();
         InitializeSceneSettings();
+    }
+
+    void Library::BindGraphEdges() noexcept
+    {
+        std::unique_lock lock{ _mScenes };
+        auto lookup = [this](std::string_view id) -> const Scene* {
+            const auto where = sceneMap.find(RE::BSFixedString{ id });
+            return where != sceneMap.end() ? where->second : nullptr;
+        };
+        for (auto&& [key, scene] : sceneMap) {
+            scene->BindGraphEdges(lookup);
+        }
+        logger::info("BindGraphEdges: resolved cross-scene destinations for {} scenes", sceneMap.size());
     }
 
     void Library::InitializeSceneSettings() noexcept

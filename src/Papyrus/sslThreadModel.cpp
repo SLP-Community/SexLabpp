@@ -367,17 +367,8 @@ namespace Papyrus::ThreadModel
             a_vm->TraceStack("No active scene or stage", a_stackID);
             return 0;
         }
-        const auto& adj = scene->GetAdjacentStages(stage);
-        if (!adj || adj->empty())
-            return 0;
         Registry::TagData tags{ a_tags };
-        std::vector<int> weights{};
-        int n = 0;
-        for (auto&& i : *adj) {
-            auto c = i->tags.CountTags(tags);
-            weights.resize(weights.size() + c + 1, n++);
-        }
-        return Random::draw(weights);
+        return scene->SelectNextAdjacentIndex(stage, tags);
     }
 
     bool SetActiveScene(QUESTARGS, RE::BSFixedString a_sceneid)
