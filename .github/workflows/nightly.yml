@@ -1,0 +1,377 @@
+name: Nightly
+
+on:
+  schedule:
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Release version (defaults to nightly-YYYY-MM-DD; run ID always appended)'
+        required: false
+        default: ''
+      publish-release:
+        description: 'Publish GitHub prerelease?'
+        type: boolean
+        default: true
+      release-body:
+        description: 'Release body'
+        required: false
+        default: 'Nightly build of SexLabpp from the `dev` branch. Untested; may contain bugs.'
+      force:
+        description: 'Run even if no commits in the last 24 hours'
+        type: boolean
+        default: false
+
+jobs:
+  prepare:
+    name: Prepare
+    runs-on: ubuntu-latest
+    outputs:
+      date: ${{ steps.get-date.outputs.time }}
+      version: ${{ steps.get-version.outputs.VERSION }}
+      should_run: ${{ steps.should_run.outputs.should_run }}
+    steps:
+      - name: Checkout dev
+        uses: actions/checkout@v4
+        with:
+          ref: dev
+          fetch-depth: 0
+
+      - name: Get date
+        id: get-date
+        uses: Kaven-Universe/github-action-current-date-time@v1
+        with:
+          format: "YYYY-MM-DD"
+
+      - name: Get version
+        id: get-version
+        shell: bash
+        run: |
+          BASE="${{ inputs.version }}"
+          if [ -z "$BASE" ]; then
+            BASE="nightly-${{ steps.get-date.outputs.time }}"
+          fi
+          echo "VERSION=${BASE}-${{ github.run_id }}" >> "$GITHUB_OUTPUT"
+
+      - name: Check for changes last 24 hours
+        id: should_run
+        shell: bash
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ inputs.force }}" = "true" ]; then
+            echo "should_run=1" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          COUNT=$(git log --since="1 days ago" --name-only --pretty=format: | grep -c . || true)
+          echo "Commits/files touched in last 24h: $COUNT"
+          git log --since="1 days ago" --oneline || true
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "should_run=1" >> "$GITHUB_OUTPUT"
+          else
+            echo "should_run=$COUNT" >> "$GITHUB_OUTPUT"
+          fi
+
+  compile-skse:
+    name: Compile SKSE
+    needs: prepare
+    if: ${{ needs.prepare.outputs.should_run != '0' }}
+    runs-on: windows-latest
+    steps:
+      - name: Checkout dev
+        uses: actions/checkout@v4
+        with:
+          ref: dev
+          submodules: recursive
+
+      - name: Set xmake env
+        run: echo "XMAKE_GLOBALDIR=${{ runner.workspace }}/xmake-global" >> $GITHUB_ENV
+        shell: bash
+
+      - name: Create xmake cache directories
+        run: |
+          mkdir -p "${{ env.XMAKE_GLOBALDIR }}/xmake-cache"
+          mkdir -p "${{ env.XMAKE_GLOBALDIR }}/build-cache"
+        shell: bash
+
+      - name: Cache xmake dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.xmake/packages
+            ${{ env.XMAKE_GLOBALDIR }}/xmake-cache
+          key: xmake-deps-${{ runner.os }}-${{ hashFiles('xmake-requires.lock') }}
+          restore-keys: |
+            xmake-deps-${{ runner.os }}-
+
+      - name: Cache xmake build cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.XMAKE_GLOBALDIR }}/build-cache
+          key: xmake-build-${{ runner.os }}-${{ github.sha }}
+          restore-keys: |
+            xmake-build-${{ runner.os }}-
+
+      - name: Setup xmake
+        uses: xmake-io/github-action-setup-xmake@v1
+        with:
+          xmake-version: 'latest'
+          actions-cache-folder: ${{ env.XMAKE_GLOBALDIR }}/xmake-cache
+          actions-cache-key: '.xmake-actions-cache'
+          build-cache: true
+          build-cache-path: ${{ env.XMAKE_GLOBALDIR }}/build-cache
+          build-cache-key: xmake-build-${{ runner.os }}-${{ github.run_id }}
+
+      - name: Configure
+        run: |
+          xmake repo --update
+          xmake f -y -m release --build_papyrus=n --build_spriggit=n --build_assets=n
+          xmake require -y
+
+      - name: Build SexLabUtil
+        run: xmake build SexLabUtil
+
+      - name: Upload SKSE plugin
+        uses: actions/upload-artifact@v4
+        with:
+          name: skse-plugin
+          path: |
+            build/windows/x64/release/SexLabUtil.dll
+            build/windows/x64/release/SexLabUtil.pdb
+            dist/SKSE/Plugins/SexLab.ini
+
+  compile-spriggit:
+    name: Compile Spriggit
+    needs: prepare
+    if: ${{ needs.prepare.outputs.should_run != '0' }}
+    runs-on: windows-latest
+    steps:
+      - name: Checkout dev
+        uses: actions/checkout@v4
+        with:
+          ref: dev
+
+      - name: Cache Spriggit
+        id: cache-spriggit
+        uses: actions/cache@v4
+        with:
+          path: .github/spriggit
+          key: ${{ runner.os }}-spriggit-cli
+
+      - name: Fetch Spriggit
+        if: steps.cache-spriggit.outputs.cache-hit != 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Path .github -Force | Out-Null
+          gh release download -R Mutagen-Modding/Spriggit --pattern "SpriggitCLI.zip" --dir .github --clobber
+          7z x .github/SpriggitCLI.zip "-o.github\spriggit" -y
+          if (-not (Test-Path ".github/spriggit/Spriggit.CLI.exe")) {
+            throw "Spriggit.CLI.exe not found after extraction"
+          }
+
+      - name: Deserialize SexLab.esm
+        shell: cmd
+        run: .github\spriggit\Spriggit.CLI.exe deserialize --InputPath "res/SexLab.esm" --OutputPath "dist/SexLab.esm"
+
+      - name: Upload plugin
+        uses: actions/upload-artifact@v4
+        with:
+          name: esm-plugin
+          path: dist/SexLab.esm
+
+  compile-papyrus:
+    name: Compile Papyrus
+    needs: prepare
+    if: ${{ needs.prepare.outputs.should_run != '0' }}
+    runs-on: windows-latest
+    steps:
+      - name: Checkout dev
+        uses: actions/checkout@v4
+        with:
+          ref: dev
+
+      - name: Cache Papyrus includes
+        id: cache-ss
+        uses: actions/cache@v4
+        with:
+          path: .github/Papyrus
+          key: papyrus-includes-v1
+
+      - name: Cache Caprica
+        id: cache-com
+        uses: actions/cache@v4
+        with:
+          path: .github/Caprica
+          key: caprica-0.3.0a
+
+      - name: Fetch Caprica
+        if: steps.cache-com.outputs.cache-hit != 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Path .github -Force | Out-Null
+          gh release download 0.3.0a -R KrisV-777/Caprica --pattern "Caprica.zip" --dir .github --clobber
+          7z x .github/Caprica.zip "-o.github\Caprica" -y
+          if (-not (Test-Path ".github/Caprica/Caprica.exe")) {
+            throw "Caprica.exe not found after extraction"
+          }
+
+      - name: Stage Papyrus includes
+        if: steps.cache-ss.outputs.cache-hit != 'true'
+        shell: pwsh
+        run: .github/scripts/setup-papyrus-includes.ps1
+
+      - name: Ensure VRIK stub present
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Path .github/Papyrus/SRC_VRIK -Force | Out-Null
+          Copy-Item .github/ci/papyrus-stubs/VRIK.psc .github/Papyrus/SRC_VRIK/VRIK.psc -Force
+
+      - name: Compile with Caprica
+        shell: pwsh
+        run: |
+          $imports = @(
+            ".github/Papyrus/SRC",
+            ".github/Papyrus/SRC_SKYUI",
+            ".github/Papyrus/SRC_PAPUTIL",
+            ".github/Papyrus/SRC_RACEMENU",
+            ".github/Papyrus/SRC_MFG",
+            ".github/Papyrus/SRC_LOVENSE",
+            ".github/Papyrus/SRC_VRIK",
+            "dist/Source/Scripts"
+          ) -join ";"
+          New-Item -ItemType Directory -Path "dist/Scripts" -Force | Out-Null
+          & .github/Caprica/Caprica.exe `
+            --game skyrim `
+            --import $imports `
+            --output "dist/Scripts" `
+            --flags=".github/Papyrus/SRC/TESV_Papyrus_Flags.flg" `
+            "dist/Source/Scripts" `
+            -R -q
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      - name: Upload compiled scripts
+        uses: actions/upload-artifact@v4
+        with:
+          name: compiled-scripts
+          path: dist/Scripts
+
+  package-mod:
+    name: Package nightly
+    runs-on: ubuntu-latest
+    needs: [prepare, compile-skse, compile-spriggit, compile-papyrus]
+    if: ${{ needs.prepare.outputs.should_run != '0' }}
+    steps:
+      - name: Checkout dev
+        uses: actions/checkout@v4
+        with:
+          ref: dev
+
+      - name: Download SKSE plugin
+        uses: actions/download-artifact@v4
+        with:
+          name: skse-plugin
+          path: artifacts/skse
+
+      - name: Download ESM
+        uses: actions/download-artifact@v4
+        with:
+          name: esm-plugin
+          path: artifacts/esm
+
+      - name: Download compiled scripts
+        uses: actions/download-artifact@v4
+        with:
+          name: compiled-scripts
+          path: artifacts/pex
+
+      - name: Assemble package
+        shell: bash
+        run: |
+          set -euo pipefail
+          PKG="${{ github.workspace }}/to-pack"
+          mkdir -p "$PKG/SKSE/Plugins"
+          mkdir -p "$PKG/Scripts"
+          mkdir -p "$PKG/Source/Scripts"
+
+          # Existing dist assets (UI, meshes, sounds, etc.)
+          if [ -d dist ]; then
+            cp -a dist/. "$PKG/"
+          fi
+
+          # Built outputs overlay dist
+          cp -a artifacts/skse/. "$PKG/SKSE/Plugins/" 2>/dev/null || true
+          # DLL/PDB may sit at artifact root depending on path strip
+          find artifacts/skse -name 'SexLabUtil.dll' -exec cp -a {} "$PKG/SKSE/Plugins/" \;
+          find artifacts/skse -name 'SexLabUtil.pdb' -exec cp -a {} "$PKG/SKSE/Plugins/" \;
+          find artifacts/skse -name 'SexLab.ini' -exec cp -a {} "$PKG/SKSE/Plugins/" \;
+
+          cp -a artifacts/esm/SexLab.esm "$PKG/SexLab.esm"
+          cp -a artifacts/pex/. "$PKG/Scripts/"
+          cp -a dist/Source/Scripts/. "$PKG/Source/Scripts/"
+
+          # Drop CI-only / build junk if any leaked in
+          rm -rf "$PKG/Scripts/Source" 2>/dev/null || true
+
+          ls -la "$PKG"
+          ls -la "$PKG/SKSE/Plugins"
+
+      - name: Zip package
+        uses: vimtor/action-zip@v1.2
+        with:
+          files: to-pack/.
+          dest: SexLabpp-${{ needs.prepare.outputs.version }}.zip
+
+      - name: Upload nightly zip
+        uses: actions/upload-artifact@v4
+        with:
+          name: SexLabpp-${{ needs.prepare.outputs.version }}
+          path: SexLabpp-${{ needs.prepare.outputs.version }}.zip
+
+      - name: Remove intermediate artifacts
+        uses: geekyeggo/delete-artifact@v5
+        with:
+          name: |
+            skse-plugin
+            esm-plugin
+            compiled-scripts
+          failOnError: false
+
+  share-release:
+    name: Publish prerelease
+    needs: [prepare, package-mod]
+    if: ${{ inputs.publish-release != false && needs.prepare.outputs.should_run != '0' }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Download nightly zip
+        uses: actions/download-artifact@v4
+        with:
+          name: SexLabpp-${{ needs.prepare.outputs.version }}
+
+      - name: Delete existing tag/release (same base date)
+        uses: dev-drprasad/delete-tag-and-release@v1.1
+        continue-on-error: true
+        with:
+          tag_name: nightly-${{ needs.prepare.outputs.date }}
+          github_token: ${{ github.token }}
+          delete_release: true
+
+      - name: Create prerelease
+        uses: ncipollo/release-action@v1
+        with:
+          allowUpdates: true
+          name: SexLabpp ${{ needs.prepare.outputs.version }} @ ${{ needs.prepare.outputs.date }}
+          draft: false
+          body: ${{ inputs.release-body || 'Nightly build of SexLabpp from the `dev` branch. Untested; may contain bugs.' }}
+          tag: nightly-${{ needs.prepare.outputs.date }}
+          commit: dev
+          prerelease: true
+          makeLatest: false
+          removeArtifacts: true
+          replacesArtifacts: true
+          artifactErrorsFailBuild: true
+          artifacts: SexLabpp-${{ needs.prepare.outputs.version }}.zip
+          token: ${{ github.token }}
