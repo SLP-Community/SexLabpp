@@ -104,16 +104,22 @@ namespace Thread::Interface
         for (auto& b : _bars) {
             if (b.formId != actorID)
                 continue;
-            if (b.enjoyment >= kGameEnjThresh) {
+            if (b.enjoyment < kGameEnjThresh)
+                return;
+            _timeCycle = std::max(a_nextTimeCycle, kGameMinTimeCycle);
+            if (!b.isGameDpt) {
                 b.isGameDpt = true;
                 _needleRunning = true;
+                _needlePosition = 0.0f;
+                _needleDirection = 1.0f;
+                // First input starts the needle. Scoring the centered initial position would always hit.
+                return;
             }
             const float halfWidth = GreenZoneHalfWidth(b.enjoyment);
             const bool hit = _needlePosition >= 0.5f - halfWidth && _needlePosition <= 0.5f + halfWidth;
             _feedbackActorId = actorID;
             _feedbackHit = hit;
             _feedbackUntil = ImGuiMCP::GetTime() + kFeedbackSec;
-            _timeCycle = std::max(a_nextTimeCycle, kGameMinTimeCycle);
 
             if (!a_hud.GetThreadScript())
                 return;

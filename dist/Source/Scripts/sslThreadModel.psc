@@ -254,10 +254,11 @@ Actor[] Function CanBeImpregnated(Actor akActor,  bool abAllowFutaImpregnation, 
 			int[] orgP = SexLabRegistry.GetClimaxingActors(GetActiveScene(), orgasmStages[i])
 			int n = 0
 			While (n < orgP.Length)
-				If (_Positions[n] != akActor && ActorAlias[n].IsOrgasmAllowed())
-					int orgSex = ActorAlias[n].GetSex()
+				int orgIdx = orgP[n]
+				If (orgIdx >= 0 && orgIdx < _Positions.Length && _Positions[orgIdx] != akActor && ActorAlias[orgIdx].IsOrgasmAllowed())
+					int orgSex = ActorAlias[orgIdx].GetSex()
 					If (orgSex == 0 || (abFutaCanPregnate && orgSex == 2) || (abCreatureCanPregnate && orgSex == 3))
-						ret[n] = _Positions[n]
+						ret[orgIdx] = _Positions[orgIdx]
 					EndIf
 				EndIf
 				n += 1
@@ -2130,10 +2131,8 @@ bool[] Function ListDetectedInteractionsInternal(Actor akPosition, Actor akPartn
 	If (Config.FallbackToTagsForDetection && HasSceneTag("PosTagged"))
 		return ListDetectedPosTagsInteractionsInternal(akPosition)
     EndIf
-	;If all else fails, returns pAnal, which has the highest enj factor
-	bool[] better_than_nothing = Utility.CreateBoolArray(SUPPORTED_INTER_COUNT, False)
-	better_than_nothing[pAnal] = True
-	return better_than_nothing 
+	; Unknown interactions shouldn't invent anal penetration or its pain.
+	return Utility.CreateBoolArray(SUPPORTED_INTER_COUNT, False)
 EndFunction
 
 bool[] Function ListDetectedPhysicsInteractionsInternal(Actor akPosition, Actor akPartner)
@@ -2468,6 +2467,7 @@ bool[] Function CheckActiveHomoTypes()
 EndFunction
 
 bool Function CrtMaleHugePP()
+	; COMEBACK: This is thread-wide. Narrow it to the actual penetrating partner if pain becomes partner-aware.
 	bool HugePP = False
 	If sslActorLibrary.CountCrtMale(_Positions) > 0
 		int CreMalePos = -1
@@ -2655,7 +2655,8 @@ float Function CalcInstThreadAnimSpeed()
 	If (Config.SetAnimSpeedByEnjoyment)
 		int i = 0
 		While (i < _Positions.Length)
-			float actorSpeed = _AnimationSpeedBase * PapyrusUtil.ClampFloat(GetEnjoyment(_Positions[i]) as float / 90, 0.8, 1.2)
+			float enjoymentSpeed = 1.0 + (GetEnjoyment(_Positions[i]) as float / 500)
+			float actorSpeed = _AnimationSpeedBase * PapyrusUtil.ClampFloat(enjoymentSpeed, 0.8, 1.2)
 			If (actorSpeed > animSpeed)
 				animSpeed = actorSpeed
 			EndIf
