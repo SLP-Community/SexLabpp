@@ -127,10 +127,18 @@ String[] Function GetAllStages(String asID) native global
 
 ; Get the n'th outgoing edge from the given Stage
 String Function BranchTo(String asID, String asStage, int n) native global
+String Function GetBranchScene(String asID, String asStage, int n) native global
 ; Get the number of outgoing edges from a given stage
 int Function GetNumBranches(String asID, String asStage) native global
+int Function GetBranchPriority(String asID, String asStage, int n) native global
+int Function GetBranchFlags(String asID, String asStage, int n) native global
+String Function GetBranchLabel(String asID, String asStage, int n) native global
 ; return: None/Invalid - -1 | 0 - Root | 1 - Common Node | 2 - Sink
 int Function GetNodeType(String asID, String asStage) native global
+
+; SoS bend (−9…9) for position n; 0 if unset
+int Function GetSchlong(String asID, String asStage, int n) native global
+int[] Function GetSchlongA(String asID, String asStage) native global
 
 ; Get the shortest/longest path from the given stage to a sink
 ; Return value is a path from asStage (inclusive) to some sink: [asStage, ..., Sink]

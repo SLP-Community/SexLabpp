@@ -67,8 +67,15 @@ namespace Papyrus::SexLabRegistry
     int32_t GetNumStages(STATICARGS, RE::BSFixedString a_id);
     std::vector<RE::BSFixedString> GetAllstages(STATICARGS, RE::BSFixedString a_id);
     RE::BSFixedString BranchTo(STATICARGS, RE::BSFixedString a_id, RE::BSFixedString a_stage, int n);
+    RE::BSFixedString GetBranchScene(STATICARGS, RE::BSFixedString a_id, RE::BSFixedString a_stage, int n);
     int32_t GetNumBranches(STATICARGS, RE::BSFixedString a_id, RE::BSFixedString a_stage);
+    int32_t GetBranchPriority(STATICARGS, RE::BSFixedString a_id, RE::BSFixedString a_stage, int n);
+    int32_t GetBranchFlags(STATICARGS, RE::BSFixedString a_id, RE::BSFixedString a_stage, int n);
+    RE::BSFixedString GetBranchLabel(STATICARGS, RE::BSFixedString a_id, RE::BSFixedString a_stage, int n);
     int32_t GetNodeType(STATICARGS, RE::BSFixedString a_id, RE::BSFixedString a_stage);
+
+    int32_t GetSchlong(STATICARGS, RE::BSFixedString a_id, RE::BSFixedString a_stage, int n);
+    std::vector<int32_t> GetSchlongA(STATICARGS, RE::BSFixedString a_id, RE::BSFixedString a_stage);
 
     std::vector<RE::BSFixedString> GetPathMin(STATICARGS, RE::BSFixedString a_id, RE::BSFixedString a_stage);
     std::vector<RE::BSFixedString> GetPathMax(STATICARGS, RE::BSFixedString a_id, RE::BSFixedString a_stage);
@@ -170,8 +177,14 @@ namespace Papyrus::SexLabRegistry
         REGISTERFUNC(GetNumStages, "SexLabRegistry", true);
         REGISTERFUNC(GetAllstages, "SexLabRegistry", true);
         REGISTERFUNC(BranchTo, "SexLabRegistry", true);
+        REGISTERFUNC(GetBranchScene, "SexLabRegistry", true);
         REGISTERFUNC(GetNumBranches, "SexLabRegistry", true);
+        REGISTERFUNC(GetBranchPriority, "SexLabRegistry", true);
+        REGISTERFUNC(GetBranchFlags, "SexLabRegistry", true);
+        REGISTERFUNC(GetBranchLabel, "SexLabRegistry", true);
         REGISTERFUNC(GetNodeType, "SexLabRegistry", true);
+        REGISTERFUNC(GetSchlong, "SexLabRegistry", true);
+        REGISTERFUNC(GetSchlongA, "SexLabRegistry", true);
 
         REGISTERFUNC(GetPathMin, "SexLabRegistry", true);
         REGISTERFUNC(GetPathMax, "SexLabRegistry", true);

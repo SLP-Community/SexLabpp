@@ -1194,7 +1194,29 @@ State Animating
 		UnregisterForUpdate()
 		SendThreadEvent("StageEnd")
 		RunHook(Config.HOOKID_STAGEEND)
-		PlayNextImpl(SexLabRegistry.BranchTo(GetActiveScene(), GetActiveStage(), aiNextBranch))
+		String activeScene = GetActiveScene()
+		String activeStage = GetActiveStage()
+		String nextScene = SexLabRegistry.GetBranchScene(activeScene, activeStage, aiNextBranch)
+		String nextStage = SexLabRegistry.BranchTo(activeScene, activeStage, aiNextBranch)
+		If (!nextStage)
+			Log("Invalid branch or previous stage is sink, ending scene")
+			If(LeadIn)
+				EndLeadIn()
+			Else
+				EndAnimation()
+			EndIf
+			return
+		EndIf
+		If (nextScene && nextScene != activeScene)
+			If (!ResetScene(nextScene))
+				Log("Cross-scene branch failed; ending animation", "PlayNext()")
+				EndAnimation()
+				return
+			EndIf
+			PlayNextImpl(nextStage)
+			return
+		EndIf
+		PlayNextImpl(nextStage)
 	EndFunction
 	Function PlayNextImpl(String asNewStage)
 		If (!asNewStage)
@@ -1232,6 +1254,11 @@ State Animating
 			i += 1
 		EndWhile
 		StartStage(_StageHistory, asNewStage)
+		i = 0
+		While (i < _Positions.Length)
+			ActorAlias[i].ApplySosBend()
+			i += 1
+		EndWhile
 	EndFunction
 	Function TriggerOrgasm()
 		SendModEvent("SSL_ORGASM_Thread" + tid)

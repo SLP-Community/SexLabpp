@@ -7,6 +7,9 @@
 #include "Registry/Define/Tags.h"
 #include "Registry/Define/Transform.h"
 
+#include <functional>
+#include <string_view>
+
 namespace Registry
 {
     struct Position
@@ -40,6 +43,8 @@ namespace Registry
         Transform offset;
         stl::enumeration<StripData> strips;
         std::vector<RE::BSFixedString> tags;
+        /// SoS bend −9…9 (`0` = neutral).
+        int8_t sosBend{ 0 };
     };
 
     struct Stage
@@ -83,6 +88,25 @@ namespace Registry
       public:
         ActorFragment data;
         std::vector<RE::BSFixedString> annotations;
+    };
+
+    class Scene;
+
+    struct GraphEdge
+    {
+        static constexpr uint8_t FLAG_SECONDARY = 1 << 0;
+
+        std::string scene_id{};
+        std::string stage_id{};
+        const Scene* destination_scene{ nullptr };
+        const Stage* destination{ nullptr };
+        int32_t priority{ 0 };
+        uint8_t flags{ 0 };
+        std::string label{};
+
+        _NODISCARD bool IsSecondary() const { return (flags & FLAG_SECONDARY) != 0; }
+        _NODISCARD bool IsResolved() const { return destination != nullptr && destination_scene != nullptr; }
+        _NODISCARD bool IsSameScene(std::string_view a_sceneId) const { return scene_id == a_sceneId; }
     };
 
     class Scene
@@ -135,8 +159,13 @@ namespace Registry
         _NODISCARD size_t GetNumAdjacentStages(const Stage* a_stage) const;
         _NODISCARD const Stage* GetNthAdjacentStage(const Stage* a_stage, size_t n) const;
         _NODISCARD const std::vector<const Stage*>* GetAdjacentStages(const Stage* a_stage) const;
+        _NODISCARD const std::vector<GraphEdge>* GetAdjacentEdges(const Stage* a_stage) const;
+        _NODISCARD const GraphEdge* GetNthAdjacentEdge(const Stage* a_stage, size_t n) const;
+        _NODISCARD int SelectNextAdjacentIndex(const Stage* a_stage, const TagData& a_tags) const;
         _NODISCARD RE::BSFixedString GetNthAnimationEvent(const Stage* a_stage, size_t n) const;
         _NODISCARD std::vector<RE::BSFixedString> GetAnimationEvents(const Stage* a_stage) const;
+
+        void BindGraphEdges(const std::function<const Scene*(std::string_view)>& a_lookup);
 
         void Save(YAML::Node& a_node) const;
         void Load(const YAML::Node& a_node);
@@ -164,6 +193,7 @@ namespace Registry
 
         std::vector<std::unique_ptr<Stage>> stages;
         std::map<const Stage*, std::vector<const Stage*>> graph;
+        std::map<const Stage*, std::vector<GraphEdge>> edge_meta;
         Stage* start_animation;
     };
 
