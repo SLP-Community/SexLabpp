@@ -1087,9 +1087,6 @@ bool _animationSyncPending
 bool _sceneResetSyncPending
 float _nextSceneResetAt
 String _queuedSceneReset
-int _initialRealignTicks	; Placement is only asserted once per stage; if the first assert races with a busy
-							; actor (furniture exit, get-up, pathing) it silently fails until the next stage.
-							; Counts down OnUpdate ticks after AnimationStart to re-assert placement (see RealignActors)
 
 bool _QuickResetScenes		; reinits thread without actor/center changes (e.g. to get new playing scenes)
 bool _ForceAdvance		; Force fully auto advance (set by timed stages)
@@ -1149,7 +1146,6 @@ State Animating
 			AutoAdvance = true
 		EndIf
 		StartedAt = SexLabUtil.GetCurrentGameRealTime()
-		_initialRealignTicks = 4
 		StartStage(Utility.CreateStringArray(0), "")
 	EndFunction
 
@@ -1365,12 +1361,6 @@ State Animating
 		If (SexLabUtil.IsGamePausedOrFrozen())
 			RegisterForSingleUpdate(ANIMATING_UPDATE_INTERVAL)
 			return
-		EndIf
-		If (_initialRealignTicks > 0)
-			_initialRealignTicks -= 1
-			If (_initialRealignTicks == 3 || _initialRealignTicks == 0)
-				RealignActors()
-			EndIf
 		EndIf
 		If (!_NativeFixedLengthTimer && !_TimerPaused && (AutoAdvance || _ForceAdvance))
 			_StageTimer -= ANIMATING_UPDATE_INTERVAL
@@ -2214,8 +2204,12 @@ Function ApplyCumFX(Actor SourceRef)
 			bool aGrinding_ = interFlags[aGrinding]
 			bool aAnal_ = interFlags[aAnal]
 			bool any_oral = pOral_ || pDeepthroat_ || pLickingShaft_
-			; Comeback: reasses need for fallback
-			If (!any_oral && !aVaginal_ && !aGrinding_ && !aAnal_)
+			; Fall back to scene-wide tags only in a 1-on-1 pairing, where the sole target
+			; must be the recipient. In 3+ actor scenes these tags don't say WHICH actor the
+			; source finished on, so applying them sprays cum onto bystanders not interacting
+			; with the source (e.g. oral cum on a male partner in an Oral-tagged group scene).
+			; Leave aiType unset (-2) for such targets so they get none.
+			If (!any_oral && !aVaginal_ && !aGrinding_ && !aAnal_ && _Positions.Length <= 2)
 				any_oral = IsOral()
 				aVaginal_ = IsVaginal()
 				aAnal_ = IsAnal()
