@@ -5,3 +5,11 @@ Furniture\common\commonbench01.nif:
   - Type: ChairCommon
     Offset:
     - [0.0, 1, 0.0, 180]
+Furniture\common\commonbed01.nif:
+  - Type: BedSingle
+    Offset:
+    - [0.0, 0.0, 40.0, 0.0]
+Furniture\common\commonbeddouble01.nif:
+  - Type: BedDouble
+    Offset:
+    - [0.0, 0.0, 40.0, 0.0]
