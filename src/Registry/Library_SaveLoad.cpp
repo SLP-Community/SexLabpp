@@ -5,6 +5,19 @@
 
 namespace Registry
 {
+    struct CumFxTextureSource
+    {
+        std::string type;
+        std::string path;
+    };
+
+    struct CumFxConfigSource
+    {
+        std::optional<int32_t> priority;
+        std::optional<std::vector<std::string>> races;
+        std::optional<std::vector<CumFxTextureSource>> textures;
+    };
+
     void Library::Initialize() noexcept
     {
         logger::info("Loading Library");
@@ -25,6 +38,7 @@ namespace Registry
         InitializeVoice();
         InitializeExpressions();
         InitializeFurnitures();
+        InitializeCumFx();
 #endif
 
         const auto tEnd = std::chrono::high_resolution_clock::now();
@@ -34,8 +48,9 @@ namespace Registry
         logger::info("Loaded {} VoiceType-Pitches", savedPitches.size());
         logger::info("Loaded {} Cached Voices", savedVoices.size());
         logger::info("Loaded {} Expressions", expressions.size());
-        logger::info("Loaded {} CumFx Textures", std::accumulate(fxList.begin(), fxList.end(), 0ull,
-                                                     [](auto acc, auto&& it) { return acc + it.size(); }));
+        logger::info("Loaded {} CumFx Profiles", std::accumulate(fxList.begin(), fxList.end(), 0ull, [](auto acc, const auto& config) {
+            return acc + std::accumulate(config.profiles.begin(), config.profiles.end(), 0ull, [](auto count, const auto& profiles) { return count + profiles.size(); });
+        }));
         logger::info("Loaded {} Furnitures", furnitures.size());
         logger::info("Library loaded in {}ms", ms.count());
     }
@@ -340,72 +355,128 @@ namespace Registry
 
     void Library::InitializeCumFx() noexcept
     {
-        std::unique_lock lock{ _mCumFx };
-        if (!FolderExists(CUM_FX_PATH, true))
+        fxList.clear();
+        if (!FolderExists(CUM_FX_CONFIG_PATH, true))
             return;
-        const auto fxTypes = magic_enum::enum_entries<Registry::Library::FxType>();
-        for (auto&& [value, name] : fxTypes) {
-            logger::info("Initializing FX type: {}", name);
-            const auto path = std::format("{}{}", CUM_FX_PATH, name);
-            if (fs::exists(path) && !fs::is_empty(path)) {
-                for (auto& profileEntry : fs::directory_iterator(path)) {
-                    if (!profileEntry.is_directory())
-                        continue;
-                    const auto typeCount = InitializeCumFxType(profileEntry);
-                    if (typeCount == 0) {
-                        logger::error("Failed to parse profile: {}", profileEntry.path().string());
-                        continue;
+        try {
+            for (const auto& file : fs::directory_iterator{ CUM_FX_CONFIG_PATH }) {
+                if (!file.is_regular_file() || file.path().extension() != ".json") {
+                    continue;
+                }
+                const auto filename = file.path().filename().string();
+                CumFxConfigSource source;
+                std::string buffer;
+                if (const auto error = glz::read_file_json(source, file.path().string(), buffer); error) {
+                    logger::error("Unable to load CumFx config {}: {}", filename, glz::format_error(error, buffer));
+                    continue;
+                }
+                if (!source.priority || !source.races || !source.textures || source.textures->empty()) {
+                    logger::error("CumFx config {} must define priority, races, and at least one texture", filename);
+                    continue;
+                }
+
+                FxConfig config{ .priority = *source.priority };
+                bool valid = true;
+                for (const auto& raceId : *source.races) {
+                    const auto race = Util::FormFromString<RE::TESRace>(raceId);
+                    if (!race) {
+                        logger::error("CumFx config {} has invalid race {}", filename, raceId);
+                        valid = false;
+                        break;
                     }
-                    const auto profileName = profileEntry.path().filename().string();
-                    fxList[static_cast<size_t>(value)].emplace_back(RE::BSFixedString(profileName), typeCount);
-                    logger::info("Loaded profile: {}", profileName);
+                    config.races.push_back(race);
+                }
+                if (!valid) {
+                    continue;
+                }
+
+                for (const auto& texture : *source.textures) {
+                    const auto type = magic_enum::enum_cast<FxType>(texture.type, magic_enum::case_insensitive);
+                    if (!type) {
+                        logger::error("CumFx config {} has invalid type {}", filename, texture.type);
+                        valid = false;
+                        break;
+                    }
+                    auto pathString = texture.path;
+                    std::ranges::replace(pathString, '\\', '/');
+                    const fs::path relativePath{ pathString };
+                    const auto normalizedPath = relativePath.lexically_normal();
+                    const auto normalizedString = normalizedPath.generic_string();
+                    if (relativePath.empty() || relativePath.is_absolute() || normalizedString == ".." || normalizedString.starts_with("../")) {
+                        logger::error("CumFx config {} has invalid path {}", filename, texture.path);
+                        valid = false;
+                        break;
+                    }
+                    const auto profilePath = fs::path{ CUM_FX_PATH } / normalizedPath;
+                    if (!fs::exists(profilePath) || !fs::is_directory(profilePath)) {
+                        logger::error("CumFx config {} profile path does not exist: {}", filename, profilePath.string());
+                        valid = false;
+                        break;
+                    }
+                    const auto layerCount = InitializeCumFxType(profilePath);
+                    if (layerCount == 0) {
+                        logger::error("CumFx config {} has invalid profile: {}", filename, profilePath.string());
+                        valid = false;
+                        break;
+                    }
+                    config.profiles[static_cast<size_t>(*type)].push_back({ RE::BSFixedString{ normalizedPath.generic_string() }, layerCount });
+                }
+                if (valid) {
+                    logger::info("Loaded CumFx config: {}", filename);
+                    fxList.push_back(std::move(config));
                 }
             }
-            if (fxList[static_cast<size_t>(value)].empty()) {
-                logger::error("No valid FX profiles found for type: {}", name);
-            }
+        } catch (const std::exception& e) {
+            logger::error("Unable to initialize CumFx configs: {}", e.what());
+        }
+        if (fxList.empty()) {
+            logger::error("No valid CumFx configs found");
         }
     }
 
-    uint8_t Library::InitializeCumFxType(const fs::directory_entry& a_typePath) const noexcept
+    uint8_t Library::InitializeCumFxType(const fs::path& a_typePath) const
     {
         std::vector<uint8_t> fxFiles;
-        for (const auto& file : fs::directory_iterator(a_typePath.path())) {
+        std::vector<uint8_t> normalFiles;
+        for (const auto& file : fs::directory_iterator(a_typePath)) {
             if (!file.is_regular_file() || file.path().extension() != ".dds") {
                 logger::warn("Invalid file type: {}. Expected .dds", file.path().string());
                 continue;
             }
-            std::string fileName = file.path().filename().string();
-            size_t dotPos = fileName.find_last_of('.');
-            std::string numberPart = fileName.substr(0, dotPos);
-            try {
-                size_t number = std::stoul(numberPart);
-                if (number > std::numeric_limits<uint8_t>::max()) {
-                    logger::warn("File number {} exceeds maximum value of 255", number);
-                    continue;
-                }
-                fxFiles.push_back(static_cast<uint8_t>(number));
-            } catch (const std::exception& e) {
-                logger::warn("Invalid number in file name: {}. Error: {}", numberPart, e.what());
+            auto numberPart = file.path().stem().string();
+            const bool isNormalMap = numberPart.ends_with("_n");
+            if (isNormalMap) {
+                numberPart.resize(numberPart.size() - 2);
+            }
+            uint32_t number = 0;
+            const auto [end, error] = std::from_chars(numberPart.data(), numberPart.data() + numberPart.size(), number);
+            if (error != std::errc{} || end != numberPart.data() + numberPart.size() || number == 0 || number > std::numeric_limits<uint8_t>::max() || numberPart != std::to_string(number)) {
+                logger::warn("Invalid CumFx file name: {}", file.path().string());
                 continue;
             }
+            (isNormalMap ? normalFiles : fxFiles).push_back(static_cast<uint8_t>(number));
         }
         if (fxFiles.empty()) {
-            logger::error("No valid files found in directory: {}", a_typePath.path().string());
+            logger::error("No valid files found in directory: {}", a_typePath.string());
             return 0;
         }
         std::sort(fxFiles.begin(), fxFiles.end());
         if (fxFiles.front() != 1) {
-            logger::error("First file number is not 1 in directory: {}", a_typePath.path().string());
+            logger::error("First file number is not 1 in directory: {}", a_typePath.string());
             return 0;
         }
         uint8_t expectedFileNumber = 1;
         for (const auto fileNumber : fxFiles) {
             if (fileNumber != expectedFileNumber) {
-                logger::error("Missing file number {} in directory: {}", expectedFileNumber, a_typePath.path().string());
+                logger::error("Missing file number {} in directory: {}", expectedFileNumber, a_typePath.string());
                 return 0;
             }
             ++expectedFileNumber;
+        }
+        for (const auto fileNumber : normalFiles) {
+            if (!std::ranges::contains(fxFiles, fileNumber)) {
+                logger::warn("Normal map {}_n.dds has no matching diffuse texture in directory: {}", fileNumber, a_typePath.string());
+            }
         }
         return static_cast<uint8_t>(fxFiles.size());
     }

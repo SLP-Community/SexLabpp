@@ -1,0 +1,18 @@
+{
+  "priority": 0,
+  "races": [],
+  "textures": [
+    {
+      "type": "Vaginal",
+      "path": "Vaginal/SLACS"
+    },
+    {
+      "type": "Anal",
+      "path": "Anal/SLACS"
+    },
+    {
+      "type": "Oral",
+      "path": "Oral/SLACS"
+    }
+  ]
+}

@@ -513,24 +513,51 @@ namespace Registry
     }
 
 
-    RE::BSFixedString Library::PickRandomFxSet(FxType a_type) const
+    RE::BSFixedString Library::PickRandomFxSet(RE::Actor* a_actor, FxType a_type) const
     {
         const auto typeIdx = static_cast<size_t>(a_type);
-        if (fxList[typeIdx].empty()) {
+        const auto actorRace = a_actor->GetRace();
+        // armorParentRace is intended mostly for followers with custom races who don't have a patch.
+        const auto armorRace = actorRace ? actorRace->armorParentRace : nullptr;
+        int32_t bestTier = -1;
+        int32_t bestPriority = std::numeric_limits<int32_t>::min();
+        std::vector<const FxConfig*> candidates;
+        for (const auto& config : fxList) {
+            if (config.profiles[typeIdx].empty()) {
+                continue;
+            }
+            const auto matches = [&](const RE::TESRace* a_race) { return a_race && std::ranges::contains(config.races, a_race); };
+            const int32_t tier = config.races.empty() ? 0 : matches(actorRace) ? 2 : matches(armorRace) ? 1 : -1;
+            if (tier < 0) {
+                continue;
+            }
+            if (tier < bestTier || (tier == bestTier && config.priority < bestPriority)) {
+                continue;
+            }
+            if (tier > bestTier || config.priority > bestPriority) {
+                bestTier = tier;
+                bestPriority = config.priority;
+                candidates.clear();
+            }
+            candidates.push_back(&config);
+        }
+        if (candidates.empty()) {
             return "";
         }
-        const auto i = Random::draw<size_t>(0, fxList[typeIdx].size() - 1);
-        return fxList[typeIdx][i].first;
+        const auto config = candidates[Random::draw<size_t>(0, candidates.size() - 1)];
+        const auto& profiles = config->profiles[typeIdx];
+        return profiles[Random::draw<size_t>(0, profiles.size() - 1)].path;
     }
 
     uint8_t Library::GetFxCount(FxType a_type, RE::BSFixedString a_set) const
     {
         const auto typeIdx = static_cast<size_t>(a_type);
-        const auto it = std::find_if(fxList[typeIdx].begin(), fxList[typeIdx].end(), [&](const auto& pair) {
-            return pair.first == a_set;
-        });
-        if (it != fxList[typeIdx].end()) {
-            return it->second;
+        for (const auto& config : fxList) {
+            const auto& profiles = config.profiles[typeIdx];
+            const auto profile = std::ranges::find(profiles, a_set, &FxProfile::path);
+            if (profile != profiles.end()) {
+                return profile->layerCount;
+            }
         }
         logger::error("FX set {} not found", a_set.c_str());
         return 0;

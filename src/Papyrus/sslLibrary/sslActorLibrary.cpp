@@ -102,15 +102,19 @@ namespace Papyrus::ActorLibrary
         return a_actor->GetActorRuntimeData().unk1E8;
     }
 
-    RE::BSFixedString PickRandomFxSet(VM* a_vm, StackID a_stackID, RE::StaticFunctionTag*, int32_t a_type)
+    RE::BSFixedString PickRandomFxSet(VM* a_vm, StackID a_stackID, RE::StaticFunctionTag*, RE::Actor* a_actor, int32_t a_type)
     {
+        if (!a_actor) {
+            a_vm->TraceStack("Actor is none", a_stackID);
+            return "";
+        }
         const auto fx = Registry::Library::GetSingleton();
         if (a_type < 0 || a_type >= Registry::Library::NUM_FX_TYPES) {
             a_vm->TraceStack("Invalid FX type", a_stackID);
             return "";
         }
         const auto fxType = static_cast<Registry::Library::FxType>(a_type);
-        const auto fxSet = fx->PickRandomFxSet(fxType);
+        const auto fxSet = fx->PickRandomFxSet(a_actor, fxType);
         if (fxSet.empty()) {
             a_vm->TraceStack("FX set is empty or invalid", a_stackID);
             return "";
