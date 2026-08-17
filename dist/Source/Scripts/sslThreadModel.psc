@@ -1207,12 +1207,7 @@ State Animating
 			return
 		ElseIf(!Leadin)
 			int ctype = sslSystemConfig.GetSettingInt("iClimaxType")
-			If (ctype == Config.CLIMAXTYPE_LEGACY)
-				If (SexLabRegistry.GetNodeType(GetActiveScene(), asNewStage) == 2)
-					SendThreadEvent("OrgasmStart")
-					TriggerOrgasm()
-				EndIf
-			ElseIf ((ctype == Config.CLIMAXTYPE_SCENE) || (!HasPlayer))
+			If ((ctype == Config.CLIMAXTYPE_SCENE) || (!HasPlayer && ctype != Config.CLIMAXTYPE_LEGACY))
 				int[] cactors = SexLabRegistry.GetClimaxingActors(GetActiveScene(), asNewStage)
 				If (cactors.Length > 0)
 					SendThreadEvent("OrgasmStart")
@@ -1473,9 +1468,15 @@ State Animating
 	Function EndAnimation(bool Quickly = false)
 		UnregisterForUpdate()
 		If ((sslSystemConfig.GetSettingInt("iClimaxType") == Config.CLIMAXTYPE_LEGACY) && (!_QuickResetScenes))
-			If (SexLabRegistry.GetNodeType(GetActiveScene(), GetActiveStage()) == 2)
-				SendThreadEvent("OrgasmEnd")
-			EndIf
+			SendThreadEvent("OrgasmStart")
+			int i = 0
+			While (i < _Positions.Length)
+				If (ActorAlias[i].IsOrgasmAllowed())
+					ActorAlias[i].DoOrgasm(true)
+				EndIf
+				i += 1
+			EndWhile
+			SendThreadEvent("OrgasmEnd")
 		EndIf
 		GoToState(STATE_END)
 	EndFunction

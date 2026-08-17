@@ -24,6 +24,7 @@ namespace Registry
         static constexpr const char* EXPRESSION_LEGACY_CONFIG{ "Data\\SKSE\\Plugins\\SexLab\\" };
 
         static constexpr const char* CUM_FX_PATH{ "Data\\Textures\\SexLab\\CumFx\\" };
+        static constexpr const char* CUM_FX_CONFIG_PATH{ "Data\\Textures\\SexLab\\CumFx\\Configs\\" };
 
         static constexpr const char* FURNITURE_PATH{ CONFIGPATH("Furniture") };
 
@@ -35,7 +36,19 @@ namespace Registry
             Oral,
         };
         constexpr static auto NUM_FX_TYPES = magic_enum::enum_count<FxType>();
-        using FxPair = std::pair<RE::BSFixedString, uint8_t>;
+
+        struct FxProfile
+        {
+            RE::BSFixedString path;
+            uint8_t layerCount;
+        };
+
+        struct FxConfig
+        {
+            int32_t priority;
+            std::vector<RE::TESRace*> races;
+            std::array<std::vector<FxProfile>, NUM_FX_TYPES> profiles;
+        };
 
       public:
         _NODISCARD std::vector<const Scene*> LookupScenes(const std::vector<RE::Actor*>& a_actors, const std::vector<std::string_view>& tags, const std::vector<RE::Actor*>& a_submissives) const;
@@ -88,7 +101,7 @@ namespace Registry
         void SetExpressionEnabled(RE::BSFixedString a_id, bool a_enabled);
 
       public:
-        RE::BSFixedString PickRandomFxSet(FxType a_type) const;
+        RE::BSFixedString PickRandomFxSet(RE::Actor* a_actor, FxType a_type) const;
         uint8_t GetFxCount(FxType a_type, RE::BSFixedString a_set) const;
 
       public:
@@ -112,7 +125,7 @@ namespace Registry
         void InitializeVoiceSettings() noexcept;
         void InitializeVoiceCache() noexcept;
         void InitializeCumFx() noexcept;
-        uint8_t InitializeCumFxType(const fs::directory_entry& a_typePath) const noexcept;
+        uint8_t InitializeCumFxType(const fs::path& a_typePath) const;
 
         void SaveScenes() const noexcept;
         void SaveExpressions() const noexcept;
@@ -132,8 +145,7 @@ namespace Registry
         mutable std::shared_mutex _mExpressions{};
         std::map<RE::BSFixedString, Expression, FixedStringCompare> expressions{};
 
-        mutable std::shared_mutex _mCumFx{};
-        std::array<std::vector<FxPair>, NUM_FX_TYPES> fxList;
+        std::vector<FxConfig> fxList;
 
         mutable std::shared_mutex _mFurniture{};
         FurnitureDetails offsetDefaultBedroll{ FurnitureType::BedRoll, Coordinate(std::vector{ 0.0f, 0.0f, 7.5f, 180.0f }) };

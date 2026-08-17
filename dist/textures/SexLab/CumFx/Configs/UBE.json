@@ -1,0 +1,37 @@
+{
+  "priority": 0,
+  "races": [
+    "0x005734|UBE_AllRace.esp",
+    "0x005735|UBE_AllRace.esp",
+    "0x05A179|UBE_AllRace.esp",
+    "0x05A17A|UBE_AllRace.esp",
+    "0x05A184|UBE_AllRace.esp",
+    "0x05A185|UBE_AllRace.esp",
+    "0x05A18E|UBE_AllRace.esp",
+    "0x05A18F|UBE_AllRace.esp",
+    "0x05A198|UBE_AllRace.esp",
+    "0x05A199|UBE_AllRace.esp",
+    "0x05A1A2|UBE_AllRace.esp",
+    "0x05A1A3|UBE_AllRace.esp",
+    "0x05A1AC|UBE_AllRace.esp",
+    "0x05A1AD|UBE_AllRace.esp",
+    "0x05A1B0|UBE_AllRace.esp",
+    "0x05A1B1|UBE_AllRace.esp",
+    "0x07A4D5|UBE_AllRace.esp",
+    "0x07A4D6|UBE_AllRace.esp"
+  ],
+  "textures": [
+    {
+      "type": "Vaginal",
+      "path": "Vaginal/UBE"
+    },
+    {
+      "type": "Anal",
+      "path": "Anal/UBE"
+    },
+    {
+      "type": "Oral",
+      "path": "Oral/UBE"
+    }
+  ]
+}

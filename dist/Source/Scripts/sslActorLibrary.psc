@@ -71,7 +71,7 @@ Function RemoveCumFx(Actor akTarget, int aiType)
 	ElseIf (aiType == FX_ANAL)
 		akTarget.RemoveSpell(CumAnalSpell)
 	EndIf
-	StorageUtil.UnsetIntValue(akTarget, ACTIVE_SET_PREFIX + aiType)
+	StorageUtil.UnsetStringValue(akTarget, ACTIVE_SET_PREFIX + aiType)
 	StorageUtil.UnsetIntValue(akTarget, ACTIVE_LAYER_PREFIX + aiType)
 	StorageUtil.UnsetFloatValue(akTarget, LAST_APPLIED_TIME_PREFIX + aiType)
 	StorageUtil.UnsetStringValue(akTarget, LAST_APPLIED_TEXTURE_PREFIX + aiType)
@@ -266,7 +266,7 @@ EndFunction
 
 Form[] Function UnequipSlots(Actor akActor, int aiSlots) native global
 
-String Function PickRandomFxSet(int asType) native global
+String Function PickRandomFxSet(Actor akActor, int aiType) native global
 int Function GetFxSetCount(int asType, String asSet) native global
 
 Form[] Function StripActorImpl(Actor akActor, int aiSlots, bool abStripWeapons = true, bool abAnimate = false)
@@ -301,26 +301,29 @@ Function BeginOverlay(Actor akTarget, int aiType)
 	bool isFemale = akTarget.GetLeveledActorBase().GetSex() as Bool
 	String set = StorageUtil.GetStringValue(akTarget, ACTIVE_SET_PREFIX + aiType, "")
 	If (set == "")
-		set = PickRandomFxSet(aiType)
+		set = PickRandomFxSet(akTarget, aiType)
+		If (set == "")
+			Log(akTarget + ": No cum fx set found for type " + aiType)
+			return
+		EndIf
 		StorageUtil.SetStringValue(akTarget, ACTIVE_SET_PREFIX + aiType, set)
 		Log(akTarget + ": Selecting cum fx set; Random " + aiType + " set " + set + " selected for " + akTarget.GetBaseObject().GetName())
 	Else
 		Log(akTarget + ": Selecting cum fx set; Using " + aiType + " set " + set + " for " + akTarget.GetBaseObject().GetName())
 	EndIf
-	int layer = StorageUtil.GetIntValue(akTarget, ACTIVE_LAYER_PREFIX + aiType, 0) + 1
+	int currentLayer = StorageUtil.GetIntValue(akTarget, ACTIVE_LAYER_PREFIX + aiType, 0)
 	int maxLayer = GetFxSetCount(aiType, set)
-	If (layer > maxLayer)
-		layer = maxLayer
-	EndIf
-	If (StorageUtil.SetIntValue(akTarget, ACTIVE_LAYER_PREFIX + aiType, layer) == maxLayer)
+	If (maxLayer < 1 || currentLayer >= maxLayer)
 		return
 	EndIf
-	String texturePath = "SexLab/CumFx/" + TypeToString(aiType) + "/" + set + "/" + layer + ".dds"
-    ; String akTargetRaceStr = MiscUtil.GetActorRaceEditorID(akTarget)
-    ; If (StringUtil.Find(akTargetRaceStr, "UBE") != -1)
-    ;     texturePath = "SexLab/CumFx/UBE/" + TypeToString(aiType) + "/" + set + "/" + layer + ".dds"
-    ;     Log(akTarget + ": Selecting cum fx set; UBE " + aiType + " set " + set + " selected for " + akTarget.GetBaseObject().GetName())
-    ; Endif
+	int layer = currentLayer + 1
+	StorageUtil.SetIntValue(akTarget, ACTIVE_LAYER_PREFIX + aiType, layer)
+	String lastEffect = StorageUtil.GetStringValue(akTarget, LAST_APPLIED_TEXTURE_PREFIX + aiType)
+	String texturePath = "SexLab/CumFx/" + set + "/" + layer + ".dds"
+	String normalTexture = StringUtil.Substring(texturePath, 0, StringUtil.GetLength(texturePath) - 4) + "_n.dds"
+	If (!MiscUtil.FileExists("Data\\Textures\\" + normalTexture))
+		normalTexture = ""
+	EndIf
 	StorageUtil.SetStringValue(akTarget, LAST_APPLIED_TEXTURE_PREFIX + aiType, texturePath)
 	StorageUtil.SetFloatValue(akTarget, LAST_APPLIED_TIME_PREFIX + aiType, SexLabUtil.GetCurrentGameRealTime())
 	StorageUtil.IntListAdd(akTarget, APPLIED_TEXTURE_LIST, aiType, false)
@@ -330,9 +333,9 @@ Function BeginOverlay(Actor akTarget, int aiType)
 		String part = parts[i]
 		; !(Menu.LimitCumAreas && (part == "Hands" || part == "Feet")) && !part == "Face" || part == "Oral" && part == "Face"
 		If (part != "Face" || (part == "Face" && aiType == FX_ORAL))
-			Int slot = GetEmptySlot(akTarget, isFemale, part, aiType)
+			Int slot = GetEmptySlot(akTarget, isFemale, part, lastEffect)
 			If slot != -1
-				ApplyOverlay(akTarget, isFemale, part, slot, texturePath, set)
+				ApplyOverlay(akTarget, isFemale, part, slot, texturePath, normalTexture)
 			Else
 				Log(akTarget + ": Error applying overlay to area: " + part)
 			EndIf
@@ -341,7 +344,7 @@ Function BeginOverlay(Actor akTarget, int aiType)
 	EndWhile
 EndFunction
 
-Function ApplyOverlay(Actor akTarget, bool isFemale, String asArea, String asOverlaySlot, String asTexture, String asSet)
+Function ApplyOverlay(Actor akTarget, bool isFemale, String asArea, String asOverlaySlot, String asTexture, String asNormalTexture)
 	;note on args:
 	;Function AddNodeOverrideInt(ObjectReference ref, bool isFemale, string node, int key, int index, int value, bool persist)
 	;key 0=Color, 1=??, 2=Gloss,3=specStr, 4/5=Lighting, 6=TextureSet, 7=tintColor, 8=alpha, 9=texture
@@ -349,6 +352,11 @@ Function ApplyOverlay(Actor akTarget, bool isFemale, String asArea, String asOve
 	float alpha = sslSystemConfig.GetSettingFlt("fCumAlpha")
 	String node = asArea + " [ovl" + asOverlaySlot + "]"
 	NiOverride.AddNodeOverrideString(akTarget, isFemale, node, 9, 0, asTexture, true)
+	If (asNormalTexture != "")
+		NiOverride.AddNodeOverrideString(akTarget, isFemale, node, 9, 1, asNormalTexture, true)
+	Else
+		NiOverride.RemoveNodeOverride(akTarget, isFemale, node, 9, 1)
+	EndIf
 	NiOverride.AddNodeOverrideInt(akTarget, isFemale, node, 7, -1, 0, true)	;tint color
     NiOverride.AddNodeOverrideInt(akTarget, isFemale, node, 0, -1, 0, true)	;color
 	NiOverride.AddNodeOverrideFloat(akTarget, isFemale, node, 8, -1, alpha, true)
@@ -370,6 +378,7 @@ Function RemovePartOverlay(Actor akTarget, bool isFemale, String LastEffect)
 			If (TexPath == LastEffect)
 				NiOverride.AddNodeOverrideString(akTarget, isFemale, Node, 9, 0, "actors\\character\\overlays\\default.dds", true)
 				NiOverride.RemoveNodeOverride(akTarget, isFemale, Node, 9, 0)
+				NiOverride.RemoveNodeOverride(akTarget, isFemale, Node, 9, 1)
 				NiOverride.RemoveNodeOverride(akTarget, isFemale, Node, 7, -1)
 				NiOverride.RemoveNodeOverride(akTarget, isFemale, Node, 0, -1)
 				NiOverride.RemoveNodeOverride(akTarget, isFemale, Node, 8, -1)
@@ -381,14 +390,13 @@ Function RemovePartOverlay(Actor akTarget, bool isFemale, String LastEffect)
 	EndWhile
 EndFunction
 
-int Function GetEmptySlot(Actor akTarget, bool isFemale, String asArea, int aiType)
-	String typeStr = TypeToString(aiType)
+int Function GetEmptySlot(Actor akTarget, bool isFemale, String asArea, String asLastEffect)
 	int i = GetNumSlots(asArea)
 	While (i > 0)
 		i -= 1
 		String TexPath = NiOverride.GetNodeOverrideString(akTarget, isFemale, asArea + " [ovl" + i + "]", 9, 0)
 		Log("GetEmptySlot(): akTarget: " + akTarget.GetBaseObject().GetName() + ". Slot: " + i + ". TexPath: " + TexPath)
-		If (TexPath == "" || (StringUtil.Find(TexPath, "SexLab") != -1 && StringUtil.Find(TexPath, typeStr) != -1) || TexPath == "actors\\character\\overlays\\default.dds") 
+		If (TexPath == "" || (asLastEffect != "" && TexPath == asLastEffect) || TexPath == "actors\\character\\overlays\\default.dds")
 			Log("GetEmptySlot(): Slot " + i + " chosen for area: " + asArea + " on " + akTarget.GetLeveledActorBase().GetName())
 			Return i
 		EndIf
