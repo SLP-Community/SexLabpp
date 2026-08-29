@@ -67,16 +67,6 @@ namespace Papyrus::ThreadModel
     bool SetNextPermutation(QUESTARGS, RE::Actor* a_position);
     void UpdatePlacement(QUESTARGS, RE::Actor* a_position);
 
-    bool IsCollisionRegistered(QUESTARGS);
-    void UnregisterCollision(QUESTARGS);
-    std::vector<int> GetCollisionActions(QUESTARGS, RE::Actor* a_position, RE::Actor* a_partner);
-    bool HasCollisionAction(QUESTARGS, int a_type, RE::Actor* a_position, RE::Actor* a_partner);
-    RE::Actor* GetPartnerByAction(QUESTARGS, RE::Actor* a_position, int a_type);
-    std::vector<RE::Actor*> GetPartnersByAction(QUESTARGS, RE::Actor* a_position, int a_type);
-    RE::Actor* GetPartnerByTypeRev(QUESTARGS, RE::Actor* a_position, int a_type);
-    std::vector<RE::Actor*> GetPartnersByTypeRev(QUESTARGS, RE::Actor* a_position, int a_type);
-    float GetActionVelocity(QUESTARGS, RE::Actor* a_position, RE::Actor* a_partner, int a_type);
-
     void SetAnimationPlaybackSpeed(QUESTARGS, float a_playbackSpeed);
     bool RestartFixedLengthTimer(QUESTARGS);
     bool AdjustFixedLengthTimer(QUESTARGS, float a_delta);
@@ -85,6 +75,20 @@ namespace Papyrus::ThreadModel
 
     void AddExperience(QUESTARGS, std::vector<RE::Actor*> a_positions, RE::BSFixedString a_scene, std::vector<RE::BSFixedString> a_playedstages);
     void UpdateStatistics(QUESTARGS, RE::Actor* a_actor, std::vector<RE::Actor*> a_positions, RE::BSFixedString a_scene, std::vector<RE::BSFixedString> a_playedstages, float a_time);
+
+    // INTERACTIONS
+    bool IsCollisionRegistered(QUESTARGS);
+    void UnregisterCollision(QUESTARGS);
+    std::vector<bool> GetInteractionFlagsImpl(QUESTARGS, RE::Actor* a_actor, RE::Actor* a_partner);
+    std::vector<int32_t> GetActiveInterTypesImpl(QUESTARGS, RE::Actor* a_actor, RE::Actor* a_partner);
+    bool HasActiveInteractionImpl(QUESTARGS, RE::Actor* a_actor, RE::Actor* a_partner, int32_t a_interType);
+    bool HasActiveInteractionAllImpl(QUESTARGS, RE::Actor* a_actor, std::vector<int32_t> a_types);
+    bool HasActiveInteractionAnyImpl(QUESTARGS, RE::Actor* a_actor, std::vector<int32_t> a_types);
+    RE::Actor* GetPartnerByInteractionTypeImpl(QUESTARGS, RE::Actor* a_actor, int32_t a_interType);
+    std::vector<RE::Actor*> GetPartnersByInteractionTypeImpl(QUESTARGS, RE::Actor* a_actor, int32_t a_interType);
+    float GetInteractionVelocityImpl(QUESTARGS, RE::Actor* a_actor, RE::Actor* a_partner, int32_t a_interType);
+    RE::BSFixedString GetInteractionStringImpl(QUESTARGS, RE::Actor* a_actor);
+    std::vector<RE::BSFixedString> GetInteractionStringArrayImpl(QUESTARGS, RE::Actor* a_actor);
 
     // SCENE HUD
     void InitSceneHUDImpl(QUESTARGS);
@@ -122,16 +126,6 @@ namespace Papyrus::ThreadModel
         REGISTERFUNC(UpdatePlacement, "sslThreadModel", false);
         REGISTERFUNC(SetNextPermutation, "sslThreadModel", false);
 
-        REGISTERFUNC(IsCollisionRegistered, "sslThreadModel", true);
-        REGISTERFUNC(UnregisterCollision, "sslThreadModel", true);
-        REGISTERFUNC(GetCollisionActions, "sslThreadModel", true);
-        REGISTERFUNC(HasCollisionAction, "sslThreadModel", true);
-        REGISTERFUNC(GetPartnerByAction, "sslThreadModel", true);
-        REGISTERFUNC(GetPartnersByAction, "sslThreadModel", true);
-        REGISTERFUNC(GetPartnerByTypeRev, "sslThreadModel", true);
-        REGISTERFUNC(GetPartnersByTypeRev, "sslThreadModel", true);
-        REGISTERFUNC(GetActionVelocity, "sslThreadModel", true);
-
         REGISTERFUNC(SetAnimationPlaybackSpeed, "sslThreadModel", false);
         REGISTERFUNC(RestartFixedLengthTimer, "sslThreadModel", false);
         REGISTERFUNC(AdjustFixedLengthTimer, "sslThreadModel", false);
@@ -140,6 +134,19 @@ namespace Papyrus::ThreadModel
 
         REGISTERFUNC(AddExperience, "sslThreadModel", true);
         REGISTERFUNC(UpdateStatistics, "sslThreadModel", true);
+
+        REGISTERFUNC(IsCollisionRegistered, "sslThreadModel", true);
+        REGISTERFUNC(UnregisterCollision, "sslThreadModel", true);
+        REGISTERFUNC(GetInteractionFlagsImpl, "sslThreadModel", true);
+        REGISTERFUNC(GetActiveInterTypesImpl, "sslThreadModel", true);
+        REGISTERFUNC(HasActiveInteractionImpl, "sslThreadModel", true);
+        REGISTERFUNC(HasActiveInteractionAllImpl, "sslThreadModel", true);
+        REGISTERFUNC(HasActiveInteractionAnyImpl, "sslThreadModel", true);
+        REGISTERFUNC(GetPartnerByInteractionTypeImpl, "sslThreadModel", true);
+        REGISTERFUNC(GetPartnersByInteractionTypeImpl, "sslThreadModel", true);
+        REGISTERFUNC(GetInteractionVelocityImpl, "sslThreadModel", true);
+        REGISTERFUNC(GetInteractionStringImpl, "sslThreadModel", true);
+        REGISTERFUNC(GetInteractionStringArrayImpl, "sslThreadModel", true);
 
         REGISTERFUNC(InitSceneHUDImpl, "sslThreadModel", true);
         REGISTERFUNC(DestroySceneHUDImpl, "sslThreadModel", true);

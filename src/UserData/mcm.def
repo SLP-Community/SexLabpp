@@ -99,7 +99,6 @@ MCM_SETTING(fLockHmdSpeed, 20.0f)
 MCM_SETTING(bInternalEnjoymentEnabled, true)
 MCM_SETTING(bGameEnabled, true)
 
-MCM_SETTING(bFallbackToTagsForDetection, true)
 MCM_SETTING(bNoStaminaEndsScene, false)
 MCM_SETTING(bMaleOrgasmEndsScene, false)
 MCM_SETTING(bDomMustOrgasm, true)

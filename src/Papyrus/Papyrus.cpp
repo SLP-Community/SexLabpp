@@ -3,7 +3,7 @@
 #include "SexLabRegistry.h"
 #include "SexLabUtil.h"
 #include "sslActorStats.h"
-#include "sslConsoleCommand.h"
+//#include "sslConsoleCommand.h"
 #include "sslLibrary/sslActorLibrary.h"
 #include "sslLibrary/sslThreadLibrary.h"
 #include "sslObject/sslAnimationSlots.h"
@@ -33,7 +33,7 @@ namespace Papyrus
         papyrus->Register(Papyrus::ThreadLibrary::Register);
         papyrus->Register(Papyrus::ThreadModel::Register);
         papyrus->Register(Papyrus::VoiceSlots::Register);
-        papyrus->Register(Papyrus::ConsoleCommand::Register);
+        //papyrus->Register(Papyrus::ConsoleCommand::Register);
 
         return true;
     }

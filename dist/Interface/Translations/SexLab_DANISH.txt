@@ -421,8 +421,6 @@ $SSL_bGameEnabled	Enable Enjoyment Game
 $SSL_bGameEnabledHighlight	Toggles the enjoyment minigame inspired from SLSO's implementation.
 
 # ------ General Configs
-$SSL_bFallbackToTagsForDetection	Allow Fallback to Position Tags
-$SSL_bFallbackToTagsForDetectionHighlight	Toggles fallback to position tags for interactions detection when the internal physics-based real-time collision type guessing is not available.
 $SSL_bNoStaminaEndsScene	No Stamina Ends Scene
 $SSL_bNoStaminaEndsSceneHighlight	Ends the scene automatically when the actor's stamina is depleted.
 $SSL_bMaleOrgasmEndsScene	Male Orgasm Ends Scene

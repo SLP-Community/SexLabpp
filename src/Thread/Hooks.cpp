@@ -21,8 +21,12 @@ namespace Thread::Hooks
             static void Thunk()
             {
                 static REL::Relocation<float*> deltaTime{ REL::VariantID(523660, 410199, 0x30C3A08) };
-                Instance::UpdateAnimations(*deltaTime);
+                const auto frameDelta = *deltaTime;
+                Instance::UpdateAnimations(frameDelta);
                 original();
+                if (!Util::IsGamePausedOrFrozen()) {
+                    Thread::Interaction::NiSurface::Manager::OnFrameUpdate(frameDelta);
+                }
             }
 
             static inline REL::Relocation<decltype(Thunk)> original;

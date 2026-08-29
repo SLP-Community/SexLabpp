@@ -1,5 +1,6 @@
 #pragma once
 
+#include "DebugDraw.h"
 #include "Thread/Interface/UI/Scale.h"
 #include "Thread/Interface/UI/Theme.h"
 #include "Thread/Interface/UI/Window.h"
@@ -52,6 +53,7 @@ namespace Thread::Interface
         [[nodiscard]] const Script::ObjectPtr& GetThreadScript() const { return _threadScript; }
         [[nodiscard]] const Script::CallbackPtr& GetCallback() const { return _callback; }
         [[nodiscard]] UI::Scale& GetScale() { return _scale; }
+        [[nodiscard]] DebugDraw& GetDebugDraw() { return _debugDraw; }
 
       private:
         struct Elements;
@@ -67,6 +69,7 @@ namespace Thread::Interface
         Script::CallbackPtr _callback{};
         UI::Scale _scale;
         UI::FrameworkWindow _window;
+        DebugDraw _debugDraw;
         std::unique_ptr<Elements> _elements;
         PanelId _activePanel{ PanelId::kNone };
         bool _registered{ false };

@@ -77,28 +77,13 @@ EndFunction
 ; --- Interactions Info                               --- ;
 ; ------------------------------------------------------- ;
 
-bool[] Function GetCurrentInteractionFlags()
+bool[] Function GetInteractionFlags()
 	return _CurrentInteractions
 EndFunction
 
 ; ------------------------------------------------------- ;
 ; --- Specific Detections                             --- ;
 ; ------------------------------------------------------- ;
-
-bool Function IsVaginalComplex()
-	return (_CurrentInteractions[_Thread.aVaginal] || _CurrentInteractions[_Thread.pVaginal] \
-	|| _CurrentInteractions[_Thread.aGrinding] || _CurrentInteractions[_Thread.pGrinding])
-EndFunction
-
-bool Function IsAnalComplex()
-	return (_CurrentInteractions[_Thread.aAnal] || _CurrentInteractions[_Thread.pAnal])
-EndFunction
-
-bool Function IsOralComplex()
-	return (_CurrentInteractions[_Thread.aOral] || _CurrentInteractions[_Thread.pOral] \
-	|| _CurrentInteractions[_Thread.aLickingShaft] || _CurrentInteractions[_Thread.pLickingShaft] \
-	|| _CurrentInteractions[_Thread.aDeepthroat] || _CurrentInteractions[_Thread.pDeepthroat])
-EndFunction
 
 bool Function ShouldMouthOpen()
 	bool condNonCrotch = (_CurrentInteractions[_Thread.aSuckingToes] || _CurrentInteractions[_Thread.pAnimObjFace])
@@ -771,10 +756,10 @@ State Animating
 			RegisterForSingleUpdate(UPDATE_INTERVAL)
 			return
 		EndIf
-		_CurrentInteractions = _Thread.ListDetectedInteractionsInternal(_ActorRef)
+		_CurrentInteractions = _Thread.GetInteractionFlagsImpl(_ActorRef, None)
 		UpdateEffectiveEnjoymentCalculations()
 		If (_bEnjEnabled && !_Thread.EnjoymentPaused && _Thread.ElementUI_EnjBars)
-			EnjBarsUpdateSlider(_FullEnjoyment as float, _Thread.GetCurrentInteractionString(_ActorRef))
+			EnjBarsUpdateSlider(_FullEnjoyment as float, _Thread.GetInteractionStringImpl(_ActorRef))
 		EndIf
 		int strength = CalcReaction()
 		If (strength == 100)

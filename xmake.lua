@@ -1,4 +1,4 @@
-set_xmakever("2.9.5")
+set_xmakever("3.0.0")
 
 -- Globals
 PROJECT_NAME = "SexLabUtil"
@@ -96,14 +96,15 @@ add_requires("yaml-cpp", "magic_enum", "glaze", "simpleini", "glm", "eigen")
 
 -- policies
 set_policy("package.requires_lock", true)
+set_policy("check.auto_ignore_flags", false)
 
 -- rules
-add_rules("mode.debug", "mode.release")
+add_rules("mode.debug", "mode.release", "mode.releasedbg")
 
 set_runtimes("MD")
 add_defines("_ITERATOR_DEBUG_LEVEL=0")
 
-if is_mode("debug") then
+if is_mode("debug") or is_mode("releasedbg") then
     add_defines("DEBUG")
     set_optimize("none")
 elseif is_mode("release") then

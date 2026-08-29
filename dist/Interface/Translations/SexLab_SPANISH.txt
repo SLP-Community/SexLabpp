@@ -438,8 +438,6 @@ $SSL_bGameEnabled	Activar minijuego de disfrute
 $SSL_bGameEnabledHighlight	Activa el minijuego de disfrute inspirado en SLSO.
 
 # ------ General Configs
-$SSL_bFallbackToTagsForDetection	Permitir uso de etiquetas como respaldo
-$SSL_bFallbackToTagsForDetectionHighlight	Permite usar etiquetas de posición como respaldo cuando no está disponible la detección física en tiempo real.
 $SSL_bNoStaminaEndsScene	Sin resistencia termina escena
 $SSL_bNoStaminaEndsSceneHighlight	Finaliza la escena automáticamente cuando la resistencia del actor se agota.
 $SSL_bMaleOrgasmEndsScene	Orgasmo masculino termina escena

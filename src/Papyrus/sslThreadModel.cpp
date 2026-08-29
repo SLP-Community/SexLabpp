@@ -5,7 +5,7 @@
 #include "Registry/Util/RayCast.h"
 #include "Registry/Util/RayCast/ObjectBound.h"
 #include "Thread/Collision/CollisionHandler.h"
-#include "Thread/NiNode/Node.h"
+#include "Thread/Interaction/Interaction.h"
 #include "Thread/Thread.h"
 #include "UserData/StripData.h"
 #include "Util/Script.h"
@@ -433,366 +433,6 @@ namespace Papyrus::ThreadModel
         return scene->IsCompatibleFurniture(a_center);
     }
 
-    // ================================================
-    //        TYPE-GUESSING - Machine Learning
-
-    bool IsCollisionRegisteredML(QUESTARGS)
-    {
-        GET_INSTANCE(false);
-        return instance->HasNiInstance();
-    }
-
-    void UnregisterCollisionML(QUESTARGS)
-    {
-        GET_INSTANCE();
-        instance->UnregisterNiInstance();
-    }
-
-    std::vector<int> GetCollisionActionsML(QUESTARGS, RE::Actor* a_position, RE::Actor* a_partner)
-    {
-        GET_INSTANCE({});
-        auto niInstance = instance->GetNiInstance();
-        if (!niInstance) {
-            a_vm->TraceStack("Not registered", a_stackID);
-            return {};
-        }
-        const auto idxA = a_position ? a_position->formID : 0;
-        const auto idxB = a_partner ? a_partner->formID : 0;
-        const auto interactions = niInstance->GetInteractions(idxA, idxB, Thread::NiNode::NiType::Type::None);
-        const auto ret = std::ranges::fold_left(interactions, std::vector<int>{}, [](auto&& acc, const auto& it) {
-            return (acc.push_back(static_cast<int>(it->GetType())), acc);
-        });
-        return ret;
-    }
-
-    bool HasCollisionActionML(QUESTARGS, int a_type, RE::Actor* a_position, RE::Actor* a_partner)
-    {
-        GET_INSTANCE({});
-        auto niInstance = instance->GetNiInstance();
-        if (!niInstance) {
-            a_vm->TraceStack("Not registered", a_stackID);
-            return false;
-        }
-        const auto idxA = a_position ? a_position->formID : 0;
-        const auto idxB = a_partner ? a_partner->formID : 0;
-        const auto interactions = niInstance->GetInteractions(idxA, idxB, Thread::NiNode::NiType::Type(a_type));
-        return !interactions.empty();
-    }
-
-    RE::Actor* GetPartnerByActionML(QUESTARGS, RE::Actor* a_position, int a_type)
-    {
-        if (!a_position) {
-            a_vm->TraceStack("Actor is none", a_stackID);
-            return nullptr;
-        }
-        const auto ret = GetPartnersByAction(a_vm, a_stackID, a_qst, a_position, a_type);
-        return ret.empty() ? nullptr : ret.front();
-    }
-
-    std::vector<RE::Actor*> GetPartnersByActionML(QUESTARGS, RE::Actor* a_position, int a_type)
-    {
-        GET_INSTANCE({});
-        auto niInstance = instance->GetNiInstance();
-        if (!niInstance) {
-            a_vm->TraceStack("Not registered", a_stackID);
-            return {};
-        }
-        const auto idxA = a_position ? a_position->formID : 0;
-        return niInstance->GetInteractionPartners(idxA, Thread::NiNode::NiType::Type(a_type));
-    }
-
-    RE::Actor* GetPartnerByTypeRevML(QUESTARGS, RE::Actor* a_position, int a_type)
-    {
-        if (!a_position) {
-            a_vm->TraceStack("Actor is none", a_stackID);
-            return nullptr;
-        }
-        const auto ret = GetPartnersByTypeRev(a_vm, a_stackID, a_qst, a_position, a_type);
-        return ret.empty() ? nullptr : ret.front();
-    }
-
-    std::vector<RE::Actor*> GetPartnersByTypeRevML(QUESTARGS, RE::Actor* a_position, int a_type)
-    {
-        GET_INSTANCE({});
-        auto niInstance = instance->GetNiInstance();
-        if (!niInstance) {
-            a_vm->TraceStack("Not registered", a_stackID);
-            return {};
-        }
-        const auto idxB = a_position ? a_position->formID : 0;
-        return niInstance->GetInteractionPartnersRev(idxB, Thread::NiNode::NiType::Type(a_type));
-    }
-
-    float GetActionVelocityML(QUESTARGS, RE::Actor* a_position, RE::Actor* a_partner, int a_type)
-    {
-        if (!a_position) {
-            a_vm->TraceStack("Actor is none", a_stackID);
-            return 0.0f;
-        }
-        if (a_type == 0) {
-            a_vm->TraceStack("Type cant be 'any'", a_stackID);
-            return 0.0f;
-        }
-        GET_INSTANCE({});
-        auto niInstance = instance->GetNiInstance();
-        if (!niInstance) {
-            a_vm->TraceStack("Not registered", a_stackID);
-            return 0.0f;
-        }
-        float ret = 0.0f;
-        const auto idxA = a_position->formID;
-        const auto idxB = a_partner ? a_partner->formID : 0;
-        const auto interactions = niInstance->GetInteractions(idxA, idxB, Thread::NiNode::NiType::Type(a_type));
-        if (!interactions.empty()) {
-            ret = interactions.front()->velocity;
-        } else {
-            a_vm->TraceStack("No such interaction found", a_stackID);
-        }
-        return ret;
-    }
-
-    // ================================================
-    //            TYPE-GUESSING - Legacy
-
-    bool IsCollisionRegisteredLegacy(QUESTARGS)
-    {
-        GET_INSTANCE(false);
-        return instance->HasNiInstanceLegacy();
-    }
-
-    void UnregisterCollisionLegacy(QUESTARGS)
-    {
-        GET_INSTANCE();
-        instance->UnregisterNiInstanceLegacy();
-    }
-
-    std::vector<int> GetCollisionActionsLegacy(QUESTARGS, RE::Actor* a_position, RE::Actor* a_partner)
-    {
-        GET_INSTANCE({});
-        auto niInstance = instance->GetNiInstanceLegacy();
-        if (!niInstance) {
-            a_vm->TraceStack("Not registered", a_stackID);
-            return {};
-        }
-        std::vector<int> ret{};
-        niInstance->VisitPositions([&](auto& p) {
-            if (a_position && p.actor->formID != a_position->formID)
-                return false;
-            for (auto&& type : p.interactions) {
-                if (a_partner && type.partner->formID != a_partner->formID)
-                    continue;
-                ret.push_back(static_cast<int>(type.action));
-            }
-            return false;
-        });
-        return ret;
-    }
-
-    bool HasCollisionActionLegacy(QUESTARGS, int a_type, RE::Actor* a_position, RE::Actor* a_partner)
-    {
-        GET_INSTANCE({});
-        auto niInstance = instance->GetNiInstanceLegacy();
-        if (!niInstance) {
-            a_vm->TraceStack("Not registered", a_stackID);
-            return false;
-        }
-        return niInstance->VisitPositions([&](auto& p) {
-            if (a_position && p.actor->formID != a_position->formID)
-                return false;
-            for (auto&& type : p.interactions) {
-                if (a_partner && type.partner->formID != a_partner->formID)
-                    continue;
-                if (a_type != -1 && a_type != static_cast<int>(type.action))
-                    continue;
-                return true;
-            }
-            return false;
-        });
-    }
-
-    RE::Actor* GetPartnerByActionLegacy(QUESTARGS, RE::Actor* a_position, int a_type)
-    {
-        if (!a_position) {
-            a_vm->TraceStack("Actor is none", a_stackID);
-            return nullptr;
-        }
-        GET_INSTANCE({});
-        auto niInstance = instance->GetNiInstanceLegacy();
-        if (!niInstance) {
-            a_vm->TraceStack("Not registered", a_stackID);
-            return nullptr;
-        }
-        RE::Actor* ret = nullptr;
-        niInstance->VisitPositions([&](auto& p) {
-            if (p.actor->formID != a_position->formID)
-                return false;
-            for (auto&& type : p.interactions) {
-                if (a_type != -1 && a_type != static_cast<int>(type.action))
-                    continue;
-                ret = type.partner.get();
-                return true;
-            }
-            return false;
-        });
-        return ret;
-    }
-
-    std::vector<RE::Actor*> GetPartnersByActionLegacy(QUESTARGS, RE::Actor* a_position, int a_type)
-    {
-        GET_INSTANCE({});
-        auto niInstance = instance->GetNiInstanceLegacy();
-        if (!niInstance) {
-            a_vm->TraceStack("Not registered", a_stackID);
-            return {};
-        }
-        std::vector<RE::Actor*> ret{};
-        niInstance->VisitPositions([&](auto& p) {
-            if (a_position && p.actor->formID != a_position->formID)
-                return false;
-            for (auto&& type : p.interactions) {
-                if (a_type != -1 && a_type != static_cast<int>(type.action))
-                    continue;
-                ret.push_back(type.partner.get());
-            }
-            return false;
-        });
-        return ret;
-    }
-
-    RE::Actor* GetPartnerByTypeRevLegacy(QUESTARGS, RE::Actor* a_position, int a_type)
-    {
-        if (!a_position) {
-            a_vm->TraceStack("Actor is none", a_stackID);
-            return nullptr;
-        }
-        GET_INSTANCE({});
-        auto niInstance = instance->GetNiInstanceLegacy();
-        if (!niInstance) {
-            a_vm->TraceStack("Not registered", a_stackID);
-            return {};
-        }
-        RE::Actor* ret = nullptr;
-        niInstance->VisitPositions([&](auto& p) {
-            for (auto&& type : p.interactions) {
-                if (a_position->formID == type.partner->formID) {
-                    if (a_type == -1 || a_type == static_cast<int>(type.action)) {
-                        ret = p.actor.get();
-                        return true;
-                    }
-                    break;
-                }
-            }
-            return false;
-        });
-        return ret;
-    }
-
-    std::vector<RE::Actor*> GetPartnersByTypeRevLegacy(QUESTARGS, RE::Actor* a_position, int a_type)
-    {
-        GET_INSTANCE({});
-        auto niInstance = instance->GetNiInstanceLegacy();
-        if (!niInstance) {
-            a_vm->TraceStack("Not registered", a_stackID);
-            return {};
-        }
-        std::vector<RE::Actor*> ret{};
-        niInstance->VisitPositions([&](auto& p) {
-            for (auto&& type : p.interactions) {
-                if (!a_position || a_position->formID == type.partner->formID) {
-                    if (a_type == -1 || a_type == static_cast<int>(type.action))
-                        ret.push_back(p.actor.get());
-                    break;
-                }
-            }
-            return false;
-        });
-        return ret;
-    }
-
-    float GetActionVelocityLegacy(QUESTARGS, RE::Actor* a_position, RE::Actor* a_partner, int a_type)
-    {
-        if (!a_position) {
-            a_vm->TraceStack("Actor is none", a_stackID);
-            return 0.0f;
-        }
-        if (a_type == -1) {
-            a_vm->TraceStack("Type cant be 'any'", a_stackID);
-            return 0.0f;
-        }
-        GET_INSTANCE({});
-        auto niInstance = instance->GetNiInstanceLegacy();
-        if (!niInstance) {
-            a_vm->TraceStack("Not registered", a_stackID);
-            return 0.0f;
-        }
-        float ret = 0.0f;
-        niInstance->VisitPositions([&](auto& p) {
-            if (p.actor->formID != a_position->formID)
-                return false;
-            for (auto&& type : p.interactions) {
-                if (a_partner && a_partner->formID != type.partner->formID)
-                    continue;
-                if (a_type != static_cast<int>(type.action))
-                    continue;
-                ret = type.velocity;
-                return true;
-            }
-            return false;
-        });
-        return ret;
-    }
-
-    // ================================================
-    //            TYPE-GUESSING - Dispatch
-
-    bool IsCollisionRegistered(QUESTARGS)
-    {
-        return Settings::bUseLegacyNiType ? IsCollisionRegisteredLegacy(a_vm, a_stackID, a_qst) : IsCollisionRegisteredML(a_vm, a_stackID, a_qst);
-    }
-
-    void UnregisterCollision(QUESTARGS)
-    {
-        Settings::bUseLegacyNiType ? UnregisterCollisionLegacy(a_vm, a_stackID, a_qst) : UnregisterCollisionML(a_vm, a_stackID, a_qst);
-    }
-
-    std::vector<int> GetCollisionActions(QUESTARGS, RE::Actor* a_position, RE::Actor* a_partner)
-    {
-        return Settings::bUseLegacyNiType ? GetCollisionActionsLegacy(a_vm, a_stackID, a_qst, a_position, a_partner) : GetCollisionActionsML(a_vm, a_stackID, a_qst, a_position, a_partner);
-    }
-
-    bool HasCollisionAction(QUESTARGS, int a_type, RE::Actor* a_position, RE::Actor* a_partner)
-    {
-        return Settings::bUseLegacyNiType ? HasCollisionActionLegacy(a_vm, a_stackID, a_qst, a_type, a_position, a_partner) : HasCollisionActionML(a_vm, a_stackID, a_qst, a_type, a_position, a_partner);
-    }
-
-    RE::Actor* GetPartnerByAction(QUESTARGS, RE::Actor* a_position, int a_type)
-    {
-        return Settings::bUseLegacyNiType ? GetPartnerByActionLegacy(a_vm, a_stackID, a_qst, a_position, a_type) : GetPartnerByActionML(a_vm, a_stackID, a_qst, a_position, a_type);
-    }
-
-    std::vector<RE::Actor*> GetPartnersByAction(QUESTARGS, RE::Actor* a_position, int a_type)
-    {
-        return Settings::bUseLegacyNiType ? GetPartnersByActionLegacy(a_vm, a_stackID, a_qst, a_position, a_type) : GetPartnersByActionML(a_vm, a_stackID, a_qst, a_position, a_type);
-    }
-
-    RE::Actor* GetPartnerByTypeRev(QUESTARGS, RE::Actor* a_position, int a_type)
-    {
-        return Settings::bUseLegacyNiType ? GetPartnerByTypeRevLegacy(a_vm, a_stackID, a_qst, a_position, a_type) : GetPartnerByTypeRevML(a_vm, a_stackID, a_qst, a_position, a_type);
-    }
-
-    std::vector<RE::Actor*> GetPartnersByTypeRev(QUESTARGS, RE::Actor* a_position, int a_type)
-    {
-        return Settings::bUseLegacyNiType ? GetPartnersByTypeRevLegacy(a_vm, a_stackID, a_qst, a_position, a_type) : GetPartnersByTypeRevML(a_vm, a_stackID, a_qst, a_position, a_type);
-    }
-
-    float GetActionVelocity(QUESTARGS, RE::Actor* a_position, RE::Actor* a_partner, int a_type)
-    {
-        return Settings::bUseLegacyNiType ? GetActionVelocityLegacy(a_vm, a_stackID, a_qst, a_position, a_partner, a_type) : GetActionVelocityML(a_vm, a_stackID, a_qst, a_position, a_partner, a_type);
-    }
-
-    //
-    // ================================================
-
     void SetAnimationPlaybackSpeed(QUESTARGS, float a_playbackSpeed)
     {
         GET_INSTANCE();
@@ -938,6 +578,82 @@ namespace Papyrus::ThreadModel
             stats.AddStatistic(stats.TimesOral, 1);
             stats.AddStatistic(stats.XP_Oral, oral * 1.25f);
         }
+    }
+
+    // ---------------------------------------------- //
+    //                  INTERACTIONS                  //
+    // ---------------------------------------------- //
+
+    bool IsCollisionRegistered(QUESTARGS)
+    {
+        GET_INSTANCE(false);
+        return Thread::Interaction::IsCollisionRegistered(instance);
+    }
+
+    void UnregisterCollision(QUESTARGS)
+    {
+        GET_INSTANCE();
+        Thread::Interaction::UnregisterCollision(instance);
+    }
+
+    std::vector<bool> GetInteractionFlagsImpl(QUESTARGS, RE::Actor* a_actor, RE::Actor* a_partner)
+    {
+        GET_INSTANCE(std::vector<bool>(Thread::Interaction::kInterTypeCount, false));
+        return Thread::Interaction::GetInteractionFlagsImpl(instance, a_actor, a_partner);
+    }
+
+    std::vector<int32_t> GetActiveInterTypesImpl(QUESTARGS, RE::Actor* a_actor, RE::Actor* a_partner)
+    {
+        GET_INSTANCE({});
+        return Thread::Interaction::GetActiveInterTypesImpl(instance, a_actor, a_partner);
+    }
+
+    bool HasActiveInteractionImpl(QUESTARGS, RE::Actor* a_actor, RE::Actor* a_partner, int32_t a_interType)
+    {
+        GET_INSTANCE(false);
+        return Thread::Interaction::HasActiveInteractionImpl(instance, a_actor, a_partner, a_interType);
+    }
+
+    bool HasActiveInteractionAllImpl(QUESTARGS, RE::Actor* a_actor, std::vector<int32_t> a_interTypes)
+    {
+        GET_INSTANCE(false);
+        return Thread::Interaction::HasActiveInteractionAllImpl(instance, a_actor, a_interTypes);
+    }
+
+    bool HasActiveInteractionAnyImpl(QUESTARGS, RE::Actor* a_actor, std::vector<int32_t> a_interTypes)
+    {
+        GET_INSTANCE(false);
+        return Thread::Interaction::HasActiveInteractionAnyImpl(instance, a_actor, a_interTypes);
+    }
+
+    RE::Actor* GetPartnerByInteractionTypeImpl(QUESTARGS, RE::Actor* a_actor, int32_t a_interType)
+    {
+        GET_INSTANCE(nullptr);
+        return Thread::Interaction::GetPartnerByInteractionTypeImpl(instance, a_actor, a_interType);
+    }
+
+    std::vector<RE::Actor*> GetPartnersByInteractionTypeImpl(QUESTARGS, RE::Actor* a_actor, int32_t a_interType)
+    {
+        GET_INSTANCE({});
+        return Thread::Interaction::GetPartnersByInteractionTypeImpl(instance, a_actor, a_interType);
+    }
+
+    float GetInteractionVelocityImpl(QUESTARGS, RE::Actor* a_actor, RE::Actor* a_partner, int32_t a_interType)
+    {
+        GET_INSTANCE(0.0f);
+        return Thread::Interaction::GetInteractionVelocityImpl(instance, a_actor, a_partner, a_interType);
+    }
+
+    RE::BSFixedString GetInteractionStringImpl(QUESTARGS, RE::Actor* a_actor)
+    {
+        GET_INSTANCE(RE::BSFixedString{});
+        return RE::BSFixedString{ Thread::Interaction::GetInteractionStringImpl(instance, a_actor).c_str() };
+    }
+
+    std::vector<RE::BSFixedString> GetInteractionStringArrayImpl(QUESTARGS, RE::Actor* a_actor)
+    {
+        GET_INSTANCE({});
+        return Thread::Interaction::GetInteractionStringArrayImpl(instance, a_actor);
     }
 
     // ---------------------------------------------- //

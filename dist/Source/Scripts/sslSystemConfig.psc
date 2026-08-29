@@ -1120,14 +1120,6 @@ bool Property InternalEnjoymentEnabled hidden
     SetSettingBool("bInternalEnjoymentEnabled", value)
   EndFunction
 EndProperty
-bool Property FallbackToTagsForDetection hidden
-  bool Function Get()
-    return GetSettingBool("bFallbackToTagsForDetection")
-  EndFunction
-  Function Set(bool value)
-    SetSettingBool("bFallbackToTagsForDetection", value)
-  EndFunction
-EndProperty
 float Property EnjRaiseMultInter hidden
   float Function Get()
     return GetSettingFlt("fEnjRaiseMultInter")

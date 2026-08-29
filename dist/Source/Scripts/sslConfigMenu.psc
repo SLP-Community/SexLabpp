@@ -808,12 +808,12 @@ Function EnjoymentSettings()
 
 	AddHeaderOption("$SSL_EnjGeneralConfigs", enj_header)
 	AddStateOptionSlider("fEnjRaiseMultInter", "$SSL_fEnjRaiseMultInter", 1.2, 0, 3, 0.1, "{1}", enj_flag)	
-	AddStateOptionBool("bFallbackToTagsForDetection", "$SSL_bFallbackToTagsForDetection", enj_flag)
 	AddStateOptionBool("bNoStaminaEndsScene", "$SSL_bNoStaminaEndsScene", enj_flag)
 	AddStateOptionBool("bMaleOrgasmEndsScene", "$SSL_bMaleOrgasmEndsScene", enj_flag)
 	AddStateOptionBool("bDomMustOrgasm", "$SSL_bDomMustOrgasm", enj_flag)
 	AddStateOptionBool("bPlayerMustOrgasm", "$SSL_bPlayerMustOrgasm", enj_flag)
 	AddStateOptionBool("bHighEnjOrgasmWait", "$SSL_bHighEnjOrgasmWait", enj_flag)
+	AddEmptyOption()
 
 	AddHeaderOption("$SSL_EnjPainConfigs", enj_header)
 	AddStateOptionSlider("iMaxNoPainOrgasmMale", "$SSL_iMaxNoPainOrgasmMale", 1, 1, 4, 1, "{0}", enj_flag)

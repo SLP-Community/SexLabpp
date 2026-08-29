@@ -81,6 +81,7 @@ namespace Thread::Interface
         }
         _scale.SetTextMultiplier(textScaleMultiplier);
 
+        _debugDraw.Clear();
         _activePanel = PanelId::kNone;
         _focused = false;
         _elements = std::make_unique<Elements>();
@@ -98,6 +99,7 @@ namespace Thread::Interface
         _window.SetBlocksInput(false);
         _window.Close();
         _elements.reset();
+        _debugDraw.Clear();
         _activePanel = PanelId::kNone;
         _linkedThread = nullptr;
         _threadScript = nullptr;
@@ -124,6 +126,8 @@ namespace Thread::Interface
             instance->GetThreadProperty<bool>("VarUI_HasPlayer")) {
             _elements->enjoymentBarsOverlay.Render(*this);
         }
+
+        _debugDraw.Render();
 
         if (!_focused)
             return;
