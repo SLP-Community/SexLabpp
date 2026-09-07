@@ -85,7 +85,11 @@ Function RemoveCumFx(Actor akTarget, int aiType)
 EndFunction
 
 int Function CountCumFx(Actor akActor, int aiType)
-	return StorageUtil.CountObjIntValuePrefix(akActor, ACTIVE_LAYER_PREFIX + aiType)
+	If (aiType == FX_ALL)
+		return StorageUtil.GetIntValue(akActor, ACTIVE_LAYER_PREFIX + FX_VAGINAL, 0) + StorageUtil.GetIntValue(akActor, ACTIVE_LAYER_PREFIX + FX_ANAL, 0) + StorageUtil.GetIntValue(akActor, ACTIVE_LAYER_PREFIX + FX_ORAL, 0)
+	Else
+		return StorageUtil.GetIntValue(akActor, ACTIVE_LAYER_PREFIX + aiType, 0)
+	EndIf
 EndFunction
 
 ; ------------------------------------------------------- ;
