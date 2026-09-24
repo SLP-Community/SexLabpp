@@ -1,4 +1,4 @@
 [submodule "lib/CommonLibSSE-NG"]
 	path = lib/CommonLibSSE-NG
-	url = https://github.com/alandtse/CommonLibVR.git
-	branch = ng
+	url = https://github.com/naitro2010/CommonLibSSE-GG
+	branch = main
