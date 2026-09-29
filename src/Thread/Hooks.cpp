@@ -12,8 +12,10 @@ namespace Thread::Hooks
             {
                 auto& trampoline = SKSE::GetTrampoline();
                 const auto address = REL::VariantID(35565, 36564, 0x5BAB10).address();
-                const auto offset = REL::VariantOffset(0x748, 0xC26, 0x7EE).offset();
-
+                uint64_t offset_AE_1p6=0xC26;
+                uint64_t offset_AE_1p7=0xC38;
+                bool is_AE_1p7=(REL::Module::get().version() >= REL::Version(1, 7, 0, 0));
+                const auto offset = REL::VariantOffset(0x748, (is_AE_1p7 ? offset_AE_1p7 : offset_AE_1p6), 0x7EE).offset();
                 original = trampoline.write_call<5>(address + offset, Thunk);
                 logger::info("Installed frame hook");
             }
