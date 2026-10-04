@@ -22,21 +22,23 @@ namespace Registry::Animation::Legacy
 
     struct Scene
     {
-        Scene(std::ifstream& a_stream, std::string_view a_hash, uint8_t a_version);
+        Scene(std::ifstream& a_stream, uint8_t a_version);
         ~Scene() = default;
 
         std::string id;
         std::string name;
+
         std::vector<PositionInfo> positions;
+        Transform furnitureOffset;
+        TagData tags;
+
+        REX::EnumSet<FurnitureType::Value> furnitureTypes{ FurnitureType::None };
+        bool allowBed;
         bool isPrivate;
 
-        bool allowBed;
-        Transform furnitureOffset;
-        REX::EnumSet<FurnitureType::Value> furnitureTypes{ FurnitureType::None };
-
-        std::string startStageID;
         std::vector<std::unique_ptr<Stage>> stages;
-        std::map<std::string, std::vector<std::string>> graph;
+        std::map<const Stage*, std::vector<const Stage*>> graph;
+        Stage* startAnimation;
     };
 
     struct PositionInfo
@@ -45,10 +47,6 @@ namespace Registry::Animation::Legacy
         ~PositionInfo() = default;
 
         ActorFragment data;
-        RaceKey race;
-        REX::EnumSet<Sex> sex;
-        float scale;
-        uint8_t extra;
         std::vector<RE::BSFixedString> annotations;
     };
 
@@ -86,7 +84,6 @@ namespace Registry::Animation::Legacy
         Position(std::ifstream& a_stream, uint8_t a_version);
         ~Position() = default;
 
-      public:
         RE::BSFixedString event;
 
         bool climax;

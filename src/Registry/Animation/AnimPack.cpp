@@ -5,20 +5,28 @@
 
 namespace Registry::Animation
 {
+    std::vector<const Stage*> AnimPack::GetStages() const
+    {
+        std::vector<const Stage*> ret{};
+        ret.reserve(stages.size());
+        for (auto&& stage : stages) {
+            ret.push_back(stage.get());
+        }
+        return ret;
+    }
+
     AnimPack::AnimPack(const fs::path a_file)
     {
         std::ifstream stream(a_file, std::ios::binary);
         stream.unsetf(std::ios::skipws);
-        stream.exceptions(std::fstream::eofbit);
-        stream.exceptions(std::fstream::badbit);
-        stream.exceptions(std::fstream::failbit);
+        stream.exceptions(std::fstream::eofbit | std::fstream::badbit | std::fstream::failbit);
 
         uint8_t version;
         stream.read(reinterpret_cast<char*>(&version), 1);
-        if (version != kLegacyVersion && (version < kMinVersion || version > kCurrentVersion)) {
+        if (version < kMinVersion || version > kCurrentVersion) {
             const auto err = std::format("Invalid version: {}", version);
             throw std::runtime_error(err.c_str());
-        } else if (version == kLegacyVersion) {
+        } else if (version <= kFinalLegacyVersion) {
             Legacy::AnimPackage legacyPack{ stream, version };
             name = legacyPack.name;
             author = legacyPack.author;
@@ -26,11 +34,7 @@ namespace Registry::Animation
 
             scenes.reserve(legacyPack.scenes.size());
             for (auto&& legacyScene : legacyPack.scenes) {
-                auto scene = std::make_unique<Scene>(*legacyScene, hash);
-                scene->ForEachStage([&](Stage* a_stage) {
-                    stages.push_back(std::make_shared<Stage>(*a_stage));
-                    return false;
-                });
+                auto scene = std::make_unique<Scene>(*legacyScene, hash, &stages);
                 scenes.push_back(std::move(scene));
             }
         } else {
@@ -48,7 +52,7 @@ namespace Registry::Animation
             const auto sceneCount = Decode::Read<uint64_t>(stream);
             scenes.reserve(sceneCount);
             for (uint64_t i = 0; i < sceneCount; i++) {
-                scenes.push_back(std::make_unique<Scene>(stream, hash, version));
+                scenes.push_back(std::make_unique<Scene>(stream, version));
             }
         }
     }

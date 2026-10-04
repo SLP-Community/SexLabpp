@@ -64,8 +64,7 @@ namespace Registry::Animation
         if (a_version > 1 && a_version < 4) {
             const auto extraCustom = Decode::Read<uint64_t>(a_stream);
             for (uint64_t i = 0; i < extraCustom; i++) {
-                RE::BSFixedString unusedTag;
-                Decode::Read(a_stream, unusedTag);
+                Decode::Read<RE::BSFixedString>(a_stream);
             }
         }
     }
