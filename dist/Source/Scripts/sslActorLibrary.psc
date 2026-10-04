@@ -39,6 +39,7 @@ Function AddCumFx(Actor akActor, int aiType)
 			AddCumFx(akActor, addFxType)
 			addFxType += 1
 		EndWhile
+		return
 	Else
 		If (aiType == FX_VAGINAL)
 			akActor.AddSpell(CumVaginalSpell)
