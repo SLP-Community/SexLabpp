@@ -1,267 +1,128 @@
-#include "Animation.h"
+﻿#include "Scene.h"
 
-#include "Registry/Define/RaceKey.h"
-#include "Registry/Library.h"
-#include "Registry/Util/Decode.h"
-#include "Util/Combinatorics.h"
-#include "Util/StringUtil.h"
+#include "Registry/Animation/Legacy/Animation.h"
 
-namespace Registry
-{
-    AnimPackage::AnimPackage(const fs::path a_file)
+namespace Registry::Animation {
+    namespace
     {
-        std::ifstream stream(a_file, std::ios::binary);
-        stream.unsetf(std::ios::skipws);
-        stream.exceptions(std::fstream::eofbit);
-        stream.exceptions(std::fstream::badbit);
-        stream.exceptions(std::fstream::failbit);
-
-        uint8_t version;
-        constexpr uint8_t MIN_VERSION = 1;
-        constexpr uint8_t MAX_VERSION = 4;
-        stream.read(reinterpret_cast<char*>(&version), 1);
-        if (version < MIN_VERSION || version > MAX_VERSION) {
-            const auto err = std::format("Invalid version: {}", version);
-            throw std::runtime_error(err.c_str());
-        }
-        Decode::Read(stream, name);
-        Decode::Read(stream, author);
-        hash.resize(Decode::HASH_SIZE);
-        stream.read(hash.data(), Decode::HASH_SIZE);
-
-        uint64_t scene_count;
-        Decode::Read(stream, scene_count);
-        scenes.reserve(scene_count);
-        for (size_t i = 0; i < scene_count; i++) {
-            scenes.push_back(std::make_unique<Scene>(stream, hash, version));
-        }
-    }
-
-    Scene::Scene(std::ifstream& a_stream, std::string_view a_hash, uint8_t a_version) :
-      hash(a_hash), enabled(true)
-    {
-        // initialize start_animation to avoid crash
-        start_animation = nullptr;
-
-        id.resize(Decode::ID_SIZE);
-        a_stream.read(id.data(), Decode::ID_SIZE);
-        Decode::Read(a_stream, name);
-        // --- Position Infos
-        uint64_t info_count;
-        Decode::Read(a_stream, info_count);
-        positions.reserve(info_count);
-        for (size_t i = 0; i < info_count; i++) {
-            positions.emplace_back(a_stream, a_version);
-        }
-
-        enum legacySex : char
+        enum LegacySexTag : char
         {
             Male = 'M',
             Female = 'F',
             Futa = 'H',
             Creature = 'C',
         };
-        std::vector<std::vector<legacySex>> sexes{};
-        sexes.reserve(positions.size());
-        for (auto&& position : positions) {
-            std::vector<legacySex> vec{};
-            if (position.data.IsHuman()) {
-                if (position.data.IsSex(Sex::Male))
-                    vec.push_back(legacySex::Male);
-                if (position.data.IsSex(Sex::Female))
-                    vec.push_back(legacySex::Female);
-                if (position.data.IsSex(Sex::Futa))
-                    vec.push_back(legacySex::Futa);
-            } else {
-                vec.push_back(legacySex::Creature);
-            }
-            if (vec.empty()) {
-                const auto err = std::format("Some position has no associated sex in scene: {}", id);
-                throw std::runtime_error(err.c_str());
-            }
-            sexes.push_back(vec);
-        }
-        Combinatorics::ForEachCombination(sexes, [&](auto& it) {
-            std::vector<char> gender_tag{};
-            for (auto&& sex : it) {
-                gender_tag.push_back(*sex);
-            }
-            RE::BSFixedString gTag1{ std::string{ gender_tag.begin(), gender_tag.end() } };
-            RE::BSFixedString gTag2{ std::string{ gender_tag.rbegin(), gender_tag.rend() } };
-            tags.AddTag(gTag1);
-            if (gTag2 != gTag1) {
-                tags.AddTag(gTag2);
-            }
-            return Combinatorics::CResult::Next;
-        });
-        // --- Stages
-        std::string startstage(Decode::ID_SIZE, 'X');
-        if (a_version < 4) {
-            a_stream.read(startstage.data(), Decode::ID_SIZE);
-        }
-        uint64_t stage_count;
-        Decode::Read(a_stream, stage_count);
-        stages.reserve(stage_count);
-        for (size_t i = 0; i < stage_count; i++) {
-            const auto& stage = stages.emplace_back(
-                std::make_unique<Stage>(a_stream, a_version));
 
-            tags.AddTag(stage->tags);
-            if (stage->id == startstage) {
-                start_animation = stage.get();
-            }
-        }
-        if (!start_animation && stages.size() == 0) {
-            const auto err = std::format("Start animation {} is not found in scene {}", startstage, id);
-            throw std::runtime_error(err.c_str());
-        }
-        if (!start_animation) {
-            start_animation = stages[0].get();
-        }
-        // --- Graph
-        uint64_t graph_vertices;
-        Decode::Read(a_stream, graph_vertices);
-        if (graph_vertices != stage_count) {
-            const auto err = std::format("Invalid graph vertex count; expected {} but got {}", stage_count, graph_vertices);
-            throw std::runtime_error(err.c_str());
-        }
-        std::string vertexid(Decode::ID_SIZE, 'X');
-        for (size_t i = 0; i < graph_vertices; i++) {
-            a_stream.read(vertexid.data(), Decode::ID_SIZE);
-            const auto vertex = GetStageByID(vertexid.data());
-            if (!vertex) {
-                const auto err = std::format("Invalid vertex: {} in scene: {}", vertexid, id);
-                throw std::runtime_error(err.c_str());
-            }
-            std::vector<const Stage*> edges{};
-            uint64_t edge_count;
-            Decode::Read(a_stream, edge_count);
-            std::string edgeid(Decode::ID_SIZE, 'X');
-            for (size_t n = 0; n < edge_count; n++) {
-                a_stream.read(edgeid.data(), Decode::ID_SIZE);
-                const auto edge = GetStageByID(edgeid.data());
-                if (!edge) {
-                    const auto err = std::format("Invalid edge: {} for vertex: {} in scene: {}", edgeid, vertexid, id);
+        void BuildLegacySexTags(const std::string& a_sceneID, const std::vector<PositionMetaData>& a_positions, TagData& a_tags)
+        {
+            std::vector<std::vector<LegacySexTag>> sexes{};
+            sexes.reserve(a_positions.size());
+            for (auto&& position : a_positions) {
+                std::vector<LegacySexTag> vec{};
+                if (position.data.IsHuman()) {
+                    if (position.data.IsSex(Sex::Male)) {
+                        vec.push_back(LegacySexTag::Male);
+                    }
+                    if (position.data.IsSex(Sex::Female)) {
+                        vec.push_back(LegacySexTag::Female);
+                    }
+                    if (position.data.IsSex(Sex::Futa)) {
+                        vec.push_back(LegacySexTag::Futa);
+                    }
+                } else {
+                    vec.push_back(LegacySexTag::Creature);
+                }
+                if (vec.empty()) {
+                    const auto err = std::format("Some position has no associated sex in scene: {}", a_sceneID);
                     throw std::runtime_error(err.c_str());
                 }
-                edges.push_back(edge);
+                sexes.push_back(std::move(vec));
             }
-            graph.insert(std::make_pair(vertex, edges));
-        }
-        // --- Misc
-        Decode::Read(a_stream, *reinterpret_cast<uint32_t*>(&furnitureTypes));
-        a_stream.read(reinterpret_cast<char*>(&allowBed), 1);
-        furnitureOffset = Coordinate(a_stream);
-        a_stream.read(reinterpret_cast<char*>(&isPrivate), 1);
-    }
 
-    PositionInfo::PositionInfo(std::ifstream& a_stream, uint8_t a_version)
-    {
-        enum Extra : uint8_t
-        {
-            Submissive = 1 << 0,
-            Vampire = 1 << 1,
-            Unconscious = 1 << 2
-        };
-        float scale;
-        RaceKey race;
-        REX::EnumSet<Sex> sex;
-        REX::EnumSet<Extra> extra;
-        a_stream.read(reinterpret_cast<char*>(&race), 1);
-        a_stream.read(reinterpret_cast<char*>(&sex), 1);
-        Decode::Read(a_stream, scale);
-        a_stream.read(reinterpret_cast<char*>(&extra), 1);
+            std::vector<LegacySexTag> combination{};
+            combination.reserve(sexes.size());
+            const std::function<void(size_t)> recurse = [&](size_t a_index) {
+                if (a_index == sexes.size()) {
+                    std::vector<char> genderTag{};
+                    genderTag.reserve(combination.size());
+                    for (auto&& it : combination) {
+                        genderTag.push_back(static_cast<char>(it));
+                    }
 
-        data = ActorFragment(sex, race, scale, extra.all(Extra::Vampire), extra.all(Extra::Submissive), extra.all(Extra::Unconscious));
+                    RE::BSFixedString gTag1{ std::string{ genderTag.begin(), genderTag.end() } };
+                    RE::BSFixedString gTag2{ std::string{ genderTag.rbegin(), genderTag.rend() } };
+                    a_tags.AddTag(gTag1);
+                    if (gTag2 != gTag1) {
+                        a_tags.AddTag(gTag2);
+                    }
+                    return;
+                }
 
-        if (a_version > 1 && a_version < 4) {
-            uint64_t extra_custom;
-            Decode::Read(a_stream, extra_custom);
-            annotations.reserve(extra_custom);
-            for (size_t j = 0; j < extra_custom; j++) {
-                RE::BSFixedString tag;
-                Decode::Read(a_stream, tag);
-                annotations.push_back(tag);
-            }
-        } else {
-            annotations = {};
+                for (auto&& sex : sexes[a_index]) {
+                    combination.push_back(sex);
+                    recurse(a_index + 1);
+                    combination.pop_back();
+                }
+            };
+            recurse(0);
         }
     }
 
-    Stage::Stage(std::ifstream& a_stream, uint8_t a_version)
+    Scene::Scene(const Legacy::Scene& a_legacyScene, std::string_view a_hash) :
+      id(a_legacyScene.id),
+      name(a_legacyScene.name),
+      start(nullptr),
+      positions(),
+      tags(),
+      isEnabled(true),
+      isPrivate(a_legacyScene.isPrivate),
+      allowBed(a_legacyScene.allowBed),
+      furnitureOffset(a_legacyScene.furnitureOffset),
+      furnitureTypes(a_legacyScene.furnitureTypes)
     {
-        id.resize(Decode::ID_SIZE);
-        a_stream.read(id.data(), Decode::ID_SIZE);
-
-        uint64_t position_count;
-        Decode::Read(a_stream, position_count);
-        positions.reserve(position_count);
-        for (size_t i = 0; i < position_count; i++) {
-            positions.emplace_back(a_stream, a_version);
+        positions.reserve(a_legacyScene.positions.size());
+        for (auto&& legacyPositionInfo : a_legacyScene.positions) {
+            positions.emplace_back(legacyPositionInfo);
         }
-        Decode::Read(a_stream, fixedlength);
-        Decode::Read(a_stream, navtext);
-        tags = TagData{ a_stream };
-    }
+        BuildLegacySexTags(id, positions, tags);
 
-    Position::Position(std::ifstream& a_stream, uint8_t a_version) :
-      event(Decode::Read<decltype(event)>(a_stream)),
-      climax(Decode::Read<uint8_t>(a_stream) > 0),
-      offset(Transform(a_stream)),
-      strips(decltype(strips)::enum_type(Decode::Read<uint8_t>(a_stream))),
-      tags({})
-    {
-        if (a_version == 3)
-            Decode::Read<int8_t>(a_stream);
-        if (a_version >= 4) {
-            uint64_t extra_custom;
-            Decode::Read(a_stream, extra_custom);
-            tags.reserve(extra_custom);
-            for (size_t j = 0; j < extra_custom; j++) {
-                RE::BSFixedString tag;
-                Decode::Read(a_stream, tag);
-                tags.push_back(tag);
+        std::vector<std::shared_ptr<Stage>> stages{};
+        stages.reserve(a_legacyScene.stages.size());
+        std::map<std::string, std::shared_ptr<Stage>> stagesByID{};
+        for (auto&& legacyStage : a_legacyScene.stages) {
+            auto stage = std::make_shared<Stage>(*legacyStage, a_hash);
+            tags.AddTag(legacyStage->tags);
+            stagesByID.insert_or_assign(std::string{ stage->GetID() }, stage);
+            stages.push_back(std::move(stage));
+        }
+
+        if (!a_legacyScene.startStageID.empty()) {
+            if (const auto where = stagesByID.find(a_legacyScene.startStageID); where != stagesByID.end()) {
+                start = where->second;
             }
         }
-    }
-
-    void Position::Save(YAML::Node& a_node) const
-    {
-        auto transform = a_node["transform"];
-        offset.Save(transform);
-    }
-
-    void Position::Load(const YAML::Node& a_node)
-    {
-        if (auto transform = a_node["transform"]; transform.IsDefined()) {
-            offset.Load(transform);
+        if (!start && !stages.empty()) {
+            start = stages[0];
         }
-    }
-
-    void Stage::Save(YAML::Node& a_node) const
-    {
-        for (auto&& annotation : tags.GetAnnotations()) {
-            a_node["annotations"].push_back(annotation.data());
+        if (!start && stages.empty()) {
+            const auto err = std::format("Start animation {} is not found in scene {}", a_legacyScene.startStageID, id);
+            throw std::runtime_error(err.c_str());
         }
-        const auto hasChanges = std::ranges::find_if(positions, [](auto& position) { return position.offset.HasChanges(); });
-        if (hasChanges != positions.end()) {
-            for (size_t i = 0; i < positions.size(); i++) {
-                auto node = a_node[i];
-                positions[i].Save(node);
+
+        for (auto&& [legacyVertexID, legacyEdges] : a_legacyScene.graph) {
+            const auto vertexWhere = stagesByID.find(legacyVertexID);
+            if (vertexWhere == stagesByID.end()) {
+                const auto err = std::format("Invalid vertex: {} in scene: {}", legacyVertexID, id);
+                throw std::runtime_error(err.c_str());
             }
-        }
-    }
 
-    void Stage::Load(const YAML::Node& a_node)
-    {
-        if (auto annotations = a_node["annotations"]; annotations.IsDefined()) {
-            for (auto&& annotation : annotations) {
-                tags.AddAnnotation(annotation.as<std::string>());
-            }
-        }
-        for (size_t i = 0; i < positions.size(); i++) {
-            if (auto node = a_node[i]; node.IsDefined()) {
-                positions[i].Load(node);
+            for (auto&& legacyEdgeID : legacyEdges) {
+                const auto edgeWhere = stagesByID.find(legacyEdgeID);
+                if (edgeWhere == stagesByID.end()) {
+                    const auto err = std::format("Invalid edge: {} for vertex: {} in scene: {}", legacyEdgeID, legacyVertexID, id);
+                    throw std::runtime_error(err.c_str());
+                }
+                vertexWhere->second->AddOutgoingEdge(edgeWhere->second);
             }
         }
     }
@@ -287,51 +148,6 @@ namespace Registry
         }
     }
 
-
-    bool PositionInfo::CanFillPosition(RE::Actor* a_actor) const
-    {
-        auto fragment = ActorFragment(a_actor, false);
-        return CanFillPosition(fragment);
-    }
-
-    bool PositionInfo::CanFillPosition(const ActorFragment& a_fragment) const
-    {
-        return data.GetCompatibilityScore(a_fragment) != 0;
-    }
-
-    bool PositionInfo::CanFillPosition(const PositionInfo& a_other) const
-    {
-        return CanFillPosition(a_other.data);
-    }
-
-    bool PositionInfo::HasExtraCstm(const RE::BSFixedString& a_extra) const
-    {
-        return std::ranges::find(annotations, a_extra) != annotations.end();
-    }
-
-    std::string PositionInfo::ConcatExtraCstm() const
-    {
-        return Util::StringJoin(annotations, ", ");
-    }
-
-    PapyrusSex PositionInfo::GetSexPapyrus() const
-    {
-        auto sex = data.GetSex();
-        REX::EnumSet<PapyrusSex> ret{ PapyrusSex::None };
-        if (data.IsHuman()) {
-#define SET_SEX(s)       \
-    if (sex.all(Sex::s)) \
-        ret.set(PapyrusSex::s);
-            SET_SEX(Male);
-            SET_SEX(Female);
-            SET_SEX(Futa);
-#undef SET_SEX
-        } else {
-            const auto crtSex = sex.any(Sex::Female) ? PapyrusSex::CrtFemale : PapyrusSex::CrtMale;
-            ret.set(crtSex);
-        }
-        return ret.get();
-    }
 
     REX::EnumSet<FurnitureType::Value> Scene::GetFurnitureTypes() const
     {
@@ -742,5 +558,4 @@ namespace Registry
         }
         return ret;
     }
-
-}  // namespace Registry
+}
