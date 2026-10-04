@@ -303,7 +303,11 @@ int Property pVaginal       = 24 AutoReadOnly Hidden	; Position's vagina is pene
 int Property aAnal          = 25 AutoReadOnly Hidden	; Position's penis/dildo is penetrating partner's anus.
 int Property pAnal          = 26 AutoReadOnly Hidden	; Position's anus is penetrated by partner's penis/dildo.
 
-int Property SUPPORTED_INTER_COUNT = 27 AutoReadOnly Hidden
+int Property SUPPORTED_INTER_COUNT Hidden
+	int Function Get()
+		return 27
+	EndFunction
+EndProperty
 
 ; If physics-based collision related data is currently available or not
 bool Function IsInteractionRegistered()
