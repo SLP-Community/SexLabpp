@@ -90,6 +90,7 @@ namespace Papyrus::ThreadModel
     float GetInteractionVelocityImpl(QUESTARGS, RE::Actor* a_actor, RE::Actor* a_partner, int32_t a_interType);
     RE::BSFixedString GetInteractionStringImpl(QUESTARGS, RE::Actor* a_actor);
     std::vector<RE::BSFixedString> GetInteractionStringArrayImpl(QUESTARGS, RE::Actor* a_actor);
+    int GetSchlongSizeTierImpl(QUESTARGS, RE::Actor* a_actor);
 
     // SCENE HUD
     void InitSceneHUDImpl(QUESTARGS);
@@ -149,6 +150,7 @@ namespace Papyrus::ThreadModel
         REGISTERFUNC(GetInteractionVelocityImpl, "sslThreadModel", true);
         REGISTERFUNC(GetInteractionStringImpl, "sslThreadModel", true);
         REGISTERFUNC(GetInteractionStringArrayImpl, "sslThreadModel", true);
+        REGISTERFUNC(GetSchlongSizeTierImpl, "sslThreadModel", true);
 
         REGISTERFUNC(InitSceneHUDImpl, "sslThreadModel", true);
         REGISTERFUNC(DestroySceneHUDImpl, "sslThreadModel", true);

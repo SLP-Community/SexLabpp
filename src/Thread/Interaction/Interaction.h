@@ -162,4 +162,6 @@ namespace Thread::Interaction
     std::vector<RE::BSFixedString> GetInteractionStringArrayImpl(Thread::Instance* instance, RE::Actor* a_actor);
     std::string GetInteractionStringImpl(Thread::Instance* instance, RE::Actor* a_actor);
 
+    int GetSchlongSizeTierImpl(Thread::Instance* instance, RE::Actor* a_actor);
+
 }  // namespace Thread::Interaction

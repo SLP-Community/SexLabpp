@@ -663,6 +663,12 @@ namespace Papyrus::ThreadModel
         return Thread::Interaction::GetInteractionStringArrayImpl(instance, a_actor);
     }
 
+    int GetSchlongSizeTierImpl(QUESTARGS, RE::Actor* a_actor)
+    {
+        GET_INSTANCE(-1);
+        return Thread::Interaction::GetSchlongSizeTierImpl(instance, a_actor);
+    }
+
     // ---------------------------------------------- //
     //                   SCENE HUD                    //
     // ---------------------------------------------- //

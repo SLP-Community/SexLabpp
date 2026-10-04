@@ -13,6 +13,7 @@ namespace Thread::Interaction::NiSurface
         Scene(const std::vector<RE::Actor*>& a_positions, const Registry::Scene* a_scene);
 
         bool VisitPositions(const std::function<bool(const ActorState&)>& a_visitor) const;
+        std::optional<ShaftSize> GetShaftSize(RE::FormID a_actorId) const;
 
       private:
         void UpdateInteractions(float a_delta, bool a_drawCollision);

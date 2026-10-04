@@ -143,26 +143,56 @@ namespace Thread::Interaction
         return scene && scene->tags.HasTag("PosTagged");
     }
 
-    static std::vector<bool> GetInteractionPosTags(Thread::Instance* instance, RE::Actor* a_actor)
+    static std::vector<bool> GetInteractionPosTags(Thread::Instance* instance, RE::Actor* a_actor, RE::Actor* a_partner = nullptr)
     {
-        std::vector<bool> flags(kInterTypeCount, false);
+        std::vector<bool> actorFlags(kInterTypeCount, false);
         const auto* stage = instance->GetActiveStage();
-        if (!stage)
-            return flags;
+        if (!a_actor || !stage)
+            return actorFlags;
         const auto& positions = instance->GetActors();
         const auto it = std::find(positions.begin(), positions.end(), a_actor);
         if (it == positions.end())
-            return flags;
+            return actorFlags;
         const int32_t idx = static_cast<int32_t>(std::distance(positions.begin(), it));
         if (idx >= static_cast<int32_t>(stage->positions.size()))
-            return flags;
+            return actorFlags;
 
         const auto& byName = InterTypeByName();
         for (const auto& tag : stage->positions[idx].tags) {
             if (const auto found = byName.find(tag); found != byName.end())
-                flags[found->second] = true;
+                actorFlags[found->second] = true;
         }
-        return flags;
+
+        if (!a_partner)
+            return actorFlags;
+
+        // Pair filter: keep only types whose complement is tagged on the partner.
+        const auto partnerFlags = GetInteractionPosTags(instance, a_partner);  // raw tags, no recursion beyond this
+        for (int32_t i = 0; i < kInterTypeCount; ++i) {
+            if (!actorFlags[i])
+                continue;
+            const int32_t c = kInterTypeTable[i].complement;
+            if (c < 0 || c >= kInterTypeCount || !partnerFlags[c])
+                actorFlags[i] = false;
+        }
+        return actorFlags;
+    }
+
+    static std::vector<RE::Actor*> GetPartnersByInteractionPosTags(Thread::Instance* instance, RE::Actor* a_actor, int32_t interType)
+    {
+        std::vector<RE::Actor*> result;
+        if (!GetInteractionPosTags(instance, a_actor)[interType])
+            return result;
+        const int32_t complement = kInterTypeTable[interType].complement;
+        if (complement < 0 || complement >= kInterTypeCount)
+            return result;
+        for (auto* other : instance->GetActors()) {
+            if (!other || other->formID == a_actor->formID)
+                continue;
+            if (GetInteractionPosTags(instance, other)[complement])
+                result.push_back(other);
+        }
+        return result;
     }
 
     // ============ Public API ============ //
@@ -189,10 +219,8 @@ namespace Thread::Interaction
         std::vector<bool> interFlags(kInterTypeCount, false);
         if (auto ni = instance->GetInstanceNiSurface()) {
             interFlags = toFlags(GetCollisionActionsNiSurface(ni.get(), a_actor, a_partner));
-        } else {
-            if (CanUseTagsFallback(instance)) {
-                interFlags = GetInteractionPosTags(instance, a_actor);
-            }
+        } else if (CanUseTagsFallback(instance)) {
+            interFlags = GetInteractionPosTags(instance, a_actor, a_partner);
         }
         return interFlags;
     }
@@ -222,10 +250,8 @@ namespace Thread::Interaction
         }
         if (auto ni = instance->GetInstanceNiSurface()) {
             return HasCollisionActionNiSurface(ni.get(), a_actor, a_partner, interType);
-        } else {
-            if (CanUseTagsFallback(instance)) {
-                return GetInteractionPosTags(instance, a_actor)[interType];
-            }
+        } else if (CanUseTagsFallback(instance)) {
+            return GetInteractionPosTags(instance, a_actor, a_partner)[interType];
         }
         return false;
     }
@@ -268,20 +294,8 @@ namespace Thread::Interaction
             return {};
         if (auto ni = instance->GetInstanceNiSurface()) {
             return GetPartnersByActionNiSurface(ni.get(), a_actor, interType);
-        } else {
-            if (CanUseTagsFallback(instance)) {
-                const auto complement = kInterTypeTable[interType].complement;
-                if (complement < 0 || complement >= kInterTypeCount)
-                    return {};
-                std::vector<RE::Actor*> result;
-                for (auto* other : instance->GetActors()) {
-                    if (!other || other->formID == a_actor->formID)
-                        continue;
-                    if (GetInteractionPosTags(instance, other)[complement])
-                        result.push_back(other);
-                }
-                return result;
-            }
+        } else if (CanUseTagsFallback(instance)) {
+            return GetPartnersByInteractionPosTags(instance, a_actor, interType);
         }
         return {};
     }
@@ -329,6 +343,26 @@ namespace Thread::Interaction
             ret += name.c_str();
         }
         return ret;
+    }
+
+    int GetSchlongSizeTierImpl(Thread::Instance* instance, RE::Actor* a_actor)
+    {
+        if (!a_actor)
+            return -1;
+        auto ni = instance->GetInstanceNiSurface();
+        if (!ni)
+            return -1;
+        const auto size = ni->GetShaftSize(a_actor->formID);
+        if (!size)
+            return -1;
+
+        // Upper bounds (world units, might need adjustments) for XS, S, M, L; longer is XL
+        logger::info("{}: actor {:X} shaft length={:.2f} radius={:.2f}", __func__, a_actor->formID, size->length, size->radius);
+        static constexpr std::array<float, 4> kTierUpper{ 9.0f, 11.0f, 13.0f, 16.0f };
+        for (int32_t tier = 0; tier < 4; ++tier)
+            if (size->length <= kTierUpper[tier])
+                return tier;
+        return 4;
     }
 
 }  // namespace Thread::Interaction

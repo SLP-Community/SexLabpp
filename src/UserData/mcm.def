@@ -28,6 +28,7 @@ MCM_SETTING(bElementEnjBars, true)
 MCM_SETTING(bElementOffsetAdjust, true)
 MCM_SETTING(bElementSceneSelect, true)
 MCM_SETTING(bElementThreadConfig, true)
+MCM_SETTING(bElementDebugNode, false)
 
 MCM_SETTING(iAskBed, 1)
 MCM_SETTING(iNPCBed, 1)

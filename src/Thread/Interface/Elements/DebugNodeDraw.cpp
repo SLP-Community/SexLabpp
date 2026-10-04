@@ -1,22 +1,16 @@
-#include "DebugDraw.h"
-#include "SKSEMenuFramework.h"
-
-#include <algorithm>
-#include <array>
-#include <cfloat>
-#include <cmath>
-#include <numbers>
+#include "DebugNodeDraw.h"
+#include "Thread/Interface/SceneHUD.h"
 
 namespace Thread::Interface
 {
-    void DebugDraw::BeginFrame()
+    void DebugNodeDraw::BeginFrame()
     {
         const std::scoped_lock guard(_lock);
         _pendingRings.clear();
         _pendingCapsules.clear();
     }
 
-    void DebugDraw::AddRing(const RE::NiPoint3& a_center, const RE::NiPoint3& a_right, const RE::NiPoint3& a_up, float a_radius)
+    void DebugNodeDraw::AddRing(const RE::NiPoint3& a_center, const RE::NiPoint3& a_right, const RE::NiPoint3& a_up, float a_radius)
     {
         if (a_radius <= 0.0f) {
             return;
@@ -27,7 +21,7 @@ namespace Thread::Interface
         }
     }
 
-    void DebugDraw::AddTaperedCapsule(const RE::NiPoint3& a_start, const RE::NiPoint3& a_end, float a_startRadius, float a_endRadius)
+    void DebugNodeDraw::AddTaperedCapsule(const RE::NiPoint3& a_start, const RE::NiPoint3& a_end, float a_startRadius, float a_endRadius)
     {
         if ((a_end - a_start).SqrLength() <= FLT_EPSILON || (a_startRadius <= 0.0f && a_endRadius <= 0.0f)) {
             return;
@@ -38,7 +32,7 @@ namespace Thread::Interface
         }
     }
 
-    void DebugDraw::Publish()
+    void DebugNodeDraw::Publish()
     {
         const std::scoped_lock guard(_lock);
         // Keep the latest complete collision frame stable until the producer publishes another one.
@@ -46,7 +40,7 @@ namespace Thread::Interface
         _publishedCapsules.swap(_pendingCapsules);
     }
 
-    void DebugDraw::Render() const
+    void DebugNodeDraw::Render(SceneHUD& a_hud)
     {
         auto* camera = RE::Main::WorldRootCamera();
         auto* drawList = ImGuiMCP::GetForegroundDrawList();
@@ -57,7 +51,7 @@ namespace Thread::Interface
 
         constexpr std::size_t segments{ 8 };
         constexpr auto color = IM_COL32(0, 255, 210, 230);
-        constexpr float thickness{ 1.5f };
+        const float thickness = a_hud.GetScale().Px(1.5f);
         const auto project = [&](const RE::NiPoint3& a_point, ImGuiMCP::ImVec2& a_screen) {
             float x{}, y{}, z{};
             if (!camera->WorldPtToScreenPt3(a_point, x, y, z, 1.0e-5f)) {
@@ -118,7 +112,7 @@ namespace Thread::Interface
         }
     }
 
-    void DebugDraw::Clear()
+    void DebugNodeDraw::Clear()
     {
         const std::scoped_lock guard(_lock);
         _pendingRings.clear();

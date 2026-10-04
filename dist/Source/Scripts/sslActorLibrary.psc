@@ -17,6 +17,12 @@ int Property FX_ALL = -1 AutoReadOnly Hidden
 int Property FX_VAGINAL = 0 AutoReadOnly Hidden
 int Property FX_ANAL = 1 AutoReadOnly Hidden
 int Property FX_ORAL = 2 AutoReadOnly Hidden
+; The maximum number of different types of CumFX that can be applied to an actor at once, always update to be +1 of the highest Fx type
+int Property MAX_FX_TYPES Hidden
+	int Function Get()
+		return FX_ORAL + 1
+	EndFunction
+EndProperty
 
 Spell Property abCumFX Auto
 Spell property CumVaginalSpell Auto
@@ -28,12 +34,11 @@ Function AddCumFx(Actor akActor, int aiType)
 		akActor.AddSpell(abCumFX)
 	EndIf
 	If (aiType == FX_ALL)
-		BeginOverlay(akActor, FX_VAGINAL)
-		BeginOverlay(akActor, FX_ANAL)
-		BeginOverlay(akActor, FX_ORAL)
-		akActor.AddSpell(CumVaginalSpell)
-		akActor.AddSpell(CumOralSpell)
-		akActor.AddSpell(CumAnalSpell)
+		int addFxType = 0
+		while (addFxType < MAX_FX_TYPES)
+			AddCumFx(akActor, addFxType)
+			addFxType += 1
+		EndWhile
 	Else
 		If (aiType == FX_VAGINAL)
 			akActor.AddSpell(CumVaginalSpell)
@@ -52,9 +57,11 @@ EndFunction
 
 Function RemoveCumFx(Actor akTarget, int aiType)
 	If (aiType == FX_ALL)
-		RemoveCumFx(akTarget, FX_VAGINAL)
-		RemoveCumFx(akTarget, FX_ANAL)
-		RemoveCumFx(akTarget, FX_ORAL)
+		int removeFxType = 0
+		While (removeFxType < MAX_FX_TYPES)
+			RemoveCumFx(akTarget, removeFxType)
+			removeFxType += 1
+		EndWhile
 		return
 	EndIf
 	int removed = StorageUtil.IntListRemove(akTarget, APPLIED_TEXTURE_LIST, aiType)
@@ -85,7 +92,18 @@ Function RemoveCumFx(Actor akTarget, int aiType)
 EndFunction
 
 int Function CountCumFx(Actor akActor, int aiType)
-	return StorageUtil.CountObjIntValuePrefix(akActor, ACTIVE_LAYER_PREFIX + aiType)
+	; if aiType is FX_ALL, return the total count of all types, otherwise return the count for the specific type
+	If (aiType == FX_ALL)
+		int checkFxType = 0
+		int fxCount = 0
+		While (checkFxType < MAX_FX_TYPES)
+			fxCount += CountCumFx(akActor, checkFxType)
+			checkFxType += 1
+		EndWhile
+		return fxCount
+	Else
+		return StorageUtil.GetIntValue(akActor, ACTIVE_LAYER_PREFIX + aiType, 0)
+	EndIf
 EndFunction
 
 ; ------------------------------------------------------- ;

@@ -18,9 +18,16 @@ namespace Thread::Interaction::NiSurface
         float radius{ 0.0f };
     };
 
+    struct ShaftSize
+    {
+        float length{ 0.0f };
+        float radius{ 0.0f };
+    };
+
     struct ShaftShape
     {
         std::vector<ShaftSection> sections;
         RE::NiPoint3 tip;
+        ShaftSize size;
     };
 }

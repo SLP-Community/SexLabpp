@@ -520,6 +520,14 @@ bool property ElementThreadConfig hidden
 	  SetSettingBool("bElementThreadConfig", aSet)
 	EndFunction
 EndProperty
+bool property ElementDebugNode hidden
+	bool Function Get()
+	  return GetSettingBool("bElementDebugNode")
+	EndFunction
+	Function Set(bool aSet)
+	  SetSettingBool("bElementDebugNode", aSet)
+	EndFunction
+EndProperty
 
 ; Floats
 float property CumTimer hidden

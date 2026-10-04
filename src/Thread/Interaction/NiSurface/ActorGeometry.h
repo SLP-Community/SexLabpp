@@ -44,6 +44,7 @@ namespace Thread::Interaction::NiSurface::Geometry
         std::optional<OpeningShape> GetAnalOpening();
         void UpdateShafts();
         GeometryMath::Segment GetCrotchSegment() const;
+        std::optional<ShaftSize> GetShaftSize() const;
 
       private:
         // Non-owning alias; ActorState::actor is declared before geometry and therefore outlives it.

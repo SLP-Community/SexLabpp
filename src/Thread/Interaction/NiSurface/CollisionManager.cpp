@@ -6,7 +6,7 @@ namespace Thread::Interaction::NiSurface
 {
     namespace
     {
-        constexpr std::uint32_t TIMING_LOG_INTERVAL{ 30 };
+        //constexpr std::uint32_t TIMING_LOG_INTERVAL{ 30 };
         constexpr float MOTION_FILTER_TIME{ 0.05f };
         constexpr float VELOCITY_FILTER_TIME{ 0.25f };
         constexpr float MOTION_STATE_RETENTION{ 0.2f };
@@ -30,6 +30,17 @@ namespace Thread::Interaction::NiSurface
             }
         }
         return false;
+    }
+
+    std::optional<ShaftSize> Scene::GetShaftSize(RE::FormID a_actorId) const
+    {
+        std::scoped_lock lock{ _mutex };
+        for (const auto& position : positions) {
+            if (position.actor->GetFormID() == a_actorId) {
+                return position.geometry.GetShaftSize();
+            }
+        }
+        return std::nullopt;
     }
 
     void Scene::UpdateInteractions(float a_delta, bool a_drawCollision)
@@ -64,26 +75,26 @@ namespace Thread::Interaction::NiSurface
             frames.emplace_back(position);
         }
         if (a_drawCollision) {
-            auto& debugDraw = Interface::SceneHUD::GetSingleton().GetDebugDraw();
+            auto& hud = Interface::SceneHUD::GetSingleton();
             for (const auto& frame : frames) {
                 if (frame.mouthOpening) {
-                    debugDraw.AddRing(frame.mouthOpening->center, frame.mouthOpening->right, frame.mouthOpening->up, frame.mouthOpening->radius);
+                    hud.DebugNodeDrawAddRing(frame.mouthOpening->center, frame.mouthOpening->right, frame.mouthOpening->up, frame.mouthOpening->radius);
                 }
                 if (frame.vaginalOpening) {
-                    debugDraw.AddRing(frame.vaginalOpening->center, frame.vaginalOpening->right, frame.vaginalOpening->up, frame.vaginalOpening->radius);
+                    hud.DebugNodeDrawAddRing(frame.vaginalOpening->center, frame.vaginalOpening->right, frame.vaginalOpening->up, frame.vaginalOpening->radius);
                 }
                 if (frame.analOpening) {
-                    debugDraw.AddRing(frame.analOpening->center, frame.analOpening->right, frame.analOpening->up, frame.analOpening->radius);
+                    hud.DebugNodeDrawAddRing(frame.analOpening->center, frame.analOpening->right, frame.analOpening->up, frame.analOpening->radius);
                 }
                 for (const auto& shaft : frame.state.geometry.shafts) {
                     if (const auto* collisionShape = shaft.GetCollisionShape()) {
                         // Draw the same tapered segment chain consumed by the opening collision test.
                         for (std::size_t section = 1; section < collisionShape->sections.size(); ++section) {
-                            debugDraw.AddTaperedCapsule(collisionShape->sections[section - 1].center, collisionShape->sections[section].center,
+                            hud.DebugNodeDrawAddTaperedCapsule(collisionShape->sections[section - 1].center, collisionShape->sections[section].center,
                                 collisionShape->sections[section - 1].radius, collisionShape->sections[section].radius);
                         }
                         if (!collisionShape->sections.empty()) {
-                            debugDraw.AddTaperedCapsule(collisionShape->sections.back().center, collisionShape->tip, collisionShape->sections.back().radius, 0.0f);
+                            hud.DebugNodeDrawAddTaperedCapsule(collisionShape->sections.back().center, collisionShape->tip, collisionShape->sections.back().radius, 0.0f);
                         }
                     }
                 }
@@ -94,8 +105,8 @@ namespace Thread::Interaction::NiSurface
             DetectVaginalInteractions(frames, source);
             DetectGeneralInteractions(frames, source);
         }
-        static std::uint32_t velocityLogFrame = 0;
-        const bool logVelocity = velocityLogFrame++ % TIMING_LOG_INTERVAL == 1;
+        //static std::uint32_t velocityLogFrame = 0;
+        //const bool logVelocity = velocityLogFrame++ % TIMING_LOG_INTERVAL == 1;
         for (std::size_t i = 0; i < positions.size(); ++i) {
             auto& position = positions[i];
             for (auto& [_, state] : position.motionStates) {
@@ -134,13 +145,13 @@ namespace Thread::Interaction::NiSurface
             });
 
             // Temporary interaction validation; remove after collision behavior is verified.
-            if (logVelocity) {
-                for (const auto& interaction : positions[i].interactions) {
-                    logger::info("NiSurface Interaction: actor={}, partner={}, action={}, source={}, distance={:.2f}, motion=({:.3f}, {:.3f}, {:.3f}), scale={:.2f}, velocity={:.3f}",
-                        position.actor->GetName(), interaction.partner->GetName(), magic_enum::enum_name(interaction.action), interaction.motionSource,
-                        interaction.distance, interaction.motion.x, interaction.motion.y, interaction.motion.z, interaction.motionScale, interaction.velocity);
-                }
-            }
+            // if (logVelocity) {
+            //    for (const auto& interaction : positions[i].interactions) {
+            //        logger::info("NiSurface Interaction: actor={}, partner={}, action={}, source={}, distance={:.2f}, motion=({:.3f}, {:.3f}, {:.3f}), scale={:.2f}, velocity={:.3f}",
+            //            position.actor->GetName(), interaction.partner->GetName(), magic_enum::enum_name(interaction.action), interaction.motionSource,
+            //            interaction.distance, interaction.motion.x, interaction.motion.y, interaction.motion.z, interaction.motionScale, interaction.velocity);
+            //    }
+            //}
         }
     }
 
@@ -197,19 +208,20 @@ namespace Thread::Interaction::NiSurface
     {
         std::scoped_lock lock{ _mutex };
         static std::uint32_t frame = 0;
-        const bool logTiming = frame++ % TIMING_LOG_INTERVAL == 1;
+        //const bool logTiming = frame++ % TIMING_LOG_INTERVAL == 1;
         const auto start = std::chrono::high_resolution_clock::now();
-        auto& debugDraw = Interface::SceneHUD::GetSingleton().GetDebugDraw();
-        debugDraw.BeginFrame();
-        const auto* linkedThread = Interface::SceneHUD::GetSingleton().GetLinkedThread();
+        auto& hud = Interface::SceneHUD::GetSingleton();
+        hud.DebugNodeDrawBeginFrame();
+        const auto* linkedThread = hud.GetLinkedThread();
+        const bool drawNodes = hud.IsDebugNodeDrawEnabled();
         for (auto&& [id, scene] : scenes) {
-            scene->UpdateInteractions(a_delta, linkedThread && id == linkedThread->GetFormID());
+            scene->UpdateInteractions(a_delta, drawNodes && linkedThread && id == linkedThread->GetFormID());
         }
-        debugDraw.Publish();
-        if (logTiming && !scenes.empty()) {
-            const auto elapsed = std::chrono::duration<double, std::milli>(std::chrono::high_resolution_clock::now() - start);
-            logger::info("NiSurface Interaction: Frame -> {:.2f}ms", elapsed.count());
-        }
+        hud.DebugNodeDrawPublish();
+        //if (logTiming && !scenes.empty()) {
+        //    const auto elapsed = std::chrono::duration<double, std::milli>(std::chrono::high_resolution_clock::now() - start);
+        //    logger::info("NiSurface Interaction: Frame -> {:.2f}ms", elapsed.count());
+        //}
     }
 
     std::shared_ptr<Scene> Manager::Get(RE::FormID a_id)

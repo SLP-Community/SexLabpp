@@ -238,6 +238,12 @@ namespace Thread::Interface
                     a_hud.CloseAllPanels();
             });
         }
+
+        bool state_DebugNodeDraw = inst->GetThreadProperty<bool>("ElementUI_DebugNodeDraw");
+        DrawToggleRow("Debug Node Draw", "debugNodeDraw", state_DebugNodeDraw, [&](bool val) {
+            inst->SetThreadProperty<bool>("ElementUI_DebugNodeDraw", val);
+        });
+
         ImGuiMCP::PopStyleColor();
         UI::PopCheckboxStyle();
 

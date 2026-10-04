@@ -1,19 +1,17 @@
 #pragma once
 
-#include <cstddef>
-#include <mutex>
-#include <vector>
-
 namespace Thread::Interface
 {
-    class DebugDraw final
+    class SceneHUD;
+
+    class DebugNodeDraw final
     {
       public:
         void BeginFrame();
         void AddRing(const RE::NiPoint3& a_center, const RE::NiPoint3& a_right, const RE::NiPoint3& a_up, float a_radius);
         void AddTaperedCapsule(const RE::NiPoint3& a_start, const RE::NiPoint3& a_end, float a_startRadius, float a_endRadius);
         void Publish();
-        void Render() const;
+        void Render(SceneHUD& a_hud);
         void Clear();
 
       private:

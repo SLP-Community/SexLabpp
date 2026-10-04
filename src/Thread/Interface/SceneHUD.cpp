@@ -6,6 +6,7 @@
 #include "Elements/PseudoPanelStack.h"
 #include "Elements/SceneSelectPanel.h"
 #include "Elements/ThreadConfigPanel.h"
+#include "Elements/DebugNodeDraw.h"
 
 namespace Thread::Interface
 {
@@ -18,6 +19,7 @@ namespace Thread::Interface
         OffsetAdjustPanel offsetAdjustPanel;
         ElementCtrlPanel elementCtrlPanel;
         PseudoPanelStack pseudoPanelStack;
+        DebugNodeDraw debugNodeDraw;
     };
 
     SceneHUD& SceneHUD::GetSingleton()
@@ -81,7 +83,6 @@ namespace Thread::Interface
         }
         _scale.SetTextMultiplier(textScaleMultiplier);
 
-        _debugDraw.Clear();
         _activePanel = PanelId::kNone;
         _focused = false;
         _elements = std::make_unique<Elements>();
@@ -99,7 +100,6 @@ namespace Thread::Interface
         _window.SetBlocksInput(false);
         _window.Close();
         _elements.reset();
-        _debugDraw.Clear();
         _activePanel = PanelId::kNone;
         _linkedThread = nullptr;
         _threadScript = nullptr;
@@ -121,13 +121,15 @@ namespace Thread::Interface
 
         if (instance->GetThreadProperty<bool>("ElementUI_AnimSpeed"))
             _elements->animSpeedOverlay.Render(*this);
+
         if (instance->GetThreadProperty<bool>("ElementUI_EnjBars") &&
             instance->GetThreadProperty<bool>("VarUI_SeparateOrgasm") &&
             instance->GetThreadProperty<bool>("VarUI_HasPlayer")) {
             _elements->enjoymentBarsOverlay.Render(*this);
         }
 
-        _debugDraw.Render();
+        if (instance->GetThreadProperty<bool>("ElementUI_DebugNodeDraw"))
+            _elements->debugNodeDraw.Render(*this);
 
         if (!_focused)
             return;
@@ -267,5 +269,37 @@ namespace Thread::Interface
             return;
         _elements->sceneSelectPanel.RebuildEntries(*this);
         _elements->sceneSelectPanel.RebuildFilter();
+    }
+
+    bool SceneHUD::IsDebugNodeDrawEnabled() const
+    {
+        if (!_elements)
+            return false;
+        auto* instance = GetThreadInstance();
+        return instance && instance->GetThreadProperty<bool>("ElementUI_DebugNodeDraw");
+    }
+
+    void SceneHUD::DebugNodeDrawBeginFrame()
+    {
+        if (_elements)
+            _elements->debugNodeDraw.BeginFrame();
+    }
+
+    void SceneHUD::DebugNodeDrawPublish()
+    {
+        if (_elements)
+            _elements->debugNodeDraw.Publish();
+    }
+
+    void SceneHUD::DebugNodeDrawAddRing(const RE::NiPoint3& a_center, const RE::NiPoint3& a_right, const RE::NiPoint3& a_up, float a_radius)
+    {
+        if (_elements)
+            _elements->debugNodeDraw.AddRing(a_center, a_right, a_up, a_radius);
+    }
+
+    void SceneHUD::DebugNodeDrawAddTaperedCapsule(const RE::NiPoint3& a_start, const RE::NiPoint3& a_end, float a_startRadius, float a_endRadius)
+    {
+        if (_elements)
+            _elements->debugNodeDraw.AddTaperedCapsule(a_start, a_end, a_startRadius, a_endRadius);
     }
 }

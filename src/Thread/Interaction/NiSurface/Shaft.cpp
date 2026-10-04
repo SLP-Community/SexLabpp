@@ -531,6 +531,19 @@ namespace Thread::Interaction::NiSurface::Geometry
             shape.tip += point;
         }
         shape.tip /= static_cast<float>(surface->tip.worldPositions.size());
+
+        // Size along the centerline and mean girth, in world units.
+        float length = 0.0f;
+        float radius = 0.0f;
+        for (std::size_t i = 1; i < shape.sections.size(); ++i) {
+            length += shape.sections[i - 1].center.GetDistance(shape.sections[i].center);
+        }
+        length += shape.sections.back().center.GetDistance(shape.tip);
+        for (const auto& section : shape.sections) {
+            radius += section.radius;
+        }
+        radius /= static_cast<float>(shape.sections.size());
+        shape.size = { length, radius };
     }
 
     GeometryMath::Segment Shaft::GetReferenceSegment() const

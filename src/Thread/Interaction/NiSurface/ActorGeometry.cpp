@@ -341,6 +341,21 @@ namespace Thread::Interaction::NiSurface::Geometry
         }
     }
 
+    std::optional<ShaftSize> ActorGeometry::GetShaftSize() const
+    {
+        std::optional<ShaftSize> best;
+        for (const auto& shaft : shafts) {
+            const auto* shape = shaft.GetCollisionShape();
+            if (!shape || shape->size.length <= 0.0f) {
+                continue;
+            }
+            if (!best || shape->size.length > best->length) {
+                best = shape->size;
+            }
+        }
+        return best;
+    }
+
     GeometryMath::Segment ActorGeometry::GetCrotchSegment() const
     {
         assert(pelvis && lowerSpine);
