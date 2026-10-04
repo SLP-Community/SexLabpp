@@ -19,7 +19,7 @@ Furniture\noble\noblebeddouble02.nif:
 Furniture\noble\noblebedsingle01.nif:
   - Type: BedSingle
     Offset:
-      - [0.0, 6.1, -13, 0.0]
+      - [0.0, 6.1, 43, 0.0]
   - Type: BenchMisc
     Offset:
       - [0.0, 86, 0.0, 0.0]
@@ -48,11 +48,11 @@ Furniture\noble\noblebench05.nif:
 Furniture\noble\noblechair01.nif:
   Type: ChairNoble
   Offset:
-    - [0.0, 0.0, -1.8, 0.0]
+    - [0.0, 47, 0, 180.0]
 Furniture\noble\noblechair02.nif:
   Type: ChairNoble
   Offset:
-    - [0.0, 0.0, -1.8, 0.0]
+    - [0.0, 47, 0, 180.0]
 Furniture\noble\noblechest01.nif:
   Type: BenchMisc
   Offset:
@@ -181,14 +181,14 @@ Furniture\noble\nobletablelongbench01.nif:
 Furniture\noble\nobletablelongbench02.nif:
   - Type: Table
     Offset:
-      - [-161.4, 0.0, 0.0, 90]
-      - [161.4, 0.0, 0.0, 270]
+      - [-196, 0.0, 0.0, 90]
+      - [196, 0.0, 0.0, 270]
   - Type: Bench
     Offset:
-      - [58.8, -91.8, 0.0, 180]
-      - [-60.7, -91.8, 0.0, 180]
-      - [58.8, 91.8, 0.0, 0.0]
-      - [-60.7, 91.8, 0.0, 0.0]
+      - [24, -91.8, 0.0, 180]
+      - [-26, -91.8, 0.0, 180]
+      - [24, 91.8, 0.0, 0.0]
+      - [-26, 91.8, 0.0, 0.0]
 Furniture\noble\nobletablelongbench03.nif:
   - Type: Table
     Offset:
