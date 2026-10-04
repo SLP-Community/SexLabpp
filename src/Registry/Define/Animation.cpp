@@ -6,6 +6,8 @@
 #include "Util/Combinatorics.h"
 #include "Util/StringUtil.h"
 
+#include <limits>
+
 namespace Registry
 {
     AnimPackage::AnimPackage(const fs::path a_file)
@@ -18,7 +20,7 @@ namespace Registry
 
         uint8_t version;
         constexpr uint8_t MIN_VERSION = 1;
-        constexpr uint8_t MAX_VERSION = 4;
+        constexpr uint8_t MAX_VERSION = 5;
         stream.read(reinterpret_cast<char*>(&version), 1);
         if (version < MIN_VERSION || version > MAX_VERSION) {
             const auto err = std::format("Invalid version: {}", version);
@@ -134,19 +136,52 @@ namespace Registry
                 throw std::runtime_error(err.c_str());
             }
             std::vector<const Stage*> edges{};
+            std::vector<GraphEdge> meta{};
             uint64_t edge_count;
             Decode::Read(a_stream, edge_count);
             std::string edgeid(Decode::ID_SIZE, 'X');
+            std::string edgescene(Decode::ID_SIZE, 'X');
             for (size_t n = 0; n < edge_count; n++) {
-                a_stream.read(edgeid.data(), Decode::ID_SIZE);
-                const auto edge = GetStageByID(edgeid.data());
-                if (!edge) {
-                    const auto err = std::format("Invalid edge: {} for vertex: {} in scene: {}", edgeid, vertexid, id);
-                    throw std::runtime_error(err.c_str());
+                GraphEdge ge{};
+                if (a_version >= 5) {
+                    a_stream.read(edgescene.data(), Decode::ID_SIZE);
+                    a_stream.read(edgeid.data(), Decode::ID_SIZE);
+                    ge.scene_id = edgescene;
+                    ge.stage_id = edgeid;
+                    Decode::Read(a_stream, ge.priority);
+                    a_stream.read(reinterpret_cast<char*>(&ge.flags), 1);
+                    Decode::Read(a_stream, ge.label);
+                    if (ge.scene_id == id) {
+                        if (const auto* edge = GetStageByID(edgeid.data())) {
+                            ge.destination = edge;
+                            ge.destination_scene = this;
+                            edges.push_back(edge);
+                        } else {
+                            edges.push_back(nullptr);
+                        }
+                    } else {
+                        edges.push_back(nullptr);
+                    }
+                } else {
+                    a_stream.read(edgeid.data(), Decode::ID_SIZE);
+                    ge.scene_id = id;
+                    ge.stage_id = edgeid;
+                    const auto* edge = GetStageByID(edgeid.data());
+                    if (!edge) {
+                        const auto err = std::format("Invalid edge: {} for vertex: {} in scene: {}", edgeid, vertexid, id);
+                        throw std::runtime_error(err.c_str());
+                    }
+                    ge.destination = edge;
+                    ge.destination_scene = this;
+                    if (!edge->navtext.empty()) {
+                        ge.label = edge->navtext;
+                    }
+                    edges.push_back(edge);
                 }
-                edges.push_back(edge);
+                meta.push_back(std::move(ge));
             }
             graph.insert(std::make_pair(vertex, edges));
+            edge_meta.insert(std::make_pair(vertex, std::move(meta)));
         }
         // --- Misc
         Decode::Read(a_stream, *reinterpret_cast<uint32_t*>(&furnitureTypes));
@@ -209,7 +244,8 @@ namespace Registry
       climax(Decode::Read<uint8_t>(a_stream) > 0),
       offset(Transform(a_stream)),
       strips(decltype(strips)::enum_type(Decode::Read<uint8_t>(a_stream))),
-      tags({})
+      tags({}),
+      sosBend(0)
     {
         if (a_version == 3)
             Decode::Read<int8_t>(a_stream);
@@ -222,6 +258,13 @@ namespace Registry
                 Decode::Read(a_stream, tag);
                 tags.push_back(tag);
             }
+        }
+        if (a_version >= 5) {
+            sosBend = Decode::Read<int8_t>(a_stream);
+            if (sosBend < -9)
+                sosBend = -9;
+            else if (sosBend > 9)
+                sosBend = 9;
         }
     }
 
@@ -572,29 +615,138 @@ namespace Registry
 
     size_t Scene::GetNumAdjacentStages(const Stage* a_stage) const
     {
-        const auto where = graph.find(a_stage);
-        if (where == graph.end())
+        const auto where = edge_meta.find(a_stage);
+        if (where == edge_meta.end())
             return 0;
-
         return where->second.size();
     }
 
     const Stage* Scene::GetNthAdjacentStage(const Stage* a_stage, size_t n) const
     {
-        const auto where = graph.find(a_stage);
-        if (where == graph.end())
-            return 0;
-
-        if (n < 0 || n >= where->second.size())
-            return 0;
-
-        return where->second[n];
+        const auto* edge = GetNthAdjacentEdge(a_stage, n);
+        return edge ? edge->destination : nullptr;
     }
 
     const std::vector<const Stage*>* Scene::GetAdjacentStages(const Stage* a_stage) const
     {
         const auto where = graph.find(a_stage);
         return where != graph.end() ? &where->second : nullptr;
+    }
+
+    const std::vector<GraphEdge>* Scene::GetAdjacentEdges(const Stage* a_stage) const
+    {
+        const auto where = edge_meta.find(a_stage);
+        return where != edge_meta.end() ? &where->second : nullptr;
+    }
+
+    const GraphEdge* Scene::GetNthAdjacentEdge(const Stage* a_stage, size_t n) const
+    {
+        const auto where = edge_meta.find(a_stage);
+        if (where == edge_meta.end() || n >= where->second.size())
+            return nullptr;
+        return &where->second[n];
+    }
+
+    void Scene::BindGraphEdges(const std::function<const Scene*(std::string_view)>& a_lookup)
+    {
+        for (auto&& [vertex, meta] : edge_meta) {
+            auto& stages_out = graph[vertex];
+            stages_out.clear();
+            stages_out.reserve(meta.size());
+            for (auto&& ge : meta) {
+                ge.destination_scene = nullptr;
+                ge.destination = nullptr;
+                if (ge.scene_id.empty() || ge.stage_id.empty()) {
+                    stages_out.push_back(nullptr);
+                    continue;
+                }
+                const Scene* dest_scene = nullptr;
+                if (ge.scene_id == id) {
+                    dest_scene = this;
+                } else {
+                    dest_scene = a_lookup(ge.scene_id);
+                }
+                if (!dest_scene) {
+                    stages_out.push_back(nullptr);
+                    continue;
+                }
+                const Stage* dest_stage = dest_scene->GetStageByID(ge.stage_id);
+                if (!dest_stage) {
+                    stages_out.push_back(nullptr);
+                    continue;
+                }
+                ge.destination_scene = dest_scene;
+                ge.destination = dest_stage;
+                stages_out.push_back(dest_stage);
+            }
+        }
+    }
+
+    int Scene::SelectNextAdjacentIndex(const Stage* a_stage, const TagData& a_tags) const
+    {
+        const auto* meta = GetAdjacentEdges(a_stage);
+        if (!meta || meta->empty())
+            return 0;
+
+        auto consider = [&](bool same_scene_only) -> std::vector<int> {
+            bool any_primary = false;
+            for (auto&& e : *meta) {
+                if (!e.IsResolved())
+                    continue;
+                if (same_scene_only && !e.IsSameScene(id))
+                    continue;
+                if (!e.IsSecondary()) {
+                    any_primary = true;
+                    break;
+                }
+            }
+
+            int32_t best_priority = std::numeric_limits<int32_t>::min();
+            bool have_priority = false;
+            for (auto&& e : *meta) {
+                if (!e.IsResolved())
+                    continue;
+                if (same_scene_only && !e.IsSameScene(id))
+                    continue;
+                if (any_primary && e.IsSecondary())
+                    continue;
+                if (!have_priority || e.priority > best_priority) {
+                    best_priority = e.priority;
+                    have_priority = true;
+                }
+            }
+            if (!have_priority)
+                return {};
+
+            std::vector<int> weights{};
+            for (int n = 0; n < static_cast<int>(meta->size()); ++n) {
+                const auto& e = (*meta)[static_cast<size_t>(n)];
+                if (!e.IsResolved())
+                    continue;
+                if (same_scene_only && !e.IsSameScene(id))
+                    continue;
+                if (any_primary && e.IsSecondary())
+                    continue;
+                if (e.priority < best_priority)
+                    continue;
+                auto c = e.destination->tags.CountTags(a_tags);
+                weights.resize(weights.size() + c + 1, n);
+            }
+            return weights;
+        };
+
+        auto weights = consider(true);
+        if (weights.empty())
+            weights = consider(false);
+        if (weights.empty()) {
+            for (int i = 0; i < static_cast<int>(meta->size()); ++i) {
+                if ((*meta)[static_cast<size_t>(i)].IsResolved())
+                    weights.push_back(i);
+            }
+        }
+        if (weights.empty())
+            return 0;
+        return Random::draw(weights);
     }
 
     RE::BSFixedString Scene::GetNthAnimationEvent(const Stage* a_stage, size_t n) const
@@ -630,11 +782,11 @@ namespace Registry
         if (a_stage == start_animation)
             return NodeType::Root;
 
-        const auto where = graph.find(a_stage);
-        if (where == graph.end())
+        const auto where = edge_meta.find(a_stage);
+        if (where == edge_meta.end())
             return NodeType::None;
 
-        return where->second.size() == 0 ? NodeType::Sink : NodeType::Default;
+        return where->second.empty() ? NodeType::Sink : NodeType::Default;
     }
 
     std::vector<const Stage*> Scene::GetLongestPath(const Stage* a_src) const
@@ -652,6 +804,8 @@ namespace Registry
             const auto& neighbours = this->graph.find(src);
             assert(neighbours != this->graph.end());
             for (auto&& n : neighbours->second) {
+                if (!n)
+                    continue;
                 const auto cmp = DFS(n);
                 if (cmp.size() + 1 > longest_path.size()) {
                     longest_path.assign(cmp.begin(), cmp.end());
@@ -677,7 +831,7 @@ namespace Registry
                 const auto neighbours = graph.find(it);
                 assert(neighbours != this->graph.end());
                 for (auto&& n : neighbours->second) {
-                    if (visited.contains(n))
+                    if (!n || visited.contains(n))
                         continue;
                     if (GetStageNodeType(n) == NodeType::Sink) {
                         std::vector<const Stage*> ret{};
@@ -711,7 +865,7 @@ namespace Registry
     std::vector<const Stage*> Scene::GetEndingStages() const
     {
         std::vector<const Stage*> ret{};
-        for (auto&& [vert, edges] : graph) {
+        for (auto&& [vert, edges] : edge_meta) {
             if (edges.empty()) {
                 ret.push_back(vert);
             }
