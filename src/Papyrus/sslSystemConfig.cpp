@@ -1,6 +1,7 @@
 #include "sslSystemConfig.h"
 
 #include "Registry/Library.h"
+#include "Thread/Interaction/Interaction.h"
 #include "UserData/StripData.h"
 
 namespace Papyrus::SystemConfig
@@ -140,36 +141,40 @@ namespace Papyrus::SystemConfig
         return static_cast<int32_t>(Registry::Library::GetSingleton()->GetSceneCount());
     }
 
-    static const std::vector<float*> EnjoymentFactorsList = {
-        &Settings::f_pStimulation,
-        &Settings::f_aAnimObjFace,
-        &Settings::f_pAnimObjFace,
-        &Settings::f_pSuckingToes,
-        &Settings::f_pGrinding,
-        &Settings::f_pSkullfuck,
-        &Settings::f_aHandJob,
-        &Settings::f_aFootJob,
-        &Settings::f_aBoobJob,
-        &Settings::f_bKissing,
-        &Settings::f_aSuckingToes,
-        &Settings::f_pFacial,
-        &Settings::f_aOral,
-        &Settings::f_aLickingShaft,
-        &Settings::f_aDeepthroat,
-        &Settings::f_pVaginal,
-        &Settings::f_pAnal,
-        &Settings::f_aFacial,
-        &Settings::f_aGrinding,
-        &Settings::f_pHandJob,
-        &Settings::f_pFootJob,
-        &Settings::f_pBoobJob,
-        &Settings::f_pLickingShaft,
-        &Settings::f_pOral,
-        &Settings::f_pDeepthroat,
-        &Settings::f_aSkullfuck,
-        &Settings::f_aVaginal,
-        &Settings::f_aAnal
-    };
+    // Indexed by InterType, same as the interaction flags Papyrus pairs these with.
+    // Filled by name so it follows the enum if that is ever rearranged again.
+    static const std::array<float*, Thread::Interaction::kInterTypeCount> EnjoymentFactorsList = [] {
+        using namespace Thread::Interaction;
+        std::array<float*, kInterTypeCount> list{};
+        list[bKissing] = &Settings::f_bKissing;
+        list[aAnimObjFace] = &Settings::f_aAnimObjFace;
+        list[pAnimObjFace] = &Settings::f_pAnimObjFace;
+        list[aGrinding] = &Settings::f_aGrinding;
+        list[pGrinding] = &Settings::f_pGrinding;
+        list[aSuckingToes] = &Settings::f_aSuckingToes;
+        list[pSuckingToes] = &Settings::f_pSuckingToes;
+        list[aFootJob] = &Settings::f_aFootJob;
+        list[pFootJob] = &Settings::f_pFootJob;
+        list[aHandJob] = &Settings::f_aHandJob;
+        list[pHandJob] = &Settings::f_pHandJob;
+        list[aBoobJob] = &Settings::f_aBoobJob;
+        list[pBoobJob] = &Settings::f_pBoobJob;
+        list[aFacial] = &Settings::f_aFacial;
+        list[pFacial] = &Settings::f_pFacial;
+        list[aLickingShaft] = &Settings::f_aLickingShaft;
+        list[pLickingShaft] = &Settings::f_pLickingShaft;
+        list[aOral] = &Settings::f_aOral;
+        list[pOral] = &Settings::f_pOral;
+        list[aDeepthroat] = &Settings::f_aDeepthroat;
+        list[pDeepthroat] = &Settings::f_pDeepthroat;
+        list[aSkullfuck] = &Settings::f_aSkullfuck;
+        list[pSkullfuck] = &Settings::f_pSkullfuck;
+        list[aVaginal] = &Settings::f_aVaginal;
+        list[pVaginal] = &Settings::f_pVaginal;
+        list[aAnal] = &Settings::f_aAnal;
+        list[pAnal] = &Settings::f_pAnal;
+        return list;
+    }();
 
     std::vector<float> GetEnjoymentFactors(RE::StaticFunctionTag*)
     {
