@@ -156,5 +156,4 @@ namespace Thread::Interaction::NiSurface::Geometry::Detail
     std::vector<std::uint16_t> SelectSamples(const std::vector<Candidate>& a_candidates);
     bool MatchesOpeningTopology(const OpeningTopology& a_topology, RE::NiSkinInstance* a_skin, RE::NiSkinData* a_skinData, RE::NiSkinPartition* a_partition, const std::array<RE::NiAVObject*, 2>& a_targets);
     bool MatchesShaftTopology(const ShaftTopology& a_topology, RE::NiSkinInstance* a_skin, RE::NiSkinData* a_skinData, RE::NiSkinPartition* a_partition, RE::NiAVObject* a_base);
-    std::optional<OpeningShape> MakeNodeOpening(const GeometryMath::Segment& a_segment, const RE::NiPoint3& a_left, const RE::NiPoint3& a_right);
 }

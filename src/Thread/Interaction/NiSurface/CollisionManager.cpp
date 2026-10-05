@@ -57,7 +57,7 @@ namespace Thread::Interaction::NiSurface
                 position.ResetGeometry(root);
                 geometryChanged = true;
             }
-            geometryReady &= root && position.geometry.pelvis && position.geometry.lowerSpine;
+            geometryReady &= root && position.geometry.IsValid();
         }
         if (geometryChanged || !geometryReady) {
             for (auto& position : positions) {
@@ -161,6 +161,9 @@ namespace Thread::Interaction::NiSurface
             return;
         }
         for (const auto& shaft : a_source.state.geometry.shafts) {
+            if (!shaft.GetCollisionShape()) {
+                continue;
+            }
             for (auto& target : a_frames) {
                 if (target.DetectShaftHead(a_source, shaft)) {
                     break;

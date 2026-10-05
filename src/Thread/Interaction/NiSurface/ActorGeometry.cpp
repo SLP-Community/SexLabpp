@@ -10,9 +10,7 @@ namespace Thread::Interaction::NiSurface::Geometry
     namespace
     {
         constexpr std::string_view FACE_ROOT{ "BSFaceGenNiNodeSkinned"sv };
-        constexpr std::string_view HEAD{ "NPC Head [Head]"sv };          // Back-of-throat reference.
-        constexpr std::string_view PELVIS{ "NPC Pelvis [Pelv]"sv };      // Bottom-middle front reference.
-        constexpr std::string_view LOWER_SPINE{ "NPC Spine [Spn0]"sv };  // Bottom-middle back reference.
+        constexpr std::string_view HEAD{ "NPC Head [Head]"sv };  // Back-of-throat reference.
         constexpr std::string_view LEFT_HAND{ "SHIELD"sv };
         constexpr std::string_view RIGHT_HAND{ "WEAPON"sv };
         constexpr std::string_view LEFT_THUMB{ "NPC L Finger02 [LF02]"sv };  // Thumb.
@@ -73,7 +71,7 @@ namespace Thread::Interaction::NiSurface::Geometry
             ShaftBase{ "GD 3" },
             ShaftBase{ "Goat_Penis02" },
             ShaftBase{ "Horker_Penis04" },
-            ShaftBase{ "HS 3" },
+            ShaftBase{ "HS 2" },
             ShaftBase{ "SCD 3" },
             ShaftBase{ "SkeeverD 03" },
             ShaftBase{ "TD 3" },
@@ -111,10 +109,6 @@ namespace Thread::Interaction::NiSurface::Geometry
             a_target = RE::NiPointer{ node };
             return true;
         };
-        // This is likely a mistake: requiring these human nodes will always reject non-human actors.
-        if (!getNode(PELVIS, pelvis, true) || !getNode(LOWER_SPINE, lowerSpine, true)) {
-            throw std::exception("Missing mandatory 3d object (body)");
-        }
         getNode(HEAD, head, true);
         getNode(LEFT_HAND, leftHand, true);
         getNode(RIGHT_HAND, rightHand, false);
@@ -249,26 +243,6 @@ namespace Thread::Interaction::NiSurface::Geometry
         logger::info("NiSurface Interaction: Actor {:X} surface shapes: mouth={}, vaginal={}, anal={}", a_actor->GetFormID(), mouthOpening.has_value(), trackedVagina.has_value(), trackedAnus.has_value());
     }
 
-    std::optional<GeometryMath::Segment> ActorGeometry::GetVaginalSegment() const
-    {
-        if (!deepVagina || !leftVagina || !rightVagina)
-            return std::nullopt;
-
-        const auto start = (leftVagina->world.translate + rightVagina->world.translate) / 2;
-        const auto end = deepVagina->world.translate;
-        return GeometryMath::Segment{ start, end };
-    }
-
-    std::optional<GeometryMath::Segment> ActorGeometry::GetAnalSegment() const
-    {
-        if (!deepAnus || !leftAnus || !rightAnus)
-            return std::nullopt;
-
-        const auto start = (leftAnus->world.translate + rightAnus->world.translate) / 2;
-        const auto end = deepAnus->world.translate;
-        return GeometryMath::Segment{ start, end };
-    }
-
     std::optional<OpeningShape> ActorGeometry::GetMouthOpening()
     {
         auto* root = ownerActor ? ownerActor->Get3D() : nullptr;
@@ -314,24 +288,12 @@ namespace Thread::Interaction::NiSurface::Geometry
 
     std::optional<OpeningShape> ActorGeometry::GetVaginalOpening()
     {
-        if (trackedVagina) {
-            if (auto opening = trackedVagina->Update()) {
-                return opening;
-            }
-        }
-        const auto segment = GetVaginalSegment();
-        return segment && leftVagina && rightVagina ? MakeNodeOpening(*segment, leftVagina->world.translate, rightVagina->world.translate) : std::nullopt;
+        return trackedVagina ? trackedVagina->Update() : std::nullopt;
     }
 
     std::optional<OpeningShape> ActorGeometry::GetAnalOpening()
     {
-        if (trackedAnus) {
-            if (auto opening = trackedAnus->Update()) {
-                return opening;
-            }
-        }
-        const auto segment = GetAnalSegment();
-        return segment && leftAnus && rightAnus ? MakeNodeOpening(*segment, leftAnus->world.translate, rightAnus->world.translate) : std::nullopt;
+        return trackedAnus ? trackedAnus->Update() : std::nullopt;
     }
 
     void ActorGeometry::UpdateShafts()
@@ -354,12 +316,6 @@ namespace Thread::Interaction::NiSurface::Geometry
             }
         }
         return best;
-    }
-
-    GeometryMath::Segment ActorGeometry::GetCrotchSegment() const
-    {
-        assert(pelvis && lowerSpine);
-        return { lowerSpine->world.translate, pelvis->world.translate };
     }
 
 }

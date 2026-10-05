@@ -2,6 +2,7 @@
 
 #include "CollisionShapes.h"
 #include "GeometryMath.h"
+#include "SkinBone.h"
 
 namespace Thread::Interaction::NiSurface::Geometry
 {
@@ -38,8 +39,9 @@ namespace Thread::Interaction::NiSurface::Geometry
         struct Bone
         {
             std::uint16_t skinIndex;
-            RE::NiPointer<RE::NiAVObject> node;
+            Detail::SkinBone reference;
             RE::NiTransform transform;
+            bool valid{ true };
         };
 
         struct SkinnedSurface
@@ -59,9 +61,11 @@ namespace Thread::Interaction::NiSurface::Geometry
         std::optional<ShaftShape> collisionShape;
         std::uint64_t equipmentSignature{ 0 };
         std::uint8_t stableEquipmentFrames{ 0 };
-        bool surfaceSearchPending{ false };
+        std::chrono::steady_clock::time_point nextSurfaceSearch{};
+        std::chrono::steady_clock::time_point nextSurfaceSearchLog{};
+        bool surfaceSearchDiagnosticsPending{ false };
 
-        void DiscoverSurface(RE::Actor* a_actor);
+        void DiscoverSurface(RE::Actor* a_actor, std::string_view a_trigger, bool a_logFailure = true);
         bool BindSurface(RE::BSGeometry* a_geometry, std::string_view a_modelPath, const std::vector<std::uint16_t>* a_knownChain = nullptr);
     };
 }
