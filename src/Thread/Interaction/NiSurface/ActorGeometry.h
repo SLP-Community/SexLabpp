@@ -12,8 +12,6 @@ namespace Thread::Interaction::NiSurface::Geometry
 
         RE::NiPointer<RE::NiNode> head;
         RE::NiPointer<RE::NiAVObject> mouth;
-        RE::NiPointer<RE::NiNode> pelvis;
-        RE::NiPointer<RE::NiNode> lowerSpine;
 
         RE::NiPointer<RE::NiNode> leftHand;
         RE::NiPointer<RE::NiNode> rightHand;
@@ -37,13 +35,11 @@ namespace Thread::Interaction::NiSurface::Geometry
         RE::NiPointer<RE::NiNode> animObjectLeft;
         RE::NiPointer<RE::NiNode> animObjectRight;
 
-        std::optional<GeometryMath::Segment> GetVaginalSegment() const;
-        std::optional<GeometryMath::Segment> GetAnalSegment() const;
+        bool IsValid() const { return ownerActor != nullptr; }
         std::optional<OpeningShape> GetMouthOpening();
         std::optional<OpeningShape> GetVaginalOpening();
         std::optional<OpeningShape> GetAnalOpening();
         void UpdateShafts();
-        GeometryMath::Segment GetCrotchSegment() const;
         std::optional<ShaftSize> GetShaftSize() const;
 
       private:

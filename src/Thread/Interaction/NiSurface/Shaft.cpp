@@ -8,6 +8,8 @@ namespace Thread::Interaction::NiSurface::Geometry
     namespace
     {
         constexpr float MIN_SHAFT_LENGTH{ 13.0f };
+        constexpr auto SHAFT_SURFACE_RETRY_INTERVAL{ std::chrono::seconds{ 1 } };
+        constexpr auto SHAFT_SURFACE_RETRY_LOG_INTERVAL{ std::chrono::seconds{ 5 } };
     }
 
     Shaft::Shaft(RE::Actor* a_actor, RE::NiPointer<RE::NiNode> a_baseNode, const glm::mat3& a_rotation) :
@@ -17,7 +19,8 @@ namespace Thread::Interaction::NiSurface::Geometry
       equipmentSignature(GetBipedSignature(a_actor))
     {
         assert(a_baseNode);
-        DiscoverSurface(a_actor);
+        nextSurfaceSearch = std::chrono::steady_clock::now() + SHAFT_SURFACE_RETRY_INTERVAL;
+        DiscoverSurface(a_actor, "ctor");
         if (surface) {
             return;
         }
@@ -69,7 +72,7 @@ namespace Thread::Interaction::NiSurface::Geometry
         } while (true);
     }
 
-    void Shaft::DiscoverSurface(RE::Actor* a_actor)
+    void Shaft::DiscoverSurface(RE::Actor* a_actor, std::string_view a_trigger, bool a_logFailure)
     {
         if (!a_actor || skeletonNodes.empty()) {
             return;
@@ -109,7 +112,7 @@ namespace Thread::Interaction::NiSurface::Geometry
         RE::BSVisit::TraverseScenegraphGeometries(a_actor->Get3D(), [&](RE::BSGeometry* a_geometry) {
             ++geometryCount;
             const auto& runtime = a_geometry->GetGeometryRuntimeData();
-            if (runtime.skinInstance && runtime.skinInstance->skinData && runtime.skinInstance->skinPartition && runtime.skinInstance->bones) {
+            if (runtime.skinInstance && runtime.skinInstance->skinData && runtime.skinInstance->skinPartition) {
                 ++skinnedGeometryCount;
             }
             const auto weights = GetShaftWeights(a_geometry, base);
@@ -133,16 +136,23 @@ namespace Thread::Interaction::NiSurface::Geometry
             return RE::BSVisit::BSVisitControl::kContinue;
         });
         if (!bestGeometry) {
-            logger::info("NiSurface Interaction: Shaft surface not found for actor {:X}: base='{}', geometries={}, skinned={}, longest weighted descendant chain={}", a_actor->GetFormID(),
-                baseName, geometryCount, skinnedGeometryCount, longestWeightedChain);
+            if (a_logFailure) {
+                const auto* race = a_actor->GetRace();
+                logger::info("NiSurface Interaction: Shaft surface not found for actor {:X} '{}': race={:X} '{}', trigger={}, base='{}', equipment={:016X}, geometries={}, skinned={}, longest weighted descendant chain={}",
+                    a_actor->GetFormID(), a_actor->GetName(), race ? race->GetFormID() : 0, race ? race->GetName() : "", a_trigger, baseName, equipmentSignature,
+                    geometryCount, skinnedGeometryCount, longestWeightedChain);
+            }
             return;
         }
 
         const auto modelPath = GetModelPath(a_actor, bestGeometry.get());
-        logger::info("NiSurface Interaction: Shaft surface selected '{}' in '{}': base='{}', skinned chain bones={}", bestGeometry->name, modelPath, baseName, bestWeights.chainBones.size());
-        if (BindSurface(bestGeometry.get(), modelPath, std::addressof(bestWeights.chainBones))) {
+        const auto bound = BindSurface(bestGeometry.get(), modelPath, std::addressof(bestWeights.chainBones));
+        if (bound || a_logFailure) {
+            logger::info("NiSurface Interaction: Shaft surface selected '{}' in '{}': base='{}', skinned chain bones={}", bestGeometry->name, modelPath, baseName, bestWeights.chainBones.size());
+        }
+        if (bound) {
             CacheShaftSelection(modelPath, baseName, std::string_view(bestGeometry->name.c_str()));
-        } else {
+        } else if (a_logFailure) {
             logger::info("NiSurface Interaction: Shaft surface bind failed for '{}' in '{}': base='{}'", bestGeometry->name, modelPath, baseName);
         }
     }
@@ -155,7 +165,7 @@ namespace Thread::Interaction::NiSurface::Geometry
         auto* skin = a_geometry->GetGeometryRuntimeData().skinInstance.get();
         auto* skinData = skin ? skin->skinData.get() : nullptr;
         auto* skinPartition = skin ? skin->skinPartition.get() : nullptr;
-        if (!skinData || !skinPartition || !skin->bones || skinPartition->numPartitions == 0 || skinPartition->vertexCount == 0) {
+        if (!skinData || !skinPartition || skinPartition->numPartitions == 0 || skinPartition->vertexCount == 0) {
             return false;
         }
 
@@ -258,18 +268,24 @@ namespace Thread::Interaction::NiSurface::Geometry
                 std::vector<RE::NiTransform> transforms(boneCount);
                 std::vector<bool> validTransforms(boneCount, false);
                 for (std::uint32_t boneIndex = 0; boneIndex < boneCount; ++boneIndex) {
-                    if (skin->bones[boneIndex]) {
-                        transforms[boneIndex] = skin->bones[boneIndex]->world * skinData->GetBoneDataSkinToBone(boneIndex);
+                    const auto bone = ResolveSkinBone(skin, static_cast<std::uint16_t>(boneIndex));
+                    if (const auto* world = bone.GetWorld()) {
+                        transforms[boneIndex] = *world * skinData->GetBoneDataSkinToBone(boneIndex);
                         validTransforms[boneIndex] = true;
                     }
+                }
+                // Use the same complete-influence rule for topology selection and live samples.
+                std::erase_if(candidates, [&](const ShaftCandidate& a_candidate) {
+                    return std::ranges::any_of(a_candidate.influences, [&](const CachedInfluence& a_influence) { return !validTransforms[a_influence.skinIndex]; });
+                });
+                if (candidates.empty()) {
+                    return false;
                 }
                 for (auto& candidate : candidates) {
                     float totalWeight = 0.0f;
                     for (const auto& influence : candidate.influences) {
-                        if (validTransforms[influence.skinIndex]) {
-                            candidate.world += (transforms[influence.skinIndex] * candidate.local) * influence.weight;
-                            totalWeight += influence.weight;
-                        }
+                        candidate.world += (transforms[influence.skinIndex] * candidate.local) * influence.weight;
+                        totalWeight += influence.weight;
                     }
                     if (totalWeight <= FLT_EPSILON) {
                         return false;
@@ -288,6 +304,17 @@ namespace Thread::Interaction::NiSurface::Geometry
                     topology.chainVertexCounts.push_back(skinData->GetBoneDataVerts(boneIndex));
                 }
 
+                std::vector<RE::NiPoint3> chainPositions;
+                chainPositions.reserve(chainBones.size());
+                for (const auto boneIndex : chainBones) {
+                    const auto bone = ResolveSkinBone(skin, boneIndex);
+                    const auto* world = bone.GetWorld();
+                    if (!world) {
+                        return false;
+                    }
+                    chainPositions.push_back(world->translate);
+                }
+
                 // Skip a multi-bone chain's root because it commonly sits inside the pelvis or also weights the scrotum.
                 const std::size_t firstChainIndex = chainBones.size() > 2 ? 1 : 0;
                 const auto sectionCount = std::min(SHAFT_SECTION_COUNT, chainBones.size() - firstChainIndex);
@@ -296,13 +323,13 @@ namespace Thread::Interaction::NiSurface::Geometry
                     const auto chainIndex = firstChainIndex + section * (chainBones.size() - firstChainIndex - 1) / (sectionCount - 1);
                     const auto previous = chainIndex == 0 ? chainIndex : chainIndex - 1;
                     const auto next = chainIndex + 1 < chainBones.size() ? chainIndex + 1 : chainIndex;
-                    const auto center = skin->bones[chainBones[chainIndex]]->world.translate;
-                    const auto tangent = skin->bones[chainBones[next]]->world.translate - skin->bones[chainBones[previous]]->world.translate;
+                    const auto center = chainPositions[chainIndex];
+                    const auto tangent = chainPositions[next] - chainPositions[previous];
                     topology.rings.push_back({ SelectShaftRingSamples(candidates, center, tangent) });
                 }
                 const auto last = chainBones.size() - 1;
-                const auto tipCenter = skin->bones[chainBones[last]]->world.translate;
-                const auto tipTangent = tipCenter - skin->bones[chainBones[last - 1]]->world.translate;
+                const auto tipCenter = chainPositions[last];
+                const auto tipTangent = tipCenter - chainPositions[last - 1];
                 topology.tip = SelectShaftTipSamples(candidates, tipCenter, tipTangent);
 
                 if (!MatchesShaftTopology(topology, skin, skinData, skinPartition, base)) {
@@ -323,7 +350,7 @@ namespace Thread::Interaction::NiSurface::Geometry
                 std::uint16_t slot;
                 if (bone == result.bones.end()) {
                     slot = static_cast<std::uint16_t>(result.bones.size());
-                    result.bones.push_back({ influence.skinIndex, RE::NiPointer{ skin->bones[influence.skinIndex] }, {} });
+                    result.bones.push_back({ influence.skinIndex, ResolveSkinBone(skin, influence.skinIndex), {} });
                 } else {
                     slot = static_cast<std::uint16_t>(std::distance(result.bones.begin(), bone));
                 }
@@ -384,7 +411,9 @@ namespace Thread::Interaction::NiSurface::Geometry
 
         std::vector<RE::NiPointer<RE::NiNode>> skinnedNodes{ skeletonNodes.front() };
         for (const auto boneIndex : topology.chainBones) {
-            auto* node = skin->bones[boneIndex] ? skin->bones[boneIndex]->AsNode() : nullptr;
+            const auto bone = ResolveSkinBone(skin, boneIndex);
+            auto* object = bone.GetNode();
+            auto* node = object ? object->AsNode() : nullptr;
             if (node && node != skinnedNodes.back().get()) {
                 skinnedNodes.emplace_back(node);
             }
@@ -406,25 +435,35 @@ namespace Thread::Interaction::NiSurface::Geometry
             collisionShape.reset();
             equipmentSignature = GetBipedSignature(ownerActor);
             stableEquipmentFrames = 0;
-            surfaceSearchPending = true;
+            nextSurfaceSearch = std::chrono::steady_clock::now() + SHAFT_SURFACE_RETRY_INTERVAL;
+            surfaceSearchDiagnosticsPending = true;
         }
 
         if (!surface) {
+            const auto now = std::chrono::steady_clock::now();
             const auto currentSignature = GetBipedSignature(ownerActor);
             if (currentSignature != equipmentSignature) {
                 equipmentSignature = currentSignature;
                 stableEquipmentFrames = 0;
-                surfaceSearchPending = true;
+                nextSurfaceSearch = now + SHAFT_SURFACE_RETRY_INTERVAL;
+                surfaceSearchDiagnosticsPending = true;
             }
 
-            // SOS can equip its mesh after scene setup. Wait for the biped state to settle, then scan exactly once.
-            if (surfaceSearchPending && ++stableEquipmentFrames >= SHAFT_EQUIPMENT_STABLE_FRAMES) {
-                surfaceSearchPending = false;
-                stableEquipmentFrames = 0;
-                const auto start = std::chrono::high_resolution_clock::now();
-                DiscoverSurface(ownerActor);
-                const auto elapsed = std::chrono::duration<double, std::milli>(std::chrono::high_resolution_clock::now() - start);
-                logger::info("NiSurface Interaction: Shaft delayed surface initialization: {:.2f}ms ({})", elapsed.count(), surface ? "bound" : "not found");
+            if (stableEquipmentFrames < SHAFT_EQUIPMENT_STABLE_FRAMES) {
+                ++stableEquipmentFrames;
+            }
+            // Biped pointers can settle before the mesh is attached or skinned. Keep retrying without another signature change.
+            if (stableEquipmentFrames >= SHAFT_EQUIPMENT_STABLE_FRAMES && now >= nextSurfaceSearch) {
+                DiscoverSurface(ownerActor, "retry", surfaceSearchDiagnosticsPending);
+                const auto finished = std::chrono::steady_clock::now();
+                nextSurfaceSearch = finished + SHAFT_SURFACE_RETRY_INTERVAL;
+                if (surface || surfaceSearchDiagnosticsPending || now >= nextSurfaceSearchLog) {
+                    const auto elapsed = std::chrono::duration<double, std::milli>(finished - now);
+                    logger::info("NiSurface Interaction: Shaft delayed surface initialization: actor={:X}, base='{}', equipment={:016X}, {:.2f}ms ({}), retry interval={}s",
+                        ownerActor->GetFormID(), skeletonNodes.front()->name, equipmentSignature, elapsed.count(), surface ? "bound" : "not found", SHAFT_SURFACE_RETRY_INTERVAL.count());
+                    nextSurfaceSearchLog = finished + SHAFT_SURFACE_RETRY_LOG_INTERVAL;
+                }
+                surfaceSearchDiagnosticsPending = false;
             }
             if (!surface) {
                 collisionShape.reset();
@@ -432,7 +471,7 @@ namespace Thread::Interaction::NiSurface::Geometry
             }
         }
         auto* skinData = surface->skinInstance->skinData.get();
-        if (!skinData || !surface->skinInstance->bones) {
+        if (!skinData) {
             collisionShape.reset();
             return;
         }
@@ -457,17 +496,21 @@ namespace Thread::Interaction::NiSurface::Geometry
         }
 
         for (auto& bone : surface->bones) {
-            if (bone.skinIndex >= surface->skinInstance->numMatrices || bone.skinIndex >= skinData->GetBoneCount() ||
-                !bone.node || surface->skinInstance->bones[bone.skinIndex] != bone.node.get()) {
-                collisionShape.reset();
-                return;
+            // Check the current binding before reading retained node/tree storage.
+            bone.valid = bone.reference.Matches(surface->skinInstance, bone.skinIndex);
+            if (bone.valid) {
+                bone.transform = *bone.reference.GetWorld() * skinData->GetBoneDataSkinToBone(bone.skinIndex);
             }
-            bone.transform = bone.node->world * skinData->GetBoneDataSkinToBone(bone.skinIndex);
         }
         const auto skinSamples = [&](SampleRing& a_ring) {
-            a_ring.worldPositions.resize(a_ring.samples.size());
-            for (std::size_t i = 0; i < a_ring.samples.size(); ++i) {
-                const auto& sample = a_ring.samples[i];
+            a_ring.worldPositions.clear();
+            a_ring.worldPositions.reserve(a_ring.samples.size());
+            for (const auto& sample : a_ring.samples) {
+                // A genuinely unresolved or replaced binding cannot supply this vertex's full deformation.
+                // Skip the whole vertex: dropping only that influence would change its weighted position.
+                if (std::ranges::any_of(sample.influences, [&](const Influence& a_influence) { return !surface->bones[a_influence.bone].valid; })) {
+                    continue;
+                }
                 RE::NiPoint3 position{};
                 float totalWeight = 0.0f;
                 for (const auto& influence : sample.influences) {
@@ -477,7 +520,7 @@ namespace Thread::Interaction::NiSurface::Geometry
                 if (totalWeight <= FLT_EPSILON) {
                     return false;
                 }
-                a_ring.worldPositions[i] = position / totalWeight;
+                a_ring.worldPositions.push_back(position / totalWeight);
             }
             return true;
         };
@@ -489,8 +532,10 @@ namespace Thread::Interaction::NiSurface::Geometry
         shape.sections.clear();
         shape.tip = {};
         shape.sections.reserve(surface->rings.size());
-        for (auto& ring : surface->rings) {
-            if (!skinSamples(ring) || ring.worldPositions.empty()) {
+        for (std::size_t i = 0; i < surface->rings.size(); ++i) {
+            auto& ring = surface->rings[i];
+            const auto skinned = skinSamples(ring);
+            if (!skinned || ring.worldPositions.size() < 2) {
                 collisionShape.reset();
                 return;
             }
@@ -523,7 +568,8 @@ namespace Thread::Interaction::NiSurface::Geometry
             shape.sections[i].radius /= static_cast<float>(surface->rings[i].worldPositions.size());
         }
 
-        if (!skinSamples(surface->tip) || surface->tip.worldPositions.empty()) {
+        const auto skinnedTip = skinSamples(surface->tip);
+        if (!skinnedTip || surface->tip.worldPositions.empty()) {
             collisionShape.reset();
             return;
         }

@@ -1,4 +1,5 @@
 #include "SurfaceCache.h"
+#include "SkinBone.h"
 
 namespace Thread::Interaction::NiSurface::Geometry
 {
@@ -218,29 +219,27 @@ namespace Thread::Interaction::NiSurface::Geometry
             auto* skin = a_geometry->GetGeometryRuntimeData().skinInstance.get();
             auto* skinData = skin ? skin->skinData.get() : nullptr;
             auto* partition = skin ? skin->skinPartition.get() : nullptr;
-            if (!skinData || !partition || !skin->bones || partition->vertexCount == 0) {
+            if (!skinData || !partition || partition->vertexCount == 0) {
                 return std::nullopt;
             }
 
             struct Descendant
             {
                 std::uint16_t skinIndex;
+                SkinBone reference;
                 std::size_t depth;
                 float distanceSq;
             };
             std::vector<Descendant> descendants;
             const auto boneCount = std::min(skin->numMatrices, skinData->GetBoneCount());
             for (std::uint32_t boneIndex = 0; boneIndex < boneCount; ++boneIndex) {
-                auto* bone = skin->bones[boneIndex];
-                if (!bone || skinData->GetBoneDataVerts(boneIndex) == 0 || !skinData->GetBoneDataBoneVertData(boneIndex)) {
+                if (skinData->GetBoneDataVerts(boneIndex) == 0 || !skinData->GetBoneDataBoneVertData(boneIndex)) {
                     continue;
                 }
-                std::size_t depth = 0;
-                for (auto* current = bone; current; current = current->parent, ++depth) {
-                    if (current == a_base) {
-                        descendants.push_back({ static_cast<std::uint16_t>(boneIndex), depth, (bone->world.translate - a_base->world.translate).SqrLength() });
-                        break;
-                    }
+                auto bone = ResolveSkinBone(skin, static_cast<std::uint16_t>(boneIndex));
+                const auto* world = bone.GetWorld();
+                if (const auto depth = bone.DepthBelow(a_base); world && depth) {
+                    descendants.push_back({ static_cast<std::uint16_t>(boneIndex), std::move(bone), *depth, (world->translate - a_base->world.translate).SqrLength() });
                 }
             }
             if (descendants.empty()) {
@@ -255,12 +254,10 @@ namespace Thread::Interaction::NiSurface::Geometry
                 }
             }
             std::vector<std::uint16_t> chain;
-            for (auto* current = skin->bones[distal->skinIndex]; current; current = current->parent) {
-                if (const auto match = std::ranges::find_if(descendants, [&](const Descendant& a_descendant) { return skin->bones[a_descendant.skinIndex] == current; }); match != descendants.end()) {
+            auto current = distal->reference;
+            for (std::size_t depth = 0; depth <= distal->depth; ++depth, current = current.GetParent()) {
+                if (const auto match = std::ranges::find_if(descendants, [&](const Descendant& a_descendant) { return a_descendant.reference.SameBone(current); }); match != descendants.end()) {
                     chain.push_back(match->skinIndex);
-                }
-                if (current == a_base) {
-                    break;
                 }
             }
             std::ranges::reverse(chain);
@@ -513,14 +510,10 @@ namespace Thread::Interaction::NiSurface::Geometry
             }
             for (std::size_t i = 0; i < a_topology.chainBones.size(); ++i) {
                 const auto boneIndex = a_topology.chainBones[i];
-                if (boneIndex >= boneCount || !a_skin->bones[boneIndex] || a_topology.chainVertexCounts[i] != a_skinData->GetBoneDataVerts(boneIndex)) {
+                if (boneIndex >= boneCount || a_topology.chainVertexCounts[i] != a_skinData->GetBoneDataVerts(boneIndex)) {
                     return false;
                 }
-                auto* current = a_skin->bones[boneIndex];
-                while (current && current != a_base) {
-                    current = current->parent;
-                }
-                if (current != a_base) {
+                if (!ResolveSkinBone(a_skin, boneIndex).DepthBelow(a_base)) {
                     return false;
                 }
             }
@@ -531,30 +524,6 @@ namespace Thread::Interaction::NiSurface::Geometry
                 });
             };
             return std::ranges::all_of(a_topology.rings, [&](const ShaftRingTopology& a_ring) { return validSamples(a_ring.samples); }) && validSamples(a_topology.tip);
-        }
-
-        std::optional<OpeningShape> MakeNodeOpening(const GeometryMath::Segment& a_segment, const RE::NiPoint3& a_left, const RE::NiPoint3& a_right)
-        {
-            auto axis = a_segment.Vector();
-            if (axis.SqrLength() <= FLT_EPSILON) {
-                return std::nullopt;
-            }
-            axis.Unitize();
-
-            auto right = a_right - a_left;
-            right -= axis * right.Dot(axis);
-            const auto diameter = right.Length();
-            if (diameter <= FLT_EPSILON) {
-                return std::nullopt;
-            }
-            right /= diameter;
-
-            auto up = right.Cross(axis);
-            if (up.SqrLength() <= FLT_EPSILON) {
-                return std::nullopt;
-            }
-            up.Unitize();
-            return OpeningShape{ a_segment.start, a_segment.end, axis, right, up, diameter * 0.5f };
         }
     }
 
