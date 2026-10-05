@@ -4,48 +4,8 @@ namespace Thread::Interaction::NiSurface
 {
     namespace
     {
-        float DistanceToOpening(const GeometryMath::Segment& a_segment, const OpeningShape& a_opening, float a_startRadius = 0.0f, float a_endRadius = 0.0f)
-        {
-            const auto vector = a_segment.Vector();
-            const auto lengthSq = vector.SqrLength();
-            if (lengthSq <= FLT_EPSILON) {
-                const auto offset = a_segment.start - a_opening.center;
-                const auto planeDistance = offset.Dot(a_opening.axis);
-                const auto radialDistance = (offset - a_opening.axis * planeDistance).Length();
-                const auto radialMiss = std::max(radialDistance - a_opening.radius - a_startRadius, 0.0f);
-                return std::sqrt(radialMiss * radialMiss + planeDistance * planeDistance);
-            }
-
-            const auto planeDenominator = vector.Dot(a_opening.axis);
-            const auto toCenter = a_opening.center - a_segment.start;
-            const auto t = std::clamp(
-                std::abs(planeDenominator) > FLT_EPSILON ? toCenter.Dot(a_opening.axis) / planeDenominator : toCenter.Dot(vector) / lengthSq,
-                0.0f,
-                1.0f);
-            const auto offset = a_segment.start + vector * t - a_opening.center;
-            const auto planeDistance = offset.Dot(a_opening.axis);
-            const auto radialDistance = (offset - a_opening.axis * planeDistance).Length();
-            const auto shaftRadius = a_startRadius + (a_endRadius - a_startRadius) * t;
-            const auto radialMiss = std::max(radialDistance - a_opening.radius - shaftRadius, 0.0f);
-            return std::sqrt(radialMiss * radialMiss + planeDistance * planeDistance);
-        }
-
-        float DistanceToOpening(const ShaftShape& a_shaft, const OpeningShape& a_opening)
-        {
-            if (a_shaft.sections.size() < 2) {
-                return std::numeric_limits<float>::max();
-            }
-            // Before entry, only the physical tip can approach the opening; after entry, test the inserted capsule chain.
-            if ((a_shaft.tip - a_opening.center).Dot(a_opening.axis) < 0.0f) {
-                return DistanceToOpening(GeometryMath::Segment{ a_shaft.tip }, a_opening);
-            }
-            float distance = std::numeric_limits<float>::max();
-            for (std::size_t i = 1; i < a_shaft.sections.size(); ++i) {
-                distance = std::min(distance, DistanceToOpening({ a_shaft.sections[i - 1].center, a_shaft.sections[i].center }, a_opening,
-                                                  a_shaft.sections[i - 1].radius, a_shaft.sections[i].radius));
-            }
-            return std::min(distance, DistanceToOpening({ a_shaft.sections.back().center, a_shaft.tip }, a_opening, a_shaft.sections.back().radius, 0.0f));
-        }
+        // Both rings may enclose the centerline; switch away from the previous opening only when the other is clearly better centered.
+        constexpr float INSERTED_CENTERING_TOLERANCE{ 0.25f };
 
         RE::NiPoint3 GetShaftTipDirection(const ShaftShape& a_shaft)
         {
@@ -57,6 +17,75 @@ namespace Thread::Interaction::NiSurface
                 direction = a_shaft.sections.back().center - a_shaft.sections[a_shaft.sections.size() - 2].center;
             }
             return direction;
+        }
+
+        struct OpeningEntry
+        {
+            float distance{ std::numeric_limits<float>::max() };
+            // Shaft direction at the opening; the tip direction until the tip crosses the opening plane.
+            RE::NiPoint3 direction{};
+            // Radial offset of the centerline crossing relative to the opening radius.
+            float centering{ std::numeric_limits<float>::max() };
+            // The centerline crosses the opening plane inside the ring, rather than passing beside it.
+            bool inserted{ false };
+        };
+
+        OpeningEntry DistanceToOpening(const GeometryMath::Segment& a_segment, const OpeningShape& a_opening, float a_startRadius = 0.0f, float a_endRadius = 0.0f)
+        {
+            const auto getCentering = [&](float a_radialDistance) {
+                return a_opening.radius > FLT_EPSILON ? a_radialDistance / a_opening.radius : std::numeric_limits<float>::max();
+            };
+            const auto vector = a_segment.Vector();
+            const auto lengthSq = vector.SqrLength();
+            if (lengthSq <= FLT_EPSILON) {
+                const auto offset = a_segment.start - a_opening.center;
+                const auto planeDistance = offset.Dot(a_opening.axis);
+                const auto radialDistance = (offset - a_opening.axis * planeDistance).Length();
+                const auto radialMiss = std::max(radialDistance - a_opening.radius - a_startRadius, 0.0f);
+                return { std::sqrt(radialMiss * radialMiss + planeDistance * planeDistance), {}, getCentering(radialDistance), false };
+            }
+
+            const auto planeDenominator = vector.Dot(a_opening.axis);
+            const auto toCenter = a_opening.center - a_segment.start;
+            const auto crossesPlane = std::abs(planeDenominator) > FLT_EPSILON;
+            const auto rawFraction = crossesPlane ? toCenter.Dot(a_opening.axis) / planeDenominator : toCenter.Dot(vector) / lengthSq;
+            const auto t = std::clamp(rawFraction, 0.0f, 1.0f);
+            const auto offset = a_segment.start + vector * t - a_opening.center;
+            const auto planeDistance = offset.Dot(a_opening.axis);
+            const auto radialDistance = (offset - a_opening.axis * planeDistance).Length();
+            const auto shaftRadius = a_startRadius + (a_endRadius - a_startRadius) * t;
+            const auto radialMiss = std::max(radialDistance - a_opening.radius - shaftRadius, 0.0f);
+            const auto inserted = crossesPlane && rawFraction >= 0.0f && rawFraction <= 1.0f && radialDistance <= a_opening.radius;
+            return { std::sqrt(radialMiss * radialMiss + planeDistance * planeDistance), vector, getCentering(radialDistance), inserted };
+        }
+
+        OpeningEntry DistanceToOpening(const ShaftShape& a_shaft, const OpeningShape& a_opening)
+        {
+            if (a_shaft.sections.size() < 2) {
+                return {};
+            }
+            // Before entry, only the physical tip can approach the opening; after entry, test the inserted capsule chain.
+            if ((a_shaft.tip - a_opening.center).Dot(a_opening.axis) < 0.0f) {
+                auto entry = DistanceToOpening(GeometryMath::Segment{ a_shaft.tip }, a_opening);
+                entry.direction = GetShaftTipDirection(a_shaft);
+                return entry;
+            }
+            OpeningEntry result;
+            const auto visitSegment = [&](const RE::NiPoint3& a_start, const RE::NiPoint3& a_end, float a_startRadius, float a_endRadius) {
+                const auto candidate = DistanceToOpening({ a_start, a_end }, a_opening, a_startRadius, a_endRadius);
+                // A centerline crossing inside the ring outranks a closer surface passing beside it.
+                if (candidate.inserted > result.inserted || (candidate.inserted == result.inserted && candidate.distance < result.distance)) {
+                    result = candidate;
+                }
+            };
+            for (std::size_t i = 1; i < a_shaft.sections.size(); ++i) {
+                visitSegment(a_shaft.sections[i - 1].center, a_shaft.sections[i].center, a_shaft.sections[i - 1].radius, a_shaft.sections[i].radius);
+            }
+            visitSegment(a_shaft.sections.back().center, a_shaft.tip, a_shaft.sections.back().radius, 0.0f);
+            if (result.direction.SqrLength() <= FLT_EPSILON) {
+                result.direction = GetShaftTipDirection(a_shaft);
+            }
+            return result;
         }
 
         struct ShaftContact
@@ -243,11 +272,15 @@ namespace Thread::Interaction::NiSurface
         const auto atSideOfHead = std::abs(angleToBase - 90) < Settings::fAngleToHeadSidewaysTolerance;
         const auto inFrontOfHead = std::abs(angleToBase - 180) < Settings::fAngleToHeadFrontalTolerance;
         const auto penetratingSkull = headDistance < (atSideOfHead ? headBounds.boundMax.x : headBounds.boundMax.y);
-        const auto mouthDistance = mouthOpening ? DistanceToOpening(*shaftShape, *mouthOpening) : std::numeric_limits<float>::max();
+        const auto mouthEntry = mouthOpening ? DistanceToOpening(*shaftShape, *mouthOpening) : OpeningEntry{};
+        const auto mouthDistance = mouthEntry.distance;
         const auto mouthContact = mouthOpening ? GetShaftContact(*shaftShape, mouthOpening->center) : ShaftContact{};
         const auto lickingDistance = mouthOpening ? std::max(mouthContact.distance - mouthOpening->radius, 0.0f) : std::numeric_limits<float>::max();
         const auto contactingMouth = mouthOpening && mouthDistance <= Settings::fDistanceMouth;
-        const auto aimingAtMouth = mouthOpening && GeometryMath::GetAngleDegree(GetShaftTipDirection(*shaftShape), mouthOpening->axis) < Settings::fAngleToHeadTolerance;
+        // Inside the mouth the tip bends freely, so aim with the shaft where it crosses the mouth instead.
+        const auto mouthAimAngle = mouthOpening ? GeometryMath::GetAngleDegree(mouthEntry.direction, mouthOpening->axis) : 0.0f;
+        const auto mouthAimLimit = mouthEntry.inserted ? Settings::fAnglePenetration : Settings::fAngleToHeadTolerance;
+        const auto aimingAtMouth = mouthOpening && mouthAimAngle < mouthAimLimit;
         const auto verticalToShaft = std::abs(GeometryMath::GetAngleDegree(mouthContact.direction, vHead) - 90.0f) < 30.0f;
         const auto closeToMouth = mouthOpening && lickingDistance <= Settings::fDistanceMouth && lickingDistance < headDistance;
 
@@ -271,6 +304,8 @@ namespace Thread::Interaction::NiSurface
                 }
                 return true;
             }
+        } else if (mouthEntry.inserted) {
+            // A shaft entering through the mouth is never skull or facial contact, even when the oral checks reject it.
         } else if (penetratingSkull && aimingAtHead) {
             if (!baseNode || RotateNode(baseNode, shaftSegment, headWorld.translate, Settings::fAdjustSchlongLimit)) {
                 interactions.emplace_back(a_partner.state.actor, Interaction::Action::Skullfuck, headDistance, shaftTip - headWorld.translate);
@@ -292,8 +327,10 @@ namespace Thread::Interaction::NiSurface
         const auto shaftSegment = a_shaft.GetReferenceSegment();
         const auto shaftTip = shaftShape->tip;
         const auto shaftNode = a_shaft.GetBaseReferenceNode();
-        const auto dVaginal = vaginalOpening ? DistanceToOpening(*shaftShape, *vaginalOpening) : std::numeric_limits<float>::max();
-        const auto dAnal = analOpening ? DistanceToOpening(*shaftShape, *analOpening) : std::numeric_limits<float>::max();
+        const auto vaginalEntry = vaginalOpening ? DistanceToOpening(*shaftShape, *vaginalOpening) : OpeningEntry{};
+        const auto analEntry = analOpening ? DistanceToOpening(*shaftShape, *analOpening) : OpeningEntry{};
+        const auto dVaginal = vaginalEntry.distance;
+        const auto dAnal = analEntry.distance;
         const auto previous = std::ranges::find_if(state.interactions, [&](const Interaction& it) {
             return it.partner == a_partner.state.actor && (it.action == Interaction::Action::Vaginal || it.action == Interaction::Action::Anal);
         });
@@ -301,24 +338,46 @@ namespace Thread::Interaction::NiSurface
         if (previous != state.interactions.end()) {
             tolerance = previous->action == Interaction::Action::Vaginal ? Settings::fPenetrationVaginalToleranceRepeat : -Settings::fPenetrationAnalToleranceRepeat;
         }
-        // Retain the preference and repeat tolerance when both openings are available.
-        const bool preferVaginal = vaginalOpening && (!analOpening || dVaginal - dAnal < tolerance);
-        const auto detectOpening = [&](const std::optional<OpeningShape>& a_opening, Interaction::Action a_type, float a_distance) {
-            if (!a_opening || a_distance > Settings::fDistanceCrotch) {
+        // Distances saturate at zero once inserted, so the opening the shaft passes through outranks one it only passes beside.
+        // Repeat tolerances order openings of the same kind only.
+        const auto anyInserted = vaginalEntry.inserted || analEntry.inserted;
+        const bool preferVaginal = [&]() {
+            if (!vaginalOpening || !analOpening) {
+                return vaginalOpening.has_value();
+            }
+            if (vaginalEntry.inserted != analEntry.inserted) {
+                return vaginalEntry.inserted;
+            }
+            if (anyInserted) {
+                auto margin = 0.0f;
+                if (previous != state.interactions.end()) {
+                    margin = previous->action == Interaction::Action::Vaginal ? INSERTED_CENTERING_TOLERANCE : -INSERTED_CENTERING_TOLERANCE;
+                }
+                return vaginalEntry.centering - analEntry.centering < margin;
+            }
+            return dVaginal - dAnal < tolerance;
+        }();
+        const auto detectOpening = [&](const std::optional<OpeningShape>& a_opening, Interaction::Action a_type, const OpeningEntry& a_entry) {
+            if (!a_opening || a_entry.distance > Settings::fDistanceCrotch) {
                 return false;
             }
-            const auto angle = GeometryMath::GetAngleDegree(a_opening->axis, GetShaftTipDirection(*shaftShape));
+            // Once a ring encloses the shaft, an opening it only passes beside is not being penetrated.
+            if (anyInserted && !a_entry.inserted) {
+                return false;
+            }
+            // Inside an opening the tip bends freely, so aim with the shaft where it crosses the opening instead.
+            const auto angle = GeometryMath::GetAngleDegree(a_opening->axis, a_entry.direction);
             if (angle > Settings::fAnglePenetration || (shaftNode && !RotateNode(shaftNode, shaftSegment, a_opening->deep, Settings::fAdjustSchlongVaginalLimit))) {
                 return false;
             }
-            interactions.emplace_back(a_partner.state.actor, a_type, a_distance, shaftTip - a_opening->center);
+            interactions.emplace_back(a_partner.state.actor, a_type, a_entry.distance, shaftTip - a_opening->center);
             return true;
         };
         if (preferVaginal) {
-            if (detectOpening(vaginalOpening, Interaction::Action::Vaginal, dVaginal) || detectOpening(analOpening, Interaction::Action::Anal, dAnal)) {
+            if (detectOpening(vaginalOpening, Interaction::Action::Vaginal, vaginalEntry) || detectOpening(analOpening, Interaction::Action::Anal, analEntry)) {
                 return true;
             }
-        } else if (detectOpening(analOpening, Interaction::Action::Anal, dAnal) || detectOpening(vaginalOpening, Interaction::Action::Vaginal, dVaginal)) {
+        } else if (detectOpening(analOpening, Interaction::Action::Anal, analEntry) || detectOpening(vaginalOpening, Interaction::Action::Vaginal, vaginalEntry)) {
             return true;
         }
         if (vaginalOpening && analOpening && std::min(dVaginal, dAnal) <= Settings::fDistanceCrotch) {
@@ -350,16 +409,25 @@ namespace Thread::Interaction::NiSurface
         const auto rightDistance = GeometryMath::ClosestSegmentBetweenSegments(GeometryMath::Segment{ rightPosition }, shaftSegment).Length();
         const auto closeToLeft = leftDistance < Settings::fDistanceHand;
         const auto closeToRight = rightDistance < Settings::fDistanceHand;
+        const auto leftGrip = (leftPosition + leftThumb->world.translate) / 2;
+        const auto rightGrip = (rightPosition + rightThumb->world.translate) / 2;
+        const auto shaftVector = shaftSegment.Vector();
+        const auto getRawAlong = [&](const RE::NiPoint3& a_point) {
+            return shaftVector.SqrLength() > FLT_EPSILON ? (a_point - shaftSegment.start).Dot(shaftVector) / shaftVector.SqrLength() : 0.0f;
+        };
+        // A grip behind the shaft base rests on the pelvis or thighs rather than holding the shaft.
+        const auto holdingLeft = closeToLeft && getRawAlong(leftGrip) >= 0.0f;
+        const auto holdingRight = closeToRight && getRawAlong(rightGrip) >= 0.0f;
         bool pickLeft;
-        if (!closeToRight && !closeToLeft) {
+        if (!holdingRight && !holdingLeft) {
             return false;
-        } else if (closeToRight && closeToLeft) {
+        } else if (holdingRight && holdingLeft) {
             const auto shaftNode = a_shaft.GetBaseReferenceNode();
             pickLeft = shaftNode && shaftNode->world.translate.GetDistance(leftPosition) < shaftNode->world.translate.GetDistance(rightPosition);
         } else {
-            pickLeft = closeToLeft;
+            pickLeft = holdingLeft;
         }
-        const auto referencePoint = pickLeft ? (leftPosition + leftThumb->world.translate) / 2 : (rightPosition + rightThumb->world.translate) / 2;
+        const auto referencePoint = pickLeft ? leftGrip : rightGrip;
         RotateNode(a_shaft.GetBaseReferenceNode(), shaftSegment, referencePoint, Settings::fAdjustSchlongLimit);
         interactions.emplace_back(a_partner.state.actor, Interaction::Action::HandJob, pickLeft ? leftDistance : rightDistance,
             RE::NiPoint3{ GetNormalizedPositionAlongShaft(shaftSegment, referencePoint), 0.0f, 0.0f }, shaftSegment.Length(), pickLeft ? 1 : 2);
@@ -421,6 +489,8 @@ namespace Thread::Interaction::NiSurface
     {
         if (!a_partner.vaginalOpening)
             return false;
+        // Hands may stimulate their own actor; feet cannot reach their own crotch.
+        const auto self = a_partner == *this;
         const auto get = [&](const auto& limb, auto type, float maxDist, std::uint8_t source) {
             if (!limb)
                 return false;
@@ -437,8 +507,8 @@ namespace Thread::Interaction::NiSurface
         const auto rFoot = state.geometry.rightFoot;
         return get(lHand, Interaction::Action::HandJob, Settings::fDistanceHand, 1) ||
                get(rHand, Interaction::Action::HandJob, Settings::fDistanceHand, 2) ||
-               get(lFoot, Interaction::Action::FootJob, Settings::fDistanceFoot, 1) ||
-               get(rFoot, Interaction::Action::FootJob, Settings::fDistanceFoot, 2);
+               (!self && (get(lFoot, Interaction::Action::FootJob, Settings::fDistanceFoot, 1) ||
+                             get(rFoot, Interaction::Action::FootJob, Settings::fDistanceFoot, 2)));
     }
 
     bool ActorState::Frame::DetectAnimObjectFace(const Frame& a_partner)
