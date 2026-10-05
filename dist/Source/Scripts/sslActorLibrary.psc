@@ -287,6 +287,8 @@ Form[] Function UnequipSlots(Actor akActor, int aiSlots) native global
 
 String Function PickRandomFxSet(Actor akActor, int aiType) native global
 int Function GetFxSetCount(int asType, String asSet) native global
+; Overlay areas ("Face", "Body", "Hands", "Feet") the set is drawn on, from the "areas" of its config entry
+String[] Function GetFxSetAreas(Actor akActor, int aiType, String asSet) native global
 
 Form[] Function StripActorImpl(Actor akActor, int aiSlots, bool abStripWeapons = true, bool abAnimate = false)
 	abAnimate = abAnimate && akActor.GetWornForm(0x4)	; Body armor slot
@@ -346,18 +348,15 @@ Function BeginOverlay(Actor akTarget, int aiType)
 	StorageUtil.SetStringValue(akTarget, LAST_APPLIED_TEXTURE_PREFIX + aiType, texturePath)
 	StorageUtil.SetFloatValue(akTarget, LAST_APPLIED_TIME_PREFIX + aiType, SexLabUtil.GetCurrentGameRealTime())
 	StorageUtil.IntListAdd(akTarget, APPLIED_TEXTURE_LIST, aiType, false)
-	String[] parts = GetAreas()
+	String[] parts = GetFxSetAreas(akTarget, aiType, set)
 	int i = 0
 	While (i < parts.Length)
 		String part = parts[i]
-		; !(Menu.LimitCumAreas && (part == "Hands" || part == "Feet")) && !part == "Face" || part == "Oral" && part == "Face"
-		If (part != "Face" || (part == "Face" && aiType == FX_ORAL))
-			Int slot = GetEmptySlot(akTarget, isFemale, part, lastEffect)
-			If slot != -1
-				ApplyOverlay(akTarget, isFemale, part, slot, texturePath, normalTexture)
-			Else
-				Log(akTarget + ": Error applying overlay to area: " + part)
-			EndIf
+		Int slot = GetEmptySlot(akTarget, isFemale, part, lastEffect)
+		If slot != -1
+			ApplyOverlay(akTarget, isFemale, part, slot, texturePath, normalTexture)
+		Else
+			Log(akTarget + ": Error applying overlay to area: " + part)
 		EndIf
 		i += 1
 	EndWhile

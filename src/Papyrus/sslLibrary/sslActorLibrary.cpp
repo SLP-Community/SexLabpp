@@ -138,4 +138,25 @@ namespace Papyrus::ActorLibrary
         return count;
     }
 
+    std::vector<RE::BSFixedString> GetFxSetAreas(VM* a_vm, StackID a_stackID, RE::StaticFunctionTag*, RE::Actor* a_actor, int32_t a_type, RE::BSFixedString asSet)
+    {
+        if (!a_actor) {
+            a_vm->TraceStack("Actor is none", a_stackID);
+            return {};
+        }
+        if (a_type < 0 || a_type >= Registry::Library::NUM_FX_TYPES) {
+            a_vm->TraceStack("Invalid FX type", a_stackID);
+            return {};
+        }
+        const auto fxType = static_cast<Registry::Library::FxType>(a_type);
+        const auto areas = Registry::Library::GetSingleton()->GetFxAreas(a_actor, fxType, asSet);
+        std::vector<RE::BSFixedString> ret{};
+        for (const auto& [area, name] : magic_enum::enum_entries<Registry::Library::FxArea>()) {
+            if (areas & std::to_underlying(area)) {
+                ret.emplace_back(name);
+            }
+        }
+        return ret;
+    }
+
 }  // namespace Papyrus::ActorLibrary

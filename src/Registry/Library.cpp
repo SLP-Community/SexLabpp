@@ -513,7 +513,7 @@ namespace Registry
     }
 
 
-    RE::BSFixedString Library::PickRandomFxSet(RE::Actor* a_actor, FxType a_type) const
+    std::vector<const Library::FxConfig*> Library::GetFxConfigs(RE::Actor* a_actor, FxType a_type) const
     {
         const auto typeIdx = static_cast<size_t>(a_type);
         const auto actorRace = a_actor->GetRace();
@@ -541,11 +541,17 @@ namespace Registry
             }
             candidates.push_back(&config);
         }
+        return candidates;
+    }
+
+    RE::BSFixedString Library::PickRandomFxSet(RE::Actor* a_actor, FxType a_type) const
+    {
+        const auto candidates = GetFxConfigs(a_actor, a_type);
         if (candidates.empty()) {
             return "";
         }
         const auto config = candidates[Random::draw<size_t>(0, candidates.size() - 1)];
-        const auto& profiles = config->profiles[typeIdx];
+        const auto& profiles = config->profiles[static_cast<size_t>(a_type)];
         return profiles[Random::draw<size_t>(0, profiles.size() - 1)].path;
     }
 
@@ -561,6 +567,28 @@ namespace Registry
         }
         logger::error("FX set {} not found", a_set.c_str());
         return 0;
+    }
+
+    uint8_t Library::GetFxAreas(RE::Actor* a_actor, FxType a_type, RE::BSFixedString a_set) const
+    {
+        const auto typeIdx = static_cast<size_t>(a_type);
+        const auto find = [&](const FxConfig& a_config) -> const FxProfile* {
+            const auto& profiles = a_config.profiles[typeIdx];
+            const auto profile = std::ranges::find(profiles, a_set, &FxProfile::path);
+            return profile != profiles.end() ? &*profile : nullptr;
+        };
+        // Several configs may list the same folder with different areas, the ones the set was picked from go first
+        for (const auto config : GetFxConfigs(a_actor, a_type)) {
+            if (const auto profile = find(*config)) {
+                return profile->areas;
+            }
+        }
+        for (const auto& config : fxList) {
+            if (const auto profile = find(config)) {
+                return profile->areas;
+            }
+        }
+        return DefaultFxAreas(a_type);
     }
 
     const FurnitureDetails* Library::GetFurnitureDetails(const RE::TESObjectREFR* a_ref) const
