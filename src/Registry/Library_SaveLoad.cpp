@@ -9,6 +9,7 @@ namespace Registry
     {
         std::string type;
         std::string path;
+        std::optional<std::vector<std::string>> areas;
     };
 
     struct CumFxConfigSource
@@ -17,6 +18,20 @@ namespace Registry
         std::optional<std::vector<std::string>> races;
         std::optional<std::vector<CumFxTextureSource>> textures;
     };
+
+    // FxArea bits for a list of area names, 0 if the list is empty or names an unknown area
+    static uint8_t ParseFxAreas(const std::vector<std::string>& a_names)
+    {
+        uint8_t areas = 0;
+        for (const auto& name : a_names) {
+            const auto area = magic_enum::enum_cast<Library::FxArea>(name, magic_enum::case_insensitive);
+            if (!area) {
+                return 0;
+            }
+            areas |= std::to_underlying(*area);
+        }
+        return areas;
+    }
 
     void Library::Initialize() noexcept
     {
@@ -419,7 +434,16 @@ namespace Registry
                         valid = false;
                         break;
                     }
-                    config.profiles[static_cast<size_t>(*type)].push_back({ RE::BSFixedString{ normalizedPath.generic_string() }, layerCount });
+                    auto areas = DefaultFxAreas(*type);
+                    if (texture.areas) {
+                        areas = ParseFxAreas(*texture.areas);
+                        if (areas == 0) {
+                            logger::error("CumFx config {} has invalid areas for {}", filename, texture.path);
+                            valid = false;
+                            break;
+                        }
+                    }
+                    config.profiles[static_cast<size_t>(*type)].push_back({ RE::BSFixedString{ normalizedPath.generic_string() }, layerCount, areas });
                 }
                 if (valid) {
                     logger::info("Loaded CumFx config: {}", filename);
