@@ -58,11 +58,16 @@ EndFunction
 
 Function RemoveCumFx(Actor akTarget, int aiType)
 	If (aiType == FX_ALL)
+		bool nothingListed = StorageUtil.IntListCount(akTarget, APPLIED_TEXTURE_LIST) == 0
 		int removeFxType = 0
 		While (removeFxType < MAX_FX_TYPES)
 			RemoveCumFx(akTarget, removeFxType)
 			removeFxType += 1
 		EndWhile
+		If (nothingListed)
+			; no type was listed, so the loop above removed nothing: still clear stray layers
+			RemoveStrayOverlays(akTarget)
+		EndIf
 		return
 	EndIf
 	int removed = StorageUtil.IntListRemove(akTarget, APPLIED_TEXTURE_LIST, aiType)
@@ -85,6 +90,8 @@ Function RemoveCumFx(Actor akTarget, int aiType)
 	StorageUtil.UnsetStringValue(akTarget, LAST_APPLIED_TEXTURE_PREFIX + aiType)
 	If (StorageUtil.IntListCount(akTarget, APPLIED_TEXTURE_LIST) == 0)
 		akTarget.RemoveSpell(abCumFX)
+		; nothing is applied any more, so a cum texture still on the actor was left behind
+		RemoveStrayOverlays(akTarget)
 	EndIf
 	int handle = ModEvent.Create("SexLabClearCum")
 	ModEvent.PushForm(handle, akTarget)
@@ -395,14 +402,43 @@ Function RemovePartOverlay(Actor akTarget, bool isFemale, String LastEffect)
 			String Node = parts[i] + " [ovl" + j + "]"
 			String TexPath = NiOverride.GetNodeOverrideString(akTarget, isFemale, Node, 9, 0)
 			If (TexPath == LastEffect)
-				NiOverride.AddNodeOverrideString(akTarget, isFemale, Node, 9, 0, "actors\\character\\overlays\\default.dds", true)
-				NiOverride.RemoveNodeOverride(akTarget, isFemale, Node, 9, 0)
-				NiOverride.RemoveNodeOverride(akTarget, isFemale, Node, 9, 1)
-				NiOverride.RemoveNodeOverride(akTarget, isFemale, Node, 7, -1)
-				NiOverride.RemoveNodeOverride(akTarget, isFemale, Node, 0, -1)
-				NiOverride.RemoveNodeOverride(akTarget, isFemale, Node, 8, -1)
-				NiOverride.RemoveNodeOverride(akTarget, isFemale, Node, 2, -1)
-				NiOverride.RemoveNodeOverride(akTarget, isFemale, Node, 3, -1)
+				ClearOverlay(akTarget, isFemale, Node)
+			EndIf
+		EndWhile
+		i += 1
+	EndWhile
+EndFunction
+
+Function ClearOverlay(Actor akTarget, bool isFemale, String asNode)
+	NiOverride.AddNodeOverrideString(akTarget, isFemale, asNode, 9, 0, "actors\\character\\overlays\\default.dds", true)
+	NiOverride.RemoveNodeOverride(akTarget, isFemale, asNode, 9, 0)
+	NiOverride.RemoveNodeOverride(akTarget, isFemale, asNode, 9, 1)
+	NiOverride.RemoveNodeOverride(akTarget, isFemale, asNode, 7, -1)
+	NiOverride.RemoveNodeOverride(akTarget, isFemale, asNode, 0, -1)
+	NiOverride.RemoveNodeOverride(akTarget, isFemale, asNode, 8, -1)
+	NiOverride.RemoveNodeOverride(akTarget, isFemale, asNode, 2, -1)
+	NiOverride.RemoveNodeOverride(akTarget, isFemale, asNode, 3, -1)
+EndFunction
+
+; Empties every overlay slot that still shows one of our textures. Only called when no fx type is applied to
+; the actor, so whatever it finds is a layer an earlier apply lost track of
+Function RemoveStrayOverlays(Actor akTarget)
+	bool isFemale = akTarget.GetLeveledActorBase().GetSex() == 1
+	String[] parts = GetAreas()
+	Int i = 0
+	While (i < parts.Length)
+		Int j = GetNumSlots(parts[i])
+		While (j > 0)
+			j -= 1
+			String Node = parts[i] + " [ovl" + j + "]"
+			String TexPath = NiOverride.GetNodeOverrideString(akTarget, isFemale, Node, 9, 0)
+			If (StringUtil.Find(TexPath, "SexLab/CumFx/") == 0 || StringUtil.Find(TexPath, "SexLab\\CumFx\\") == 0)
+				If (StorageUtil.IntListCount(akTarget, APPLIED_TEXTURE_LIST) > 0)
+					; a new layer was applied while we were looking (every call here lets other threads in)
+					return
+				EndIf
+				Log("RemoveStrayOverlays: " + TexPath + " cleared from " + Node + " on " + akTarget.GetLeveledActorBase().GetName())
+				ClearOverlay(akTarget, isFemale, Node)
 			EndIf
 		EndWhile
 		i += 1
@@ -410,16 +446,30 @@ Function RemovePartOverlay(Actor akTarget, bool isFemale, String LastEffect)
 EndFunction
 
 int Function GetEmptySlot(Actor akTarget, bool isFemale, String asArea, String asLastEffect)
+	; The slot holding this type's previous layer wins over a free one, wherever it sits. Taking the first
+	; free slot from the top moved the type to a slot another type had just given up, and the layer in its
+	; old slot stayed for good: removal only looks for the texture applied last
+	int free = -1
 	int i = GetNumSlots(asArea)
 	While (i > 0)
 		i -= 1
 		String TexPath = NiOverride.GetNodeOverrideString(akTarget, isFemale, asArea + " [ovl" + i + "]", 9, 0)
 		Log("GetEmptySlot(): akTarget: " + akTarget.GetBaseObject().GetName() + ". Slot: " + i + ". TexPath: " + TexPath)
-		If (TexPath == "" || (asLastEffect != "" && TexPath == asLastEffect) || TexPath == "actors\\character\\overlays\\default.dds")
+		If (asLastEffect != "" && TexPath == asLastEffect)
 			Log("GetEmptySlot(): Slot " + i + " chosen for area: " + asArea + " on " + akTarget.GetLeveledActorBase().GetName())
 			Return i
+		ElseIf (free == -1 && (TexPath == "" || TexPath == "actors\\character\\overlays\\default.dds"))
+			free = i
+			If (asLastEffect == "")
+				; first layer of this type: there is no previous layer to look for further down
+				i = 0
+			EndIf
 		EndIf
 	EndWhile
+	If (free != -1)
+		Log("GetEmptySlot(): Slot " + free + " chosen for area: " + asArea + " on " + akTarget.GetLeveledActorBase().GetName())
+		Return free
+	EndIf
 	Log("GetEmptySlot(): Error: Could not find a free slot in area: " + asArea)
 	Return -1
 EndFunction
