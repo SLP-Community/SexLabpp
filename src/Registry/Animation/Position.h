@@ -62,6 +62,5 @@ namespace Registry::Animation
 
       public:
         ActorFragment data;
-        std::vector<RE::BSFixedString> annotations{};
     };
 }

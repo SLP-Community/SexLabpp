@@ -137,11 +137,6 @@ namespace Registry::Animation {
                 a_node["annotations"].push_back(annotation.data());
             }
         }
-        for (size_t i = 0; i < positions.size(); i++) {
-            for (auto&& annotation : positions[i].annotations) {
-                a_node["positions"][i]["annotations"].push_back(annotation.data());
-            }
-        }
         for (auto&& stage : stages) {
             auto node = a_node[stage->id];
             stage->Save(node);
@@ -156,24 +151,6 @@ namespace Registry::Animation {
         if (const auto annotations = a_node["annotations"]; annotations.IsDefined()) {
             for (auto&& annotation : annotations) {
                 tags.AddAnnotation(annotation.as<std::string>());
-            }
-        }
-
-        if (const auto positionNodes = a_node["positions"]; positionNodes.IsDefined()) {
-            for (size_t i = 0; i < positions.size(); i++) {
-                const auto node = positionNodes[i];
-                if (!node.IsDefined())
-                    continue;
-                const auto annotations = node["annotations"];
-                if (!annotations.IsDefined())
-                    continue;
-                auto& list = positions[i].annotations;
-                for (auto&& annotation : annotations) {
-                    const RE::BSFixedString tag{ annotation.as<std::string>() };
-                    if (std::ranges::find(list, tag) == list.end()) {
-                        list.push_back(tag);
-                    }
-                }
             }
         }
 
