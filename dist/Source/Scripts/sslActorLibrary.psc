@@ -10,8 +10,8 @@ ScriptName sslActorLibrary extends sslSystemLibrary
 String Property ACTIVE_SET_PREFIX = "SexLabActiveSet" AutoReadOnly Hidden
 String Property ACTIVE_LAYER_PREFIX = "SexLabActiveLayer" AutoReadOnly Hidden
 String Property LAST_APPLIED_TIME_PREFIX = "SexLabLastAppliedTime" AutoReadOnly Hidden
-; Seconds the current layer of a type has been shown, counted up by sslActorCumEffect. The time stamp above
-; is no longer written, only cleared
+; Seconds the current layer of a type has been on the actor, added up by sslActorCumEffect from the game time
+; that passed. The time stamp above is no longer written, only cleared
 String Property APPLIED_SECONDS_PREFIX = "SexLabAppliedSeconds" AutoReadOnly Hidden
 String Property LAST_APPLIED_TEXTURE_PREFIX = "SexLabLastAppliedTexture" AutoReadOnly Hidden
 String Property APPLIED_TEXTURE_LIST = "SexLabAppliedTextureList" AutoReadOnly Hidden
