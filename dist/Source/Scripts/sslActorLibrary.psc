@@ -10,6 +10,9 @@ ScriptName sslActorLibrary extends sslSystemLibrary
 String Property ACTIVE_SET_PREFIX = "SexLabActiveSet" AutoReadOnly Hidden
 String Property ACTIVE_LAYER_PREFIX = "SexLabActiveLayer" AutoReadOnly Hidden
 String Property LAST_APPLIED_TIME_PREFIX = "SexLabLastAppliedTime" AutoReadOnly Hidden
+; Seconds the current layer of a type has been on the actor, added up by sslActorCumEffect from the game time
+; that passed. The time stamp above is no longer written, only cleared
+String Property APPLIED_SECONDS_PREFIX = "SexLabAppliedSeconds" AutoReadOnly Hidden
 String Property LAST_APPLIED_TEXTURE_PREFIX = "SexLabLastAppliedTexture" AutoReadOnly Hidden
 String Property APPLIED_TEXTURE_LIST = "SexLabAppliedTextureList" AutoReadOnly Hidden
 
@@ -82,6 +85,7 @@ Function RemoveCumFx(Actor akTarget, int aiType)
 	StorageUtil.UnsetStringValue(akTarget, ACTIVE_SET_PREFIX + aiType)
 	StorageUtil.UnsetIntValue(akTarget, ACTIVE_LAYER_PREFIX + aiType)
 	StorageUtil.UnsetFloatValue(akTarget, LAST_APPLIED_TIME_PREFIX + aiType)
+	StorageUtil.UnsetFloatValue(akTarget, APPLIED_SECONDS_PREFIX + aiType)
 	StorageUtil.UnsetStringValue(akTarget, LAST_APPLIED_TEXTURE_PREFIX + aiType)
 	If (StorageUtil.IntListCount(akTarget, APPLIED_TEXTURE_LIST) == 0)
 		akTarget.RemoveSpell(abCumFX)
@@ -344,7 +348,7 @@ Function BeginOverlay(Actor akTarget, int aiType)
 		normalTexture = ""
 	EndIf
 	StorageUtil.SetStringValue(akTarget, LAST_APPLIED_TEXTURE_PREFIX + aiType, texturePath)
-	StorageUtil.SetFloatValue(akTarget, LAST_APPLIED_TIME_PREFIX + aiType, SexLabUtil.GetCurrentGameRealTime())
+	StorageUtil.SetFloatValue(akTarget, APPLIED_SECONDS_PREFIX + aiType, 0.0)
 	StorageUtil.IntListAdd(akTarget, APPLIED_TEXTURE_LIST, aiType, false)
 	String[] parts = GetAreas()
 	int i = 0
