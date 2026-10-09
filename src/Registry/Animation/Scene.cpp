@@ -130,6 +130,9 @@ namespace Registry::Animation {
     void Scene::Save(YAML::Node& a_node) const
     {
         a_node["enabled"] = this->enabled;
+        for (auto&& annotation : tags.GetAnnotations()) {
+            a_node["annotations"].push_back(annotation.data());
+        }
         for (auto&& stage : stages) {
             auto node = a_node[stage->id];
             stage->Save(node);
@@ -140,6 +143,12 @@ namespace Registry::Animation {
     {
         if (const auto enable = a_node["enabled"]; enable.IsDefined())
             this->enabled = enable.as<bool>();
+
+        if (const auto annotations = a_node["annotations"]; annotations.IsDefined()) {
+            for (auto&& annotation : annotations) {
+                tags.AddAnnotation(annotation.as<std::string>());
+            }
+        }
 
         for (auto&& stage : stages) {
             if (auto node = a_node[stage->id]; node.IsDefined()) {
