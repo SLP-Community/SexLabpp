@@ -4,7 +4,7 @@
 
 namespace Registry
 {
-    std::vector<const Scene*> Library::LookupScenes(const std::vector<RE::Actor*>& a_actors, const std::vector<std::string_view>& a_tags, const std::vector<RE::Actor*>& a_submissives) const
+    std::vector<const Animation::Scene*> Library::LookupScenes(const std::vector<RE::Actor*>& a_actors, const std::vector<std::string_view>& a_tags, const std::vector<RE::Actor*>& a_submissives) const
     {
         const auto tStart = std::chrono::high_resolution_clock::now();
         ActorFragment::FragmentHash hash;
@@ -40,16 +40,16 @@ namespace Registry
         }
         const auto& rawScenes = where->second;
 
-        std::vector<const Scene*> ret{};
+        std::vector<const Animation::Scene*> ret{};
         ret.reserve(rawScenes.size());
-        std::copy_if(rawScenes.begin(), rawScenes.end(), std::back_inserter(ret), [&](Scene* a_scene) {
+        std::copy_if(rawScenes.begin(), rawScenes.end(), std::back_inserter(ret), [&](Animation::Scene* a_scene) {
             return a_scene->IsEnabled() && !a_scene->IsPrivate();
         });
         if (ret.empty()) {
             logger::warn("Invalid query: [{} | {} | {}]; 0/{} animations are enabled", a_actors.size(), hash.to_string(), tagstr, where->second.size());
             return {};
         }
-        const auto removed = std::erase_if(ret, [&](const Scene* a_scene) {
+        const auto removed = std::erase_if(ret, [&](const Animation::Scene* a_scene) {
             return !a_scene->IsCompatibleTags(tags);
         });
         if (ret.empty()) {
@@ -62,16 +62,16 @@ namespace Registry
         return ret;
     }
 
-    std::vector<const Scene*> Library::GetByTags(int32_t a_positions, const std::vector<std::string_view>& a_tags) const
+    std::vector<const Animation::Scene*> Library::GetByTags(int32_t a_positions, const std::vector<std::string_view>& a_tags) const
     {
         TagDetails tags{ a_tags };
-        std::vector<const Scene*> ret{};
+        std::vector<const Animation::Scene*> ret{};
         ret.reserve(sceneMap.size() >> 5);
         const std::shared_lock lock{ _mScenes };
         for (auto&& [key, scene] : sceneMap) {
             if (!scene->IsEnabled() || scene->IsPrivate())
                 continue;
-            if (scene->positions.size() != a_positions)
+            if (static_cast<int32_t>(scene->GetNumPositions()) != a_positions)
                 continue;
             if (!scene->IsCompatibleTags(tags))
                 continue;
@@ -80,35 +80,48 @@ namespace Registry
         return ret;
     }
 
-    const AnimPackage* Library::GetPackageFromScene(const Scene* a_scene) const
+    const Animation::AnimPack* Library::GetPackageFromScene(const Animation::Scene* a_scene) const
     {
         std::shared_lock lock{ _mScenes };
         for (auto&& package : packages) {
-            if (std::ranges::contains(package->scenes, a_scene, [](const auto& scenePtr) { return scenePtr.get(); })) {
+            if (std::ranges::contains(package->GetScenes(), a_scene, [](const auto& scenePtr) { return scenePtr.get(); })) {
                 return package.get();
             }
         }
         return nullptr;
     }
 
-    const Scene* Library::GetSceneById(const RE::BSFixedString& a_id) const
+    const Animation::Scene* Library::GetSceneById(const RE::BSFixedString& a_id) const
     {
         std::shared_lock lock{ _mScenes };
         const auto where = sceneMap.find(a_id);
         return where != sceneMap.end() ? where->second : nullptr;
     }
 
-    const Scene* Library::GetSceneByName(const RE::BSFixedString& a_name) const
+    const Animation::Scene* Library::GetSceneByName(const RE::BSFixedString& a_name) const
     {
         std::shared_lock lock{ _mScenes };
         for (auto&& package : packages) {
-            for (auto&& scene : package->scenes) {
-                if (a_name == RE::BSFixedString(scene->name))
+            for (auto&& scene : package->GetScenes()) {
+                if (a_name == RE::BSFixedString(scene->GetName().data()))
                     return scene.get();
             }
         }
         return nullptr;
     }
+
+    const Animation::Stage* Library::GetStageById(const RE::BSFixedString& a_id) const
+    {
+        std::shared_lock lock{ _mScenes };
+        for (auto&& package : packages) {
+            for (auto&& stage : package->GetStages()) {
+                if (a_id == RE::BSFixedString(stage->GetId().data()))
+                    return stage;
+            }
+        }
+        return nullptr;
+    }
+
 
     size_t Library::GetSceneCount() const
     {
@@ -116,7 +129,7 @@ namespace Registry
         return sceneMap.size();
     }
 
-    bool Library::EditScene(const RE::BSFixedString& a_id, const std::function<void(Scene*)>& a_func)
+    bool Library::EditScene(const RE::BSFixedString& a_id, const std::function<void(Animation::Scene*)>& a_func)
     {
         auto scene = GetSceneById(a_id);
         if (!scene) {
@@ -127,14 +140,14 @@ namespace Registry
         return true;
     }
 
-    void Library::EditScene(const Registry::Scene* a_scene, const std::function<void(Scene*)>& a_func)
+    void Library::EditScene(const Registry::Animation::Scene* a_scene, const std::function<void(Animation::Scene*)>& a_func)
     {
         std::unique_lock lock{ _mScenes };
-        const auto scene = const_cast<Scene*>(a_scene);
+        const auto scene = const_cast<Animation::Scene*>(a_scene);
         a_func(scene);
     }
 
-    bool Library::ForEachPackage(std::function<bool(const AnimPackage*)> a_visitor) const
+    bool Library::ForEachPackage(std::function<bool(const Animation::AnimPack*)> a_visitor) const
     {
         std::shared_lock lock{ _mScenes };
         for (auto&& package : packages) {
@@ -144,7 +157,7 @@ namespace Registry
         return false;
     }
 
-    bool Library::ForEachScene(std::function<bool(const Scene*)> a_visitor) const
+    bool Library::ForEachScene(std::function<bool(const Animation::Scene*)> a_visitor) const
     {
         std::shared_lock lock{ _mScenes };
         for (auto&& [key, scene] : sceneMap) {

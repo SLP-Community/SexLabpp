@@ -48,11 +48,13 @@ namespace Thread::Interface
 
         auto* lib = Registry::Library::GetSingleton();
         const auto* scene = lib->GetSceneById(RE::BSFixedString{ e.id.c_str() });
-        if (!scene)
+        if (!scene) {
+            logger::error("Scene not found: {}", e.id);
             return;
-        for (const auto& a : scene->tags.GetAnnotations()) {
-            lib->EditScene(RE::BSFixedString{ e.id.c_str() }, [&](Registry::Scene* s) {
-                s->tags.RemoveAnnotation(a);
+        }
+        for (const auto& a : scene->GetTags().GetAnnotations()) {
+            lib->EditScene(RE::BSFixedString{ e.id.c_str() }, [&](Registry::Animation::Scene* s) {
+                s->GetTags().RemoveAnnotation(a);
             });
         }
         std::istringstream ss(trimmed);
@@ -61,8 +63,8 @@ namespace Thread::Interface
             const auto start = token.find_first_not_of(' ');
             const auto end = token.find_last_not_of(' ');
             if (start != std::string::npos) {
-                lib->EditScene(RE::BSFixedString{ e.id.c_str() }, [&](Registry::Scene* s) {
-                    s->tags.AddAnnotation(RE::BSFixedString{
+                lib->EditScene(RE::BSFixedString{ e.id.c_str() }, [&](Registry::Animation::Scene* s) {
+                    s->GetTags().AddAnnotation(RE::BSFixedString{
                         token.substr(start, end - start + 1).c_str() });
                 });
             }
@@ -80,22 +82,22 @@ namespace Thread::Interface
 
         for (const auto* sc : inst->GetThreadScenes()) {
             SceneEntry e;
-            e.id = sc->id;
-            e.name = sc->name;
+            e.id = sc->GetId();
+            e.name = sc->GetName();
             e.isActive = (sc == active);
             if (const auto* pkg = lib->GetPackageFromScene(sc)) {
                 e.packageName = pkg->GetName().c_str();
                 e.author = pkg->GetAuthor().c_str();
             }
             bool first = true;
-            for (const auto& t : sc->tags.AsVector()) {
+            for (const auto& t : sc->GetTags().AsVector()) {
                 if (!first)
                     e.tags += ", ";
                 e.tags += t.c_str();
                 first = false;
             }
             first = true;
-            for (const auto& a : sc->tags.GetAnnotations()) {
+            for (const auto& a : sc->GetTags().GetAnnotations()) {
                 if (!first)
                     e.annotations += ", ";
                 e.annotations += a.c_str();

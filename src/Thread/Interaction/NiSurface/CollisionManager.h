@@ -1,7 +1,11 @@
 #pragma once
 
 #include "ActorState.h"
-#include "Registry/Define/Animation.h"
+
+namespace Registry::Animation
+{
+    struct Scene;
+}
 
 namespace Thread::Interaction::NiSurface
 {
@@ -10,7 +14,7 @@ namespace Thread::Interaction::NiSurface
         friend class Manager;
 
       public:
-        Scene(const std::vector<RE::Actor*>& a_positions, const Registry::Scene* a_scene);
+        Scene(const std::vector<RE::Actor*>& a_positions, const ::Registry::Animation::Scene* a_scene);
 
         bool VisitPositions(const std::function<bool(const ActorState&)>& a_visitor) const;
 
@@ -30,7 +34,7 @@ namespace Thread::Interaction::NiSurface
         static void OnFrameUpdate(float a_delta);
 
         static std::shared_ptr<Scene> Get(RE::FormID a_id);
-        static std::shared_ptr<Scene> Register(RE::FormID a_id, std::vector<RE::Actor*> a_positions, const Registry::Scene* a_scene) noexcept;
+        static std::shared_ptr<Scene> Register(RE::FormID a_id, std::vector<RE::Actor*> a_positions, const ::Registry::Animation::Scene* a_scene) noexcept;
         static void Unregister(RE::FormID a_id) noexcept;
 
       private:

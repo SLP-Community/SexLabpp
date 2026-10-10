@@ -1,7 +1,5 @@
 #pragma once
 
-#include "Registry/Define/Animation.h"
-
 namespace Papyrus::ThreadModel
 {
     enum FurniStatus

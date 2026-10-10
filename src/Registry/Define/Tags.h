@@ -103,12 +103,10 @@ namespace Registry
 
       public:
         bool HasAnnotation(const RE::BSFixedString& a_tag) const;
-        void AddAnnotation(RE::BSFixedString a_tag);
-        void RemoveAnnotation(const RE::BSFixedString& a_tag);
-        void SetAnnotations(const std::vector<RE::BSFixedString>& a_tags) { _annotations = a_tags; }
+        bool AddAnnotation(RE::BSFixedString a_tag) const;
+        bool RemoveAnnotation(const RE::BSFixedString& a_tag) const;
 
         /// @brief Get the annotated (editable) tags
-        std::vector<RE::BSFixedString>& GetAnnotations() { return _annotations; }
         const std::vector<RE::BSFixedString>& GetAnnotations() const { return _annotations; }
 
       public:
@@ -125,7 +123,7 @@ namespace Registry
 
         stl::enumeration<Tag> _basetags;
         std::vector<RE::BSFixedString> _extratags;
-        std::vector<RE::BSFixedString> _annotations;
+        mutable std::vector<RE::BSFixedString> _annotations;
     };
 
     class TagDetails

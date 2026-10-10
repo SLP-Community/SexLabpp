@@ -1,5 +1,7 @@
 ﻿#include "Stage.h"
 
+#include <unordered_set>
+
 #include "Registry/Animation/Legacy/Animation.h"
 #include "Registry/Util/Decode.h"
 
@@ -31,7 +33,7 @@ namespace Registry::Animation
     {
         positions.reserve(a_legacyStage.positions.size());
         for (auto&& legacyPosition : a_legacyStage.positions) {
-            positions.emplace_back(*legacyPosition);
+            positions.emplace_back(legacyPosition);
         }
     }
 
@@ -63,13 +65,31 @@ namespace Registry::Animation
         }
     }
 
+    RE::BSFixedString Stage::GetAnimationEvent(size_t n) const
+    {
+        assert(n < positions.size());
+        return std::format("{}{}", eventHash, positions[n].GetEvent().data());
+    }
+
+    const std::vector<Stage*> Stage::GetOutgoingEdges() const
+    {
+        std::vector<Stage*> ret{};
+        ret.reserve(outgoingEdges.size());
+        for (auto&& edge : outgoingEdges) {
+            if (const auto stage = edge.lock(); stage) {
+                ret.push_back(stage.get());
+            }
+        }
+        return ret;
+    }
+
+
     std::vector<RE::BSFixedString> Stage::GetAnimationEvents() const
     {
         std::vector<RE::BSFixedString> events;
         events.reserve(positions.size());
-        for (auto&& position : positions) {
-            const auto event = std::format("{}{}", eventHash, position.GetEvent().data());
-            events.emplace_back(event);
+        for (size_t i = 0; i < positions.size(); i++) {
+            events.emplace_back(GetAnimationEvent(i));
         }
         return events;
     }
@@ -94,19 +114,15 @@ namespace Registry::Animation
         while (!stack.empty()) {
             auto& frame = stack.back();
             const auto& edges = frame.stage->GetOutgoingEdges();
-            const auto hasAnyLiveEdge = std::ranges::any_of(edges, [](const auto& edge) { return !edge.expired(); });
             bool pushedNext = false;
             while (frame.nextEdge < edges.size()) {
-                const auto next = edges[frame.nextEdge++].lock();
-                if (!next) {
+                const auto next = edges[frame.nextEdge++];
+                if (visited.contains(next)) {
                     continue;
                 }
-                if (visited.contains(next.get())) {
-                    continue;
-                }
-                visited.insert(next.get());
-                currentPath.push_back(next.get());
-                stack.push_back({ next.get(), 0 });
+                visited.insert(next);
+                currentPath.push_back(next);
+                stack.push_back({ next, 0 });
                 pushedNext = true;
                 break;
             }
@@ -115,7 +131,7 @@ namespace Registry::Animation
                 continue;
             }
 
-            if (!hasAnyLiveEdge) {  // Exit node (or all targets expired).
+            if (edges.empty()) {  // Exit node (or all targets expired).
                 if (currentPath.size() > longestPath.size()) {
                     longestPath = currentPath;
                 }
@@ -142,7 +158,7 @@ namespace Registry::Animation
             queue.pop();
 
             const auto& edges = stage->GetOutgoingEdges();
-            if (edges.empty()) {  // We reached an exit.
+            if (edges.empty()) {
                 std::vector<const Stage*> path{};
 
                 for (auto current = stage; current != nullptr;) {
@@ -159,14 +175,10 @@ namespace Registry::Animation
 
             bool enqueuedAny = false;
             for (auto&& edge : edges) {
-                const auto next = edge.lock();
-                if (!next) {
-                    continue;
-                }
                 enqueuedAny = true;
-                if (visited.insert(next.get()).second) {
-                    parent[next.get()] = stage;
-                    queue.push(next.get());
+                if (visited.insert(edge).second) {
+                    parent[edge] = stage;
+                    queue.push(edge);
                 }
             }
 

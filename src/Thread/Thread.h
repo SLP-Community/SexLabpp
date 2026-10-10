@@ -27,7 +27,7 @@ namespace Thread
         };
 
         using FurnitureMapping = std::vector<std::pair<RE::TESObjectREFR*, Registry::FurnitureOffset>>;
-        using SceneMapping = std::array<std::vector<const Registry::Scene*>, SceneType::Total>;
+        using SceneMapping = std::array<std::vector<const Registry::Animation::Scene*>, SceneType::Total>;
 
       public:
         struct Position
@@ -77,20 +77,19 @@ namespace Thread
             Interaction::NiSurface::Manager::Unregister(linkedQst->GetFormID());
         }
 
-        void AdvanceScene(const Registry::Stage* a_nextStage);
+        void AdvanceScene(const Registry::Animation::Stage* a_nextStage);
         bool BeginActorRecovery();
         bool BeginPlayerDialogueWait();
         bool BeginPlayerSheatheWait();
         void RealignActors();
-        bool SetActiveScene(const Registry::Scene* a_scene);
-        const Registry::Scene* GetActiveScene() { return activeScene; }
-        const Registry::Stage* GetActiveStage() { return activeStage; }
-        std::vector<const Registry::Scene*> GetThreadScenes(SceneType a_type);
-        std::vector<const Registry::Scene*> GetThreadScenes();
+        bool SetActiveScene(const Registry::Animation::Scene* a_scene);
+        const Registry::Animation::Scene* GetActiveScene() { return activeScene; }
+        const Registry::Animation::Stage* GetActiveStage() { return activeStage; }
+        std::vector<const Registry::Animation::Scene*> GetThreadScenes(SceneType a_type);
+        std::vector<const Registry::Animation::Scene*> GetThreadScenes();
 
         const std::vector<RE::Actor*>& GetActors();
         Position* GetPosition(RE::Actor* a_actor);
-        const Registry::PositionInfo* GetPositionInfo(RE::Actor* a_actor);
         void UpdatePlacement(RE::Actor* a_actor);
 
         RE::TESObjectREFR* GetCenterRef() { return center.GetRef(); }
@@ -191,8 +190,8 @@ namespace Thread
         Registry::Coordinate baseCoordinates{};
         std::vector<std::vector<RE::Actor*>> assignments{};
         std::vector<std::vector<RE::Actor*>>::iterator activeAssignment{ assignments.end() };
-        const Registry::Scene* activeScene{ nullptr };
-        const Registry::Stage* activeStage{ nullptr };
+        const Registry::Animation::Scene* activeScene{ nullptr };
+        const Registry::Animation::Stage* activeStage{ nullptr };
         SceneMapping scenes{};
         std::vector<PendingAnimation> pendingAnimations{};
         std::vector<PendingRecovery> pendingRecoveries{};
@@ -222,8 +221,8 @@ namespace Thread
         void FinalizeInstanceMake();
         RE::Actor* InitializeReferences(const std::vector<RE::Actor*>& a_submissives);
         std::vector<Registry::ActorFragment> InitializeScenes(const SceneMapping& a_scenes, FurniturePreference a_furniturePreference);
-        std::vector<const Registry::Scene*>& InitializeCenter(RE::Actor* centerAct, FurniturePreference furniturePreference);
-        bool InitializeFixedCenter(RE::Actor* centerAct, std::vector<const Registry::Scene*>& prioScenes, REX::EnumSet<Registry::FurnitureType::Value> sceneTypes);
+        std::vector<const Registry::Animation::Scene*>& InitializeCenter(RE::Actor* centerAct, FurniturePreference furniturePreference);
+        bool InitializeFixedCenter(RE::Actor* centerAct, std::vector<const Registry::Animation::Scene*>& prioScenes, REX::EnumSet<Registry::FurnitureType::Value> sceneTypes);
         CenterSelection GetSelectionMethod(FurniturePreference furniturePreference);
         void InitializeCenterRefMenu(const FurnitureMapping& a_furnitures, RE::Actor* a_tmpCenter);
         FurnitureMapping GetUniqueFurnituesOfTypeInBound(RE::Actor* a_centerAct, REX::EnumSet<Registry::FurnitureType::Value> a_furnitureTypes);

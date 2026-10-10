@@ -1,4 +1,4 @@
-﻿#include "Position.h"
+#include "Position.h"
 
 #include "Registry/Animation/Legacy/Animation.h"
 #include "Registry/Define/RaceKey.h"

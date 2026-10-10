@@ -26,9 +26,12 @@ namespace Registry::Animation
         _NODISCARD bool IsCompatibleFurniture(const FurnitureDetails* a_details) const;
         _NODISCARD bool IsCompatibleFurniture(const RE::TESObjectREFR* a_reference) const;
 
-        _NODISCARD uint32_t CountPositions() const;
-        _NODISCARD uint32_t CountSubmissives() const;
-        _NODISCARD const PositionMetaData* GetNthPosition(size_t n) const;
+        _NODISCARD uint32_t GetNumPositions() const;
+        _NODISCARD uint32_t GetNumSubmissives() const;
+        _NODISCARD std::vector<PositionMetaData>& GetPositions() { return positions; }
+        _NODISCARD const PositionMetaData& GetNthPosition(size_t n) const;
+        _NODISCARD const std::vector<PositionMetaData>& GetPositions() const { return positions; }
+        void SetEnabled(bool a_enabled) { isEnabled = a_enabled; }
 
         _NODISCARD REX::EnumSet<FurnitureType::Value> GetFurnitureTypes() const;
         _NODISCARD std::vector<std::vector<RE::Actor*>> FindAssignments(const std::vector<ActorFragment>& a_fragments) const;
@@ -52,12 +55,18 @@ namespace Registry::Animation
       public:
         _NODISCARD bool Legacy_IsCompatibleSexCount(int32_t a_males, int32_t a_females) const;
         _NODISCARD bool Legacy_IsCompatibleSexCountCrt(int32_t a_males, int32_t a_females) const;
+        _NODISCARD std::string_view GetId() const { return id; }
+        _NODISCARD std::string_view GetName() const { return name; }
+        _NODISCARD TagData& GetTags() { return tags; }
+        _NODISCARD const TagData& GetTags() const { return tags; }
+        _NODISCARD Transform& GetFurnitureOffset() { return furnitureOffset; }
+        _NODISCARD const Transform& GetFurnitureOffset() const { return furnitureOffset; }
 
       private:
         std::string id{};
         std::string name{ "???" };
 
-        StageRef start{};
+        std::weak_ptr<Stage> start{};
         std::vector<PositionMetaData> positions{};
 
         TagData tags{};

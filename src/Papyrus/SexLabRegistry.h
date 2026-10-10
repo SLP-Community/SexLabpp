@@ -49,16 +49,24 @@ namespace Papyrus::SexLabRegistry
     RE::BSFixedString GetSceneName(STATICARGS, RE::BSFixedString a_sceneid);
     bool IsCompatibleCenter(STATICARGS, RE::BSFixedString a_sceneid, RE::TESObjectREFR* a_center);
 
-    bool IsSceneTag(STATICARGS, RE::BSFixedString a_id, RE::BSFixedString a_tag);
-    bool IsSceneTagA(STATICARGS, RE::BSFixedString a_id, std::vector<std::string_view> a_tags);
-    bool IsStageTag(STATICARGS, RE::BSFixedString a_id, RE::BSFixedString a_stageid, RE::BSFixedString a_tag);
-    bool IsStageTagA(STATICARGS, RE::BSFixedString a_id, RE::BSFixedString a_stageid, std::vector<std::string_view> a_tags);
-    bool IsPositionTag(STATICARGS, RE::BSFixedString a_id, RE::BSFixedString a_stage, int n, RE::BSFixedString a_tag);
-    bool IsPositionTagA(STATICARGS, RE::BSFixedString a_id, RE::BSFixedString a_stage, int n, std::vector<std::string_view> a_tags);
     std::vector<RE::BSFixedString> GetSceneTags(STATICARGS, RE::BSFixedString a_id);
-    std::vector<RE::BSFixedString> GetStageTags(STATICARGS, RE::BSFixedString a_id, RE::BSFixedString a_stage);
-    std::vector<RE::BSFixedString> GetPositionTags(STATICARGS, RE::BSFixedString a_id, RE::BSFixedString a_stage, int n);
     std::vector<RE::BSFixedString> GetCommonTags(STATICARGS, std::vector<RE::BSFixedString> a_ids);
+    bool HasSceneTag(STATICARGS, RE::BSFixedString a_id, RE::BSFixedString a_tag);
+    bool HasSceneTagA(STATICARGS, RE::BSFixedString a_id, std::vector<std::string_view> a_tags);
+    bool AddSceneTag(STATICARGS, RE::BSFixedString a_sceneid, RE::BSFixedString a_tag);
+    bool RemoveSceneTag(STATICARGS, RE::BSFixedString a_sceneid, RE::BSFixedString a_tag);
+
+    std::vector<RE::BSFixedString> GetStageTags(STATICARGS, RE::BSFixedString a_id, RE::BSFixedString a_stage);
+    bool HasStageTag(STATICARGS, RE::BSFixedString a_id, RE::BSFixedString a_stageid, RE::BSFixedString a_tag);
+    bool HasStageTagA(STATICARGS, RE::BSFixedString a_id, RE::BSFixedString a_stageid, std::vector<std::string_view> a_tags);
+    bool AddStageTag(STATICARGS, RE::BSFixedString a_stageid, RE::BSFixedString a_stage, RE::BSFixedString a_tag);
+    bool RemoveStageTag(STATICARGS, RE::BSFixedString a_stageid, RE::BSFixedString a_stage, RE::BSFixedString a_tag);
+
+    std::vector<RE::BSFixedString> GetPositionTags(STATICARGS, RE::BSFixedString a_id, RE::BSFixedString a_stage, int n);
+    bool HasPositionTag(STATICARGS, RE::BSFixedString a_id, RE::BSFixedString a_stage, int n, RE::BSFixedString a_tag);
+    bool HasPositionTagA(STATICARGS, RE::BSFixedString a_id, RE::BSFixedString a_stage, int n, std::vector<std::string_view> a_tags);
+    bool AddPositionTag(STATICARGS, RE::BSFixedString a_stageid, RE::BSFixedString a_stage, int n, RE::BSFixedString a_tag);
+    bool RemovePositionTag(STATICARGS, RE::BSFixedString a_stageid, RE::BSFixedString a_stage, int n, RE::BSFixedString a_tag);
 
     RE::BSFixedString GetAnimationEvent(STATICARGS, RE::BSFixedString a_id, RE::BSFixedString a_stage, int n);
     std::vector<RE::BSFixedString> GetAnimationEventA(STATICARGS, RE::BSFixedString a_id, RE::BSFixedString a_stage);
@@ -68,7 +76,6 @@ namespace Papyrus::SexLabRegistry
     std::vector<RE::BSFixedString> GetAllstages(STATICARGS, RE::BSFixedString a_id);
     RE::BSFixedString BranchTo(STATICARGS, RE::BSFixedString a_id, RE::BSFixedString a_stage, int n);
     int32_t GetNumBranches(STATICARGS, RE::BSFixedString a_id, RE::BSFixedString a_stage);
-    int32_t GetNodeType(STATICARGS, RE::BSFixedString a_id, RE::BSFixedString a_stage);
 
     std::vector<RE::BSFixedString> GetPathMin(STATICARGS, RE::BSFixedString a_id, RE::BSFixedString a_stage);
     std::vector<RE::BSFixedString> GetPathMax(STATICARGS, RE::BSFixedString a_id, RE::BSFixedString a_stage);
@@ -106,16 +113,6 @@ namespace Papyrus::SexLabRegistry
     int32_t GetStripData(STATICARGS, RE::BSFixedString a_id, RE::BSFixedString a_stage, int n);
     std::vector<int32_t> GetStripDataA(STATICARGS, RE::BSFixedString a_id, RE::BSFixedString a_stage);
 
-    bool HasSceneAnnotation(STATICARGS, RE::BSFixedString a_id, RE::BSFixedString a_tag);
-    void RemoveSceneAnnotation(STATICARGS, RE::BSFixedString a_id, RE::BSFixedString a_tag);
-    void AddSceneAnnotation(STATICARGS, RE::BSFixedString a_id, RE::BSFixedString a_tag);
-    std::vector<RE::BSFixedString> GetSceneAnnotations(STATICARGS, RE::BSFixedString a_id);
-
-    bool HasPositionAnnotation(STATICARGS, RE::BSFixedString a_id, int n, RE::BSFixedString a_tag);
-    void RemovePositionAnnotation(STATICARGS, RE::BSFixedString a_id, int n, RE::BSFixedString a_tag);
-    void AddPositionAnnotation(STATICARGS, RE::BSFixedString a_id, int n, RE::BSFixedString a_tag);
-    std::vector<RE::BSFixedString> GetPositionAnnotations(STATICARGS, RE::BSFixedString a_id, int n);
-
     inline bool Register(VM* a_vm)
     {
         REGISTERFUNC(GetRaceID, "SexLabRegistry", true);
@@ -152,16 +149,24 @@ namespace Papyrus::SexLabRegistry
         REGISTERFUNC(GetSceneName, "SexLabRegistry", true);
         REGISTERFUNC(IsCompatibleCenter, "SexLabRegistry", true);
 
-        REGISTERFUNC(IsSceneTag, "SexLabRegistry", true);
-        REGISTERFUNC(IsSceneTagA, "SexLabRegistry", true);
-        REGISTERFUNC(IsStageTag, "SexLabRegistry", true);
-        REGISTERFUNC(IsStageTagA, "SexLabRegistry", true);
-        REGISTERFUNC(IsPositionTag, "SexLabRegistry", true);
-        REGISTERFUNC(IsPositionTagA, "SexLabRegistry", true);
         REGISTERFUNC(GetSceneTags, "SexLabRegistry", true);
-        REGISTERFUNC(GetStageTags, "SexLabRegistry", true);
-        REGISTERFUNC(GetPositionTags, "SexLabRegistry", true);
         REGISTERFUNC(GetCommonTags, "SexLabRegistry", true);
+        REGISTERFUNC(HasSceneTag, "SexLabRegistry", true);
+        REGISTERFUNC(HasSceneTagA, "SexLabRegistry", true);
+        REGISTERFUNC(AddSceneTag, "SexLabRegistry", true);
+        REGISTERFUNC(RemoveSceneTag, "SexLabRegistry", true);
+
+        REGISTERFUNC(GetStageTags, "SexLabRegistry", true);
+        REGISTERFUNC(HasStageTag, "SexLabRegistry", true);
+        REGISTERFUNC(HasStageTagA, "SexLabRegistry", true);
+        REGISTERFUNC(AddStageTag, "SexLabRegistry", true);
+        REGISTERFUNC(RemoveStageTag, "SexLabRegistry", true);
+
+        REGISTERFUNC(GetPositionTags, "SexLabRegistry", true);
+        REGISTERFUNC(HasPositionTag, "SexLabRegistry", true);
+        REGISTERFUNC(HasPositionTagA, "SexLabRegistry", true);
+        REGISTERFUNC(AddPositionTag, "SexLabRegistry", true);
+        REGISTERFUNC(RemovePositionTag, "SexLabRegistry", true);
 
         REGISTERFUNC(GetAnimationEvent, "SexLabRegistry", true);
         REGISTERFUNC(GetAnimationEventA, "SexLabRegistry", true);
@@ -171,7 +176,6 @@ namespace Papyrus::SexLabRegistry
         REGISTERFUNC(GetAllstages, "SexLabRegistry", true);
         REGISTERFUNC(BranchTo, "SexLabRegistry", true);
         REGISTERFUNC(GetNumBranches, "SexLabRegistry", true);
-        REGISTERFUNC(GetNodeType, "SexLabRegistry", true);
 
         REGISTERFUNC(GetPathMin, "SexLabRegistry", true);
         REGISTERFUNC(GetPathMax, "SexLabRegistry", true);
@@ -208,16 +212,6 @@ namespace Papyrus::SexLabRegistry
 
         REGISTERFUNC(GetStripData, "SexLabRegistry", true);
         REGISTERFUNC(GetStripDataA, "SexLabRegistry", true);
-
-        REGISTERFUNC(HasSceneAnnotation, "SexLabRegistry", true);
-        REGISTERFUNC(RemoveSceneAnnotation, "SexLabRegistry", true);
-        REGISTERFUNC(AddSceneAnnotation, "SexLabRegistry", true);
-        REGISTERFUNC(GetSceneAnnotations, "SexLabRegistry", true);
-
-        REGISTERFUNC(HasPositionAnnotation, "SexLabRegistry", true);
-        REGISTERFUNC(RemovePositionAnnotation, "SexLabRegistry", true);
-        REGISTERFUNC(AddPositionAnnotation, "SexLabRegistry", true);
-        REGISTERFUNC(GetPositionAnnotations, "SexLabRegistry", true);
 
         return true;
     }

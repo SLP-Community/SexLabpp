@@ -386,7 +386,7 @@ Function UpdateAnnotations(string asString)
 	String[] annotations = PapyrusUtil.StringSplit(asString, ",")
 	int i = 0
 	While(i < annotations.Length)
-		SexLabRegistry.AddSceneAnnotation(activeScene, annotations[i])
+		SexLabRegistry.AddSceneTag(activeScene, annotations[i])
 		i += 1
 	EndWhile
 EndFunction

@@ -44,14 +44,14 @@ namespace Thread::Interface
             return;
         const auto* cur = inst->GetActiveScene();
         const auto scenes = inst->GetThreadScenes();
-        std::vector<const Registry::Scene*> pool;
+        std::vector<const Registry::Animation::Scene*> pool;
         pool.reserve(scenes.size());
         for (auto* s : scenes)
             if (s != cur)
                 pool.push_back(s);
         if (pool.empty())
             return;
-        const std::string id{ Random::draw(pool)->id };
+        const std::string id{ Random::draw(pool)->GetId() };
         Script::DispatchMethodCall(a_hud.GetThreadScript(), "ResetScene",
             a_hud.GetCallback(), RE::BSFixedString{ id.c_str() });
     }

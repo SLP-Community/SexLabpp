@@ -1,6 +1,5 @@
 #include "sslThreadLibrary.h"
 
-#include "Registry/Define/Animation.h"
 #include "Registry/Define/Fragment.h"
 #include "Registry/Define/Furniture.h"
 #include "Registry/Define/RaceKey.h"
@@ -214,7 +213,7 @@ namespace Papyrus::ThreadLibrary
             a_includes.size() > 3 ? a_includes[3] : nullptr,
             "");
 
-        for (auto&& position : scene->positions) {
+        for (auto&& position : scene->GetPositions()) {
             RE::Actor* fill = nullptr;
             for (auto& include : a_includes) {
                 if (include && position.CanFillPosition(include)) {
@@ -257,7 +256,7 @@ namespace Papyrus::ThreadLibrary
             a_vm->TraceStack("Cannot sort actors by a none scene", a_stackID);
             return a_positions;
         }
-        auto subcount = scene->CountSubmissives();
+        auto subcount = scene->GetNumSubmissives();
         std::vector<Registry::ActorFragment> fragments;
         for (auto&& actor : a_positions) {
             const auto submissive = subcount > 0 && std::find(a_submissives.begin(), a_submissives.end(), actor) != a_submissives.end();

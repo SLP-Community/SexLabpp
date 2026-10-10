@@ -90,10 +90,10 @@ namespace Registry
 #endif
                 const auto filename = file.path().filename().string();
                 try {
-                    auto package = std::make_unique<AnimPackage>(file);
-                    for (auto&& scene : package->scenes) {
-                        auto positionFragments = std::ranges::fold_left(scene->positions, std::vector<std::vector<ActorFragment>>{}, [](auto acc, const auto& pos) {
-                            acc.push_back(pos.data.Split());
+                    auto package = std::make_unique<Animation::AnimPack>(file.path());
+                    for (auto&& scene : package->GetScenes()) {
+                        auto positionFragments = std::ranges::fold_left(scene->GetPositions(), std::vector<std::vector<ActorFragment>>{}, [](auto acc, const auto& pos) {
+                            acc.push_back(pos.get().Split());
                             return std::move(acc);
                         });
                         Combinatorics::ForEachCombination<ActorFragment>(positionFragments, [&](const std::vector<std::vector<ActorFragment>::const_iterator>& it) {
@@ -110,7 +110,7 @@ namespace Registry
                             }
                             return Combinatorics::CResult::Next;
                         });
-                        sceneMap[scene->id] = scene.get();
+                        sceneMap[RE::BSFixedString{ scene->GetId().data() }] = scene.get();
                     }
                     logger::info("InitializeScenes: Finished parsing file {}", filename);
                     const std::unique_lock lock{ _mScenes };
@@ -140,7 +140,7 @@ namespace Registry
             try {
                 const auto root = YAML::LoadFile(file.path().string());
                 for (auto&& [key, scene] : sceneMap) {
-                    const auto node = root[scene->id];
+                    const auto node = root[scene->GetId().data()];
                     if (!node.IsDefined())
                         continue;
                     scene->Load(node);
@@ -496,8 +496,8 @@ namespace Registry
         for (auto&& p : packages) {
             threads.emplace_back([&]() {
                 YAML::Node data{};
-                for (auto&& scene : p->scenes) {
-                    auto node = data[scene->id];
+                for (auto&& scene : p->GetScenes()) {
+                    auto node = data[scene->GetId().data()];
                     scene->Save(node);
                 }
                 const auto filepath = std::format("{}\\{}_{}.yaml", SCENE_USER_CONFIG, p->GetName().data(), p->GetHash());

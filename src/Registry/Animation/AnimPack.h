@@ -1,12 +1,15 @@
 ﻿#pragma once
 
+#include "Scene.h"
+#include "Stage.h"
+
 namespace Registry::Animation
 {
     struct AnimPack
     {
         constexpr static inline size_t kMinVersion = 1;
         constexpr static inline size_t kFinalLegacyVersion = 4;
-        constexpr static inline size_t kCurrentVersion = 4;
+        constexpr static inline size_t kCurrentVersion = 5;
 
       public:
         AnimPack(const fs::path a_file);

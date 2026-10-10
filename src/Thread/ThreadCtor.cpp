@@ -87,12 +87,12 @@ namespace Thread
             return (acc.push_back(it.data), acc);
         });
         for (size_t i = 0; i < SceneType::Total; i++) {
-            scenes[i] = std::ranges::fold_left(a_scenes[i], std::vector<const Registry::Scene*>{}, [&](auto&& acc, const Registry::Scene* it) {
+            scenes[i] = std::ranges::fold_left(a_scenes[i], std::vector<const Registry::Animation::Scene*>{}, [&](auto&& acc, const Registry::Animation::Scene* it) {
                 if (it->FindAssignments(fragments).empty()) {
-                    logger::warn("Scene {}, {} has no assignments.", it->id, it->name);
+                    logger::warn("Scene {}, {} has no assignments.", it->GetId(), it->GetName());
                     return acc;
                 } else if (it->RequiresFurniture() && a_furniturepref == FurniturePreference::Disallow) {
-                    logger::warn("Scene {}, {} requires furniture, but furniture is disallowed.", it->id, it->name);
+                    logger::warn("Scene {}, {} requires furniture, but furniture is disallowed.", it->GetId(), it->GetName());
                     return acc;
                 }
                 acc.push_back(it);
@@ -123,7 +123,7 @@ namespace Thread
         return fragments;
     }
 
-    std::vector<const Registry::Scene*>& Instance::InitializeCenter(RE::Actor* centerAct, FurniturePreference furniturePreference)
+    std::vector<const Registry::Animation::Scene*>& Instance::InitializeCenter(RE::Actor* centerAct, FurniturePreference furniturePreference)
     {
         auto& prioScenes = scenes[SceneType::Custom].empty() ? scenes[SceneType::Primary] : scenes[SceneType::Custom];
         if (prioScenes.empty()) {
@@ -179,7 +179,7 @@ namespace Thread
         return prioScenes;
     }
 
-    bool Instance::InitializeFixedCenter(RE::Actor* centerAct, std::vector<const Registry::Scene*>& prioScenes, REX::EnumSet<Registry::FurnitureType::Value> sceneTypes)
+    bool Instance::InitializeFixedCenter(RE::Actor* centerAct, std::vector<const Registry::Animation::Scene*>& prioScenes, REX::EnumSet<Registry::FurnitureType::Value> sceneTypes)
     {
         const auto& details = center.details = Registry::Library::GetSingleton()->GetFurnitureDetails(center.GetRef());
         if (((bool (*)(void))Offsets::NotOnGameThread.address())()) {

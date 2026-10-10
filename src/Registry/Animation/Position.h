@@ -1,5 +1,9 @@
 ﻿#pragma once
 
+#include "Legacy/Animation.h"
+#include "Registry/Define/Tags.h"
+#include "Registry/Define/Transform.h"
+
 namespace Registry::Animation
 {
     namespace Legacy
@@ -34,7 +38,9 @@ namespace Registry::Animation
 
         _NODISCARD const RE::BSFixedString& GetEvent() const { return event; }
         _NODISCARD bool IsClimax() const { return climax; }
+        _NODISCARD TagData& GetTags() { return tags; }
         _NODISCARD const TagData& GetTags() const { return tags; }
+        _NODISCARD Transform& GetOffset() { return offset; }
         _NODISCARD const Transform& GetOffset() const { return offset; }
         _NODISCARD REX::EnumSet<StripParts> GetStrips() const { return strips; }
 

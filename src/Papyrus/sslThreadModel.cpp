@@ -94,7 +94,7 @@ namespace Papyrus::ThreadModel
             std::vector<uint32_t> a_overwrite,      // use if exists
             std::vector<RE::TESForm*> a_mergewith)  // [HighHeelSpell, WeaponRight, WeaponLeft, Armor...]
         {
-            using Strip = Registry::Position::StripData;
+            using Strip = Registry::Animation::StripParts;
             using SlotMask = RE::BIPED_MODEL::BipedObjectSlot;
 
             enum MergeIDX
@@ -219,7 +219,7 @@ namespace Papyrus::ThreadModel
     {
         GET_INSTANCE("");
         if (const auto& scene = instance->GetActiveScene()) {
-            return scene->id;
+            return RE::BSFixedString{ scene->GetId().data() };
         }
         a_vm->TraceStack("No active scene", a_stackID);
         return RE::BSFixedString{};
@@ -229,7 +229,7 @@ namespace Papyrus::ThreadModel
     {
         GET_INSTANCE("");
         if (const auto& stage = instance->GetActiveStage()) {
-            return stage->id;
+            return RE::BSFixedString{ stage->GetId().data() };
         }
         a_vm->TraceStack("No active stage", a_stackID);
         return RE::BSFixedString{};
@@ -239,7 +239,7 @@ namespace Papyrus::ThreadModel
     {
         GET_INSTANCE({});
         return std::ranges::fold_left(instance->GetThreadScenes(), std::vector<RE::BSFixedString>{}, [](auto&& acc, const auto& it) {
-            return (acc.push_back(it->id), acc);
+            return (acc.push_back(RE::BSFixedString{ it->GetId().data() }), acc);
         });
     }
 
@@ -272,7 +272,7 @@ namespace Papyrus::ThreadModel
     {
         const auto library = Registry::Library::GetSingleton();
         const auto toVector = [&](const auto& a_list) {
-            return std::ranges::fold_left(a_list, std::vector<const Registry::Scene*>{}, [&](auto&& acc, const auto& it) {
+            return std::ranges::fold_left(a_list, std::vector<const Registry::Animation::Scene*>{}, [&](auto&& acc, const auto& it) {
                 const auto scene = library->GetSceneById(it);
                 if (!scene) {
                     const auto err = std::format("Invalid scene id {}", it);
@@ -326,7 +326,7 @@ namespace Papyrus::ThreadModel
         GET_INSTANCE({});
         const auto sceneList = instance->GetThreadScenes(Thread::Instance::SceneType::LeadIn);
         return std::ranges::fold_left(sceneList, std::vector<RE::BSFixedString>{}, [](auto&& acc, const auto& it) {
-            return (acc.push_back(it->id), acc);
+            return (acc.push_back(RE::BSFixedString{ it->GetId().data() }), acc);
         });
     }
 
@@ -335,7 +335,7 @@ namespace Papyrus::ThreadModel
         GET_INSTANCE({});
         const auto sceneList = instance->GetThreadScenes(Thread::Instance::SceneType::Primary);
         return std::ranges::fold_left(sceneList, std::vector<RE::BSFixedString>{}, [](auto&& acc, const auto& it) {
-            return (acc.push_back(it->id), acc);
+            return (acc.push_back(RE::BSFixedString{ it->GetId().data() }), acc);
         });
     }
 
@@ -344,14 +344,14 @@ namespace Papyrus::ThreadModel
         GET_INSTANCE({});
         const auto sceneList = instance->GetThreadScenes(Thread::Instance::SceneType::Custom);
         return std::ranges::fold_left(sceneList, std::vector<RE::BSFixedString>{}, [](auto&& acc, const auto& it) {
-            return (acc.push_back(it->id), acc);
+            return (acc.push_back(RE::BSFixedString{ it->GetId().data() }), acc);
         });
     }
 
     std::vector<RE::BSFixedString> AdvanceScene(QUESTARGS, std::vector<RE::BSFixedString> a_history, RE::BSFixedString a_nextStage)
     {
         GET_INSTANCE(a_history);
-        auto stage = instance->GetActiveScene()->GetStageByID(a_nextStage);
+        auto stage = instance->GetActiveScene()->GetStageById(a_nextStage);
         if (!stage) {
             a_vm->TraceStack("Invalid stage id", a_stackID);
             return a_history;
@@ -368,20 +368,19 @@ namespace Papyrus::ThreadModel
     int SelectNextStage(QUESTARGS, std::vector<RE::BSFixedString> a_tags)
     {
         GET_INSTANCE(0);
-        const auto& scene = instance->GetActiveScene();
         const auto& stage = instance->GetActiveStage();
-        if (!scene || !stage) {
-            a_vm->TraceStack("No active scene or stage", a_stackID);
+        if (!stage) {
+            a_vm->TraceStack("No active stage", a_stackID);
             return 0;
         }
-        const auto& adj = scene->GetAdjacentStages(stage);
-        if (!adj || adj->empty())
+        const auto adj = stage->GetOutgoingEdges();
+        if (adj.empty())
             return 0;
         Registry::TagData tags{ a_tags };
         std::vector<int> weights{};
         int n = 0;
-        for (auto&& i : *adj) {
-            auto c = i->tags.CountTags(tags);
+        for (auto&& i : adj) {
+            auto c = i->GetTags().CountTags(tags);
             weights.resize(weights.size() + c + 1, n++);
         }
         return Random::draw(weights);
@@ -476,19 +475,19 @@ namespace Papyrus::ThreadModel
         if (!scene) {
             a_vm->TraceStack("Invalid scene id", a_stackID);
             return;
-        } else if (scene->CountPositions() != a_positions.size()) {
+        } else if (scene->GetNumPositions() != a_positions.size()) {
             a_vm->TraceStack("Position cound does not match scene position count", a_stackID);
             return;
         }
         int vaginal = 0, anal = 0, oral = 0;
         for (auto&& it : a_playedstages) {
-            auto stage = scene->GetStageByID(it);
+            auto stage = scene->GetStageById(it);
             if (!stage)
                 continue;
 
-            vaginal += stage->tags.HasTag(Registry::Tag::Vaginal);
-            anal += stage->tags.HasTag(Registry::Tag::Anal);
-            oral += stage->tags.HasTag(Registry::Tag::Oral);
+            vaginal += stage->GetTags().HasTag(Registry::Tag::Vaginal);
+            anal += stage->GetTags().HasTag(Registry::Tag::Anal);
+            oral += stage->GetTags().HasTag(Registry::Tag::Oral);
         }
         const auto statdata = Registry::Statistics::StatisticsData::GetSingleton();
         for (auto&& p : a_positions) {
@@ -512,7 +511,7 @@ namespace Papyrus::ThreadModel
         if (!scene) {
             a_vm->TraceStack("Invalid scene id", a_stackID);
             return;
-        } else if (scene->CountPositions() != a_positions.size()) {
+        } else if (scene->GetNumPositions() != a_positions.size()) {
             a_vm->TraceStack("Position cound does not match scene position count", a_stackID);
             return;
         }
@@ -520,9 +519,9 @@ namespace Papyrus::ThreadModel
         stats.SetStatistic(stats.LastUpdate_GameTime, RE::Calendar::GetSingleton()->GetCurrentGameTime());
         stats.AddStatistic(stats.SecondsInScene, a_time);
         stats.AddStatistic(stats.TimesTotal, 1);
-        if (scene->CountPositions() == 1) {
+        if (scene->GetNumPositions() == 1) {
             stats.AddStatistic(stats.TimesMasturbated, 1);
-            if (scene->CountSubmissives() == 1) {
+            if (scene->GetNumSubmissives() == 1) {
                 stats.AddStatistic(stats.TimesSubmissive, 1);
             }
         } else {
@@ -532,10 +531,10 @@ namespace Papyrus::ThreadModel
                     continue;
                 if (a_positions[i] == a_actor) {
                     const auto& p = scene->GetNthPosition(i);
-                    sub = p->IsSubmissive();
+                    sub = p.IsSubmissive();
                     continue;
                 }
-                if (sub != 1 && scene->GetNthPosition(i)->IsSubmissive()) {
+                if (sub != 1 && scene->GetNthPosition(i).IsSubmissive()) {
                     sub = -1;
                 }
                 if (a_positions[i]->IsHumanoid()) {
@@ -565,13 +564,13 @@ namespace Papyrus::ThreadModel
         }
         int vaginal = 0, anal = 0, oral = 0;
         for (auto&& it : a_playedstages) {
-            auto stage = scene->GetStageByID(it);
+            auto stage = scene->GetStageById(it);
             if (!stage)
                 continue;
 
-            vaginal += stage->tags.HasTag(Registry::Tag::Vaginal);
-            anal += stage->tags.HasTag(Registry::Tag::Anal);
-            oral += stage->tags.HasTag(Registry::Tag::Oral);
+            vaginal += stage->GetTags().HasTag(Registry::Tag::Vaginal);
+            anal += stage->GetTags().HasTag(Registry::Tag::Anal);
+            oral += stage->GetTags().HasTag(Registry::Tag::Oral);
         }
         if (vaginal) {
             stats.AddStatistic(stats.TimesVaginal, 1);

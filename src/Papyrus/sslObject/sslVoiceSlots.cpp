@@ -68,13 +68,13 @@ namespace Papyrus::VoiceSlots
                 a_vm->TraceStack("Invalid scene id", a_stackID);
                 return nullptr;
             }
-            if (scene->CountPositions() <= static_cast<uint32_t>(a_idx)) {
+            if (scene->GetNumPositions() <= static_cast<uint32_t>(a_idx)) {
                 a_vm->TraceStack("Invalid position idx", a_stackID);
                 return nullptr;
             }
             REX::EnumSet<Registry::VoiceAnnotation> annotation;
-            if (scene->CountSubmissives() > 0) {
-                if (scene->GetNthPosition(a_idx)->IsSubmissive())
+            if (scene->GetNumSubmissives() > 0) {
+                if (scene->GetNthPosition(a_idx).IsSubmissive())
                     annotation.set(Registry::VoiceAnnotation::Submissive);
                 else
                     annotation.set(Registry::VoiceAnnotation::Dominant);
@@ -97,13 +97,13 @@ namespace Papyrus::VoiceSlots
                 a_vm->TraceStack("Invalid scene id", a_stackID);
                 return nullptr;
             }
-            if (scene->CountPositions() <= static_cast<uint32_t>(a_idx)) {
+            if (scene->GetNumPositions() <= static_cast<uint32_t>(a_idx)) {
                 a_vm->TraceStack("Invalid position idx", a_stackID);
                 return nullptr;
             }
             REX::EnumSet<Registry::VoiceAnnotation> annotation;
-            if (scene->CountSubmissives() > 0) {
-                if (scene->GetNthPosition(a_idx)->IsSubmissive())
+            if (scene->GetNumSubmissives() > 0) {
+                if (scene->GetNthPosition(a_idx).IsSubmissive())
                     annotation.set(Registry::VoiceAnnotation::Submissive);
                 else
                     annotation.set(Registry::VoiceAnnotation::Dominant);

@@ -2,8 +2,8 @@
 
 #include <shared_mutex>
 
-#include "Animation.h"
 #include "RaceKey.h"
+#include "Tags.h"
 
 namespace Registry
 {

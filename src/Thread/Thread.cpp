@@ -91,9 +91,9 @@ namespace Thread
         details = Registry::Library::GetSingleton()->GetFurnitureDetails(a_ref);
     }
 
-    void Instance::AdvanceScene(const Registry::Stage* a_nextStage)
+    void Instance::AdvanceScene(const Registry::Animation::Stage* a_nextStage)
     {
-        assert(activeScene && activeScene->GetStageNodeType(a_nextStage) != Registry::Scene::NodeType::None);
+        assert(activeScene && a_nextStage);
         if (!HasInstanceNiSurface()) {
             Interaction::NiSurface::Manager::Register(linkedQst->formID, *activeAssignment, activeScene);
         }
@@ -104,7 +104,7 @@ namespace Thread
         pendingAnimations.reserve(activeAssignment->size());
         for (size_t i = 0; i < activeAssignment->size(); i++) {
             const auto& actor = activeAssignment->at(i);
-            const auto& animationEvent = activeScene->GetNthAnimationEvent(a_nextStage, i);
+            const auto& animationEvent = a_nextStage->GetAnimationEvent(i);
 
             pendingAnimations.emplace_back(actor, animationEvent, std::vector<ActiveClip>{}, nullptr, std::string{}, 0.0f, 0.0f, 0.0f, i);
         }
@@ -120,11 +120,11 @@ namespace Thread
         }
     }
 
-    bool Instance::SetActiveScene(const Registry::Scene* a_scene)
+    bool Instance::SetActiveScene(const Registry::Animation::Scene* a_scene)
     {
         assert(a_scene);
         if (!a_scene->IsCompatibleFurniture(center.offset.type)) {
-            logger::warn("Scene {} is not compatible with center reference {}.", a_scene->id, center.GetRef()->GetFormID());
+            logger::warn("Scene {} is not compatible with center reference {}.", a_scene->GetId(), center.GetRef()->GetFormID());
             return false;
         }
         const auto fragments = std::ranges::fold_left(positions, std::vector<Registry::ActorFragment>{}, [](auto&& acc, const auto& it) {
@@ -132,7 +132,7 @@ namespace Thread
         });
         const auto newAssignments = a_scene->FindAssignments(fragments);
         if (newAssignments.empty()) {
-            logger::warn("Scene {} has no valid assignments.", a_scene->id);
+            logger::warn("Scene {} has no valid assignments.", a_scene->GetId());
             return false;
         }
         CancelFixedLengthTimer();
@@ -150,7 +150,7 @@ namespace Thread
             p.uniquePermutations = static_cast<uint8_t>(uniquePositions[p.data.GetActor()].size());
         }
         baseCoordinates = center.offset.offset.ApplyReturn(center.GetRef());
-        activeScene->furnitureOffset.Apply(baseCoordinates);
+        activeScene->GetFurnitureOffset().Apply(baseCoordinates);
         activeAssignment = assignments.begin();
 
         if (auto* sceneHUD = Interface::SceneHUD::GetSingleton().GetForThread(linkedQst))
@@ -158,13 +158,13 @@ namespace Thread
         return true;
     }
 
-    std::vector<const Registry::Scene*> Instance::GetThreadScenes(SceneType a_type)
+    std::vector<const Registry::Animation::Scene*> Instance::GetThreadScenes(SceneType a_type)
     {
         assert(a_type < SceneType::Total);
         return scenes[a_type];
     }
 
-    std::vector<const Registry::Scene*> Instance::GetThreadScenes()
+    std::vector<const Registry::Animation::Scene*> Instance::GetThreadScenes()
     {
         for (auto&& sceneVec : scenes) {
             if (std::ranges::contains(sceneVec, activeScene)) {
@@ -191,18 +191,6 @@ namespace Thread
         return nullptr;
     }
 
-    const Registry::PositionInfo* Instance::GetPositionInfo(RE::Actor* a_actor)
-    {
-        assert(a_actor);
-        const auto i = std::distance(activeAssignment->begin(), std::find(activeAssignment->begin(), activeAssignment->end(), a_actor));
-        assert(i >= 0);
-        if (static_cast<size_t>(i) >= activeAssignment->size()) {
-            logger::warn("Actor {} is not part of the current scene.", a_actor->GetFormID());
-            return nullptr;
-        }
-        return activeScene->GetNthPosition(i);
-    }
-
     void Instance::UpdatePlacement(RE::Actor* a_actor)
     {
         assert(a_actor);
@@ -218,8 +206,8 @@ namespace Thread
     void Instance::ReassertPlacement(size_t a_position, bool a_force)
     {
         const auto actor = activeAssignment->at(a_position);
-        const auto& position = activeStage->positions[a_position];
-        const auto& coordinate = position.offset.ApplyReturn(baseCoordinates);
+        const auto& position = activeStage->GetPositions()[a_position];
+        const auto& coordinate = position.GetOffset().ApplyReturn(baseCoordinates);
         constexpr float positionToleranceSquared = 0.25f;
         constexpr float rotationTolerance = 0.008726646f;
         constexpr float fullRotation = 6.283185307f;
@@ -258,7 +246,7 @@ namespace Thread
             center.SetReference(a_ref, inBounds.front());
         }
         baseCoordinates = center.offset.offset.ApplyReturn(center.GetRef());
-        activeScene->furnitureOffset.Apply(baseCoordinates);
+        activeScene->GetFurnitureOffset().Apply(baseCoordinates);
         AdvanceScene(activeStage);
         return true;
     }
@@ -270,11 +258,11 @@ namespace Thread
 
         // scene/furniture offset
         if (actorFormId == 0) {
-            Registry::Library::GetSingleton()->EditScene(activeScene, [&](Registry::Scene* scene) {
-                scene->furnitureOffset.SetOffset(value, axis);
+            Registry::Library::GetSingleton()->EditScene(activeScene, [&](Registry::Animation::Scene* scene) {
+                scene->GetFurnitureOffset().SetOffset(value, axis);
             });
             baseCoordinates = center.offset.offset.ApplyReturn(center.GetRef());
-            activeScene->furnitureOffset.Apply(baseCoordinates);
+            activeScene->GetFurnitureOffset().Apply(baseCoordinates);
             RealignActors();
 
         // position offset
@@ -285,15 +273,15 @@ namespace Thread
                 return;
             const auto posIdx = static_cast<size_t>(std::distance(activeAssignment->begin(), it));
 
-            Registry::Library::GetSingleton()->EditScene(activeScene, [&](Registry::Scene* scene) {
+            Registry::Library::GetSingleton()->EditScene(activeScene, [&](Registry::Animation::Scene* scene) {
                 if (Instance::GetThreadProperty<bool>("VarUI_AdjustStage")) {
-                    auto* stage = const_cast<Registry::Stage*>(scene->GetStageByID(activeStage->id));
-                    if (stage && posIdx < stage->positions.size())
-                        stage->positions[posIdx].offset.SetOffset(value, axis);
+                    auto* stage = const_cast<Registry::Animation::Stage*>(scene->GetStageById(RE::BSFixedString{ activeStage->GetId().data() }));
+                    if (stage && posIdx < stage->GetPositions().size())
+                        stage->GetPositions()[posIdx].GetOffset().SetOffset(value, axis);
                 } else {
-                    scene->ForEachStage([&](Registry::Stage* st) {
-                        if (posIdx < st->positions.size())
-                            st->positions[posIdx].offset.SetOffset(value, axis);
+                    scene->ForEachStage([&](Registry::Animation::Stage* st) {
+                        if (posIdx < st->GetPositions().size())
+                            st->GetPositions()[posIdx].GetOffset().SetOffset(value, axis);
                         return false;
                     });
                 }
@@ -306,15 +294,15 @@ namespace Thread
     {
         if (!activeScene || !activeStage)
             return;
-        Registry::Library::GetSingleton()->EditScene(activeScene, [&](Registry::Scene* scene) {
+        Registry::Library::GetSingleton()->EditScene(activeScene, [&](Registry::Animation::Scene* scene) {
             if (hasFurn) {
-                scene->furnitureOffset.ResetOffset();
+                scene->GetFurnitureOffset().ResetOffset();
                 baseCoordinates = center.offset.offset.ApplyReturn(center.GetRef());
-                scene->furnitureOffset.Apply(baseCoordinates);
+                scene->GetFurnitureOffset().Apply(baseCoordinates);
             }
-            scene->ForEachStage([](Registry::Stage* stage) {
-                for (auto&& pos : stage->positions) {
-                    pos.offset.ResetOffset();
+            scene->ForEachStage([](Registry::Animation::Stage* stage) {
+                for (auto&& pos : stage->GetPositions()) {
+                    pos.GetOffset().ResetOffset();
                 }
                 return false;
             });

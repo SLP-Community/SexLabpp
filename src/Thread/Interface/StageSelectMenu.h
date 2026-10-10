@@ -6,10 +6,10 @@ namespace Thread
     class Instance;
 }
 
-namespace Registry
+namespace Registry::Animation
 {
     struct Stage;
-    class Scene;
+    struct Scene;
 }
 
 namespace Thread::Interface
@@ -32,14 +32,14 @@ namespace Thread::Interface
       private:
         struct ChoiceOption
         {
-            const Registry::Stage* stage;
+            const Registry::Animation::Stage* stage;
             std::string prefix;
             std::string label;
         };
 
         struct GraphNode
         {
-            const Registry::Stage* stage;
+            const Registry::Animation::Stage* stage;
             float x{ 0.0f };
             float y{ 0.0f };
             int layer{ 0 };
@@ -73,7 +73,7 @@ namespace Thread::Interface
         // Branch-choice modal
         bool _choicePending{ false };
         std::vector<ChoiceOption> _choices;
-        const Registry::Stage* _choiceOrigin{ nullptr };
+        const Registry::Animation::Stage* _choiceOrigin{ nullptr };
         int _selectedChoiceIndex = 0;
         std::vector<float> _choiceScrollOffsets;
         double _choiceStartTime = 0.0;
@@ -81,7 +81,7 @@ namespace Thread::Interface
 
         // Graph view
         bool _graphOpen{ false };
-        const Registry::Scene* _graphScene{ nullptr };
+        const Registry::Animation::Scene* _graphScene{ nullptr };
         std::vector<GraphNode> _graphNodes;
         std::vector<GraphEdge> _graphEdges;
         int _graphCurrentIndex{ -1 };

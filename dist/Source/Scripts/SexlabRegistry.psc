@@ -92,23 +92,37 @@ String Function GetSceneName(String asID) native global
 ; Check if the given center can be used to animate this scene
 bool Function IsCompatibleCenter(String asID, ObjectReference akCenter) native global
 
-; Check if some given tag is part of a given scene
-bool Function IsSceneTag(String asID, String asTag) native global
-bool Function IsSceneTagA(String asID, String[] asTags) native global
-; Check if some given tag is part of a given stage
-bool Function IsStageTag(String asID, String asStage, String asTag) native global
-bool Function IsStageTagA(String asID, String asStage, String[] asTags) native global
-; Check if some given tag is part of a given position
-bool Function IsPositionTag(String asID, String asStage, int n, String asTag) native global
-bool Function IsPositionTagA(String asID, String asStage, int n, String[] asTags) native global
 ; Get all tags of this Scene. Scene tags are a merged representation of all stage tags
-String[] Function GetSceneTags(String asID) native global
-; Get all of this stage's tags
-String[] Function GetStageTags(String asID, String asStage) native global
-; Get all of this position's tags
-String[] Function GetPositionTags(String asID, String asStage, int n) native global
+String[] Function GetSceneTags(String asSceneId) native global
 ; From a list of scenes, get the tags which are shared among all of them
-String[] Function GetCommonTags(String[] asIDs) native global
+String[] Function GetCommonTags(String[] asSceneIds) native global
+; Check if some given tag is part of a given scene
+bool Function HasSceneTag(String asSceneId, String asTag) native global
+bool Function HasSceneTagA(String asSceneId, String[] asTags) native global
+; Add a tag (annotation) to the given scene
+bool Function AddSceneTag(String asSceneId, String asTag) native global
+; Remove a tag (annotation) from the given scene
+bool Function RemoveSceneTag(String asSceneId, String asTag) native global
+
+; Get all of this stage's tags
+String[] Function GetStageTags(String asStageId) native global
+; Check if some given tag is part of a given stage
+bool Function HasStageTag(String asID, String asStage, String asTag) native global
+bool Function HasStageTagA(String asID, String asStage, String[] asTags) native global
+; Add a tag (annotation) to the given stage
+bool Function AddStageTag(String asStageId, String asStage, String asTag) native global
+; Remove a tag (annotation) from the given stage. Return true if the tag was successfully removed, false otherwise
+bool Function RemoveStageTag(String asStageId, String asStage, String asTag) native global
+
+; Get all of this position's tags
+String[] Function GetPositionTags(String asStageId, String asStage, int n) native global
+; Check if some given tag is part of a given position
+bool Function HasPositionTag(String asID, String asStage, int n, String asTag) native global
+bool Function HasPositionTagA(String asID, String asStage, int n, String[] asTags) native global
+; Add a tag (annotation) to the given position
+bool Function AddPositionTag(String asStageId, String asStage, int n, String asTag) native global
+; Remove a tag (annotation) from the given position
+bool Function RemovePositionTag(String asStageId, String asStage, int n, String asTag) native global
 
 ; --- Animation
 
@@ -129,8 +143,6 @@ String[] Function GetAllStages(String asID) native global
 String Function BranchTo(String asID, String asStage, int n) native global
 ; Get the number of outgoing edges from a given stage
 int Function GetNumBranches(String asID, String asStage) native global
-; return: None/Invalid - -1 | 0 - Root | 1 - Common Node | 2 - Sink
-int Function GetNodeType(String asID, String asStage) native global
 
 ; Get the shortest/longest path from the given stage to a sink
 ; Return value is a path from asStage (inclusive) to some sink: [asStage, ..., Sink]
@@ -216,25 +228,3 @@ Function SetStageOffset(String asID, String asStage, int n, float afValue, int a
 Function SetStageOffsetA(String asID, String asStage, int n, float[] afNewOffset) native global
 Function ResetStageOffset(String asID, String asStage, int n) native global
 Function ResetStageOffsetA(String asID, String asStage) native global
-
-; --- Scene Annotations
-
-; Check if a specific annotation exists for the given scene
-bool Function HasSceneAnnotation(String asID, String asTag) native global
-; Remove a specific annotation from the given scene
-Function RemoveSceneAnnotation(String asID, String asTag) native global
-; Add a specific annotation to the given scene
-Function AddSceneAnnotation(String asID, String asTag) native global
-; Get all annotations for the given scene
-String[] Function GetSceneAnnotations(String asID) native global
-
-; --- Position Annotations
-
-; Check if a specific annotation exists for the given position in the scene
-bool Function HasPositionAnnotation(String asID, int n, String asTag) native global
-; Remove a specific annotation from the given position in the scene
-Function RemovePositionAnnotation(String asID, int n, String asTag) native global
-; Add a specific annotation to the given position in the scene
-Function AddPositionAnnotation(String asID, int n, String asTag) native global
-; Get all annotations for the given position in the scene
-String[] Function GetPositionAnnotations(String asID, int n) native global

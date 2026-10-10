@@ -13,11 +13,11 @@ namespace Thread::Interaction::NiSurface
         constexpr float MINIMUM_SAMPLE_TIME{ 0.0001f };
     }
 
-    Scene::Scene(const std::vector<RE::Actor*>& a_positions, const Registry::Scene* a_scene)
+    Scene::Scene(const std::vector<RE::Actor*>& a_positions, const ::Registry::Animation::Scene* a_scene)
     {
         positions.reserve(a_positions.size());
         for (std::size_t i = 0; i < a_positions.size(); ++i) {
-            positions.emplace_back(a_positions[i], a_scene->GetNthPosition(i)->data.GetSex().get());
+            positions.emplace_back(a_positions[i], a_scene->GetNthPosition(i).get().GetSex().get());
         }
     }
 
@@ -219,7 +219,7 @@ namespace Thread::Interaction::NiSurface
         return where != scenes.end() ? where->second : nullptr;
     }
 
-    std::shared_ptr<Scene> Manager::Register(RE::FormID a_id, std::vector<RE::Actor*> a_positions, const Registry::Scene* a_scene) noexcept
+    std::shared_ptr<Scene> Manager::Register(RE::FormID a_id, std::vector<RE::Actor*> a_positions, const ::Registry::Animation::Scene* a_scene) noexcept
     {
         try {
             std::scoped_lock lock{ _mutex };

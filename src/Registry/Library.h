@@ -2,7 +2,7 @@
 
 #include <shared_mutex>
 
-#include "Define/Animation.h"
+#include "Animation/AnimPack.h"
 #include "Define/Expression.h"
 #include "Define/Fragment.h"
 #include "Define/Furniture.h"
@@ -51,18 +51,19 @@ namespace Registry
         };
 
       public:
-        _NODISCARD std::vector<const Scene*> LookupScenes(const std::vector<RE::Actor*>& a_actors, const std::vector<std::string_view>& tags, const std::vector<RE::Actor*>& a_submissives) const;
-        _NODISCARD std::vector<const Scene*> GetByTags(int32_t a_positions, const std::vector<std::string_view>& a_tags) const;
+        _NODISCARD std::vector<const Animation::Scene*> LookupScenes(const std::vector<RE::Actor*>& a_actors, const std::vector<std::string_view>& tags, const std::vector<RE::Actor*>& a_submissives) const;
+        _NODISCARD std::vector<const Animation::Scene*> GetByTags(int32_t a_positions, const std::vector<std::string_view>& a_tags) const;
 
-        _NODISCARD const AnimPackage* GetPackageFromScene(const Scene* a_scene) const;
-        _NODISCARD const Scene* GetSceneById(const RE::BSFixedString& a_id) const;
-        _NODISCARD const Scene* GetSceneByName(const RE::BSFixedString& a_id) const;
+        _NODISCARD const Animation::AnimPack* GetPackageFromScene(const Animation::Scene* a_scene) const;
+        _NODISCARD const Animation::Scene* GetSceneById(const RE::BSFixedString& a_id) const;
+        _NODISCARD const Animation::Scene* GetSceneByName(const RE::BSFixedString& a_id) const;
+        _NODISCARD const Animation::Stage* GetStageById(const RE::BSFixedString& a_id) const;
         _NODISCARD size_t GetSceneCount() const;
 
-        bool EditScene(const RE::BSFixedString& a_id, const std::function<void(Scene*)>& a_func);
-        void EditScene(const Registry::Scene* a_scene, const std::function<void(Scene*)>& a_func);
-        bool ForEachPackage(std::function<bool(const AnimPackage*)> a_visitor) const;
-        bool ForEachScene(std::function<bool(const Scene*)> a_visitor) const;
+        bool EditScene(const RE::BSFixedString& a_id, const std::function<void(Animation::Scene*)>& a_func);
+        void EditScene(const Registry::Animation::Scene* a_scene, const std::function<void(Animation::Scene*)>& a_func);
+        bool ForEachPackage(std::function<bool(const Animation::AnimPack*)> a_visitor) const;
+        bool ForEachScene(std::function<bool(const Animation::Scene*)> a_visitor) const;
 
       public:
         std::vector<RE::BSFixedString> GetAllVoiceIds(RaceKey a_race) const;
@@ -133,9 +134,9 @@ namespace Registry
 
       private:
         mutable std::shared_mutex _mScenes{};
-        std::vector<std::unique_ptr<AnimPackage>> packages;
-        std::map<RE::BSFixedString, Scene*, FixedStringCompare> sceneMap;             // SceneId -> Scene
-        std::unordered_map<ActorFragment::FragmentHash, std::vector<Scene*>> scenes;  // Hashes -> Scenes
+        std::vector<std::unique_ptr<Animation::AnimPack>> packages;
+        std::map<RE::BSFixedString, Animation::Scene*, FixedStringCompare> sceneMap;             // SceneId -> Scene
+        std::unordered_map<ActorFragment::FragmentHash, std::vector<Animation::Scene*>> scenes;  // Hashes -> Scenes
 
         mutable std::shared_mutex _mVoice{};
         std::map<RE::BSFixedString, Voice, FixedStringCompare> voices{};

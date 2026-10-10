@@ -69,18 +69,18 @@ namespace Thread::Interface
         if (!scene || !stage)
             return false;
 
-        const auto* adjacent = scene->GetAdjacentStages(stage);
-        if (!adjacent || adjacent->size() < 2) {
+        const auto adjacent = stage->GetOutgoingEdges();
+        if (adjacent.size() < 2) {
             return false;
         }
 
         _choices.clear();
-        _choices.reserve(adjacent->size());
+        _choices.reserve(adjacent.size());
         int choiceIdx = 1;
-        for (const auto* next : *adjacent) {
-            std::string navText = !next->navtext.empty() ?
-                                      ResolveNavTextPlaceholders(next->navtext, inst->GetActors()) :
-                                      next->id;
+        for (const auto* next : adjacent) {
+            std::string navText = !next->GetNavigationText().empty() ?
+                                      ResolveNavTextPlaceholders(next->GetNavigationText(), inst->GetActors()) :
+                                      std::string{ next->GetId() };
             std::string prefix = std::to_string(choiceIdx++) + ".  ";
             _choices.push_back({ next, std::move(prefix), std::move(navText) });
         }
@@ -196,7 +196,7 @@ namespace Thread::Interface
         if (allStages.empty())
             return;
 
-        std::unordered_map<const Registry::Stage*, int> indexOf;
+        std::unordered_map<const Registry::Animation::Stage*, int> indexOf;
         indexOf.reserve(allStages.size());
         _graphNodes.reserve(allStages.size());
         for (const auto* s : allStages) {
@@ -209,7 +209,7 @@ namespace Thread::Interface
         std::vector<int> queue;
         queue.reserve(_graphNodes.size());
 
-        const auto* root = scene->GetStageByID(RE::BSFixedString{});
+        const auto* root = scene->GetStageById(RE::BSFixedString{});
         if (root) {
             if (const auto it = indexOf.find(root); it != indexOf.end()) {
                 layerOf[it->second] = 0;
@@ -220,10 +220,8 @@ namespace Thread::Interface
         for (size_t head = 0; head < queue.size(); ++head) {
             const int cur = queue[head];
             const auto* curStage = _graphNodes[cur].stage;
-            const auto* adjacent = scene->GetAdjacentStages(curStage);
-            if (!adjacent)
-                continue;
-            for (const auto* next : *adjacent) {
+            const auto adjacent = curStage->GetOutgoingEdges();
+            for (const auto* next : adjacent) {
                 const auto it = indexOf.find(next);
                 if (it == indexOf.end())
                     continue;
@@ -542,7 +540,7 @@ namespace Thread::Interface
         const float nameFontSize = scale.TextPx(UI::Theme::FontSize.sectionHeader);
         const float namePadH = scale.Px(8.0f);
         const float namePadSide = scale.Px(12.0f);
-        const char* sceneName = _graphScene ? _graphScene->name.c_str() : "Scene Graph";
+        const char* sceneName = _graphScene ? _graphScene->GetName().data() : "Scene Graph";
 
         SetWindowFontSize(nameFontSize);
         const float nameAvailW = viewW * 0.50f - namePadSide * 2.0f;
@@ -676,20 +674,20 @@ namespace Thread::Interface
                 graphClickedIndex = i;
 
             const bool isCurrent = i == _graphCurrentIndex;
-            const auto nodeType = _graphScene ? _graphScene->GetStageNodeType(node.stage) : Registry::Scene::NodeType::None;
-            const auto fill = isCurrent                                   ? UI::Theme::Color.accent :
-                              hovered                                     ? UI::Theme::Color.borderHovered :
-                              nodeType == Registry::Scene::NodeType::Sink ? UI::Theme::Color.textMuted :
-                                                                            UI::Theme::Color.buttonIdle;
+            const auto isSinkNode = _graphScene && node.stage && node.stage->GetOutgoingEdges().empty();
+            const auto fill = isCurrent  ? UI::Theme::Color.accent :
+                              hovered    ? UI::Theme::Color.borderHovered :
+                              isSinkNode ? UI::Theme::Color.textMuted :
+                                           UI::Theme::Color.buttonIdle;
 
             ImGuiMCP::ImDrawListManager::AddCircleFilled(dl, p, radius, fill, 20);
 
             // Show labels when toggle is on (always current + hovered regardless).
             const bool showLabel = _graphShowLabels || isCurrent || hovered;
             if (showLabel) {
-                std::string label = !node.stage->navtext.empty() ?
-                                        ResolveNavTextPlaceholders(node.stage->navtext, inst->GetActors()) :
-                                        node.stage->id;
+                std::string label = !node.stage->GetNavigationText().empty() ?
+                                        ResolveNavTextPlaceholders(node.stage->GetNavigationText(), inst->GetActors()) :
+                                        std::string{ node.stage->GetId() };
                 SetWindowFontSize(scale.TextPx(UI::Theme::FontSize.metadata) * 0.88f);
                 const ImGuiMCP::ImVec2 labelSz = ImGuiMCP::CalcTextSize(label.c_str());
                 DrawTextShadowed(dl, ImGuiMCP::ImVec2{ p.x - labelSz.x * 0.5f, p.y + radius + scale.Px(2.0f) },
@@ -708,7 +706,7 @@ namespace Thread::Interface
             const auto* clickedStage = _graphNodes[graphClickedIndex].stage;
             if (_graphScene && clickedStage) {
                 Script::DispatchMethodCall(script, "ToggleVisibilitySceneGraph", Script::CallbackPtr{}, -1);
-                Script::DispatchMethodCall(script, "SkipTo", Script::CallbackPtr{}, std::string{ clickedStage->id });
+                Script::DispatchMethodCall(script, "SkipTo", Script::CallbackPtr{}, std::string{ clickedStage->GetId() });
                 return;
             }
         }

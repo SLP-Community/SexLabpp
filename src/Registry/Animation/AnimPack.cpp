@@ -1,4 +1,4 @@
-﻿#include "AnimPack.h"
+#include "AnimPack.h"
 
 #include "Registry/Animation/Legacy/Animation.h"
 #include "Registry/Util/Decode.h"

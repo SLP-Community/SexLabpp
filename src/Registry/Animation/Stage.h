@@ -12,10 +12,6 @@ namespace Registry::Animation
         struct Stage;
     }
 
-    struct Stage;
-    using std::shared_ptr<Stage> = std::shared_ptr<Stage>;
-    using StageRef = std::weak_ptr<Stage>;
-
     struct Stage
     {
       public:
@@ -28,9 +24,11 @@ namespace Registry::Animation
 
         _NODISCARD std::string_view GetId() const { return id; }
 
+        _NODISCARD RE::BSFixedString GetAnimationEvent(size_t n) const;
         _NODISCARD std::vector<RE::BSFixedString> GetAnimationEvents() const;
+        _NODISCARD std::vector<Position>& GetPositions() { return positions; }
         _NODISCARD const std::vector<Position>& GetPositions() const { return positions; }
-        _NODISCARD const std::vector<StageRef>& GetOutgoingEdges() const { return outgoingEdges; }
+        _NODISCARD const std::vector<Stage*> GetOutgoingEdges() const;
 
         _NODISCARD TagData& GetTags() { return tags; }
         _NODISCARD const TagData& GetTags() const { return tags; }
@@ -46,7 +44,7 @@ namespace Registry::Animation
         std::string id{ "" };
         std::string_view eventHash{ "" };
         std::vector<Position> positions{};
-        std::vector<StageRef> outgoingEdges{};
+        std::vector<std::weak_ptr<Stage>> outgoingEdges{};
 
         TagData tags{};
         float fixedDuration{ 0.0f };

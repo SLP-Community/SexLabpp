@@ -142,12 +142,13 @@ namespace Registry
         std::erase_if(_annotations, [&](const auto& tag) { return !a_tags.HasTag(tag); });
     }
 
-    void TagData::RemoveAnnotation(const RE::BSFixedString& a_tag)
+    bool TagData::RemoveAnnotation(const RE::BSFixedString& a_tag) const
     {
         const auto where = std::find(_annotations.begin(), _annotations.end(), a_tag);
         if (where == _annotations.end())
-            return;
+            return false;
         _annotations.erase(where);
+        return true;
     }
 
     bool TagData::HasTag(Tag a_tag) const
@@ -195,11 +196,12 @@ namespace Registry
         return std::find(_annotations.begin(), _annotations.end(), a_tag) != _annotations.end();
     }
 
-    void TagData::AddAnnotation(RE::BSFixedString a_tag)
+    bool TagData::AddAnnotation(RE::BSFixedString a_tag) const
     {
         if (std::find(_annotations.begin(), _annotations.end(), a_tag) != _annotations.end())
-            return;
+            return false;
         _annotations.push_back(a_tag);
+        return true;
     }
 
     void TagData::ForEachExtra(std::function<bool(const std::string_view)> a_visitor) const
@@ -216,7 +218,8 @@ namespace Registry
         for (auto&& [tag_str, tag] : TagTable)
             if (_basetags.all(tag))
                 ret.push_back(tag_str);
-
+        for (auto&& tag : _annotations)
+            ret.push_back(tag);
         return ret;
     }
 

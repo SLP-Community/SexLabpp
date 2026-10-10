@@ -1,6 +1,7 @@
 #include "Scene.h"
 
 #include <unordered_map>
+#include <unordered_set>
 
 #include "Registry/Animation/Legacy/Animation.h"
 #include "Registry/Library.h"
@@ -12,7 +13,7 @@ namespace Registry::Animation
         throw std::runtime_error("Scene binary constructor is no longer implementable with the new shared-stage structure");
     }
 
-    Scene::Scene(const Legacy::Scene& a_legacyScene, std::string_view a_hash, std::vector<StagePtr>* a_ownedStages) :
+    Scene::Scene(const Legacy::Scene& a_legacyScene, std::string_view a_hash, std::vector<std::shared_ptr<Stage>>* a_ownedStages) :
       id(a_legacyScene.id),
       name(a_legacyScene.name),
       tags(a_legacyScene.tags),
@@ -30,7 +31,7 @@ namespace Registry::Animation
             positions.emplace_back(legacyPosition);
         }
 
-        std::unordered_map<const Legacy::Stage*, StagePtr> legacyToStage{};
+        std::unordered_map<const Legacy::Stage*, std::shared_ptr<Stage>> legacyToStage{};
         legacyToStage.reserve(a_legacyScene.stages.size());
         for (auto&& legacyStage : a_legacyScene.stages) {
             auto stage = std::make_shared<Stage>(*legacyStage, a_hash);
@@ -100,19 +101,23 @@ namespace Registry::Animation
         return std::ranges::any_of(positions, [](auto&& info) { return !info.IsHuman(); });
     }
 
-    uint32_t Scene::CountSubmissives() const
+    uint32_t Scene::GetNumPositions() const
+    {
+        return static_cast<uint32_t>(positions.size());
+    }
+
+
+    uint32_t Scene::GetNumSubmissives() const
     {
         return static_cast<uint32_t>(std::ranges::count_if(positions, [](auto&& info) { return info.IsSubmissive(); }));
     }
 
-    const PositionMetaData* Scene::GetNthPosition(size_t n) const
+    const PositionMetaData& Scene::GetNthPosition(size_t n) const
     {
-        return &positions.at(n);
-    }
-
-    uint32_t Scene::CountPositions() const
-    {
-        return static_cast<uint32_t>(positions.size());
+        if (n >= positions.size()) {
+            throw std::out_of_range(std::format("Position index {} out of range for scene '{}'", n, id));
+        }
+        return positions[n];
     }
 
     bool Scene::IsEnabled() const
@@ -292,8 +297,7 @@ namespace Registry::Animation
     {
         std::vector<const Stage*> ret{};
         ForEachStage(start.lock().get(), [&](const Stage* stage) {
-            const auto hasLiveOutgoing = std::ranges::any_of(stage->GetOutgoingEdges(), [](const auto& edge) { return !edge.expired(); });
-            if (!hasLiveOutgoing) {
+            if (stage->GetOutgoingEdges().empty()) {
                 ret.push_back(stage);
             }
             return false;
@@ -359,9 +363,7 @@ namespace Registry::Animation
             }
 
             for (auto&& edge : stage->GetOutgoingEdges()) {
-                if (const auto next = edge.lock(); next) {
-                    stack.push(next.get());
-                }
+                stack.push(edge);
             }
         }
     }
@@ -390,9 +392,7 @@ namespace Registry::Animation
             }
 
             for (auto&& edge : stage->GetOutgoingEdges()) {
-                if (const auto next = edge.lock(); next) {
-                    stack.push(next.get());
-                }
+                stack.push(edge);
             }
         }
     }

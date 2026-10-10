@@ -93,9 +93,9 @@ namespace Thread::Interface
 
         const Registry::Coordinate* offset = nullptr;
         if (a_target.isCenter) {
-            offset = &scene->furnitureOffset.GetOffset();
-        } else if (a_target.positionIndex < stage->positions.size()) {
-            offset = &stage->positions[a_target.positionIndex].offset.GetOffset();
+            offset = &scene->GetFurnitureOffset().GetOffset();
+        } else if (a_target.positionIndex < stage->GetPositions().size()) {
+            offset = &stage->GetPositions()[a_target.positionIndex].GetOffset().GetOffset();
         }
         if (!offset)
             return;

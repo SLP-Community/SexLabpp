@@ -14,14 +14,23 @@ namespace Papyrus::SexLabRegistry
     }
 
 #define STAGE(argRet)                                    \
-    const auto stage = scene->GetStageByID(a_stage);     \
+    SCENE(argRet);                                       \
+    const auto stage = scene->GetStageById(a_stage);     \
     if (!stage) {                                        \
         a_vm->TraceStack("Invalid stage id", a_stackID); \
         return argRet;                                   \
     }
 
 #define POSITION(argRet)                                     \
-    if (n < 0 || n >= scene->positions.size()) {             \
+    const auto positions = stage->GetPositions();            \
+    if (n < 0 || static_cast<size_t>(n) >= positions.size()) { \
+        a_vm->TraceStack("Invalid position idx", a_stackID); \
+        return argRet;                                       \
+    }                                                        \
+    const auto position = positions[n];
+
+#define POSITION_META(argRet)                                \
+    if (n < 0 || n >= scene->GetPositions().size()) {        \
         a_vm->TraceStack("Invalid position idx", a_stackID); \
         return argRet;                                       \
     }
@@ -209,12 +218,12 @@ namespace Papyrus::SexLabRegistry
             if (a_center) {
                 const auto details = lib->GetFurnitureDetails(a_center);
                 if (details) {
-                    std::erase_if(scenes, [&](const Registry::Scene* a_scene) {
+                    std::erase_if(scenes, [&](const Registry::Animation::Scene* a_scene) {
                         return !a_scene->IsCompatibleFurniture(details);
                     });
                 }
             } else if (a_furniturepref == FurniturePreference::Prefer) {
-                const auto where = std::remove_if(scenes.begin(), scenes.end(), [&](const Registry::Scene* a_scene) {
+                const auto where = std::remove_if(scenes.begin(), scenes.end(), [&](const Registry::Animation::Scene* a_scene) {
                     return !a_scene->RequiresFurniture();
                 });
                 if (where != scenes.begin()) {
@@ -223,7 +232,7 @@ namespace Papyrus::SexLabRegistry
                     logger::info("Validating Center; Prefering furnitures but no furniture animations in set");
                 }
             } else if (a_furniturepref == FurniturePreference::Disallow) {
-                std::erase_if(scenes, [&](const Registry::Scene* a_scene) {
+                std::erase_if(scenes, [&](const Registry::Animation::Scene* a_scene) {
                     return a_scene->RequiresFurniture();
                 });
             }
@@ -232,7 +241,7 @@ namespace Papyrus::SexLabRegistry
         std::vector<RE::BSFixedString> ret{};
         ret.reserve(scenes.size());
         for (auto&& scene : scenes)
-            ret.push_back(scene->id);
+            ret.push_back(RE::BSFixedString{ scene->GetId().data() });
         return ret;
     }
 
@@ -322,7 +331,7 @@ namespace Papyrus::SexLabRegistry
     RE::BSFixedString GetSceneByName(RE::StaticFunctionTag*, RE::BSFixedString a_name)
     {
         auto ret = Registry::Library::GetSingleton()->GetSceneByName(a_name);
-        return ret ? ret->id : "";
+        return ret ? RE::BSFixedString{ ret->GetId().data() } : "";
     }
 
     bool SortBySceneA(STATICARGS, RE::reference_array<RE::Actor*> a_positions, std::vector<RE::Actor*> a_victims, std::string a_sceneid)
@@ -432,19 +441,19 @@ namespace Papyrus::SexLabRegistry
     bool StageExists(STATICARGS, RE::BSFixedString a_id, RE::BSFixedString a_stage)
     {
         SCENE(false);
-        return scene->GetStageByID(a_stage) != nullptr;
+        return scene->GetStageById(a_stage) != nullptr;
     }
 
     bool IsSceneEnabled(STATICARGS, RE::BSFixedString a_id)
     {
         SCENE(false);
-        return scene->enabled;
+        return scene->IsEnabled();
     }
 
     void SetSceneEnabled(STATICARGS, RE::BSFixedString a_id, bool a_enabled)
     {
         const auto foundScene = Registry::Library::GetSingleton()->EditScene(a_id, [&](auto scene) {
-            scene->enabled = a_enabled;
+            scene->SetEnabled(a_enabled);
         });
         if (!foundScene) {
             a_vm->TraceStack("Invalid scene id", a_stackID);
@@ -455,7 +464,7 @@ namespace Papyrus::SexLabRegistry
     RE::BSFixedString GetSceneName(STATICARGS, RE::BSFixedString a_id)
     {
         SCENE("");
-        return scene->name;
+        return RE::BSFixedString{ scene->GetName().data() };
     }
 
     bool IsCompatibleCenter(STATICARGS, RE::BSFixedString a_id, RE::TESObjectREFR* a_center)
@@ -469,71 +478,10 @@ namespace Papyrus::SexLabRegistry
         return scene->IsCompatibleFurniture(details);
     }
 
-    bool IsSceneTag(STATICARGS, RE::BSFixedString a_id, RE::BSFixedString a_tag)
-    {
-        SCENE(false);
-        return scene->tags.HasTag(a_tag);
-    }
-
-    bool IsSceneTagA(STATICARGS, RE::BSFixedString a_id, std::vector<std::string_view> a_tags)
-    {
-        SCENE(false);
-        const auto details = Registry::TagDetails(a_tags);
-        return scene->IsCompatibleTags(details);
-    }
-
-    bool IsStageTag(STATICARGS, RE::BSFixedString a_id, RE::BSFixedString a_stage, RE::BSFixedString a_tag)
-    {
-        SCENE(false);
-        STAGE(false);
-        return stage->tags.HasTag(a_tag);
-    }
-
-    bool IsStageTagA(STATICARGS, RE::BSFixedString a_id, RE::BSFixedString a_stage, std::vector<std::string_view> a_tags)
-    {
-        SCENE(false);
-        STAGE(false);
-        const auto details = Registry::TagDetails{ a_tags };
-        return details.MatchTags(stage->tags);
-    }
-
-    bool IsPositionTag(STATICARGS, RE::BSFixedString a_id, RE::BSFixedString a_stage, int n, RE::BSFixedString a_tag)
-    {
-        SCENE(false);
-        STAGE(false);
-        POSITION(false);
-        const auto& tags = stage->positions[n].tags;
-        return std::find(tags.begin(), tags.end(), a_tag) != tags.end();
-    }
-
-    bool IsPositionTagA(STATICARGS, RE::BSFixedString a_id, RE::BSFixedString a_stage, int n, std::vector<std::string_view> a_tags)
-    {
-        SCENE(false);
-        STAGE(false);
-        POSITION(false);
-        const auto details = Registry::TagDetails{ a_tags };
-        return details.MatchTags(stage->positions[n].tags);
-    }
-
     std::vector<RE::BSFixedString> GetSceneTags(STATICARGS, RE::BSFixedString a_id)
     {
         SCENE({});
-        return scene->tags.AsVector();
-    }
-
-    std::vector<RE::BSFixedString> GetStageTags(STATICARGS, RE::BSFixedString a_id, RE::BSFixedString a_stage)
-    {
-        SCENE({});
-        STAGE({});
-        return stage->tags.AsVector();
-    }
-
-    std::vector<RE::BSFixedString> GetPositionTags(STATICARGS, RE::BSFixedString a_id, RE::BSFixedString a_stage, int n)
-    {
-        SCENE({});
-        STAGE({});
-        POSITION({});
-        return stage->positions[n].tags;
+        return scene->GetTags().AsVector();
     }
 
     std::vector<RE::BSFixedString> GetCommonTags(STATICARGS, std::vector<RE::BSFixedString> a_ids)
@@ -549,34 +497,153 @@ namespace Papyrus::SexLabRegistry
             }
             if (first) {
                 first = false;
-                ret.AddTag(scene->tags);
+                ret.AddTag(scene->GetTags());
             } else {
-                ret.IntersectTags(scene->tags);
+                ret.IntersectTags(scene->GetTags());
             }
         }
         return ret.AsVector();
     }
 
+    bool HasSceneTag(STATICARGS, RE::BSFixedString a_id, RE::BSFixedString a_tag)
+    {
+        SCENE(false);
+        return scene->GetTags().HasTag(a_tag);
+    }
+
+    bool HasSceneTagA(STATICARGS, RE::BSFixedString a_id, std::vector<std::string_view> a_tags)
+    {
+        SCENE(false);
+        const auto details = Registry::TagDetails(a_tags);
+        return scene->IsCompatibleTags(details);
+    }
+
+    bool AddSceneTag(STATICARGS, RE::BSFixedString a_id, RE::BSFixedString a_tag)
+    {
+        return Registry::Library::GetSingleton()->EditScene(a_id, [&](auto scene) {
+            scene->GetTags().AddAnnotation(a_tag);
+        });
+    }
+
+    bool RemoveSceneTag(STATICARGS, RE::BSFixedString a_id, RE::BSFixedString a_tag)
+    {
+        return Registry::Library::GetSingleton()->EditScene(a_id, [&](auto scene) {
+            scene->GetTags().RemoveAnnotation(a_tag);
+        });
+    }
+
+    std::vector<RE::BSFixedString> GetStageTags(STATICARGS, RE::BSFixedString a_id, RE::BSFixedString a_stage)
+    {
+        STAGE({});
+        return stage->GetTags().AsVector();
+    }
+
+    bool HasStageTag(STATICARGS, RE::BSFixedString a_id, RE::BSFixedString a_stage, RE::BSFixedString a_tag)
+    {
+        STAGE(false);
+        return stage->GetTags().HasTag(a_tag);
+    }
+
+    bool HasStageTagA(STATICARGS, RE::BSFixedString a_id, RE::BSFixedString a_stage, std::vector<std::string_view> a_tags)
+    {
+        STAGE(false);
+        const auto details = Registry::TagDetails{ a_tags };
+        return details.MatchTags(stage->GetTags());
+    }
+
+    bool AddStageTag(STATICARGS, RE::BSFixedString a_id, RE::BSFixedString a_stage, RE::BSFixedString a_tag)
+    {
+        return Registry::Library::GetSingleton()->EditScene(a_id, [&](auto scene) {
+            const auto stage = scene->GetStageById(a_stage);
+            if (!stage) {
+                return;
+            }
+            stage->GetTags().AddAnnotation(a_tag);
+        });
+    }
+
+    bool RemoveStageTag(STATICARGS, RE::BSFixedString a_id, RE::BSFixedString a_stage, RE::BSFixedString a_tag)
+    {
+        return Registry::Library::GetSingleton()->EditScene(a_id, [&](auto scene) {
+            const auto stage = scene->GetStageById(a_stage);
+            if (!stage) {
+                return;
+            }
+            stage->GetTags().RemoveAnnotation(a_tag);
+        });
+    }
+
+    std::vector<RE::BSFixedString> GetPositionTags(STATICARGS, RE::BSFixedString a_id, RE::BSFixedString a_stage, int n)
+    {
+        STAGE({});
+        POSITION({});
+        return position.GetTags().AsVector();
+    }
+
+    bool HasPositionTag(STATICARGS, RE::BSFixedString a_id, RE::BSFixedString a_stage, int n, RE::BSFixedString a_tag)
+    {
+        STAGE(false);
+        POSITION(false);
+        return position.GetTags().HasTag(a_tag);
+    }
+
+    bool HasPositionTagA(STATICARGS, RE::BSFixedString a_id, RE::BSFixedString a_stage, int n, std::vector<std::string_view> a_tags)
+    {
+        STAGE(false);
+        POSITION(false);
+        const auto details = Registry::TagDetails{ a_tags };
+        return details.MatchTags(position.GetTags());
+    }
+
+    bool AddPositionTag(STATICARGS, RE::BSFixedString a_id, RE::BSFixedString a_stage, int n, RE::BSFixedString a_tag)
+    {
+        return Registry::Library::GetSingleton()->EditScene(a_id, [&](auto scene) {
+            const auto stage = scene->GetStageById(a_stage);
+            if (!stage) {
+                return;
+            }
+            if (n < 0 || static_cast<size_t>(n) >= stage->GetPositions().size()) {
+                return;
+            }
+            stage->GetPositions()[n].GetTags().AddAnnotation(a_tag);
+        });
+    }
+
+    bool RemovePositionTag(STATICARGS, RE::BSFixedString a_id, RE::BSFixedString a_stage, int n, RE::BSFixedString a_tag)
+    {
+        return Registry::Library::GetSingleton()->EditScene(a_id, [&](auto scene) {
+            const auto stage = scene->GetStageById(a_stage);
+            if (!stage) {
+                return;
+            }
+            if (n < 0 || static_cast<size_t>(n) >= stage->GetPositions().size()) {
+                return;
+            }
+            stage->GetPositions()[n].GetTags().RemoveAnnotation(a_tag);
+        });
+    }
+
     RE::BSFixedString GetAnimationEvent(STATICARGS, RE::BSFixedString a_id, RE::BSFixedString a_stage, int n)
     {
-        SCENE("");
         STAGE("");
-        POSITION("");
-        return scene->GetNthAnimationEvent(stage, n);
+        if (n < 0 || static_cast<size_t>(n) >= stage->GetPositions().size()) {
+            a_vm->TraceStack("GetAnimationEvent: Index out of bounds", 1);
+            return "";
+        }
+        return stage->GetAnimationEvent(n);
     }
 
     std::vector<RE::BSFixedString> GetAnimationEventA(STATICARGS, RE::BSFixedString a_id, RE::BSFixedString a_stage)
     {
-        SCENE({});
         STAGE({});
-        return scene->GetAnimationEvents(stage);
+        return stage->GetAnimationEvents();
     }
 
     RE::BSFixedString GetStartAnimation(STATICARGS, RE::BSFixedString a_id)
     {
         SCENE("");
-        const auto start = scene->GetStageByID("");
-        return start ? start->id : "";
+        const auto start = scene->GetStageById("");
+        return start ? RE::BSFixedString{ start->GetId().data() } : "";
     }
 
     int32_t GetNumStages(STATICARGS, RE::BSFixedString a_id)
@@ -588,57 +655,48 @@ namespace Papyrus::SexLabRegistry
     std::vector<RE::BSFixedString> GetAllstages(STATICARGS, RE::BSFixedString a_id)
     {
         SCENE({});
-        const auto stages = scene->GetAllStages();
         std::vector<RE::BSFixedString> ret{};
-        ret.reserve(stages.size());
-        for (auto&& stage : stages) {
-            ret.push_back(stage->id);
-        }
+        scene->ForEachStage([&](const auto& stage) {
+            ret.push_back(RE::BSFixedString{ stage->GetId().data() });
+            return false;
+        });
         return ret;
     }
 
     RE::BSFixedString BranchTo(STATICARGS, RE::BSFixedString a_id, RE::BSFixedString a_stage, int n)
     {
-        SCENE("");
         STAGE("");
-        const auto ret = scene->GetNthAdjacentStage(stage, n);
-        return ret ? ret->id : "";
+        const auto& edges = stage->GetOutgoingEdges();
+        if (n < 0 || static_cast<size_t>(n) >= edges.size()) {
+            return "";
+        }
+        return RE::BSFixedString{ edges[n]->GetId().data() };
     }
 
     int32_t GetNumBranches(STATICARGS, RE::BSFixedString a_id, RE::BSFixedString a_stage)
     {
-        SCENE(0);
         STAGE(0);
-        return static_cast<int32_t>(scene->GetNumAdjacentStages(stage));
-    }
-
-    int32_t GetNodeType(STATICARGS, RE::BSFixedString a_id, RE::BSFixedString a_stage)
-    {
-        SCENE(static_cast<int32_t>(Registry::Scene::NodeType::None));
-        STAGE(static_cast<int32_t>(Registry::Scene::NodeType::None));
-        return static_cast<int32_t>(scene->GetStageNodeType(stage));
+        return static_cast<int32_t>(stage->GetOutgoingEdges().size());
     }
 
     std::vector<RE::BSFixedString> GetPathMin(STATICARGS, RE::BSFixedString a_id, RE::BSFixedString a_stage)
     {
-        SCENE({});
         STAGE({});
-        const auto path = scene->GetShortestPath(stage);
+        const auto path = stage->GetShortestPath();
         std::vector<RE::BSFixedString> ret{};
         for (auto&& p : path) {
-            ret.push_back(p->id);
+            ret.push_back(RE::BSFixedString{ p->GetId().data() });
         }
         return ret;
     }
 
     std::vector<RE::BSFixedString> GetPathMax(STATICARGS, RE::BSFixedString a_id, RE::BSFixedString a_stage)
     {
-        SCENE({});
         STAGE({});
-        const auto path = scene->GetLongestPath(stage);
+        const auto path = stage->GetLongestPath();
         std::vector<RE::BSFixedString> ret{};
         for (auto&& p : path) {
-            ret.push_back(p->id);
+            ret.push_back(RE::BSFixedString{ p->GetId().data() });
         }
         return ret;
     }
@@ -646,17 +704,17 @@ namespace Papyrus::SexLabRegistry
     int32_t GetActorCount(STATICARGS, RE::BSFixedString a_id)
     {
         SCENE(false);
-        return scene->CountPositions();
+        return scene->GetNumPositions();
     }
 
     bool IsSimilarPosition(STATICARGS, RE::BSFixedString a_id, int n, int m)
     {
         SCENE(false);
-        if (n < 0 || m < 0 || n >= scene->positions.size() || m >= scene->positions.size()) {
+        if (n < 0 || m < 0 || n >= scene->GetPositions().size() || m >= scene->GetPositions().size()) {
             a_vm->TraceStack("Invalid position idx", a_stackID);
             return false;
         }
-        return scene->positions[n].CanFillPosition(scene->positions[m]);
+        return scene->GetPositions()[n].CanFillPosition(scene->GetPositions()[m]);
     }
 
     bool CanFillPosition(STATICARGS, RE::BSFixedString a_id, int n, RE::Actor* a_actor)
@@ -666,8 +724,8 @@ namespace Papyrus::SexLabRegistry
             return false;
         }
         SCENE(false);
-        POSITION(false);
-        return scene->positions[n].CanFillPosition(a_actor);
+        POSITION_META(false);
+        return scene->GetPositions()[n].CanFillPosition(a_actor);
     }
 
     std::vector<RE::BSFixedString> GetFixedLengthStages(STATICARGS, RE::BSFixedString a_id)
@@ -676,41 +734,40 @@ namespace Papyrus::SexLabRegistry
         const auto stages = scene->GetFixedLengthStages();
         std::vector<RE::BSFixedString> ret{};
         for (auto&& stage : stages) {
-            ret.push_back(stage->id);
+            ret.push_back(RE::BSFixedString{ stage->GetId().data() });
         }
         return ret;
     }
 
     float GetFixedLength(STATICARGS, RE::BSFixedString a_id, RE::BSFixedString a_stage)
     {
-        SCENE(0);
         STAGE(0);
-        return stage->fixedlength / 1000.0f;
+        return stage->GetFixedDuration() / 1000.0f;
     }
 
     std::vector<RE::BSFixedString> GetClimaxStages(STATICARGS, RE::BSFixedString a_id, int32_t n)
     {
         SCENE({});
-        if (n >= scene->positions.size()) {
+        if (n >= scene->GetPositions().size()) {
             a_vm->TraceStack("Invalid position idx", a_stackID);
             return {};
         }
         const auto stages = scene->GetClimaxStages();
         std::vector<RE::BSFixedString> ret{};
         for (auto&& stage : stages) {
-            if (n == -1 || stage->positions[n].climax)
-                ret.push_back(stage->id);
+            if (n == -1 || stage->GetPositions()[n].IsClimax())
+                ret.push_back(RE::BSFixedString{ stage->GetId().data() });
         }
         return ret;
     }
 
     std::vector<int32_t> GetClimaxingActors(STATICARGS, RE::BSFixedString a_id, RE::BSFixedString a_stage)
     {
-        SCENE({});
         STAGE({});
         std::vector<int32_t> ret{};
-        for (int32_t i = 0; i < stage->positions.size(); i++) {
-            if (stage->positions[i].climax) {
+        const auto& stagePositions = stage->GetPositions();
+        for (int32_t i = 0; i < static_cast<int32_t>(stagePositions.size()); i++) {
+            if (stagePositions[i].IsClimax()) {
                 ret.push_back(i);
             }
         }
@@ -723,7 +780,7 @@ namespace Papyrus::SexLabRegistry
         const auto stages = scene->GetEndingStages();
         std::vector<RE::BSFixedString> ret{};
         for (auto&& stage : stages) {
-            ret.push_back(stage->id);
+            ret.push_back(RE::BSFixedString{ stage->GetId().data() });
         }
         return ret;
     }
@@ -731,16 +788,16 @@ namespace Papyrus::SexLabRegistry
     int32_t GetPositionSex(STATICARGS, RE::BSFixedString a_id, int n)
     {
         SCENE(0);
-        POSITION(0);
-        return static_cast<int32_t>(scene->positions[n].GetSexPapyrus());
+        POSITION_META(0);
+        return static_cast<int32_t>(scene->GetPositions()[n].GetSexPapyrus());
     }
 
     std::vector<int32_t> GetPositionSexA(STATICARGS, RE::BSFixedString a_id)
     {
         SCENE({});
         std::vector<int32_t> ret{};
-        ret.reserve(scene->positions.size());
-        for (auto&& position : scene->positions) {
+        ret.reserve(scene->GetPositions().size());
+        for (auto&& position : scene->GetPositions()) {
             const auto sex = static_cast<int32_t>(position.GetSexPapyrus());
             ret.push_back(sex);
         }
@@ -750,17 +807,17 @@ namespace Papyrus::SexLabRegistry
     int32_t GetRaceIDPosition(STATICARGS, RE::BSFixedString a_id, int n)
     {
         SCENE(0);
-        POSITION(0);
-        return static_cast<int32_t>(scene->positions[n].data.GetRace());
+        POSITION_META(0);
+        return static_cast<int32_t>(scene->GetPositions()[n].get().GetRace());
     }
 
     std::vector<int32_t> GetRaceIDPositionA(STATICARGS, RE::BSFixedString a_id)
     {
         SCENE({});
         std::vector<int32_t> ret{};
-        ret.reserve(scene->positions.size());
-        for (auto&& position : scene->positions) {
-            const auto race = static_cast<int32_t>(position.data.GetRace());
+        ret.reserve(scene->GetPositions().size());
+        for (auto&& position : scene->GetPositions()) {
+            const auto race = static_cast<int32_t>(position.get().GetRace());
             ret.push_back(race);
         }
         return ret;
@@ -769,17 +826,17 @@ namespace Papyrus::SexLabRegistry
     RE::BSFixedString GetRaceKeyPosition(STATICARGS, RE::BSFixedString a_id, int n)
     {
         SCENE("");
-        POSITION("");
-        return scene->positions[n].data.GetRace().AsString();
+        POSITION_META("");
+        return scene->GetPositions()[n].get().GetRace().AsString();
     }
 
     std::vector<RE::BSFixedString> GetRaceKeyPositionA(STATICARGS, RE::BSFixedString a_id)
     {
         SCENE({});
         std::vector<RE::BSFixedString> ret{};
-        ret.reserve(scene->positions.size());
-        for (auto&& position : scene->positions) {
-            const auto race = position.data.GetRace().AsString();
+        ret.reserve(scene->GetPositions().size());
+        for (auto&& position : scene->GetPositions()) {
+            const auto race = position.get().GetRace().AsString();
             ret.push_back(race);
         }
         return ret;
@@ -789,14 +846,14 @@ namespace Papyrus::SexLabRegistry
     {
         std::vector<float> argRet{ 0, 0, 0, 0 };
         SCENE(argRet);
-        return scene->furnitureOffset.GetOffset().AsVector();
+        return scene->GetFurnitureOffset().GetOffset().AsVector();
     }
 
     std::vector<float> GetSceneOffsetRaw(STATICARGS, RE::BSFixedString a_id)
     {
         std::vector<float> argRet{ 0, 0, 0, 0 };
         SCENE(argRet);
-        return scene->furnitureOffset.GetRawOffset().AsVector();
+        return scene->GetFurnitureOffset().GetRawOffset().AsVector();
     }
 
     void SetSceneOffset(STATICARGS, RE::BSFixedString a_id, float a_value, Registry::CoordinateType a_idx)
@@ -806,7 +863,7 @@ namespace Papyrus::SexLabRegistry
             return;
         }
         const auto& func = [&](auto scene) {
-            scene->furnitureOffset.SetOffset(a_value, a_idx);
+            scene->GetFurnitureOffset().SetOffset(a_value, a_idx);
         };
         const auto foundScene = Registry::Library::GetSingleton()->EditScene(a_id, func);
         if (!foundScene) {
@@ -823,7 +880,7 @@ namespace Papyrus::SexLabRegistry
         }
         const auto& func = [&](auto scene) {
             const Registry::Coordinate coordinate{ a_newoffset };
-            scene->furnitureOffset.SetOffset(coordinate);
+            scene->GetFurnitureOffset().SetOffset(coordinate);
         };
         const auto foundScene = Registry::Library::GetSingleton()->EditScene(a_id, func);
         if (!foundScene) {
@@ -835,7 +892,7 @@ namespace Papyrus::SexLabRegistry
     void ResetSceneOffset(STATICARGS, RE::BSFixedString a_id)
     {
         const auto foundScene = Registry::Library::GetSingleton()->EditScene(a_id, [&](auto scene) {
-            scene->furnitureOffset.ResetOffset();
+            scene->GetFurnitureOffset().ResetOffset();
         });
         if (!foundScene) {
             a_vm->TraceStack("Invalid scene id", a_stackID);
@@ -846,41 +903,39 @@ namespace Papyrus::SexLabRegistry
     std::vector<float> GetStageOffset(STATICARGS, RE::BSFixedString a_id, RE::BSFixedString a_stage, int n)
     {
         std::vector<float> argRet{ 0, 0, 0, 0 };
-        SCENE(argRet);
         STAGE(argRet);
         POSITION(argRet);
-        return stage->positions[n].offset.GetOffset().AsVector();
+        return position.GetOffset().GetOffset().AsVector();
     }
 
     std::vector<float> GetStageOffsetRaw(STATICARGS, RE::BSFixedString a_id, RE::BSFixedString a_stage, int n)
     {
         std::vector<float> argRet{ 0, 0, 0, 0 };
-        SCENE(argRet);
         STAGE(argRet);
         POSITION(argRet);
-        return stage->positions[n].offset.GetRawOffset().AsVector();
+        return position.GetOffset().GetRawOffset().AsVector();
     }
 
     void SetStageOffset(STATICARGS, RE::BSFixedString a_id, RE::BSFixedString a_stage, int n, float a_value, Registry::CoordinateType a_idx)
     {
         bool fouundScene = Registry::Library::GetSingleton()->EditScene(a_id, [&](auto scene) {
-            POSITION((void)0);
+            POSITION_META((void)0);
             if (a_idx < Registry::CoordinateType::X || a_idx >= Registry::CoordinateType::Total) {
                 a_vm->TraceStack("Invalid offset idx", a_stackID);
                 return;
             }
             if (a_stage.empty()) {
-                scene->ForEachStage([&](Registry::Stage* a_stage) {
-                    a_stage->positions[n].offset.SetOffset(a_value, a_idx);
+                scene->ForEachStage([&](Registry::Animation::Stage* a_stage) {
+                    a_stage->GetPositions()[n].GetOffset().SetOffset(a_value, a_idx);
                     return false;
                 });
             } else {
-                const auto stage = scene->GetStageByID(a_stage);
+                const auto stage = scene->GetStageById(a_stage);
                 if (!stage) {
                     a_vm->TraceStack("Invalid stage id", a_stackID);
                     return;
                 }
-                stage->positions[n].offset.SetOffset(a_value, a_idx);
+                stage->GetPositions()[n].GetOffset().SetOffset(a_value, a_idx);
             }
         });
         if (!fouundScene) {
@@ -892,24 +947,24 @@ namespace Papyrus::SexLabRegistry
     void SetStageOffsetA(STATICARGS, RE::BSFixedString a_id, RE::BSFixedString a_stage, int n, std::vector<float> a_newoffset)
     {
         bool foundScene = Registry::Library::GetSingleton()->EditScene(a_id, [&](auto scene) {
-            POSITION((void)0);
+            POSITION_META((void)0);
             if (a_newoffset.size() < Registry::CoordinateType::Total) {
                 a_vm->TraceStack("New offsets are of incorrect size", a_stackID);
                 return;
             }
             const Registry::Coordinate coordinate{ a_newoffset };
             if (a_stage.empty()) {
-                scene->ForEachStage([&](Registry::Stage* a_stage) {
-                    a_stage->positions[n].offset.SetOffset(coordinate);
+                scene->ForEachStage([&](Registry::Animation::Stage* a_stage) {
+                    a_stage->GetPositions()[n].GetOffset().SetOffset(coordinate);
                     return false;
                 });
             } else {
-                const auto stage = scene->GetStageByID(a_stage);
+                const auto stage = scene->GetStageById(a_stage);
                 if (!stage) {
                     a_vm->TraceStack("Invalid stage id", a_stackID);
                     return;
                 }
-                stage->positions[n].offset.SetOffset(coordinate);
+                stage->GetPositions()[n].GetOffset().SetOffset(coordinate);
             }
         });
         if (!foundScene) {
@@ -921,13 +976,13 @@ namespace Papyrus::SexLabRegistry
     void ResetStageOffset(STATICARGS, RE::BSFixedString a_id, RE::BSFixedString a_stage, int n)
     {
         bool foundScene = !Registry::Library::GetSingleton()->EditScene(a_id, [&](auto scene) {
-            const auto stage = scene->GetStageByID(a_stage);
+            const auto stage = scene->GetStageById(a_stage);
             if (!stage) {
                 a_vm->TraceStack("Invalid stage id", a_stackID);
                 return;
             }
-            POSITION((void)0);
-            stage->positions[n].offset.ResetOffset();
+            POSITION_META((void)0);
+            stage->GetPositions()[n].GetOffset().ResetOffset();
         });
         if (!foundScene) {
             a_vm->TraceStack("Invalid scene id", a_stackID);
@@ -938,13 +993,13 @@ namespace Papyrus::SexLabRegistry
     void ResetStageOffsetA(STATICARGS, RE::BSFixedString a_id, RE::BSFixedString a_stage)
     {
         const auto foundScene = Registry::Library::GetSingleton()->EditScene(a_id, [&](auto scene) {
-            const auto stage = scene->GetStageByID(a_stage);
+            const auto stage = scene->GetStageById(a_stage);
             if (!stage) {
                 a_vm->TraceStack("Invalid stage id", a_stackID);
                 return;
             }
-            for (auto&& pos : stage->positions) {
-                pos.offset.ResetOffset();
+            for (auto&& pos : stage->GetPositions()) {
+                pos.GetOffset().ResetOffset();
             }
         });
         if (!foundScene) {
@@ -955,100 +1010,20 @@ namespace Papyrus::SexLabRegistry
 
     int32_t GetStripData(STATICARGS, RE::BSFixedString a_id, RE::BSFixedString a_stage, int n)
     {
-        SCENE(0);
         STAGE(0);
         POSITION(0);
-        return stage->positions[n].strips.underlying();
+        return position.GetStrips().underlying();
     }
 
     std::vector<int32_t> GetStripDataA(STATICARGS, RE::BSFixedString a_id, RE::BSFixedString a_stage)
     {
-        SCENE({});
         STAGE({});
         std::vector<int32_t> ret{};
-        ret.reserve(stage->positions.size());
-        for (auto&& position : stage->positions) {
-            ret.push_back(position.strips.underlying());
+        ret.reserve(stage->GetPositions().size());
+        for (auto&& position : stage->GetPositions()) {
+            ret.push_back(position.GetStrips().underlying());
         }
         return ret;
-    }
-
-    bool HasSceneAnnotation(STATICARGS, RE::BSFixedString a_id, RE::BSFixedString a_tag)
-    {
-        SCENE(false);
-        return scene->tags.HasAnnotation(a_tag);
-    }
-
-    void RemoveSceneAnnotation(STATICARGS, RE::BSFixedString a_id, RE::BSFixedString a_tag)
-    {
-        const auto foundScene = Registry::Library::GetSingleton()->EditScene(a_id, [&](auto scene) {
-            scene->tags.RemoveAnnotation(a_tag);
-        });
-        if (!foundScene) {
-            a_vm->TraceStack("Invalid scene id", a_stackID);
-            return;
-        }
-    }
-
-    void AddSceneAnnotation(STATICARGS, RE::BSFixedString a_id, RE::BSFixedString a_tag)
-    {
-        const auto foundScene = Registry::Library::GetSingleton()->EditScene(a_id, [&](auto scene) {
-            scene->tags.AddAnnotation(a_tag);
-        });
-        if (!foundScene) {
-            a_vm->TraceStack("Invalid scene id", a_stackID);
-            return;
-        }
-    }
-
-    std::vector<RE::BSFixedString> GetSceneAnnotations(STATICARGS, RE::BSFixedString a_id)
-    {
-        SCENE({});
-        return scene->tags.GetAnnotations();
-    }
-
-    bool HasPositionAnnotation(STATICARGS, RE::BSFixedString a_id, int n, RE::BSFixedString a_tag)
-    {
-        SCENE(false);
-        POSITION(false);
-        const auto& annotations = scene->positions[n].annotations;
-        return std::ranges::find(annotations, a_tag) != annotations.end();
-    }
-    void RemovePositionAnnotation(STATICARGS, RE::BSFixedString a_id, int n, RE::BSFixedString a_tag)
-    {
-        const auto foundScene = Registry::Library::GetSingleton()->EditScene(a_id, [&](auto scene) {
-            POSITION((void)0);
-            auto& annotations = scene->positions[n].annotations;
-            const auto w = std::remove(annotations.begin(), annotations.end(), a_tag);
-            scene->positions[n].annotations.erase(w, annotations.end());
-        });
-        if (!foundScene) {
-            a_vm->TraceStack("Invalid scene id", a_stackID);
-            return;
-        }
-    }
-
-    void AddPositionAnnotation(STATICARGS, RE::BSFixedString a_id, int n, RE::BSFixedString a_tag)
-    {
-        const auto foundScene = Registry::Library::GetSingleton()->EditScene(a_id, [&](auto scene) {
-            POSITION((void)0);
-            const auto& annotations = scene->positions[n].annotations;
-            if (std::ranges::find(annotations, a_tag) != annotations.end()) {
-                return;
-            }
-            scene->positions[n].annotations.push_back(a_tag);
-        });
-        if (!foundScene) {
-            a_vm->TraceStack("Invalid scene id", a_stackID);
-            return;
-        }
-    }
-
-    std::vector<RE::BSFixedString> GetPositionAnnotations(STATICARGS, RE::BSFixedString a_id, int n)
-    {
-        SCENE({});
-        POSITION({});
-        return scene->positions[n].annotations;
     }
 
 }  // namespace Papyrus::SexLabRegistry

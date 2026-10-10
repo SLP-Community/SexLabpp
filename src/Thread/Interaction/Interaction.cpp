@@ -1,6 +1,5 @@
 #include "Interaction.h"
 
-#include "Registry/Define/Animation.h"
 #include "Thread/Thread.h"
 
 using namespace Thread::Interaction::NiSurface;
@@ -140,7 +139,7 @@ namespace Thread::Interaction
         if (!Settings::bFallbackToTagsForDetection)
             return false;
         const auto* scene = instance->GetActiveScene();
-        return scene && scene->tags.HasTag("PosTagged");
+        return scene && scene->GetTags().HasTag("PosTagged");
     }
 
     static std::vector<bool> GetInteractionPosTags(Thread::Instance* instance, RE::Actor* a_actor)
@@ -154,11 +153,11 @@ namespace Thread::Interaction
         if (it == positions.end())
             return flags;
         const int32_t idx = static_cast<int32_t>(std::distance(positions.begin(), it));
-        if (idx >= static_cast<int32_t>(stage->positions.size()))
+        if (idx >= static_cast<int32_t>(stage->GetPositions().size()))
             return flags;
 
         const auto& byName = InterTypeByName();
-        for (const auto& tag : stage->positions[idx].tags) {
+        for (const auto& tag : stage->GetPositions()[idx].GetTags().AsVector()) {
             if (const auto found = byName.find(tag); found != byName.end())
                 flags[found->second] = true;
         }

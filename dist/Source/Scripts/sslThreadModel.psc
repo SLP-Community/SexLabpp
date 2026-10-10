@@ -250,7 +250,7 @@ Actor[] Function CanBeImpregnated(Actor akActor,  bool abAllowFutaImpregnation, 
 	String[] orgasmStages = SexLabRegistry.GetClimaxStages(GetActiveScene())
 	int i = 0
 	While (i < orgasmStages.Length)
-		If (_StageHistory.Find(orgasmStages[i]) > -1 && SexLabRegistry.IsStageTag(GetActiveScene(), orgasmStages[i], "~Grinding, ~Vaginal, Penetration"))
+		If (_StageHistory.Find(orgasmStages[i]) > -1 && SexLabRegistry.HasStageTag(GetActiveScene(), orgasmStages[i], "~Grinding, ~Vaginal, Penetration"))
 			int[] orgP = SexLabRegistry.GetClimaxingActors(GetActiveScene(), orgasmStages[i])
 			int n = 0
 			While (n < orgP.Length)
@@ -342,7 +342,7 @@ bool Function HasTag(String Tag)
 EndFunction
 
 bool Function HasSceneTag(String Tag)
-	return SexLabRegistry.IsSceneTag(GetActiveScene(), Tag)
+	return SexLabRegistry.HasSceneTag(GetActiveScene(), Tag)
 EndFunction
 bool Function IsVaginal()
 	return HasSceneTag("Vaginal")
@@ -355,7 +355,7 @@ bool Function IsOral()
 EndFunction
 
 bool Function HasStageTag(String Tag)
-	return SexLabRegistry.IsStageTag(GetActiveScene(), GetActiveStage(), Tag)
+	return SexLabRegistry.HasStageTag(GetActiveScene(), GetActiveStage(), Tag)
 EndFunction
 
 String[] Function GetTags()
@@ -2295,19 +2295,19 @@ EndFunction
 
 bool[] Function CheckSpecificStageTags(string asScene, string asStage)
 	bool[] ret = new bool[13]
-	ret[0] = SexLabRegistry.IsStageTag(asScene, asStage, "Oral")
-	ret[1] = SexLabRegistry.IsStageTag(asScene, asStage, "Vaginal")
-	ret[2] = SexLabRegistry.IsStageTag(asScene, asStage, "Anal")
-	ret[3] = SexLabRegistry.IsStageTag(asScene, asStage, "Furniture")
-	ret[4] = SexLabRegistry.IsStageTag(asScene, asStage, "Toys")
-	ret[5] = SexLabRegistry.IsStageTag(asScene, asStage, "Magic")
-	ret[6] = SexLabRegistry.IsStageTag(asScene, asStage, "Lying")
-	ret[7] = SexLabRegistry.IsStageTag(asScene, asStage, "Standing")
-	ret[8] = SexLabRegistry.IsStageTag(asScene, asStage, "Forced")
-	ret[9] = SexLabRegistry.IsStageTag(asScene, asStage, "Unconscious")
-	ret[10] = SexLabRegistry.IsStageTag(asScene, asStage, "PosTagged")
-	ret[11] = SexLabRegistry.IsStageTag(asScene, asStage, "PosFast")
-	ret[12] = SexLabRegistry.IsStageTag(asScene, asStage, "PosSlow")
+	ret[0] = SexLabRegistry.HasStageTag(asScene, asStage, "Oral")
+	ret[1] = SexLabRegistry.HasStageTag(asScene, asStage, "Vaginal")
+	ret[2] = SexLabRegistry.HasStageTag(asScene, asStage, "Anal")
+	ret[3] = SexLabRegistry.HasStageTag(asScene, asStage, "Furniture")
+	ret[4] = SexLabRegistry.HasStageTag(asScene, asStage, "Toys")
+	ret[5] = SexLabRegistry.HasStageTag(asScene, asStage, "Magic")
+	ret[6] = SexLabRegistry.HasStageTag(asScene, asStage, "Lying")
+	ret[7] = SexLabRegistry.HasStageTag(asScene, asStage, "Standing")
+	ret[8] = SexLabRegistry.HasStageTag(asScene, asStage, "Forced")
+	ret[9] = SexLabRegistry.HasStageTag(asScene, asStage, "Unconscious")
+	ret[10] = SexLabRegistry.HasStageTag(asScene, asStage, "PosTagged")
+	ret[11] = SexLabRegistry.HasStageTag(asScene, asStage, "PosFast")
+	ret[12] = SexLabRegistry.HasStageTag(asScene, asStage, "PosSlow")
 	return ret
 EndFunction
 
@@ -2557,9 +2557,9 @@ bool[] Property IsType Hidden	; [0] IsAggressive, [1] IsVaginal, [2] IsAnal, [3]
 		ret[5] = IsDirty
 		int i = 0
 		While (i < _StageHistory.Length - 1)
-			ret[6] = ret[6] || SexlabRegistry.IsStageTag(GetActiveScene(), _StageHistory[i], "Vaginal")
-			ret[7] = ret[7] || SexlabRegistry.IsStageTag(GetActiveScene(), _StageHistory[i], "Anal")
-			ret[8] = ret[8] || SexlabRegistry.IsStageTag(GetActiveScene(), _StageHistory[i], "Oral")
+			ret[6] = ret[6] || SexlabRegistry.HasStageTag(GetActiveScene(), _StageHistory[i], "Vaginal")
+			ret[7] = ret[7] || SexlabRegistry.HasStageTag(GetActiveScene(), _StageHistory[i], "Anal")
+			ret[8] = ret[8] || SexlabRegistry.HasStageTag(GetActiveScene(), _StageHistory[i], "Oral")
 			i += 1
 		EndWhile
 		return ret
@@ -2577,35 +2577,35 @@ bool Property IsAggressive hidden
 EndProperty
 bool Property IsVaginal hidden
 	bool Function get()
-		return SexlabRegistry.IsSceneTag(GetActiveScene(), "Vaginal")
+		return SexlabRegistry.HasSceneTag(GetActiveScene(), "Vaginal")
 	endfunction
 	Function set(bool value)
 	EndFunction
 EndProperty
 bool Property IsAnal hidden
 	bool Function get()
-		return SexlabRegistry.IsSceneTag(GetActiveScene(), "Anal")
+		return SexlabRegistry.HasSceneTag(GetActiveScene(), "Anal")
 	endfunction
 	Function set(bool value)
 	EndFunction
 EndProperty
 bool Property IsOral hidden
 	bool Function get()
-		return SexlabRegistry.IsSceneTag(GetActiveScene(), "Oral")
+		return SexlabRegistry.HasSceneTag(GetActiveScene(), "Oral")
 	endfunction
 	Function set(bool value)
 	EndFunction
 EndProperty
 bool Property IsLoving hidden
 	bool Function get()
-		return SexlabRegistry.IsSceneTag(GetActiveScene(), "Loving")
+		return SexlabRegistry.HasSceneTag(GetActiveScene(), "Loving")
 	endfunction
 	Function set(bool value)
 	EndFunction
 EndProperty
 bool Property IsDirty hidden
 	bool Function get()
-		return SexlabRegistry.IsSceneTag(GetActiveScene(), "Dirty") || SexlabRegistry.IsSceneTag(GetActiveScene(), "Forced")
+		return SexlabRegistry.HasSceneTag(GetActiveScene(), "Dirty") || SexlabRegistry.HasSceneTag(GetActiveScene(), "Forced")
 	endfunction
 	Function set(bool value)
 	EndFunction

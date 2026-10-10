@@ -1,6 +1,7 @@
 #include "Animation.h"
 
 #include "Registry/Util/Decode.h"
+#include "Util/Combinatorics.h"
 
 namespace Registry::Animation::Legacy
 {
@@ -106,10 +107,19 @@ namespace Registry::Animation::Legacy
             const auto err = std::format("Invalid graph vertex count; expected {} but got {}", stage_count, graph_vertices);
             throw std::runtime_error(err.c_str());
         }
+        const auto findStageById = [&](std::string_view a_stageId) -> const Stage* {
+            for (auto&& stage : stages) {
+                if (stage && stage->id == a_stageId) {
+                    return stage.get();
+                }
+            }
+            return nullptr;
+        };
+
         std::string vertexid(Decode::ID_SIZE, 'X');
         for (size_t i = 0; i < graph_vertices; i++) {
             a_stream.read(vertexid.data(), Decode::ID_SIZE);
-            const auto vertex = GetStageById(vertexid.data());
+            const auto vertex = findStageById(vertexid);
             if (!vertex) {
                 const auto err = std::format("Invalid vertex: {} in scene: {}", vertexid, id);
                 throw std::runtime_error(err.c_str());
@@ -120,14 +130,14 @@ namespace Registry::Animation::Legacy
             std::string edgeid(Decode::ID_SIZE, 'X');
             for (size_t n = 0; n < edge_count; n++) {
                 a_stream.read(edgeid.data(), Decode::ID_SIZE);
-                const auto edge = GetStageById(edgeid.data());
+                const auto edge = findStageById(edgeid);
                 if (!edge) {
                     const auto err = std::format("Invalid edge: {} for vertex: {} in scene: {}", edgeid, vertexid, id);
                     throw std::runtime_error(err.c_str());
                 }
                 edges.push_back(edge);
             }
-            graph.insert(std::make_pair(vertex, edges));
+            graph.emplace(vertex, std::move(edges));
         }
         // --- Misc
         Decode::Read(a_stream, *reinterpret_cast<uint32_t*>(&furnitureTypes));

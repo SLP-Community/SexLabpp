@@ -4,12 +4,12 @@
 
 namespace Papyrus::AnimationSlots
 {
-    inline std::vector<RE::BSFixedString> ScenesToString(const std::vector<const Registry::Scene*>& a_scenes)
+    inline std::vector<RE::BSFixedString> ScenesToString(const std::vector<const Registry::Animation::Scene*>& a_scenes)
     {
         std::vector<RE::BSFixedString> ret{};
         ret.reserve(a_scenes.size());
         for (auto&& scene : a_scenes) {
-            ret.push_back(scene->id);
+            ret.push_back(RE::BSFixedString{ scene->GetId().data() });
         }
         return ret;
     }
@@ -45,7 +45,7 @@ namespace Papyrus::AnimationSlots
         const auto lib = Registry::Library::GetSingleton();
         auto scenes = lib->GetByTags(a_actorcount, a_tags);
         const auto size = scenes.size();
-        const auto end = std::remove_if(scenes.begin(), scenes.end(), [&](const Registry::Scene* a_scene) {
+        const auto end = std::remove_if(scenes.begin(), scenes.end(), [&](const Registry::Animation::Scene* a_scene) {
             return !a_scene->Legacy_IsCompatibleSexCount(a_males, a_females);
         });
         scenes.erase(end, scenes.end());
@@ -75,7 +75,7 @@ namespace Papyrus::AnimationSlots
     std::vector<RE::BSFixedString> GetAllPackages(RE::StaticFunctionTag*)
     {
         std::vector<RE::BSFixedString> ret{};
-        Registry::Library::GetSingleton()->ForEachPackage([&](const Registry::AnimPackage* a_package) {
+        Registry::Library::GetSingleton()->ForEachPackage([&](const Registry::Animation::AnimPack* a_package) {
             ret.push_back(a_package->GetName());
             return false;
         });
@@ -84,37 +84,33 @@ namespace Papyrus::AnimationSlots
 
     std::vector<RE::BSFixedString> CreateProxyArray(RE::StaticFunctionTag*, uint32_t a_returnsize, uint32_t crt_specifier, RE::BSFixedString a_tags, RE::BSFixedString a_package)
     {
-        std::vector<const Registry::Scene*> ret{};
+        std::vector<const Registry::Animation::Scene*> ret{};
         if (a_returnsize > 0)
             ret.reserve(a_returnsize);
         auto tags = Registry::TagDetails{ a_tags };
         const auto lib = Registry::Library::GetSingleton();
         RE::BSFixedString hash = "";
-        lib->ForEachPackage([&](const Registry::AnimPackage* package) {
-            if (package->GetName() == a_package) {
-                hash = package->GetHash();
-                return true;
+        lib->ForEachPackage([&](const Registry::Animation::AnimPack* package) {
+            if (package->GetName() != a_package)
+                return false;
+            for (const auto& scene : package->GetScenes()) {
+                if (crt_specifier == 0 && scene->HasCreatures())
+                    continue;
+                if (crt_specifier == 1 && !scene->HasCreatures())
+                    continue;
+                if (!scene->IsCompatibleTags(tags))
+                    continue;
+                ret.push_back(scene.get());
+                return a_returnsize > 0 && ret.size() == a_returnsize;
             }
             return false;
         });
-        lib->ForEachScene([&](const Registry::Scene* a_scene) {
-            if (crt_specifier == 0 && a_scene->HasCreatures())
-                return false;
-            if (crt_specifier == 1 && !a_scene->HasCreatures())
-                return false;
-            if (!hash.empty() && a_scene->GetPackageHash() != hash)
-                return false;
-            if (!a_scene->IsCompatibleTags(tags))
-                return false;
-            ret.push_back(a_scene);
-            return a_returnsize > 0 && ret.size() == a_returnsize;
-        });
-        std::sort(ret.begin(), ret.end(), [](const Registry::Scene*& a, const auto& b) {
-            return a->name < b->name;
+        std::sort(ret.begin(), ret.end(), [](const Registry::Animation::Scene*& a, const auto& b) {
+            return a->GetName() < b->GetName();
         });
         std::vector<RE::BSFixedString> ids{};
         ids.reserve(ret.size());
-        std::ranges::transform(ret, std::back_inserter(ids), [](const auto& it) { return it->id; });
+        std::ranges::transform(ret, std::back_inserter(ids), [](const auto& it) { return RE::BSFixedString{ it->GetId().data() }; });
         return ids;
     }
 

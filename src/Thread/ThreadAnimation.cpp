@@ -329,10 +329,10 @@ namespace Thread
     bool Instance::StartFixedLengthTimer()
     {
         fixedLengthTimer.state = FixedLengthTimer::State::Stopped;
-        if (!activeStage || activeStage->fixedlength == 0.0f) {
+        if (!activeStage || activeStage->GetFixedDuration() == 0.0f) {
             return false;
         }
-        const auto duration = activeStage->fixedlength / 1000.0f;
+        const auto duration = activeStage->GetFixedDuration() / 1000.0f;
         fixedLengthTimer.duration = duration;
         fixedLengthTimer.remaining = duration;
         fixedLengthTimer.state = FixedLengthTimer::State::Running;
@@ -538,9 +538,9 @@ namespace Thread
             }
             const bool firstDispatch = pending.dispatchAttempts == 0;
             if (firstDispatch) {
-                const auto& positionInfo = activeScene->GetNthPosition(pending.position);
+                const auto& actorData = activeScene->GetNthPosition(pending.position).get();
                 Collision::CollisionHandler::AddActor(pending.actor->GetFormID());
-                Registry::Scale::GetSingleton()->SetScale(pending.actor, positionInfo->data.GetRace(), positionInfo->data.GetScale());
+                Registry::Scale::GetSingleton()->SetScale(pending.actor, actorData.GetRace(), actorData.GetScale());
             }
             ReassertPlacement(pending.position, firstDispatch);
             pending.dispatchAttempts++;

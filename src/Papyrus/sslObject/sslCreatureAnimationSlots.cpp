@@ -18,16 +18,16 @@ namespace Papyrus::CreatureAnimationSlots
         Registry::TagDetails tagdetails{ a_tags };
         std::vector<RE::BSFixedString> ret{};
         ret.reserve(256);
-        Registry::Library::GetSingleton()->ForEachScene([&](const Registry::Scene* a_scene) {
+        Registry::Library::GetSingleton()->ForEachScene([&](const Registry::Animation::Scene* a_scene) {
             if (!a_scene->IsEnabled() || a_scene->IsPrivate())
                 return false;
-            if (a_actorcount > -1 && a_scene->positions.size() != a_actorcount)
+            if (a_actorcount > -1 && static_cast<int32_t>(a_scene->GetNumPositions()) != a_actorcount)
                 return false;
             if (!a_scene->IsCompatibleTags(tagdetails))
                 return false;
-            for (auto&& position : a_scene->positions) {
-                if (position.data.GetRace().IsCompatibleWith(racekey)) {
-                    ret.push_back(a_scene->id);
+            for (auto&& position : a_scene->GetPositions()) {
+                if (position.get().GetRace().IsCompatibleWith(racekey)) {
+                    ret.push_back(RE::BSFixedString{ a_scene->GetId().data() });
                     break;
                 }
             }
@@ -56,10 +56,10 @@ namespace Papyrus::CreatureAnimationSlots
         Registry::TagDetails tagdetails{ a_tags };
         std::vector<RE::BSFixedString> ret{};
         ret.reserve(256);
-        Registry::Library::GetSingleton()->ForEachScene([&](const Registry::Scene* a_scene) {
+        Registry::Library::GetSingleton()->ForEachScene([&](const Registry::Animation::Scene* a_scene) {
             if (!a_scene->IsEnabled() || a_scene->IsPrivate())
                 return false;
-            if (a_scene->positions.size() != a_actorcount)
+            if (static_cast<int32_t>(a_scene->GetNumPositions()) != a_actorcount)
                 return false;
             if (!a_scene->IsCompatibleTags(tagdetails))
                 return false;
@@ -77,11 +77,11 @@ namespace Papyrus::CreatureAnimationSlots
                     reqtrue -= 1;
                     continue;
                 }
-                for (size_t i = 0; i < a_scene->positions.size(); i++) {
+                for (size_t i = 0; i < a_scene->GetPositions().size(); i++) {
                     if (control[i])
                         continue;
-                    const auto& position = a_scene->positions[i];
-                    if (position.data.GetRace().IsCompatibleWith(racekey)) {
+                    const auto& position = a_scene->GetPositions()[i];
+                    if (position.get().GetRace().IsCompatibleWith(racekey)) {
                         control[i] = true;
                         break;
                     }
@@ -90,7 +90,7 @@ namespace Papyrus::CreatureAnimationSlots
             if (reqtrue != std::count(control.begin(), control.end(), true)) {
                 return false;
             }
-            ret.push_back(a_scene->id);
+            ret.push_back(RE::BSFixedString{ a_scene->GetId().data() });
             return ret.size() == ret.capacity();
         });
         return ret;
@@ -120,16 +120,16 @@ namespace Papyrus::CreatureAnimationSlots
         Registry::TagDetails tagdetails{ a_tags };
         std::vector<RE::BSFixedString> ret;
         ret.reserve(256);
-        Registry::Library::GetSingleton()->ForEachScene([&](const Registry::Scene* a_scene) {
+        Registry::Library::GetSingleton()->ForEachScene([&](const Registry::Animation::Scene* a_scene) {
             if (!a_scene->IsEnabled() || a_scene->IsPrivate())
                 return false;
-            if (a_scene->positions.size() != a_actorcount)
+            if (static_cast<int32_t>(a_scene->GetNumPositions()) != a_actorcount)
                 return false;
             if (!a_scene->IsCompatibleTags(tagdetails))
                 return false;
             bool has_race = false;
-            for (auto&& position : a_scene->positions) {
-                if (position.data.GetRace().IsCompatibleWith(racekey)) {
+            for (auto&& position : a_scene->GetPositions()) {
+                if (position.get().GetRace().IsCompatibleWith(racekey)) {
                     has_race = true;
                     break;
                 }
@@ -141,7 +141,7 @@ namespace Papyrus::CreatureAnimationSlots
             if (!match_gender) {
                 return false;
             }
-            ret.push_back(a_scene->id);
+            ret.push_back(RE::BSFixedString{ a_scene->GetId().data() });
             return ret.size() == ret.capacity();
         });
         return ret;
