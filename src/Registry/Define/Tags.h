@@ -82,12 +82,17 @@ namespace Registry
         void AddTag(Tag a_tag);
         void AddTag(const TagData& a_tag);
         void AddTag(RE::BSFixedString a_tag);
+        /// @brief Add an annotation to this tag data
+        bool AddAnnotation(RE::BSFixedString a_tag) const;
 
         /// @brief Remove (all of) the arguments tags from this
         void RemoveTag(Tag a_tag);
         void RemoveTag(const TagData& a_tag);
         void RemoveTag(const RE::BSFixedString& a_tag);
+        /// @brief Remove an annotation from this tag data
+        bool RemoveAnnotation(const RE::BSFixedString& a_tag) const;
 
+        /// @brief Get the intersection of this and the argument tags
         void IntersectTags(const TagData& a_tags);
 
         /// @brief If this has (all of) the arguments tags
@@ -101,25 +106,19 @@ namespace Registry
         /// @brief If this data contains any tags
         _NODISCARD bool IsEmpty() const;
 
-      public:
-        bool HasAnnotation(const RE::BSFixedString& a_tag) const;
-        bool AddAnnotation(RE::BSFixedString a_tag) const;
-        bool RemoveAnnotation(const RE::BSFixedString& a_tag) const;
-
-        /// @brief Get the annotated (editable) tags
-        const std::vector<RE::BSFixedString>& GetAnnotations() const { return _annotations; }
-
-      public:
-        /// @brief visitor returns true to stop cycling
-        void ForEachExtra(std::function<bool(const std::string_view)> a_visitor) const;
-
         /// @brief get all tags in this data in a single vector
         std::vector<RE::BSFixedString> AsVector() const;
+        std::vector<RE::BSFixedString> GetAnnotations() const { return _annotations; };
+
+      public:
+        void Save(YAML::Node& a_node) const;
+        void Load(const YAML::Node& a_node);
 
       private:
         void AddExtraTag(const RE::BSFixedString& a_tag);
         void RemoveExtraTag(const RE::BSFixedString& a_tag);
         bool HasExtraTag(const RE::BSFixedString& a_tag) const;
+        bool HasAnnotation(const RE::BSFixedString& a_tag) const;
 
         stl::enumeration<Tag> _basetags;
         std::vector<RE::BSFixedString> _extratags;

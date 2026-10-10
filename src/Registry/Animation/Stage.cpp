@@ -39,9 +39,8 @@ namespace Registry::Animation
 
     void Stage::Save(YAML::Node& a_node) const
     {
-        for (auto&& annotation : tags.GetAnnotations()) {
-            a_node["annotations"].push_back(annotation.data());
-        }
+        auto annotationsNode = a_node["annotations"];
+        tags.Save(annotationsNode);
         const auto hasChanges = std::ranges::find_if(positions, [](const auto& position) { return position.GetOffset().HasChanges(); });
         if (hasChanges != positions.end()) {
             for (size_t i = 0; i < positions.size(); i++) {
@@ -54,9 +53,7 @@ namespace Registry::Animation
     void Stage::Load(const YAML::Node& a_node)
     {
         if (auto annotations = a_node["annotations"]; annotations.IsDefined()) {
-            for (auto&& annotation : annotations) {
-                tags.AddAnnotation(annotation.as<std::string>());
-            }
+            tags.Load(annotations);
         }
         for (size_t i = 0; i < positions.size(); i++) {
             if (auto node = a_node[i]; node.IsDefined()) {

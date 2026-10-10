@@ -8,6 +8,34 @@
 
 namespace Registry::Animation
 {
+    namespace
+    {
+        struct SexOptions
+        {
+            bool male{ false };
+            bool female{ false };
+        };
+
+        bool LegacyMatchSex(const std::vector<SexOptions>& options, int32_t a_males, int32_t a_females, size_t index, int32_t males, int32_t females) {
+            if (index >= options.size()) {
+                const auto maleMatch = a_males == -1 || males == a_males;
+                const auto femaleMatch = a_females == -1 || females == a_females;
+                return maleMatch && femaleMatch;
+            }
+
+            const auto& current = options[index];
+            if (current.male && (a_males == -1 || males + 1 <= a_males) &&
+                LegacyMatchSex(options, a_males, a_females, index + 1, males + 1, females)) {
+                return true;
+            }
+            if (current.female && (a_females == -1 || females + 1 <= a_females) &&
+                LegacyMatchSex(options, a_males, a_females, index + 1, males, females + 1)) {
+                return true;
+            }
+            return false;
+        };
+    }
+
     Scene::Scene(std::ifstream&, uint8_t)
     {
         throw std::runtime_error("Scene binary constructor is no longer implementable with the new shared-stage structure");
@@ -66,6 +94,8 @@ namespace Registry::Animation
     void Scene::Save(YAML::Node& a_node) const
     {
         a_node["enabled"] = isEnabled;
+        auto annotationsNode = a_node["annotations"];
+        tags.Save(annotationsNode);
         ForEachStage(start.lock().get(), [&](const Stage* stage) {
             auto node = a_node[stage->GetId().data()];
             stage->Save(node);
@@ -78,7 +108,9 @@ namespace Registry::Animation
         if (const auto enable = a_node["enabled"]; enable.IsDefined()) {
             isEnabled = enable.as<bool>();
         }
-
+        if (auto annotations = a_node["annotations"]; annotations.IsDefined()) {
+            tags.Load(annotations);
+        }
         ForEachStage(start.lock().get(), [&](Stage* stage) {
             if (auto node = a_node[stage->GetId().data()]; node.IsDefined()) {
                 stage->Load(node);
@@ -403,60 +435,50 @@ namespace Registry::Animation
             return true;
         }
 
-        bool ret = false;
-        tags.ForEachExtra([&](const std::string_view a_tag) {
-            if (a_tag.find_first_not_of("MFC") != std::string_view::npos) {
-                return false;
+        std::vector<SexOptions> options{};
+        options.reserve(positions.size());
+        for (auto&& position : positions) {
+            if (!position.IsHuman()) {
+                continue;
             }
-            if (a_males == -1 || std::count(a_tag.begin(), a_tag.end(), 'M') == a_males) {
-                if (a_females == -1 || std::count(a_tag.begin(), a_tag.end(), 'F') == a_females) {
-                    ret = true;
-                    return true;
-                }
-            }
-            return false;
-        });
-        return ret;
+            options.push_back({
+                .male = position.IsMale(),
+                .female = position.IsFemale(),
+            });
+        }
+
+        return LegacyMatchSex(options, a_males, a_females, 0, 0, 0);
     }
 
     bool Scene::Legacy_IsCompatibleSexCountCrt(int32_t a_males, int32_t a_females) const
     {
-        enum
-        {
-            Male = 0,
-            Female = 1,
-            Either = 2,
-        };
+        if (a_males < 0 && a_females < 0) {
+            return true;
+        }
 
-        bool ret = false;
-        tags.ForEachExtra([&](const std::string_view a_tag) {
-            if (a_tag.find_first_not_of("MFC") != std::string_view::npos) {
+        std::vector<SexOptions> options{};
+        options.reserve(positions.size());
+        for (auto&& position : positions) {
+            if (position.IsHuman()) {
+                continue;
+            }
+
+            const auto canMale = position.IsMale();
+            const auto canFemale = position.IsFemale();
+            if (!canMale && !canFemale) {
                 return false;
             }
-            const auto crt_total = std::count(a_tag.begin(), a_tag.end(), 'C');
-            if (crt_total != a_males + a_females) {
-                return true;
-            }
+            options.push_back({
+                .male = canMale,
+                .female = canFemale,
+            });
+        }
 
-            int count[3]{ 0, 0, 0 };
-            for (auto&& position : positions) {
-                if (position.get().IsHuman()) {
-                    continue;
-                }
-                if (position.get().IsNotSex(Sex::Female)) {
-                    count[Male]++;
-                } else if (position.get().IsNotSex(Sex::Male)) {
-                    count[Female]++;
-                } else {
-                    count[Either]++;
-                }
-            }
-            if (count[Male] <= a_males && count[Male] + count[Either] >= a_males) {
-                count[Either] -= a_males - count[Male];
-                ret = count[Female] + count[Either] == a_females;
-            }
-            return true;
-        });
-        return ret;
+        if (a_males != -1 && a_females != -1 &&
+            static_cast<size_t>(a_males + a_females) != options.size()) {
+            return false;
+        }
+
+        return LegacyMatchSex(options, a_males, a_females, 0, 0, 0);
     }
 }

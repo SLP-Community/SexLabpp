@@ -204,14 +204,6 @@ namespace Registry
         return true;
     }
 
-    void TagData::ForEachExtra(std::function<bool(const std::string_view)> a_visitor) const
-    {
-        for (auto&& tag : _extratags) {
-            if (a_visitor(tag.data()))
-                return;
-        }
-    }
-
     std::vector<RE::BSFixedString> TagData::AsVector() const
     {
         std::vector<RE::BSFixedString> ret{ _extratags.begin(), _extratags.end() };
@@ -283,4 +275,18 @@ namespace Registry
         return _tags[TagType::Required].IsEmpty() || a_data.HasTags(_tags[TagType::Required], true);
     }
 
+    void TagData::Save(YAML::Node& a_node) const
+    {
+        for (auto&& anno : _annotations) {
+            a_node.push_back(anno.c_str());
+        }
+    }
+
+    void TagData::Load(const YAML::Node& a_node)
+    {
+        _annotations.clear();
+        for (auto&& anno : a_node) {
+            AddAnnotation(anno.as<std::string>());
+        }
+    }
 }

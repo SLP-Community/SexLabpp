@@ -75,14 +75,19 @@ namespace Registry::Animation
 
     void Position::Save(YAML::Node& a_node) const
     {
-        auto transform = a_node["transform"];
-        offset.Save(transform);
+        auto annotationsNode = a_node["annotations"];
+        auto transformNode = a_node["transform"];
+        offset.Save(transformNode);
+        tags.Save(annotationsNode);
     }
 
     void Position::Load(const YAML::Node& a_node)
     {
         if (auto transform = a_node["transform"]; transform.IsDefined()) {
             offset.Load(transform);
+        }
+        if (auto annotations = a_node["annotations"]; annotations.IsDefined()) {
+            tags.Load(annotations);
         }
     }
 

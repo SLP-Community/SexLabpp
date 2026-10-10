@@ -15,11 +15,16 @@ namespace Registry::Animation
         Scene(const Legacy::Scene& a_legacyScene, std::string_view a_hash, std::vector<std::shared_ptr<Stage>>* a_ownedStages);
         ~Scene() = default;
 
+        _NODISCARD std::string_view GetId() const { return id; }
+        _NODISCARD std::string_view GetName() const { return name; }
+
         _NODISCARD bool IsEnabled() const;
         _NODISCARD bool IsPrivate() const;
         _NODISCARD bool HasCreatures() const;
         _NODISCARD bool RequiresFurniture() const;
 
+        _NODISCARD TagData& GetTags() { return tags; }
+        _NODISCARD const TagData& GetTags() const { return tags; }
         _NODISCARD bool IsCompatibleTags(const TagData& a_tags) const;
         _NODISCARD bool IsCompatibleTags(const TagDetails& a_details) const;
         _NODISCARD bool IsCompatibleFurniture(FurnitureType a_furniture) const;
@@ -33,6 +38,8 @@ namespace Registry::Animation
         _NODISCARD const std::vector<PositionMetaData>& GetPositions() const { return positions; }
         void SetEnabled(bool a_enabled) { isEnabled = a_enabled; }
 
+        _NODISCARD Transform& GetFurnitureOffset() { return furnitureOffset; }
+        _NODISCARD const Transform& GetFurnitureOffset() const { return furnitureOffset; }
         _NODISCARD REX::EnumSet<FurnitureType::Value> GetFurnitureTypes() const;
         _NODISCARD std::vector<std::vector<RE::Actor*>> FindAssignments(const std::vector<ActorFragment>& a_fragments) const;
 
@@ -55,12 +62,6 @@ namespace Registry::Animation
       public:
         _NODISCARD bool Legacy_IsCompatibleSexCount(int32_t a_males, int32_t a_females) const;
         _NODISCARD bool Legacy_IsCompatibleSexCountCrt(int32_t a_males, int32_t a_females) const;
-        _NODISCARD std::string_view GetId() const { return id; }
-        _NODISCARD std::string_view GetName() const { return name; }
-        _NODISCARD TagData& GetTags() { return tags; }
-        _NODISCARD const TagData& GetTags() const { return tags; }
-        _NODISCARD Transform& GetFurnitureOffset() { return furnitureOffset; }
-        _NODISCARD const Transform& GetFurnitureOffset() const { return furnitureOffset; }
 
       private:
         std::string id{};
