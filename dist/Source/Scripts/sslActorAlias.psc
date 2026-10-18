@@ -216,7 +216,7 @@ int Property PATHING_ENABLE = 0 AutoReadOnly
 int Property PATHING_FORCE = 1 AutoReadOnly
 
 Function SetPathing(int aiPathingFlag)
-	_PathingFlag = PapyrusUtil.ClampInt(_PathingFlag, PATHING_DISABLE, PATHING_FORCE)
+	_PathingFlag = PapyrusUtil.ClampInt(aiPathingFlag, PATHING_DISABLE, PATHING_FORCE)
 EndFunction
 
 ; *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-* ;
