@@ -31,7 +31,8 @@
     },
     {
       "type": "Oral",
-      "path": "Oral/UBE"
+      "path": "Oral/UBE",
+      "areas": ["Face"]
     }
   ]
 }

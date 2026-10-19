@@ -15,6 +15,7 @@ namespace Papyrus::ActorLibrary
 
     RE::BSFixedString PickRandomFxSet(VM* a_vm, StackID a_stackID, RE::StaticFunctionTag*, RE::Actor* a_actor, int32_t a_type);
     int32_t GetFxSetCount(VM* a_vm, StackID a_stackID, RE::StaticFunctionTag*, int32_t a_type, RE::BSFixedString asSet);
+    std::vector<RE::BSFixedString> GetFxSetAreas(VM* a_vm, StackID a_stackID, RE::StaticFunctionTag*, RE::Actor* a_actor, int32_t a_type, RE::BSFixedString asSet);
 
     inline bool Register(VM* a_vm)
     {
@@ -31,6 +32,7 @@ namespace Papyrus::ActorLibrary
 
         REGISTERFUNC(PickRandomFxSet, "sslActorLibrary", true);
         REGISTERFUNC(GetFxSetCount, "sslActorLibrary", true);
+        REGISTERFUNC(GetFxSetAreas, "sslActorLibrary", true);
 
         return true;
     }

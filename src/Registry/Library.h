@@ -37,10 +37,30 @@ namespace Registry
         };
         constexpr static auto NUM_FX_TYPES = magic_enum::enum_count<FxType>();
 
+        // Overlay areas a profile can be drawn on, named after their NiOverride nodes ("Body [ovl0]")
+        enum class FxArea : uint8_t
+        {
+            Face = 1 << 0,
+            Body = 1 << 1,
+            Hands = 1 << 2,
+            Feet = 1 << 3,
+        };
+
+        // Areas of a profile whose config does not list any
+        constexpr static REX::EnumSet<FxArea> DefaultFxAreas(FxType a_type)
+        {
+            REX::EnumSet<FxArea> areas{ FxArea::Body, FxArea::Hands, FxArea::Feet };
+            if (a_type == FxType::Oral) {
+                areas.set(FxArea::Face);
+            }
+            return areas;
+        }
+
         struct FxProfile
         {
             RE::BSFixedString path;
             uint8_t layerCount;
+            REX::EnumSet<FxArea> areas;
         };
 
         struct FxConfig
@@ -103,6 +123,7 @@ namespace Registry
       public:
         RE::BSFixedString PickRandomFxSet(RE::Actor* a_actor, FxType a_type) const;
         uint8_t GetFxCount(FxType a_type, RE::BSFixedString a_set) const;
+        REX::EnumSet<FxArea> GetFxAreas(RE::Actor* a_actor, FxType a_type, RE::BSFixedString a_set) const;
 
       public:
         _NODISCARD const FurnitureDetails* GetFurnitureDetails(const RE::TESObjectREFR* a_ref) const;
@@ -126,6 +147,7 @@ namespace Registry
         void InitializeVoiceCache() noexcept;
         void InitializeCumFx() noexcept;
         uint8_t InitializeCumFxType(const fs::path& a_typePath) const;
+        std::vector<const FxConfig*> GetFxConfigs(RE::Actor* a_actor, FxType a_type) const;
 
         void SaveScenes() const noexcept;
         void SaveExpressions() const noexcept;
