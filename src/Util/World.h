@@ -1,5 +1,7 @@
 #pragma once
 
+#include <numbers>
+
 // CommonLib only declares these base virtuals, we gotta define them here so custom collectors link and reset to Havok's maximum-distance sentinel
 inline RE::hkpCdPointCollector::~hkpCdPointCollector() = default;
 inline void RE::hkpCdPointCollector::Reset()
@@ -268,7 +270,7 @@ namespace Util
             return collector.blocked;
         }
 
-        inline std::optional<RE::NiPoint3> ProjectToNavmesh(RE::Actor* a_actor, const RE::NiPoint3& a_target, float a_maxHorizontalSnap)
+        inline std::optional<RE::NiPoint3> ProjectToNavmesh(RE::Actor* a_actor, const RE::NiPoint3& a_target, float a_maxHorizontalSnap, float a_maxDistanceBelow = MAX_NAVMESH_DISTANCE_BELOW)
         {
             const auto pathing = RE::Pathing::GetSingleton();
             if (!pathing || !a_actor->GetParentCell())
@@ -280,7 +282,7 @@ namespace Util
 
             RE::FindTriangleForLocationFilterCheckDeltaZ filter;
             filter.maxDistAbove = MAX_NAVMESH_DISTANCE_ABOVE;
-            filter.maxDistBelow = MAX_NAVMESH_DISTANCE_BELOW;
+            filter.maxDistBelow = a_maxDistanceBelow;
             RE::NiPoint3 projected;
             if (!pathing->FindClosestPointOnNavmesh(pathingCell, a_target, filter, projected) ||
                 std::hypot(projected.x - a_target.x, projected.y - a_target.y) > a_maxHorizontalSnap)
@@ -354,6 +356,56 @@ namespace Util
                 }
             }
             return std::nullopt;
+        }
+
+        // Puts an actor that is not standing on walkable ground onto the closest navmesh spot no other actor occupies.
+        // Unlike FindSafePosition this starts at the actor itself and needs no walkable path from there, so it also
+        // works from on top of furniture or of another actor's collision
+        inline bool MoveToFreeNavmesh(RE::Actor* a_actor)
+        {
+            constexpr float MAX_SNAP = 256.0f;
+            constexpr float MAX_DISTANCE_BELOW = 256.0f;
+            constexpr float ON_GROUND_TOLERANCE = 12.0f;
+            constexpr float RING_STEP = 48.0f;
+            constexpr int RING_COUNT = 4;
+            constexpr int DIRECTIONS = 8;
+
+            const std::array<RE::Actor*, 1> required{ a_actor };
+            const auto position = a_actor->GetPosition();
+            const auto base = ProjectToNavmesh(a_actor, position, MAX_SNAP, MAX_DISTANCE_BELOW);
+            if (!base) {
+                logger::warn("No navmesh within {:.0f} units of actor {:08X}.", MAX_SNAP, a_actor->GetFormID());
+                return false;
+            }
+            if (base->GetDistance(position) <= ON_GROUND_TOLERANCE)
+                return false;
+
+            const auto bounds = GatherActorBounds(position, required);
+            const auto own = std::ranges::find(bounds, a_actor, &ActorBound::actor);
+            auto target = *base;
+            if (own != bounds.end()) {
+                const auto localBound = Translate(own->bound, { -position.x, -position.y, -position.z });
+                const auto isFree = [&](const RE::NiPoint3& a_point) {
+                    return !IntersectsActor(Translate(localBound, a_point), a_actor, bounds);
+                };
+                bool found = isFree(target);
+                for (int ring = 1; ring <= RING_COUNT && !found; ring++) {
+                    for (int i = 0; i < DIRECTIONS && !found; i++) {
+                        const auto angle = std::numbers::pi_v<float> * 2.0f * static_cast<float>(i) / static_cast<float>(DIRECTIONS);
+                        const auto radius = RING_STEP * static_cast<float>(ring);
+                        const RE::NiPoint3 probe{ base->x + std::cos(angle) * radius, base->y + std::sin(angle) * radius, base->z };
+                        const auto candidate = ProjectToNavmesh(a_actor, probe, RING_STEP * 0.5f);
+                        if (candidate && isFree(*candidate)) {
+                            target = *candidate;
+                            found = true;
+                        }
+                    }
+                }
+            }
+            logger::info("Moving actor {:08X} from {:.0f}, {:.0f}, {:.0f} to free navmesh at {:.0f}, {:.0f}, {:.0f}.",
+                a_actor->GetFormID(), position.x, position.y, position.z, target.x, target.y, target.z);
+            a_actor->SetPosition(target, true);
+            return true;
         }
 
         // Most failure cases will be due to starting a scene at a position with no navmesh. This uses a floodfill algorithm, so missing navmesh wont be able to solve

@@ -8,6 +8,7 @@
 #include "Thread/Interface/SceneHUD.h"
 #include "Thread/Interface/StageSelectMenu.h"
 #include "Thread/Interface/UI/Theme.h"
+#include "Thread/Thread.h"
 #include "UserData/StripData.h"
 
 // class EventHandler :
@@ -107,6 +108,7 @@ static void SKSEMessageHandler(SKSE::MessagingInterface::Message* message)
         break;
     case SKSE::MessagingInterface::kPostLoadGame:
         // EventHandler::GetSingleton()->Register();
+        Thread::Instance::RestoreActorsAfterLoad();
         break;
     }
 }

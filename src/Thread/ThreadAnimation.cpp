@@ -5,6 +5,7 @@
 #include "Thread/Collision/CollisionHandler.h"
 #include "Thread/Hooks.h"
 #include "Util/Script.h"
+#include "Util/World.h"
 
 #include <bit>
 
@@ -31,6 +32,10 @@ namespace Thread
 
         std::mutex actorPreparationLock;
         std::unordered_map<RE::FormID, ActorPreparation> actorPreparations;
+
+        // Actors RestoreActorsAfterLoad locked again, until their thread unlocks them
+        std::mutex loadedActorLock;
+        std::vector<RE::FormID> loadedActors;
 
         bool IsPlayerDialogueActive()
         {
@@ -135,6 +140,79 @@ namespace Thread
     void Instance::RestorePreparedActors(RE::TESQuest* a_linkedQst)
     {
         RestorePreparedActorState(a_linkedQst);
+    }
+
+    // Saves made mid scene have no thread to restore their actors. Scale persists in SKEE's co-save and life state
+    // in the game's save, with the original status in Variable05. Papyrus restores the graph variables. The character
+    // controller also keeps the scene's flags, so the actor is locked again until its thread unlocks it, and
+    // ReleaseActorAfterLoad then clears them
+    void Instance::RestoreActorsAfterLoad()
+    {
+        const auto faction = const_cast<RE::TESFaction*>(GameForms::AnimatingFaction);
+        const auto restore = [&](RE::Actor* a_actor) {
+            if (!a_actor || a_actor->GetFactionRank(faction, a_actor->IsPlayerRef()) <= 0) {
+                return RE::BSContainer::ForEachResult::kContinue;
+            }
+            Registry::Scale::GetSingleton()->RemoveScale(a_actor);
+            const auto actorState = a_actor->AsActorState();
+            if (!a_actor->IsPlayerRef() && actorState->GetLifeState() == RE::ACTOR_LIFE_STATE::kRestrained) {
+                const auto values = a_actor->AsActorValueOwner();
+                const auto status = static_cast<int32_t>(values->GetActorValue(RE::ActorValue::kVariable05));
+                actorState->actorState1.lifeState = status == ActorStatus::Unconscious ? RE::ACTOR_LIFE_STATE::kUnconcious : RE::ACTOR_LIFE_STATE::kAlive;
+                values->SetActorValue(RE::ActorValue::kVariable05, 0.0f);
+            }
+            Collision::CollisionHandler::AddActor(a_actor->GetFormID());
+            {
+                std::scoped_lock lock{ loadedActorLock };
+                if (!std::ranges::contains(loadedActors, a_actor->GetFormID())) {
+                    loadedActors.push_back(a_actor->GetFormID());
+                }
+            }
+            logger::info("Restored actor {:X} from a save made mid scene.", a_actor->GetFormID());
+            return RE::BSContainer::ForEachResult::kContinue;
+        };
+        restore(RE::PlayerCharacter::GetSingleton());
+        if (const auto processLists = RE::ProcessLists::GetSingleton()) {
+            processLists->ForEachHighActor(restore);
+        }
+    }
+
+    void Instance::ReleaseActorAfterLoad(RE::Actor* a_actor)
+    {
+        {
+            std::scoped_lock lock{ loadedActorLock };
+            if (std::erase(loadedActors, a_actor->GetFormID()) == 0) {
+                return;
+            }
+        }
+        // Queued, so it runs on the main thread after an unlock the collision handler queued itself. The free spot search
+        // reads every actor's bounds from its character controller, which has none while it is out of the world
+        SKSE::GetTaskInterface()->AddTask([handle = a_actor->GetHandle()]() {
+            const auto actor = handle.get();
+            if (!actor) {
+                return;
+            }
+            // Cleared here so this does not depend on what the collision handler's unlock restores
+            if (const auto controller = actor->GetCharController()) {
+                controller->flags.reset(
+                    RE::CHARACTER_FLAGS::kNoGravityOnGround,
+                    RE::CHARACTER_FLAGS::kNoSim,
+                    RE::CHARACTER_FLAGS::kNotPushablePermanent);
+                controller->flags.set(
+                    RE::CHARACTER_FLAGS::kSupport,
+                    RE::CHARACTER_FLAGS::kCheckSupport);
+                controller->context.currentState = RE::hkpCharacterStateType::kOnGround;
+            }
+            // The thread was stopped without playing the end of the scene. The actor still sits at the scene position,
+            // inside the furniture and the other actors
+            Util::World::MoveToFreeNavmesh(actor.get());
+        });
+    }
+
+    void Instance::ClearActorsAfterLoad()
+    {
+        std::scoped_lock lock{ loadedActorLock };
+        loadedActors.clear();
     }
 
     void Instance::CancelPendingAnimations(RE::TESQuest* a_linkedQst)
