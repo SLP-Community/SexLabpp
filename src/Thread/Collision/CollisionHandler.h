@@ -16,7 +16,11 @@ namespace Thread::Collision
         [[nodiscard]] static bool HasActor(RE::FormID a_actor);
 
       private:
+        template <class T>
+        struct MoveHavokHook;
+
         static void SetActorLocked(RE::Actor* a_actor, bool a_locked);
+        static void ApplyActorLock(RE::Actor* a_actor, bool a_locked);
         static void SetFootIKEnabled(RE::Actor* a_actor, bool a_enabled);
 
         static void Hook_ApplyMovementDelta(RE::Actor* a_actor, float a_delta);

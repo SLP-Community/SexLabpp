@@ -2,6 +2,30 @@
 
 namespace Thread::Collision
 {
+    template <class T>
+    struct CollisionHandler::MoveHavokHook
+    {
+        static void Install()
+        {
+            REL::Relocation<std::uintptr_t> vtable{ T::VTABLE[0] };
+            const auto slot = REL::Module::IsVR() ? 0x86 : 0x85;
+            original = vtable.write_vfunc(slot, Thunk);
+        }
+
+        static void Thunk(T* a_actor, bool a_forceRec)
+        {
+            // MoveHavok also aligns the controller and binds it to the current skeleton. We need to preserve that synchronization
+            original(a_actor, a_forceRec);
+            if (HasActor(a_actor->GetFormID())) {
+                // The original has just changed Havok state in this context, so detach
+                // here too instead of leaving the controller attached until a queued task.
+                ApplyActorLock(a_actor, true);
+            }
+        }
+
+        static inline REL::Relocation<decltype(Thunk)> original;
+    };
+
     void CollisionHandler::Install()
     {
         auto& trampoline = SKSE::GetTrampoline();
@@ -9,7 +33,11 @@ namespace Thread::Collision
         REL::Relocation<std::uintptr_t> target{ RELOCATION_ID(36359, 37350) };
         _originalApplyMovementDelta = trampoline.write_call<5>(target.address() + OFFSET(0xF0, 0xFB), Hook_ApplyMovementDelta);
 
-        logger::info("CollisionHandler hook installed.");
+        MoveHavokHook<RE::Actor>::Install();
+        MoveHavokHook<RE::Character>::Install();
+        MoveHavokHook<RE::PlayerCharacter>::Install();
+
+        logger::info("CollisionHandler hooks installed.");
     }
 
     void CollisionHandler::Clear()
@@ -24,8 +52,6 @@ namespace Thread::Collision
         return std::ranges::contains(_cache, a_actor);
     }
 
-    // Note: Technically a mod or skyrim it's self could re-attach the controller. Just something to keep in mind
-    // if this seems to "not work" for certain mod lists and what not...
     void CollisionHandler::SetActorLocked(RE::Actor* a_actor, bool a_locked)
     {
         auto applyLock = [handle = a_actor->GetHandle(), a_locked]() {
@@ -34,30 +60,7 @@ namespace Thread::Collision
                 return;
             }
 
-            if (auto* controller = actor->GetCharController()) {
-                const RE::hkVector4 zeroVec{};
-                controller->SetLinearVelocityImpl(zeroVec);
-                controller->outVelocity = zeroVec;
-                controller->initialVelocity = zeroVec;
-                controller->velocityMod = zeroVec;
-                controller->pushDelta = zeroVec;
-                controller->surfaceInfo.surfaceVelocity = zeroVec;
-                if (a_locked) {
-                    controller->pitchAngle = 0.0f;
-                    controller->rollAngle = 0.0f;
-                }
-            }
-
-            if (a_locked) {
-                // This function retains the controller and invalidates its foot-IK raycast cache.
-                // RagdollStartHandler (at 140722B30) uses the same underlying controller/world disconnection
-                actor->DetachCharController();
-            } else {
-                // Actor::MoveHavok aligns the retained controller and
-                // reconnects it to the current cell's world, as on get-up/resurrection
-                actor->MoveHavok(false);
-            }
-            SetFootIKEnabled(actor.get(), !a_locked);
+            ApplyActorLock(actor.get(), a_locked);
         };
 
         // RagdollStartHandler and GetUpStartHandler queue world changes when required so we follow that pattern for safety (Shouldn't be needed)
@@ -66,6 +69,33 @@ namespace Thread::Collision
         } else {
             applyLock();
         }
+    }
+
+    void CollisionHandler::ApplyActorLock(RE::Actor* a_actor, bool a_locked)
+    {
+        if (auto* controller = a_actor->GetCharController()) {
+            const RE::hkVector4 zeroVec{};
+            controller->SetLinearVelocityImpl(zeroVec);
+            controller->outVelocity = zeroVec;
+            controller->initialVelocity = zeroVec;
+            controller->velocityMod = zeroVec;
+            controller->pushDelta = zeroVec;
+            controller->surfaceInfo.surfaceVelocity = zeroVec;
+            if (a_locked) {
+                controller->pitchAngle = 0.0f;
+                controller->rollAngle = 0.0f;
+            }
+        }
+
+        if (a_locked) {
+            // Retains the controller and invalidates its foot-IK raycast cache.
+            // RagdollStartHandler uses the same underlying controller/world disconnection.
+            a_actor->DetachCharController();
+        } else {
+            // Align and reconnect the controller, as on get-up/resurrection.
+            a_actor->MoveHavok(false);
+        }
+        SetFootIKEnabled(a_actor, !a_locked);
     }
 
     void CollisionHandler::SetFootIKEnabled(RE::Actor* a_actor, bool a_enabled)
