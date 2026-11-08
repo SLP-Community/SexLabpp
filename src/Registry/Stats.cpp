@@ -161,13 +161,13 @@ namespace Registry::Statistics
                 continue;
             }
             if (std::holds_alternative<float>(stat)) {
-                a_intfc->WriteRecordData(0);
-                if (!a_intfc->WriteRecordData(stat)) {
+                a_intfc->WriteRecordData(std::size_t{ 0 });
+                if (!a_intfc->WriteRecordData(std::get<float>(stat))) {
                     logger::error("Failed to save custom statistic {}", id);
                     continue;
                 }
             } else {
-                a_intfc->WriteRecordData(1);
+                a_intfc->WriteRecordData(std::size_t{ 1 });
                 auto save = std::get<RE::BSFixedString>(stat);
                 if (!stl::write_string(a_intfc, save)) {
                     logger::error("Failed to save custom statistic {}", id);
