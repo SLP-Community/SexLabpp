@@ -828,7 +828,7 @@ State Animating
 		EndIf
 		String expression = GetActorExpression()
 		If (expression && _Config.UseExpressions && _livestatus == LIVESTATUS_ALIVE)
-			sslBaseExpression.ApplyExpression(expression, _ActorRef, afStrength)
+			sslBaseExpression.ApplyExpressionEx(expression, _ActorRef, afStrength, OpenMouth)
 		EndIf
 		If (_Config.DebugMode)
 			Log("Expression? " + expression + "; Strength? " + afStrength + "; OpenMouth? " + OpenMouth, "sslBaseExpression.ApplyExpression()")
