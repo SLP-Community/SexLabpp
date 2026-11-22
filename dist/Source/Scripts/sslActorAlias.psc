@@ -323,6 +323,7 @@ endProperty
 
 ; Expressions
 bool Property ForceOpenMouth Auto Hidden
+bool _MouthOpenedHere	; RefreshExpressionEx opened the mouth for an oral stage and has not closed it yet
 bool Property OpenMouth
 	bool Function Get()
 		If (ForceOpenMouth)
@@ -812,16 +813,22 @@ State Animating
 		If (_sex > 2)
 			return
 		ElseIf (sslBaseExpression.IsMouthOpen(_ActorRef))
-			If (!OpenMouth)
+			; Only close a mouth this alias opened
+			; so it doesnt interfere with other mods that may have opened the mouth
+			If (!OpenMouth && _MouthOpenedHere)
 				sslBaseExpression.CloseMouth(_ActorRef)
+				_MouthOpenedHere = false
 			EndIf
 		ElseIf (OpenMouth)
 			sslBaseExpression.OpenMouth(_ActorRef)
+			_MouthOpenedHere = true
 			Utility.Wait(0.7)
+		Else
+			_MouthOpenedHere = false	; shut and not wanted open: nothing of ours is left on the mouth
 		EndIf
 		String expression = GetActorExpression()
 		If (expression && _Config.UseExpressions && _livestatus == LIVESTATUS_ALIVE)
-			sslBaseExpression.ApplyExpression(expression, _ActorRef, afStrength)
+			sslBaseExpression.ApplyExpressionEx(expression, _ActorRef, afStrength, OpenMouth)
 		EndIf
 		If (_Config.DebugMode)
 			Log("Expression? " + expression + "; Strength? " + afStrength + "; OpenMouth? " + OpenMouth, "sslBaseExpression.ApplyExpression()")
@@ -1124,6 +1131,7 @@ Function Initialize()
 	_DoUndress = true
 	_AllowRedress = true
 	ForceOpenMouth = false
+	_MouthOpenedHere = false
 	_ActorLocked = false
 	; Integers
 	_sex = -1

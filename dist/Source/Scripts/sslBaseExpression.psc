@@ -30,6 +30,15 @@ Function ApplyExpression(String asExpression, Actor akActor, float afStrength) g
 	ApplyPresetFloats(akActor, values)
 EndFunction
 
+; As ApplyExpression, but the caller says whether the mouth is being held open (its phonemes are
+; then left alone) instead of it being measured. Measuring cannot tell SexLab's own oral gape from
+; a mouth another mod, or one of SexLab's own presets, left above the IsMouthOpen threshold.
+Function ApplyExpressionEx(String asExpression, Actor akActor, float afStrength, bool abHoldMouthOpen) global
+	int sex = SexLabRegistry.GetSex(akActor, false)
+	float[] values = GetValues(asExpression, sex != 0, afStrength)
+	sslExpressionUtil.ApplyExpressionPreset(akActor, values, abHoldMouthOpen)
+EndFunction
+
 function ClearPhoneme(Actor ActorRef) global
 	sslExpressionUtil.resetPhonemesSmooth(ActorRef)
 endFunction
